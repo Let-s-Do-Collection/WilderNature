@@ -5,6 +5,7 @@ import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrySupplier;
 import dev.architectury.utils.Env;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -31,16 +32,18 @@ public class WilderNatureUtil {
     }
 
     public static void makeHorn(Item item) {
-        ItemProperties.register(item, new ResourceLocation("blowing"), (p_174635_, p_174636_, p_174637_, p_174638_) -> {
-            if (p_174637_ == null) {
-                return 0.0F;
-            } else {
-                return p_174637_.getUseItem() != p_174635_ ? 0.0F : (float) (p_174635_.getUseDuration() -
-                        p_174637_.getUseItemRemainingTicks()) / 20.0F;
-            }
-        });
-
-        ItemProperties.register(item, new ResourceLocation("using"), (p_174630_, p_174631_, p_174632_, p_174633_) -> p_174632_ != null && p_174632_.isUsingItem() && p_174632_.getUseItem() == p_174630_ ? 1.0F : 0.0F);
+        var player = Minecraft.getInstance().player;
+        if (player != null) {
+            ItemProperties.register(item, ResourceLocation.withDefaultNamespace("blowing"), (p_174635_, p_174636_, p_174637_, p_174638_) -> {
+                if (p_174637_ == null) {
+                    return 0.0F;
+                } else {
+                    return p_174637_.getUseItem() != p_174635_ ? 0.0F : (float) (p_174635_.getUseDuration(player) -
+                            p_174637_.getUseItemRemainingTicks()) / 20.0F;
+                }
+            });
+        }
+        ItemProperties.register(item, ResourceLocation.withDefaultNamespace("using"), (p_174630_, p_174631_, p_174632_, p_174633_) -> p_174632_ != null && p_174632_.isUsingItem() && p_174632_.getUseItem() == p_174630_ ? 1.0F : 0.0F);
     }
 
     public static VoxelShape rotateShape(Direction from, Direction to, VoxelShape shape) {
@@ -63,10 +66,10 @@ public class WilderNatureUtil {
     }
 
     public static <T extends Block> RegistrySupplier<T> registerWithoutItem(DeferredRegister<Block> register, Registrar<Block> registrar, ResourceLocation path, Supplier<T> block) {
-        return Platform.isForge() ? register.register(path.getPath(), block) : registrar.register(path, block);
+        return Platform.isNeoForge() ? register.register(path.getPath(), block) : registrar.register(path, block);
     }
 
     public static <T extends Item> RegistrySupplier<T> registerItem(DeferredRegister<Item> register, Registrar<Item> registrar, ResourceLocation path, Supplier<T> itemSupplier) {
-        return Platform.isForge() ? register.register(path.getPath(), itemSupplier) : registrar.register(path, itemSupplier);
+        return Platform.isNeoForge() ? register.register(path.getPath(), itemSupplier) : registrar.register(path, itemSupplier);
     }
 }

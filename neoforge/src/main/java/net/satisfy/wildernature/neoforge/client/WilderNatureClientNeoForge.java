@@ -1,24 +1,25 @@
-package net.satisfy.wildernature.forge.client;
+package net.satisfy.wildernature.neoforge.client;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.WilderNatureClient;
-import net.satisfy.wildernature.forge.player.layer.WolfFurChestplateLayer;
-import net.satisfy.wildernature.forge.player.model.WolfFurChestplateModel;
+import net.satisfy.wildernature.neoforge.player.layer.WolfFurChestplateLayer;
+import net.satisfy.wildernature.neoforge.player.model.WolfFurChestplateModel;
 
 import java.util.function.Function;
 
-@Mod.EventBusSubscriber(modid = WilderNature.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class WilderNatureClientForge {
+@EventBusSubscriber(modid = WilderNature.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+public class WilderNatureClientNeoForge {
 
     @SubscribeEvent
     public static void onClientSetup(RegisterEvent event) {
@@ -43,7 +44,7 @@ public class WilderNatureClientForge {
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static <E extends Player, M extends HumanoidModel<E>>
     void addLayerToPlayerSkin(EntityRenderersEvent.AddLayers event, String skinName, Function<LivingEntityRenderer<E, M>, ? extends RenderLayer<E, M>> factory) {
-        LivingEntityRenderer renderer = event.getSkin(skinName);
+        LivingEntityRenderer renderer = event.getSkin(PlayerSkin.Model.byName(skinName));
         if (renderer != null) renderer.addLayer(factory.apply(renderer));
     }
 }

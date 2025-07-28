@@ -1,20 +1,22 @@
-package net.satisfy.wildernature.forge.world;
+package net.satisfy.wildernature.neoforge.world;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Holder;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ambient.AmbientCreature;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.common.world.ModifiableBiomeInfo;
-import net.satisfy.wildernature.forge.registry.WilderNatureBiomeModifiers;
+import net.neoforged.neoforge.common.world.BiomeModifier;
+import net.neoforged.neoforge.common.world.ModifiableBiomeInfo;
+import net.satisfy.wildernature.neoforge.registry.WilderNatureBiomeModifiers;
 import net.satisfy.wildernature.registry.EntityRegistry;
 import net.satisfy.wildernature.registry.TagsRegistry;
 
@@ -27,7 +29,7 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
 
     private static <T extends Mob> void registerEntity(EntityType<T> type, Heightmap.Types heightmapType, SpawnPlacements.SpawnPredicate<T> predicate) {
         if (!registeredEntities.contains(type)) {
-            SpawnPlacements.register(type, SpawnPlacements.Type.ON_GROUND, heightmapType, predicate);
+            SpawnPlacements.register(type, SpawnPlacementTypes.ON_GROUND, heightmapType, predicate);
             registeredEntities.add(type);
         }
     }
@@ -82,7 +84,7 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
     }
 
     @Override
-    public Codec<? extends BiomeModifier> codec() {
+    public MapCodec<? extends BiomeModifier> codec() {
         return WilderNatureBiomeModifiers.ADD_ANIMALS_CODEC.get();
     }
 }

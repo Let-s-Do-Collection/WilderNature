@@ -8,10 +8,13 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.player.Inventory;
 import net.satisfy.wildernature.client.gui.components.ContractButton;
@@ -24,12 +27,12 @@ public class BountyBlockScreen extends AbstractContainerScreen<BountyBlockScreen
     private static final int GUI_WIDTH = 176;
     private static final int GUI_HEIGHT = 169;
 
-    private static final WilderNatureIdentifier TEX_BACKGROUND = new WilderNatureIdentifier("textures/gui/bounty_board/background.png");
-    private static final WilderNatureIdentifier TEX_REROLL = new WilderNatureIdentifier("textures/gui/bounty_board/reroll.png");
-    private static final WilderNatureIdentifier TEX_DELETE = new WilderNatureIdentifier("textures/gui/bounty_board/delete.png");
-    private static final WilderNatureIdentifier TEX_ACCEPT = new WilderNatureIdentifier("textures/gui/bounty_board/accept.png");
-    private static final WilderNatureIdentifier TEX_FINISHEDSLOT = new WilderNatureIdentifier("textures/gui/bounty_board/finished_bg.png");
-    private static final WilderNatureIdentifier TEX_BAR = new WilderNatureIdentifier("textures/gui/bounty_board/bar.png");
+    private static final ResourceLocation TEX_BACKGROUND = WilderNatureIdentifier.of("textures/gui/bounty_board/background.png");
+    private static final ResourceLocation TEX_REROLL = WilderNatureIdentifier.of("textures/gui/bounty_board/reroll.png");
+    private static final ResourceLocation TEX_DELETE = WilderNatureIdentifier.of("textures/gui/bounty_board/delete.png");
+    private static final ResourceLocation TEX_ACCEPT = WilderNatureIdentifier.of("textures/gui/bounty_board/accept.png");
+    private static final ResourceLocation TEX_FINISHEDSLOT = WilderNatureIdentifier.of("textures/gui/bounty_board/finished_bg.png");
+    private static final ResourceLocation TEX_BAR = WilderNatureIdentifier.of("textures/gui/bounty_board/bar.png");
 
     private ImageButton rerollButton;
     private ImageButton acceptButton;
@@ -67,8 +70,8 @@ public class BountyBlockScreen extends AbstractContainerScreen<BountyBlockScreen
         addRenderableWidget(deleteButton);
     }
 
-    private ImageButton createImageButton(int x, int y, WilderNatureIdentifier texture, Button.OnPress onPress) {
-        return new ImageButton(x, y, 14, 14, 0, 0, 14, texture, 14, 42, onPress);
+    private ImageButton createImageButton(int x, int y, ResourceLocation texture, Button.OnPress onPress) {
+        return new ImageButton(x, y, new WidgetSprites(texture, texture), onPress, Component.empty());
     }
 
     private void initializeContractButtons() {
@@ -131,7 +134,7 @@ public class BountyBlockScreen extends AbstractContainerScreen<BountyBlockScreen
     private void onAccept(Button button) {
         for (int i = 0; i < 3; i++) {
             if (contractButtons[i].getContract() == targetContractButton.getContract()) {
-                FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+                RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), null);// TODO currently null
                 buf.writeEnum(BountyBlockNetworking.BountyClientActionType.CONFIRM_CONTRACT);
                 buf.writeByte(i);
                 NetworkManager.sendToServer(BountyBlockNetworking.ID_SCREEN_ACTION, buf);
@@ -150,19 +153,19 @@ public class BountyBlockScreen extends AbstractContainerScreen<BountyBlockScreen
     }
 
     private void onReroll(Button button) {
-        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+        RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), null);// TODO currently null
         buf.writeEnum(BountyBlockNetworking.BountyClientActionType.REROLL);
         NetworkManager.sendToServer(BountyBlockNetworking.ID_SCREEN_ACTION, buf);
     }
 
     private void onDeleteContract(Button button) {
-        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+        RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), null);// TODO currently null
         buf.writeEnum(BountyBlockNetworking.BountyClientActionType.DELETE_CONTRACT);
         NetworkManager.sendToServer(BountyBlockNetworking.ID_SCREEN_ACTION, buf);
     }
 
     private void onFinish(Button button) {
-        var buf = new FriendlyByteBuf(new UnpooledHeapByteBuf(ByteBufAllocator.DEFAULT, 0, BountyBlockNetworking.MAX_SIZE));
+        RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(new UnpooledHeapByteBuf(ByteBufAllocator.DEFAULT, 0, BountyBlockNetworking.MAX_SIZE), null);// TODO currently null
         buf.writeEnum(BountyBlockNetworking.BountyClientActionType.FINISH_CONTRACT);
         NetworkManager.sendToServer(BountyBlockNetworking.ID_SCREEN_ACTION, buf);
     }

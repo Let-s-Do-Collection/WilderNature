@@ -20,7 +20,7 @@ public class ContractReloader implements ResourceManagerReloadListener {
         var path = location.getPath();
         int index = path.indexOf("/");
         var newLocation = path.substring(index + 1);
-        var rl = new ResourceLocation(location.getNamespace(), newLocation);
+        var rl = ResourceLocation.fromNamespaceAndPath(location.getNamespace(), newLocation);
 
         return contracts.get(rl);
     }
@@ -66,11 +66,11 @@ public class ContractReloader implements ResourceManagerReloadListener {
 
                 var jsonString = new String(open.readAllBytes(), StandardCharsets.UTF_8);
                 var contract = Contract.CODEC.parse(JsonOps.INSTANCE, new Gson().fromJson(jsonString, JsonElement.class))
-                        .getOrThrow(false, error -> {
+                        .getOrThrow(error -> {
                             throw new RuntimeException("Failed to parse contract: " + error);
                         });
 
-                var rl = new ResourceLocation(resourceLocation.getNamespace(), pathEdits);
+                var rl = ResourceLocation.fromNamespaceAndPath(resourceLocation.getNamespace(), pathEdits);
                 contracts.put(rl, contract);
             } catch (IOException e) {
                 throw new RuntimeException("Failed to load contract: " + resourceLocation, e);
@@ -88,11 +88,11 @@ public class ContractReloader implements ResourceManagerReloadListener {
 
                 var jsonString = new String(open.readAllBytes(), StandardCharsets.UTF_8);
                 var tier = BountyBoardTier.CODEC.parse(JsonOps.INSTANCE, new Gson().fromJson(jsonString, JsonElement.class))
-                        .getOrThrow(false, error -> {
+                        .getOrThrow(error -> {
                             throw new RuntimeException("Failed to parse tier: " + error);
                         });
 
-                var rl = new ResourceLocation(namespace, pathEdits);
+                var rl = ResourceLocation.fromNamespaceAndPath(namespace, pathEdits);
                 tiers.put(rl, tier);
             } catch (IOException e) {
                 throw new RuntimeException("Failed to load tier: " + resourceLocation, e);

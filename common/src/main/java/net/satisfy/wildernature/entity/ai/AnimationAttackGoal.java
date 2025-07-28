@@ -34,7 +34,7 @@ public class AnimationAttackGoal extends MeleeAttackGoal {
         super.tick();
         var target = animationEntity.getTarget_();
         if (target != null) {
-            checkAndPerformAttack(target, animationEntity.getMeleeAttackRangeSqr_(target));
+            checkAndPerformAttack(target);
         }
         animationEntity.setAttacking_(counter != 0);
 
@@ -46,8 +46,8 @@ public class AnimationAttackGoal extends MeleeAttackGoal {
     }
 
     @Override
-    protected void checkAndPerformAttack(LivingEntity targetEntity, double discanceSqr) {
-        if (targetEntity.getPosition(0).distanceToSqr(animationEntity.getPosition_(0)) < discanceSqr) {
+    protected void checkAndPerformAttack(LivingEntity targetEntity) {
+        if (this.isTimeToAttack() && this.mob.isWithinMeleeAttackRange(targetEntity) && this.mob.getSensing().hasLineOfSight(targetEntity)) {
             if (counter == 0) {
                 counter++;
             }

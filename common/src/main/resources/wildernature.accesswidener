@@ -1,2 +1,7 @@
 accessWidener   v2  named
 accessible method net/minecraft/client/renderer/item/ItemProperties register (Lnet/minecraft/world/item/Item;Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/client/renderer/item/ClampedItemPropertyFunction;)V
+accessible field net/minecraft/world/food/FoodProperties saturation F
+accessible field net/minecraft/world/food/FoodProperties nutrition I
+mutable field net/minecraft/world/food/FoodProperties saturation F
+mutable field net/minecraft/world/food/FoodProperties nutrition I
+accessible method net/minecraft/world/entity/SpawnPlacements register (Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/entity/SpawnPlacementType;Lnet/minecraft/world/level/levelgen/Heightmap$Types;Lnet/minecraft/world/entity/SpawnPlacements$SpawnPredicate;)V

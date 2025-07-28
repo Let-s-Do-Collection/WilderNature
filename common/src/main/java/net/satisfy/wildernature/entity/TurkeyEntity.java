@@ -21,7 +21,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.entity.ai.AnimationAttackGoal;
 import net.satisfy.wildernature.entity.ai.EntityWithAttackAnimation;
@@ -58,7 +58,7 @@ public class TurkeyEntity extends Chicken implements EntityWithAttackAnimation {
 
     public TurkeyEntity(EntityType<? extends TurkeyEntity> entityType, Level level) {
         super(entityType, level);
-        this.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
+        this.setPathfindingMalus(PathType.WATER, 0.0F);
     }
 
     @Override
@@ -74,9 +74,9 @@ public class TurkeyEntity extends Chicken implements EntityWithAttackAnimation {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ATTACKING, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(ATTACKING, false);
     }
 
 
@@ -87,7 +87,7 @@ public class TurkeyEntity extends Chicken implements EntityWithAttackAnimation {
 
     @Override
     public double getMeleeAttackRangeSqr_(LivingEntity target) {
-        return getMeleeAttackRangeSqr(target);
+        return this.distanceToSqr(target);
     }
 
     public void setAttacking_(boolean attacking) {
@@ -121,10 +121,6 @@ public class TurkeyEntity extends Chicken implements EntityWithAttackAnimation {
         this.goalSelector.addGoal(++i, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(++i, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(0, new HurtByTargetGoal(this).setAlertOthers());
-    }
-
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions entityDimensions) {
-        return this.isBaby() ? entityDimensions.height * 0.85F : entityDimensions.height * 0.92F;
     }
 
     @Override
@@ -187,10 +183,9 @@ public class TurkeyEntity extends Chicken implements EntityWithAttackAnimation {
     }
 
     @Override
-    public int getExperienceReward() {
-        return this.isPelicanJockey() ? 12 : super.getExperienceReward();
+    protected int getBaseExperienceReward() {
+        return this.isPelicanJockey() ? 12 : super.getBaseExperienceReward();
     }
-
 
     @Override
     protected void positionRider(Entity entity, MoveFunction moveFunction) {
@@ -199,7 +194,7 @@ public class TurkeyEntity extends Chicken implements EntityWithAttackAnimation {
         float g = Mth.cos(this.yBodyRot * 0.017453292F);
         double yOffset = -0.18;
 
-        moveFunction.accept(entity, this.getX() + (double) (0.1F * f), this.getY(0.5) + entity.getMyRidingOffset() + yOffset, this.getZ() - (double) (0.1F * g));
+        moveFunction.accept(entity, this.getX() + (double) (0.1F * f), this.getY(0.5) + entity.getVehicleAttachmentPoint(this).y + yOffset, this.getZ() - (double) (0.1F * g));
 
         if (entity instanceof LivingEntity) {
             ((LivingEntity) entity).yBodyRot = this.yBodyRot;

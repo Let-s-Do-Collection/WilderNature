@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.satisfy.wildernature.client.WilderNatureClient;
@@ -37,7 +38,7 @@ public class WilderNatureClientFabric implements ClientModInitializer {
         ItemTooltipCallback.EVENT.register(this::onItemTooltip);
     }
 
-    private void onItemTooltip(ItemStack itemStack, TooltipFlag context, List<Component> tooltip) {
+    private void onItemTooltip(ItemStack itemStack, Item.TooltipContext var2,  TooltipFlag context, List<Component> tooltip) {
         Truffling.addTruffledTooltip(itemStack, tooltip);
     }
 }

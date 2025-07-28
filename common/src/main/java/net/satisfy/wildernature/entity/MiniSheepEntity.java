@@ -124,10 +124,10 @@ public class MiniSheepEntity extends Animal implements Shearable {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ATTACKING, false);
-        this.entityData.define(SHEARED, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(ATTACKING, false);
+        builder.define(SHEARED, false);
     }
 
 
@@ -200,12 +200,9 @@ public class MiniSheepEntity extends Animal implements Shearable {
     }
 
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag compoundTag) {
-        return super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData, compoundTag);
-    }
-
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
-        return 0.95F * dimensions.height;
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
+        return super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData);
     }
 
     @Override
@@ -213,7 +210,7 @@ public class MiniSheepEntity extends Animal implements Shearable {
         ItemStack itemstack = player.getItemInHand(hand);
         if (itemstack.getItem() instanceof ShearsItem && this.readyForShearing()) {
             this.shear(SoundSource.PLAYERS);
-            itemstack.hurtAndBreak(1, player, (p_213613_1_) -> p_213613_1_.broadcastBreakEvent(hand));
+            itemstack.hurtAndBreak(1, player, player.getEquipmentSlotForItem(player.getItemInHand(hand)));
             return InteractionResult.SUCCESS;
         } else {
             return super.mobInteract(player, hand);
@@ -250,5 +247,10 @@ public class MiniSheepEntity extends Animal implements Shearable {
     public void readAdditionalSaveData(CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
         this.setSheared(compoundTag.getBoolean("Sheared"));
+    }
+
+    @Override
+    public boolean isFood(ItemStack stack) {
+        return false;
     }
 }

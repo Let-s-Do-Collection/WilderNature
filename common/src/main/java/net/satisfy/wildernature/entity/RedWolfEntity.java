@@ -58,7 +58,7 @@ public class RedWolfEntity extends Wolf implements EntityWithAttackAnimation {
     }
 
     public double getMeleeAttackRangeSqr_(LivingEntity target) {
-        return super.getMeleeAttackRangeSqr(target);
+        return this.distanceToSqr(target);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class RedWolfEntity extends Wolf implements EntityWithAttackAnimation {
             }
         });
         this.goalSelector.addGoal(5, new AnimationAttackGoal(this, 1.0, true, (int) (ServerAnimationDurations.red_wolf_attack * 20), 4));
-        this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.0, 10.0F, 2.0F, false));
+        this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.0, 10.0F, 2.0F));
         this.goalSelector.addGoal(7, new BreedGoal(this, 1.0));
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(9, new BegGoal(this, 8.0F));
@@ -150,11 +150,11 @@ public class RedWolfEntity extends Wolf implements EntityWithAttackAnimation {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(LEAPING, false);
-        this.entityData.define(ATTACKING, false);
-        this.entityData.define(SITTING, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(LEAPING, false);
+        builder.define(ATTACKING, false);
+        builder.define(SITTING, false);
     }
 
     private void setSneaking(boolean b) {

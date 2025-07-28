@@ -32,7 +32,6 @@ public abstract class ServerPlayerMixin extends Player {
                                     new CompoundTag()
                             )
                             .getOrThrow(
-                                    false,
                                     (err) -> {
                                         throw new RuntimeException(err);
                                     }
@@ -52,7 +51,6 @@ public abstract class ServerPlayerMixin extends Player {
                 var contract = ContractInProgress.SERVER_CODEC
                         .parse(NbtOps.INSTANCE, tag)
                         .getOrThrow(
-                                false,
                                 (err) -> {
                                     throw new RuntimeException(err);
                                 }

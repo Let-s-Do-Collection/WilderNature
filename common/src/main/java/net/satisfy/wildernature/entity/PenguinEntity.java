@@ -12,10 +12,11 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.satisfy.wildernature.registry.EntityRegistry;
 import net.satisfy.wildernature.registry.SoundRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -61,7 +62,7 @@ public class PenguinEntity extends Animal {
 
     public PenguinEntity(EntityType<? extends PenguinEntity> entityType, Level level) {
         super(entityType, level);
-        this.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
+        this.setPathfindingMalus(PathType.WATER, 0.0F);
     }
 
     public static AttributeSupplier.@NotNull Builder createMobAttributes() {
@@ -77,11 +78,6 @@ public class PenguinEntity extends Animal {
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 3f));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(6, new BoatDrivingGoal(this, 0.5));
-    }
-
-    @Override
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions entityDimensions) {
-        return entityDimensions.height * 0.4F;
     }
 
     @Override
@@ -108,6 +104,11 @@ public class PenguinEntity extends Animal {
     @Nullable
     public PenguinEntity getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
         return EntityRegistry.PENGUIN.get().create(serverLevel);
+    }
+
+    @Override
+    public boolean isFood(ItemStack stack) {
+        return false;
     }
 
     public static class BoatDrivingGoal extends Goal {

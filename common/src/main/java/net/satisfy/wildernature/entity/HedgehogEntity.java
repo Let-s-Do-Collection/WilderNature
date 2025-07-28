@@ -1,6 +1,7 @@
 package net.satisfy.wildernature.entity;
 
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -90,7 +91,7 @@ public class HedgehogEntity extends Animal {
 
             @Override
             public AttributeInstance getAttribute(Attribute movementSpeed) {
-                return HedgehogEntity.this.getAttribute(movementSpeed);
+                return HedgehogEntity.this.getAttribute(BuiltInRegistries.ATTRIBUTE.wrapAsHolder(movementSpeed));
             }
         }));
     }
@@ -142,9 +143,9 @@ public class HedgehogEntity extends Animal {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(SNIFFING, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(SNIFFING, false);
     }
 
     @Override

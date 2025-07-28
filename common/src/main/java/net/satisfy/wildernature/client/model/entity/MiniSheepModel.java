@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 @Environment(EnvType.CLIENT)
 public class MiniSheepModel<T extends MiniSheepEntity> extends HierarchicalModel<T> {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new WilderNatureIdentifier("minisheep"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("minisheep"), "main");
     private final ModelPart mini_sheep;
     private final ModelPart head;
 
@@ -93,8 +93,8 @@ public class MiniSheepModel<T extends MiniSheepEntity> extends HierarchicalModel
 
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        mini_sheep.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int alpha) {
+        mini_sheep.render(poseStack, vertexConsumer, packedLight, packedOverlay, alpha);
     }
 
     @Override

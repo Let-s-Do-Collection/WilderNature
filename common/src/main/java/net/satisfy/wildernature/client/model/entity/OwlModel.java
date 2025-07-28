@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class OwlModel extends HierarchicalModel<OwlEntity> implements HeadedModel {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new WilderNatureIdentifier("owl"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("owl"), "main");
     private final ModelPart root;
     private final ModelPart head;
 

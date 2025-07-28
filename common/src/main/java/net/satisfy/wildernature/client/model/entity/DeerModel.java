@@ -11,11 +11,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.entity.DeerEntity;
 import net.satisfy.wildernature.entity.animation.DeerAnimation;
+import net.satisfy.wildernature.util.WilderNatureIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 public class DeerModel extends HierarchicalModel<DeerEntity> {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(WilderNature.MOD_ID, "deer"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("deer"), "main");
     private final ModelPart deer;
     private final ModelPart head;
 
@@ -82,8 +83,8 @@ public class DeerModel extends HierarchicalModel<DeerEntity> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        deer.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int alpha) {
+        deer.render(poseStack, vertexConsumer, packedLight, packedOverlay, alpha);
     }
 
     @Override

@@ -10,7 +10,7 @@ public class FurCloakItem extends Item implements Equipable {
     protected final ArmorItem.Type type;
 
     public FurCloakItem(ArmorMaterial pMaterial, ArmorItem.Type pType, Properties pProperties) {
-        super(pProperties.defaultDurability(pMaterial.getDurabilityForType(pType)));
+        super(pProperties.durability(pMaterial.getDefense(pType)));
         this.type = pType;
     }
 

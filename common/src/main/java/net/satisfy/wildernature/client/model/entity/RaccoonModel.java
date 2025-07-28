@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Environment(EnvType.CLIENT)
 public class RaccoonModel<T extends RaccoonEntity> extends HierarchicalModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new WilderNatureIdentifier("raccoon"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("raccoon"), "main");
     private final ModelPart root;
 
     public RaccoonModel(ModelPart root) {
@@ -67,8 +67,8 @@ public class RaccoonModel<T extends RaccoonEntity> extends HierarchicalModel<T> 
 
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        root.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int alpha) {
+        root.render(poseStack, vertexConsumer, packedLight, packedOverlay, alpha);
     }
 
     @Override

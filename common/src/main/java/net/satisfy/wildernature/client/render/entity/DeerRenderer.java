@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
 public class DeerRenderer extends MobRenderer<DeerEntity, DeerModel> {
-    private static final ResourceLocation TEXTURE = new WilderNatureIdentifier("textures/entity/deer.png");
+    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/deer.png");
 
     public DeerRenderer(EntityRendererProvider.Context context) {
         super(context, new DeerModel(context.bakeLayer(DeerModel.LAYER_LOCATION)), 0.7f);

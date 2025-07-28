@@ -52,7 +52,7 @@ public class CompendiumItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
         tooltip.add(Component.translatable("tooltip.wildernature.compendium").withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC));
         tooltip.add(Component.empty());
         tooltip.add(Component.literal("Work in Progress!").withStyle(ChatFormatting.RED, ChatFormatting.UNDERLINE));

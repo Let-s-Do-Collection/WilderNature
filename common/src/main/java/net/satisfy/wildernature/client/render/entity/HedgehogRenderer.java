@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
 public class HedgehogRenderer extends MobRenderer<HedgehogEntity, HedgehogModel<HedgehogEntity>> {
-    private static final ResourceLocation TEXTURE = new WilderNatureIdentifier("textures/entity/hedgehog.png");
+    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/hedgehog.png");
 
     public HedgehogRenderer(EntityRendererProvider.Context context) {
         super(context, new HedgehogModel<>(context.bakeLayer(HedgehogModel.LAYER_LOCATION)), 0.7f);

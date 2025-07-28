@@ -8,12 +8,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.BisonModel;
 import net.satisfy.wildernature.entity.BisonEntity;
+import net.satisfy.wildernature.util.WilderNatureIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 
 public class BisonRenderer extends MobRenderer<BisonEntity, BisonModel<BisonEntity>> {
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation(WilderNature.MOD_ID, "textures/entity/bison.png");
+    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/bison.png");
 
     public BisonRenderer(EntityRendererProvider.Context context) {
         super(context, new BisonModel<>(context.bakeLayer(BisonModel.LAYER_LOCATION)), 0.9f);

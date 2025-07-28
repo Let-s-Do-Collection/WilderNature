@@ -3,6 +3,7 @@ package net.satisfy.wildernature.entity;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -15,6 +16,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
@@ -44,6 +46,11 @@ public class BisonEntity extends Animal implements EntityWithAttackAnimation {
 
     public BisonEntity(EntityType<? extends Animal> entityType, Level world) {
         super(entityType, world);
+    }
+
+    @Override
+    public boolean isFood(ItemStack stack) {
+        return false;
     }
 
     public static @NotNull AttributeSupplier.Builder createMobAttributes() {
@@ -105,7 +112,7 @@ public class BisonEntity extends Animal implements EntityWithAttackAnimation {
 
     @Override
     public double getMeleeAttackRangeSqr_(LivingEntity target) {
-        return getMeleeAttackRangeSqr(target);
+        return target.distanceTo(target);
     }
 
     public void setAttacking_(boolean attacking) {
@@ -135,13 +142,13 @@ public class BisonEntity extends Animal implements EntityWithAttackAnimation {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ATTACKING, false);
-        this.entityData.define(ROLLING, false);
-        this.entityData.define(ANGER_TIME, 0);
-        this.entityData.define(ANGRY, false);
-        this.entityData.define(LAST_HURT_TIME, 0L);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(ATTACKING, false);
+        builder.define(ROLLING, false);
+        builder.define(ANGER_TIME, 0);
+        builder.define(ANGRY, false);
+        builder.define(LAST_HURT_TIME, 0L);
     }
 
     @Override
@@ -150,7 +157,7 @@ public class BisonEntity extends Animal implements EntityWithAttackAnimation {
         this.goalSelector.addGoal(1, new AnimationAttackGoal(this, 1.0D, true, (int) (ServerAnimationDurations.bison_attack * 20), 5));
         this.goalSelector.addGoal(1, new BisonPanicGoal(this));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.25, Ingredient.of(Items.GRASS), false));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.25, Ingredient.of(Items.SHORT_GRASS), false));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.25));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -238,7 +245,7 @@ public class BisonEntity extends Animal implements EntityWithAttackAnimation {
             counter++;
         }
 
-        public static final AttributeModifier modifier = new AttributeModifier("bison_roll_do_not_move", -1000, AttributeModifier.Operation.ADDITION);
+        public static final AttributeModifier modifier = new AttributeModifier(ResourceLocation.parse("bison_roll_do_not_move"), -1000, AttributeModifier.Operation.ADD_VALUE);
 
         @Override
         public void start() {

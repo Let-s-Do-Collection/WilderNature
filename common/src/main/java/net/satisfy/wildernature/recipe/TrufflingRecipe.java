@@ -3,17 +3,27 @@ package net.satisfy.wildernature.recipe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.level.Level;
 import net.satisfy.wildernature.registry.RecipeRegistry;
 import net.satisfy.wildernature.registry.TagsRegistry;
@@ -24,31 +34,31 @@ public class TrufflingRecipe extends CustomRecipe {
     private final String group;
     private final NonNullList<Ingredient> ingredients;
 
-    public TrufflingRecipe(ResourceLocation id, String group, NonNullList<Ingredient> ingredients) {
-        super(id, CraftingBookCategory.MISC);
+    public TrufflingRecipe(String group, NonNullList<Ingredient> ingredients) {
+        super(CraftingBookCategory.MISC);
         this.group = group;
         this.ingredients = ingredients;
     }
 
     @Override
-    public @NotNull NonNullList<ItemStack> getRemainingItems(CraftingContainer pContainer) {
-        return NonNullList.withSize(pContainer.getContainerSize(), ItemStack.EMPTY);
+    public NonNullList<ItemStack> getRemainingItems(CraftingInput recipeInput) {
+        return NonNullList.withSize(recipeInput.items().size(), ItemStack.EMPTY);
     }
 
     @Override
-    public boolean matches(CraftingContainer craftingContainer, @NotNull Level level) {
+    public boolean matches(CraftingInput recipeInput, Level level) {
         boolean hasFoodInput = false;
         NonNullList<Boolean> matches = NonNullList.withSize(this.ingredients.size(), false);
         int itemsCount = 0;
 
-        for (int slotIndex = 0; slotIndex < craftingContainer.getContainerSize(); slotIndex++) {
-            ItemStack stackInSlot = craftingContainer.getItem(slotIndex);
+        for (int slotIndex = 0; slotIndex < recipeInput.items().size(); slotIndex++) {
+            ItemStack stackInSlot = recipeInput.getItem(slotIndex);
             if (stackInSlot.isEmpty())
                 continue;
 
             itemsCount++;
 
-            if ((stackInSlot.is(TagsRegistry.CAN_BE_TRUFFLED) || stackInSlot.getItem().isEdible()) && !hasFoodInput && !Truffling.isTruffled(stackInSlot))
+            if ((stackInSlot.is(TagsRegistry.CAN_BE_TRUFFLED) || stackInSlot.has(DataComponents.FOOD)) && !hasFoodInput && !Truffling.isTruffled(stackInSlot))
                 hasFoodInput = true;
 
             for (int ingredientIndex = 0; ingredientIndex < this.ingredients.size(); ingredientIndex++) {
@@ -61,11 +71,11 @@ public class TrufflingRecipe extends CustomRecipe {
     }
 
     @Override
-    public @NotNull ItemStack assemble(CraftingContainer craftingContainer, @NotNull RegistryAccess registryAccess) {
-        for (int index = 0; index < craftingContainer.getContainerSize(); index++) {
-            ItemStack itemStack = craftingContainer.getItem(index);
+    public ItemStack assemble(CraftingInput recipeInput, HolderLookup.Provider provider) {
+        for (int index = 0; index < recipeInput.items().size(); index++) {
+            ItemStack itemStack = recipeInput.getItem(index);
 
-            if (itemStack.is(TagsRegistry.CAN_BE_TRUFFLED) || itemStack.getItem().isEdible()) {
+            if (itemStack.is(TagsRegistry.CAN_BE_TRUFFLED) || itemStack.has(DataComponents.FOOD)) {
                 ItemStack resultStack = itemStack.copy();
                 resultStack.setCount(1);
 
@@ -92,45 +102,50 @@ public class TrufflingRecipe extends CustomRecipe {
     }
 
     public static class Serializer implements RecipeSerializer<TrufflingRecipe> {
-        public @NotNull TrufflingRecipe fromJson(@NotNull ResourceLocation recipeId, @NotNull JsonObject json) {
-            String group = GsonHelper.getAsString(json, "group", "");
-            return new TrufflingRecipe(recipeId, group, getIngredients(json));
-        }
-
-        private NonNullList<Ingredient> getIngredients(JsonObject json) {
-            JsonArray jsonArray = GsonHelper.getAsJsonArray(json, "ingredients");
-            NonNullList<Ingredient> ingredients = NonNullList.create();
-
-            for (int i = 0; i < jsonArray.size(); ++i) {
-                Ingredient ingredient = Ingredient.fromJson(jsonArray.get(i));
-                if (!ingredient.isEmpty())
-                    ingredients.add(ingredient);
+        public static final StreamCodec<RegistryFriendlyByteBuf, TrufflingRecipe> STREAM_CODEC =
+                StreamCodec.of(TrufflingRecipe.Serializer::toNetwork, TrufflingRecipe.Serializer::fromNetwork);
+        private static final MapCodec<TrufflingRecipe> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(Codec.STRING.optionalFieldOf("group", "").forGetter((shapelessRecipe) -> shapelessRecipe.group), Ingredient.CODEC_NONEMPTY.listOf().fieldOf("ingredients").flatXmap((list) -> {
+            Ingredient[] ingredients = list.stream().filter((ingredient) -> !ingredient.isEmpty()).toArray(Ingredient[]::new);
+            if (ingredients.length == 0) {
+                return DataResult.error(() -> {
+                    return "No ingredients for truffling recipe";
+                });
+            } else {
+                return ingredients.length > 9 ? DataResult.error(() -> {
+                    return "Too many ingredients for truffling recipe";
+                }) : DataResult.success(NonNullList.of(Ingredient.EMPTY, ingredients));
             }
+        }, DataResult::success).forGetter((shapelessRecipe) -> {
+            return shapelessRecipe.ingredients;
+        })).apply(instance, TrufflingRecipe::new));
 
-            if (ingredients.isEmpty())
-                throw new JsonParseException("No ingredients for truffling recipe");
-            else if (ingredients.size() > 3 * 3)
-                throw new JsonParseException("Too many ingredients for truffling recipe. The maximum is 9");
-            return ingredients;
-        }
-
-        public @NotNull TrufflingRecipe fromNetwork(@NotNull ResourceLocation recipeID, FriendlyByteBuf buffer) {
+        public static @NotNull TrufflingRecipe fromNetwork(RegistryFriendlyByteBuf buffer) {
             String group = buffer.readUtf();
-            int ingredientsCount = buffer.readVarInt();
-            NonNullList<Ingredient> ingredients = NonNullList.withSize(ingredientsCount, Ingredient.EMPTY);
-
-            ingredients.replaceAll(ignored -> Ingredient.fromNetwork(buffer));
-
-            return new TrufflingRecipe(recipeID, group, ingredients);
+            int i = buffer.readVarInt();
+            NonNullList<Ingredient> nonNullList = NonNullList.withSize(i, Ingredient.EMPTY);
+            nonNullList.replaceAll((ingredient) -> {
+                return Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
+            });
+            return new TrufflingRecipe(group, nonNullList);
         }
 
-        public void toNetwork(FriendlyByteBuf buffer, TrufflingRecipe recipe) {
+        public static void toNetwork(RegistryFriendlyByteBuf buffer, TrufflingRecipe recipe) {
             buffer.writeUtf(recipe.group);
             buffer.writeVarInt(recipe.ingredients.size());
 
             for (Ingredient ingredient : recipe.ingredients) {
-                ingredient.toNetwork(buffer);
+                Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, ingredient);
             }
+        }
+
+        @Override
+        public MapCodec<TrufflingRecipe> codec() {
+            return CODEC;
+        }
+
+        @Override
+        public StreamCodec<RegistryFriendlyByteBuf, TrufflingRecipe> streamCodec() {
+            return STREAM_CODEC;
         }
     }
 }

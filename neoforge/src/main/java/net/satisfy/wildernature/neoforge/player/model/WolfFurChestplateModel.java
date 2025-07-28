@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.forge.player.model;
+package net.satisfy.wildernature.neoforge.player.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -10,11 +10,11 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.util.WilderNatureIdentifier;
 
 public class WolfFurChestplateModel<T extends Entity> extends EntityModel<T> {
 
-    public static final ResourceLocation WOLF_FUR_CHESTPLATE_TEXTURE = new ResourceLocation(WilderNature.MOD_ID, "textures/models/armor/fur_cloak.png");
+    public static final ResourceLocation WOLF_FUR_CHESTPLATE_TEXTURE = WilderNatureIdentifier.of("textures/models/armor/fur_cloak.png");
 
     private final ModelPart chestplate;
     private final ModelPart cape;
@@ -51,7 +51,7 @@ public class WolfFurChestplateModel<T extends Entity> extends EntityModel<T> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        chestplate.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int alpha) {
+        chestplate.render(poseStack, vertexConsumer, packedLight, packedOverlay, alpha);
     }
 }

@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
 public class RedWolfRenderer extends MobRenderer<RedWolfEntity, RedWolfModel<RedWolfEntity>> {
-    private static final ResourceLocation TEXTURE = new WilderNatureIdentifier("textures/entity/red_wolf.png");
+    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/red_wolf.png");
 
     public RedWolfRenderer(EntityRendererProvider.Context context) {
         super(context, new RedWolfModel<>(context.bakeLayer(RedWolfModel.LAYER_LOCATION)), 0.7f);
