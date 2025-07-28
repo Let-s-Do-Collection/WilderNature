@@ -5,11 +5,11 @@
       "item": "minecraft:gunpowder"
     },
     {
-      "item": "minecraft:diamond"
+      "item": "minecraft:flint"
     }
   ],
   "result": {
-    "item": "wildernature:diamond_ammunition",
+    "id": "wildernature:flint_ammunition",
     "count": 16
   }
 }

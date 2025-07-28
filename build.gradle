@@ -61,6 +61,10 @@ allprojects {
             }
         }
         maven {
+            name = "Curios"
+            url = uri("https://maven.theillusivec4.top/")
+        }
+        maven {
             name = "Jared's maven"
             url = "https://maven.blamejared.com/"
         }

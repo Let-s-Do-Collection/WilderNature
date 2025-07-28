@@ -5,5 +5,8 @@
   "ingredient": {
     "item": "wildernature:turkey_meat"
   },
-  "result": "wildernature:cooked_turkey_meat"
+  "result": {
+    "id": "wildernature:cooked_turkey_meat",
+    "count": 1
+  }
 }

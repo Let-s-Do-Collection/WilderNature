@@ -5,5 +5,8 @@
   "ingredient": {
     "item": "wildernature:pelican_meat"
   },
-  "result": "wildernature:cooked_pelican_meat"
+  "result": {
+    "id": "wildernature:cooked_pelican_meat",
+    "count": 1
+  }
 }

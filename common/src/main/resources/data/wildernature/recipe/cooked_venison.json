@@ -5,5 +5,8 @@
   "ingredient": {
     "item": "wildernature:venison"
   },
-  "result": "wildernature:cooked_venison"
+  "result": {
+    "id": "wildernature:cooked_venison",
+    "count": 1
+  }
 }

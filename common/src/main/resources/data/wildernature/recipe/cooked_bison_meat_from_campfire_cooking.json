@@ -5,5 +5,8 @@
   "ingredient": {
     "item": "wildernature:bison_meat"
   },
-  "result": "wildernature:cooked_bison_meat"
+  "result": {
+    "id": "wildernature:cooked_bison_meat",
+    "count": 1
+  }
 }
