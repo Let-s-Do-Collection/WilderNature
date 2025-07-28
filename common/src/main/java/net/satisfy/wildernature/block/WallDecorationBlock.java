@@ -2,6 +2,7 @@ package net.satisfy.wildernature.block;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -40,6 +41,13 @@ public class WallDecorationBlock extends HorizontalDirectionalBlock {
     public WallDecorationBlock(BlockBehaviour.Properties settings) {
         super(settings);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+    }
+
+    public static final MapCodec<WallDecorationBlock> CODEC = simpleCodec(WallDecorationBlock::new);
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return CODEC;
     }
 
     public static VoxelShape getBoundingShape(BlockState state) {

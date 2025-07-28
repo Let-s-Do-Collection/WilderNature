@@ -2,6 +2,7 @@ package net.satisfy.wildernature.block.entity;
 
 import dev.architectury.platform.Platform;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
@@ -45,7 +46,7 @@ public class BountyBoardBlockEntity extends BlockEntity implements MenuProvider 
     public EventManager onBlockDataChange = new EventManager();
     public long boardId = new Random().nextInt();
     private ResourceLocation[] contracts = new ResourceLocation[3];
-    public ResourceLocation tier = new WilderNatureIdentifier("tier1");
+    public ResourceLocation tier = WilderNatureIdentifier.of("tier1");
     public int xp = 0;
 
     public ResourceLocation[] getContracts() {
@@ -70,16 +71,16 @@ public class BountyBoardBlockEntity extends BlockEntity implements MenuProvider 
     }
 
     @Override
-    public void load(CompoundTag compoundTag) {
+    protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
         this.rerollCooldownLeft = compoundTag.contains(KEY_REROLL_COOLDOWN_LEFT) ? compoundTag.getInt(KEY_REROLL_COOLDOWN_LEFT) : 0;
         this.rerollsLeft = compoundTag.contains(KEY_REROLLS_LEFT) ? compoundTag.getInt(KEY_REROLLS_LEFT) : MAX_REROLLS;
         this.boardId = compoundTag.contains(KEY_LONGID) ? compoundTag.getLong(KEY_LONGID) : new Random().nextInt();
-        this.tier = compoundTag.contains(KEY_TIER) ? new ResourceLocation(compoundTag.getString(KEY_TIER)) : new WilderNatureIdentifier("");
+        this.tier = compoundTag.contains(KEY_TIER) ? ResourceLocation.parse(compoundTag.getString(KEY_TIER)) : WilderNatureIdentifier.of("");
         this.xp = compoundTag.contains(KEY_EXP) ? compoundTag.getInt(KEY_EXP) : 0;
         if (compoundTag.contains(KEY_CONTRACTS)) {
             setContracts(ResourceLocation.CODEC.listOf()
                     .parse(NbtOps.INSTANCE, compoundTag.get(KEY_CONTRACTS))
-                    .getOrThrow(false, error -> { throw new RuntimeException(error); })
+                    .getOrThrow(error -> { throw new RuntimeException(error); })
                     .toArray(new ResourceLocation[3]));
         } else {
             fillWithRandomContracts();
@@ -115,8 +116,8 @@ public class BountyBoardBlockEntity extends BlockEntity implements MenuProvider 
     }
 
     @Override
-    public void saveAdditional(CompoundTag compoundTag) {
-        super.saveAdditional(compoundTag);
+    public void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
+        super.saveAdditional(compoundTag, provider);
         compoundTag.putInt(KEY_REROLL_COOLDOWN_LEFT, rerollCooldownLeft);
         compoundTag.putInt(KEY_REROLLS_LEFT, rerollsLeft);
         compoundTag.putLong(KEY_LONGID, boardId);
@@ -126,14 +127,14 @@ public class BountyBoardBlockEntity extends BlockEntity implements MenuProvider 
                 KEY_CONTRACTS,
                 ResourceLocation.CODEC.listOf()
                         .encode(Arrays.stream(getContracts()).toList(), NbtOps.INSTANCE, new ListTag())
-                        .getOrThrow(false, error -> { throw new RuntimeException(error); })
+                        .getOrThrow(error -> { throw new RuntimeException(error); })
         );
     }
 
     public CompoundTag getContractsNbt() {
         var encodedContracts = Contract.CODEC.listOf()
                 .encode(Arrays.stream(getContracts()).map(Contract::fromId).toList(), NbtOps.INSTANCE, new ListTag())
-                .getOrThrow(false, error -> { throw new RuntimeException(error); });
+                .getOrThrow(error -> { throw new RuntimeException(error); });
 
         var tag = new CompoundTag();
         tag.put("list", encodedContracts);
