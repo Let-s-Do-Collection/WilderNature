@@ -1,6 +1,7 @@
 package net.satisfy.wildernature;
 
 import dev.architectury.event.events.common.LifecycleEvent;
+import net.satisfy.wildernature.network.BountyBlockNetworking;
 import net.satisfy.wildernature.network.BountyEntrypoints;
 import net.satisfy.wildernature.registry.*;
 import net.satisfy.wildernature.util.contract.ContractInProgress;
@@ -15,6 +16,7 @@ public class WilderNature {
         TabRegistry.init();
         SoundRegistry.init();
         BountyEntrypoints.serverEntry();
+        BountyBlockNetworking.register();
     }
 
     public static void commonInit() {
