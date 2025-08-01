@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
 public class BoarRenderer extends MobRenderer<BoarEntity, BoarModel<BoarEntity>> {
-    private static final ResourceLocation TEXTURE = new WilderNatureIdentifier("textures/entity/boar.png");
+    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/boar.png");
 
     public BoarRenderer(EntityRendererProvider.Context context) {
         super(context, new BoarModel<>(context.bakeLayer(BoarModel.LAYER_LOCATION)), 0.7f);

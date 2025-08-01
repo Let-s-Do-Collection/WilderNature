@@ -6,6 +6,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.satisfy.wildernature.util.WilderNatureIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
@@ -13,12 +14,12 @@ import org.jetbrains.annotations.NotNull;
 public abstract class CompendiumScreen extends Screen {
 
     private static final ResourceLocation[] TEXTURES = new ResourceLocation[]{
-            new ResourceLocation("wildernature:textures/gui/compendium/page1.png"),
-            new ResourceLocation("wildernature:textures/gui/compendium/page2.png"),
-            new ResourceLocation("wildernature:textures/gui/compendium/page3.png"),
-            new ResourceLocation("wildernature:textures/gui/compendium/page4.png"),
-            new ResourceLocation("wildernature:textures/gui/compendium/page5.png"),
-            new ResourceLocation("wildernature:textures/gui/compendium/page6.png")
+            WilderNatureIdentifier.of("textures/gui/compendium/page1.png"),
+            WilderNatureIdentifier.of("textures/gui/compendium/page2.png"),
+            WilderNatureIdentifier.of("textures/gui/compendium/page3.png"),
+            WilderNatureIdentifier.of("textures/gui/compendium/page4.png"),
+            WilderNatureIdentifier.of("textures/gui/compendium/page5.png"),
+            WilderNatureIdentifier.of("textures/gui/compendium/page6.png")
     };
 
     private static final PageData[] PAGES = new PageData[]{
@@ -117,7 +118,7 @@ public abstract class CompendiumScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics, mouseX, mouseY, delta);
         int textureWidth = 316;
         int textureHeight = 190;
         int x = (this.width - textureWidth) / 2;

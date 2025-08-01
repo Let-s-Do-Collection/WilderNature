@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 @Environment(EnvType.CLIENT)
 public class BoarModel<T extends BoarEntity> extends HierarchicalModel<T> {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new WilderNatureIdentifier("boar"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("boar"), "main");
     private final ModelPart boar;
     private final ModelPart head;
 
@@ -80,8 +80,8 @@ public class BoarModel<T extends BoarEntity> extends HierarchicalModel<T> {
 
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        boar.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int alpha) {
+        boar.render(poseStack, vertexConsumer, packedLight, packedOverlay, alpha);
     }
 
     @Override

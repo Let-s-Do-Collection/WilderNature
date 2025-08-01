@@ -29,7 +29,7 @@ import static net.satisfy.wildernature.util.WilderNatureUtil.makeHorn;
 
 @Environment(EnvType.CLIENT)
 public class WilderNatureClient {
-    public static final ModelLayerLocation WOLF_FUR_CHESTPLATE_LAYER = new ModelLayerLocation(new ResourceLocation("minecraft:player"), "wolf_fur_chestplate");
+    public static final ModelLayerLocation WOLF_FUR_CHESTPLATE_LAYER = new ModelLayerLocation(ResourceLocation.parse("minecraft:player"), "wolf_fur_chestplate");
 
     public static void onInitializeClient() {
         RenderTypeRegistry.register(RenderType.cutout(), DEER_TROPHY.get(), HAZELNUT_BUSH.get(), BOUNTY_BOARD.get());

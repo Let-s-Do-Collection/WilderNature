@@ -29,10 +29,10 @@ public record Contract(ResourceLocation tier, ItemStack contractStack, ResourceL
     }
 
     public static final Contract ERROR_CONTRACT = new Contract(
-            new WilderNatureIdentifier("tier1"),
+            WilderNatureIdentifier.of("tier1"),
             ItemStack.EMPTY,
-            new WilderNatureIdentifier("damage_any"),
-            new WilderNatureIdentifier("_error"),
+            WilderNatureIdentifier.of("damage_any"),
+            WilderNatureIdentifier.of("_error"),
             0,
             "Deleted contract",
             "Error: This contract was deleted from datapack",

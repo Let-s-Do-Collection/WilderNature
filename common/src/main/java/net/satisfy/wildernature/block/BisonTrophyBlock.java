@@ -59,8 +59,7 @@ public class BisonTrophyBlock extends WallDecorationBlock {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult blockHitResult) {
         if (!world.isClientSide) {
             long currentTime = System.currentTimeMillis();
             Long lastUsed = lastUseTime.getOrDefault(player, 0L);

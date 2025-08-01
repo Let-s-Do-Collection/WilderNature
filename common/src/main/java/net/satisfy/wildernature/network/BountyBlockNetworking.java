@@ -9,8 +9,8 @@ import net.satisfy.wildernature.client.gui.handlers.BountyBlockScreenHandler;
 import net.satisfy.wildernature.util.WilderNatureIdentifier;
 
 public class BountyBlockNetworking {
-    public static final ResourceLocation ID_SCREEN_UPDATE = new WilderNatureIdentifier("screen_update");
-    public static final ResourceLocation ID_SCREEN_ACTION = new WilderNatureIdentifier("screen_action");
+    public static final ResourceLocation ID_SCREEN_UPDATE = WilderNatureIdentifier.of("screen_update");
+    public static final ResourceLocation ID_SCREEN_ACTION = WilderNatureIdentifier.of("screen_action");
     public static final int MAX_SIZE = 32768;
 
     public enum BountyServerUpdateType {

@@ -3,11 +3,13 @@ package net.satisfy.wildernature.entity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.Fireball;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
@@ -38,7 +40,7 @@ public class BulletEntity extends Fireball {
     }
 
     public BulletEntity(Level worldIn, LivingEntity shooter, double accelX, double accelY, double accelZ) {
-        super(EntityRegistry.BULLET.get(), shooter, accelX, accelY, accelZ, worldIn);
+        super(EntityRegistry.BULLET.get(), shooter, new Vec3(accelX, accelY, accelZ), worldIn);
         initialPosition = new Vec3(shooter.getX(), shooter.getEyeY() - 0.1, shooter.getZ());
     }
 
@@ -68,7 +70,7 @@ public class BulletEntity extends Fireball {
         if (!level().isClientSide) {
             Entity target = raytrace.getEntity();
             Entity shooter = getOwner();
-            AmmunitionItem bullet = (AmmunitionItem) getItemRaw().getItem();
+            AmmunitionItem bullet = (AmmunitionItem) getItem().getItem();
 
             int lastHurtResistant = target.invulnerableTime;
             if (ignoreInvulnerability) target.invulnerableTime = 0;
@@ -79,8 +81,6 @@ public class BulletEntity extends Fireball {
                     Vec3 vec = getDeltaMovement().multiply(1, 0, 1).normalize().scale(knockbackStrength);
                     if (vec.lengthSqr() > 0) livingTarget.push(vec.x, 0.1, vec.z);
                 }
-                if (shooter instanceof LivingEntity) doEnchantDamageEffects((LivingEntity) shooter, target);
-                AmmunitionItem.onLivingEntityHit(livingTarget, shooter, level());
             } else if (!damaged && ignoreInvulnerability) target.invulnerableTime = lastHurtResistant;
         }
     }
@@ -146,7 +146,7 @@ public class BulletEntity extends Fireball {
     }
 
     @Override
-    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return EntityPacketHandler.createAddEntityPacket(this);
+    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity serverEntity) {
+        return EntityPacketHandler.createAddEntityPacket(this, serverEntity);
     }
 }

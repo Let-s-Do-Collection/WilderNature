@@ -1,9 +1,11 @@
 package net.satisfy.wildernature.block;
 
+import com.mojang.serialization.MapCodec;
 import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -16,6 +18,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -60,6 +63,13 @@ public class BountyBoardBlock extends BaseEntityBlock {
     public BountyBoardBlock(BlockBehaviour.Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(PART, Part.BOTTOM_LEFT).setValue(FACING, Direction.NORTH));
+    }
+
+    public static final MapCodec<BountyBoardBlock> CODEC = simpleCodec(BountyBoardBlock::new);
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     private static VoxelShape makeBottomLeftShape() {
@@ -201,24 +211,23 @@ public class BountyBoardBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
-        state.getValue(PART);
-        BlockPos basePos = getBasePos(world.getBlockState(pos), pos);
-        var entity = world.getBlockEntity(basePos);
-        assert entity instanceof BountyBoardBlockEntity;
-        BountyBoardBlockEntity bountyBoardBlockEntity = (BountyBoardBlockEntity) entity;
-        if (world.isClientSide()) {
-            return;
+    public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
+        if (!world.isClientSide()) {
+            state.getValue(PART);
+            BlockPos basePos = getBasePos(world.getBlockState(pos), pos);
+            var entity = world.getBlockEntity(basePos);
+            assert entity instanceof BountyBoardBlockEntity;
+            BountyBoardBlockEntity bountyBoardBlockEntity = (BountyBoardBlockEntity) entity;
+            var blockEntityTag = new CompoundTag();
+            bountyBoardBlockEntity.saveAdditional(blockEntityTag, world.registryAccess());
+            var tag = new CompoundTag();
+            tag.put("BlockEntityTag", blockEntityTag);
+            var stack = new ItemStack(ObjectRegistry.BOUNTY_BOARD.get());
+            stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(tag));
+            world.addFreshEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack));
+            destroyAdjacentBlocks(world, basePos);
         }
-        var blockEntityTag = new CompoundTag();
-        bountyBoardBlockEntity.saveAdditional(blockEntityTag);
-        var tag = new CompoundTag();
-        tag.put("BlockEntityTag", blockEntityTag);
-        var stack = new ItemStack(ObjectRegistry.BOUNTY_BOARD.get());
-        stack.setTag(tag);
-        world.addFreshEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack));
-        destroyAdjacentBlocks(world, basePos);
-        super.playerWillDestroy(world, pos, state, player);
+        return super.playerWillDestroy(world, pos, state, player);
     }
 
     @Nullable
@@ -231,7 +240,7 @@ public class BountyBoardBlock extends BaseEntityBlock {
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState blockState, Level level, BlockPos originalBlockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+    public @NotNull InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos originalBlockPos, Player player, BlockHitResult blockHitResult) {
         if (level.isClientSide())
             return InteractionResult.SUCCESS;
         final var blockPos = getBasePos(blockState, originalBlockPos);

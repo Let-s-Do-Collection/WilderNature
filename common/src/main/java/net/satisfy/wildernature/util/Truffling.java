@@ -1,9 +1,11 @@
 package net.satisfy.wildernature.util;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 
 import java.util.List;
 import java.util.Objects;
@@ -20,12 +22,13 @@ public class Truffling {
     private static final String TRUFFLED_KEY = "Truffled";
 
     public static boolean isTruffled(ItemStack itemStack) {
-        return itemStack.hasTag() && Objects.requireNonNull(itemStack.getTag()).contains(TRUFFLED_KEY);
+        return itemStack.has(DataComponents.CUSTOM_DATA) && Objects.requireNonNull(itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)).contains(TRUFFLED_KEY);
     }
 
     public static ItemStack setTruffled(ItemStack itemStack) {
-        CompoundTag tag = itemStack.getOrCreateTag();
+        CompoundTag tag = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         tag.putBoolean(TRUFFLED_KEY, true);
+        itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
         return itemStack;
     }
 

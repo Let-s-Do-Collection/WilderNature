@@ -20,7 +20,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.entity.ai.AnimationAttackGoal;
 import net.satisfy.wildernature.entity.ai.EntityWithAttackAnimation;
@@ -86,9 +86,9 @@ public class PelicanEntity extends Animal implements EntityWithAttackAnimation {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ATTACKING, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(ATTACKING, false);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class PelicanEntity extends Animal implements EntityWithAttackAnimation {
     }
 
     public double getMeleeAttackRangeSqr_(LivingEntity entity) {
-        return super.getMeleeAttackRangeSqr(entity);
+        return this.distanceToSqr(entity);
     }
 
     static {
@@ -106,7 +106,7 @@ public class PelicanEntity extends Animal implements EntityWithAttackAnimation {
 
     public PelicanEntity(EntityType<? extends PelicanEntity> entityType, Level level) {
         super(entityType, level);
-        this.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
+        this.setPathfindingMalus(PathType.WATER, 0.0F);
     }
 
     public static AttributeSupplier.@NotNull Builder createMobAttributes() {
@@ -125,11 +125,6 @@ public class PelicanEntity extends Animal implements EntityWithAttackAnimation {
         this.goalSelector.addGoal(++i, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(++i, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(0, new HurtByTargetGoal(this).setAlertOthers());
-    }
-
-    @Override
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions entityDimensions) {
-        return entityDimensions.height * 0.4F;
     }
 
     @Override

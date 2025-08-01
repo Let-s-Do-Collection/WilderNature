@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smelting",
-  "cookingtime": 200,
-  "experience": 0.35,
-  "ingredient": {
-    "item": "wildernature:turkey_meat"
-  },
-  "result": "wildernature:cooked_turkey_meat"
-}

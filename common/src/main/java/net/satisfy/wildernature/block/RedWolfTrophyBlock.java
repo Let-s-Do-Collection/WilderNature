@@ -53,8 +53,7 @@ public class RedWolfTrophyBlock extends WallDecorationBlock {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult blockHitResult) {
         if (!world.isClientSide) {
             Vector3d center = new Vector3d(pos.getX(), pos.getY(), pos.getZ());
             double range = 32.0;

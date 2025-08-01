@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
 public class FlamingoRenderer extends MobRenderer<FlamingoEntity, FlamingoModel<FlamingoEntity>> {
-    private static final ResourceLocation WHITE_TEXTURE = new WilderNatureIdentifier("textures/entity/flamingo_white.png");
-    private static final ResourceLocation PINK_TEXTURE = new WilderNatureIdentifier("textures/entity/flamingo_pink.png");
-    private static final ResourceLocation RED_TEXTURE = new WilderNatureIdentifier("textures/entity/flamingo_red.png");
+    private static final ResourceLocation WHITE_TEXTURE = WilderNatureIdentifier.of("textures/entity/flamingo_white.png");
+    private static final ResourceLocation PINK_TEXTURE = WilderNatureIdentifier.of("textures/entity/flamingo_pink.png");
+    private static final ResourceLocation RED_TEXTURE = WilderNatureIdentifier.of("textures/entity/flamingo_red.png");
 
     public FlamingoRenderer(EntityRendererProvider.Context context) {
         super(context, new FlamingoModel<>(context.bakeLayer(FlamingoModel.LAYER_LOCATION)), 0.7f);

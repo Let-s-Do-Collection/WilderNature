@@ -10,9 +10,10 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.util.WilderNatureIdentifier;
 
 public class BountyBoardModel<T extends Entity> extends EntityModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(WilderNature.MOD_ID, "bounty_board"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("bounty_board"), "main");
     private final ModelPart board;
 
 
@@ -43,7 +44,7 @@ public class BountyBoardModel<T extends Entity> extends EntityModel<T> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        board.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int k) {
+        board.render(poseStack, vertexConsumer, packedLight, packedOverlay, k);
     }
 }

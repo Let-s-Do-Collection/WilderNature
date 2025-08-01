@@ -1,5 +1,6 @@
 package net.satisfy.wildernature.entity;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -80,7 +81,7 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
                 (int) (ServerAnimationDurations.dog_bite * 20), 7));
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.15D));
         this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
-        this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 1.25d, 18f, 7f, false));
+        this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 1.25d, 18f, 7f));
         this.goalSelector.addGoal(2, new TemptGoal(this, 1.2D, Ingredient.of(Items.BONE), false));
         this.goalSelector.addGoal(3, new FollowParentGoal(this, 1.1D));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1D));
@@ -134,7 +135,7 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
 
             @Override
             public AttributeInstance getAttribute(Attribute movementSpeed) {
-                return DogEntity.this.getAttribute(movementSpeed);
+                return DogEntity.this.getAttribute(BuiltInRegistries.ATTRIBUTE.wrapAsHolder(movementSpeed));
             }
         });
     }
@@ -185,11 +186,11 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(HOWLING, false);
-        this.entityData.define(ATTACKING, false);
-        this.entityData.define(SITTING, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(HOWLING, false);
+        builder.define(ATTACKING, false);
+        builder.define(SITTING, false);
     }
 
     @Override
@@ -246,7 +247,7 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
     }
 
     @Override
-    public boolean canBeLeashed(Player player) {
+    public boolean canBeLeashed() {
         return true;
     }
 
@@ -320,7 +321,7 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
 
     @Override
     public double getMeleeAttackRangeSqr_(LivingEntity target) {
-        return getMeleeAttackRangeSqr(target);
+        return this.distanceToSqr(target);
     }
 
     @Override

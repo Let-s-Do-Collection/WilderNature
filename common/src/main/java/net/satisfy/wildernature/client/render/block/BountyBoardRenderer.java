@@ -17,7 +17,7 @@ import net.satisfy.wildernature.util.WilderNatureIdentifier;
 import org.joml.Quaternionf;
 
 public class BountyBoardRenderer implements BlockEntityRenderer<BountyBoardBlockEntity> {
-    private static final ResourceLocation TEXTURE = new WilderNatureIdentifier("textures/entity/bounty_board.png");
+    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/bounty_board.png");
     private final BountyBoardModel<?> model;
 
     public BountyBoardRenderer(BlockEntityRendererProvider.Context context) {
@@ -51,7 +51,7 @@ public class BountyBoardRenderer implements BlockEntityRenderer<BountyBoardBlock
 
         poseStack.mulPose(new Quaternionf().rotateZ((float) Math.toRadians(180.0F)));
         VertexConsumer vertexConsumer = multiBufferSource.getBuffer(RenderType.entityCutout(TEXTURE));
-        model.renderToBuffer(poseStack, vertexConsumer, i, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        model.renderToBuffer(poseStack, vertexConsumer, i, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
     }
 }

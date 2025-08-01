@@ -13,7 +13,7 @@ import net.satisfy.wildernature.util.WilderNatureIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 public class HedgehogModel<T extends HedgehogEntity> extends HierarchicalModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new WilderNatureIdentifier("hedgehog"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("hedgehog"), "main");
     private final ModelPart root;
 
     public HedgehogModel(ModelPart root) {
@@ -87,8 +87,8 @@ public class HedgehogModel<T extends HedgehogEntity> extends HierarchicalModel<T
     }
 
     @Override
-    public void renderToBuffer(PoseStack matrices, VertexConsumer vertexConsumer, int light, int overlay, float red, float green, float blue, float alpha) {
-        root.render(matrices, vertexConsumer, light, overlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack matrices, VertexConsumer vertexConsumer, int light, int overlay,int alpha) {
+        root.render(matrices, vertexConsumer, light, overlay, alpha);
     }
 
     @Override

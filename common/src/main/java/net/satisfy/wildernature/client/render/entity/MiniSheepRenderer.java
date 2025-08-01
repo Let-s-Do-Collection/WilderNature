@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
 public class MiniSheepRenderer extends MobRenderer<MiniSheepEntity, MiniSheepModel<MiniSheepEntity>> {
-    private static final ResourceLocation SHEARED_TEXTURE = new WilderNatureIdentifier("textures/entity/minisheep_sheared.png");
-    private static final ResourceLocation DEFAULT_TEXTURE = new WilderNatureIdentifier("textures/entity/minisheep.png");
+    private static final ResourceLocation SHEARED_TEXTURE = WilderNatureIdentifier.of("textures/entity/minisheep_sheared.png");
+    private static final ResourceLocation DEFAULT_TEXTURE = WilderNatureIdentifier.of("textures/entity/minisheep.png");
 
     public MiniSheepRenderer(EntityRendererProvider.Context context) {
         super(context, new MiniSheepModel<>(context.bakeLayer(MiniSheepModel.LAYER_LOCATION)), 0.7f);

@@ -1,0 +1,46 @@
+modLoader = "javafml"
+loaderVersion="[4,)"
+license = "Custom"
+
+config = [
+    "wildernature-common.mixins.json",
+    "wildernature.forge.mixins.json"
+]
+
+[[mods]]
+modId = "wildernature"
+version = "${version}"
+displayName = "[Let's Do] Wilder Nature"
+authors = "satisfy, jason13"
+description = '''
+Discover enchanting new animals like playful squirrels and majestic deers! Visit the bounty board for fun challenges and fabulous rewards.
+'''
+logoFile = "pack.png"
+
+[[dependencies.wildernature]]
+modId = "neoforge"
+mandatory = true
+versionRange = "[21.1.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.wildernature]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.21.1,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.wildernature]]
+modId = "architectury"
+mandatory = true
+versionRange = "[9.1.12,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.wildernature]]
+modId = "curios"
+mandatory = true
+versionRange = "[5.10.0,)"
+ordering = "AFTER"
+side = "BOTH"

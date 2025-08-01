@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
 public class DogRenderer extends MobRenderer<DogEntity, DogModel<DogEntity>> {
-    private static final ResourceLocation TEXTURE = new WilderNatureIdentifier("textures/entity/dog.png");
+    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/dog.png");
 
     public DogRenderer(EntityRendererProvider.Context context) {
         super(context, new DogModel<>(context.bakeLayer(DogModel.LAYER_LOCATION)), 0.7f);

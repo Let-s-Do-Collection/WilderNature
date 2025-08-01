@@ -61,7 +61,7 @@ public class SoundRegistry {
     public static final RegistrySupplier<SoundEvent> BLUNDERBUSS_LOAD = create("blunderbuss_load");
 
     private static RegistrySupplier<SoundEvent> create(String name) {
-        final ResourceLocation id = new WilderNatureIdentifier(name);
+        final ResourceLocation id = WilderNatureIdentifier.of(name);
         return SOUND_EVENTS.register(id, () -> SoundEvent.createVariableRangeEvent(id));
     }
 

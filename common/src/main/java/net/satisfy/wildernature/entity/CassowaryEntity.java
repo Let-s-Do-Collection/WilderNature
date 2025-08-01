@@ -16,9 +16,10 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.entity.ai.AnimationAttackGoal;
 import net.satisfy.wildernature.entity.ai.EntityWithAttackAnimation;
@@ -79,9 +80,9 @@ public class CassowaryEntity extends Animal implements EntityWithAttackAnimation
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ATTACKING, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(ATTACKING, false);
     }
 
     @Override
@@ -90,13 +91,12 @@ public class CassowaryEntity extends Animal implements EntityWithAttackAnimation
     }
 
     public double getMeleeAttackRangeSqr_(LivingEntity entity) {
-        return super.getMeleeAttackRangeSqr(entity);
+        return entity.distanceTo(entity);
     }
-
 
     public CassowaryEntity(EntityType<? extends CassowaryEntity> entityType, Level level) {
         super(entityType, level);
-        this.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
+        this.setPathfindingMalus(PathType.WATER, 0.0F);
     }
 
     public static AttributeSupplier.@NotNull Builder createMobAttributes() {
@@ -114,11 +114,6 @@ public class CassowaryEntity extends Animal implements EntityWithAttackAnimation
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1D));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-    }
-
-    @Override
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions entityDimensions) {
-        return entityDimensions.height * 0.4F;
     }
 
     @Override
@@ -145,5 +140,10 @@ public class CassowaryEntity extends Animal implements EntityWithAttackAnimation
     @Nullable
     public CassowaryEntity getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
         return EntityRegistry.CASSOWARY.get().create(serverLevel);
+    }
+
+    @Override
+    public boolean isFood(ItemStack stack) {
+        return false;
     }
 }

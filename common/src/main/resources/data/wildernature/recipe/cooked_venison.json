@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "cookingtime": 200,
+  "experience": 0.35,
+  "ingredient": {
+    "item": "wildernature:venison"
+  },
+  "result": {
+    "id": "wildernature:cooked_venison",
+    "count": 1
+  }
+}

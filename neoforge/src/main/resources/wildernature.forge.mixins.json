@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.satisfy.wildernature.neoforge.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "wildernature.forge.mixins.refmap.json",
+  "mixins": [
+    "FoodDataMixin",
+    "HatItemMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": -1
+  }
+}

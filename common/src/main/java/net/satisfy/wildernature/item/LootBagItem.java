@@ -1,5 +1,6 @@
 package net.satisfy.wildernature.item;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -43,7 +44,7 @@ public class LootBagItem extends Item {
         } else {
             List<Item> edibleItems = new ArrayList<>();
             for (Item item : BuiltInRegistries.ITEM) {
-                if (item.isEdible() && !item.builtInRegistryHolder().is(TagsRegistry.LOOT_BAG_BLACKLIST)) {
+                if (item.getDefaultInstance().has(DataComponents.FOOD) && !item.builtInRegistryHolder().is(TagsRegistry.LOOT_BAG_BLACKLIST)) {
                     edibleItems.add(item);
                 }
             }

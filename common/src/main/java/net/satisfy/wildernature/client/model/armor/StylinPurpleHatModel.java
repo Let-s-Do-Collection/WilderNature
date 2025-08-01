@@ -11,7 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.satisfy.wildernature.util.WilderNatureIdentifier;
 
 public class StylinPurpleHatModel<T extends Entity> extends EntityModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new WilderNatureIdentifier("stylin_purple_hat"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("stylin_purple_hat"), "main");
     private final ModelPart stylin_purple_hat;
 
     public StylinPurpleHatModel(ModelPart root) {
@@ -30,9 +30,8 @@ public class StylinPurpleHatModel<T extends Entity> extends EntityModel<T> {
         return LayerDefinition.create(meshdefinition, 64, 64);
     }
 
-
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int k) {
         poseStack.pushPose();
         poseStack.scale(1.05F, 1.05F, 1.05F);
         stylin_purple_hat.render(poseStack, buffer, packedLight, packedOverlay);

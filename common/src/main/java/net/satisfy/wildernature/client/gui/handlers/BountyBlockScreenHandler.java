@@ -7,9 +7,11 @@ import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.UnpooledHeapByteBuf;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,6 +21,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.block.entity.BountyBoardBlockEntity;
 import net.satisfy.wildernature.event.EventManager;
@@ -55,7 +58,7 @@ public class BountyBlockScreenHandler extends AbstractContainerMenu {
         if (targetEntity != null) {
             targetEntity.onTick.subscribe(() -> {
                 if (targetEntity.rerollCooldownLeft % 20 == 0 && inventory.player.containerMenu == this) {
-                    FriendlyByteBuf buf = new FriendlyByteBuf(new UnpooledHeapByteBuf(ByteBufAllocator.DEFAULT, 0, BountyBlockNetworking.MAX_SIZE));
+                    RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(new UnpooledHeapByteBuf(ByteBufAllocator.DEFAULT, 0, BountyBlockNetworking.MAX_SIZE), inventory.player.registryAccess());
                     writeBlockDataChange(buf, targetEntity.rerollsLeft, targetEntity.rerollCooldownLeft, targetEntity.boardId, targetEntity.tier, targetEntity.xp);
                     NetworkManager.sendToPlayer((ServerPlayer) inventory.player, BountyBlockNetworking.ID_SCREEN_UPDATE, buf);
                 }
@@ -63,7 +66,7 @@ public class BountyBlockScreenHandler extends AbstractContainerMenu {
 
             targetEntity.onBlockDataChange.subscribe(() -> {
                 if (inventory.player.containerMenu == this) {
-                    FriendlyByteBuf buf = new FriendlyByteBuf(new UnpooledHeapByteBuf(ByteBufAllocator.DEFAULT, 0, BountyBlockNetworking.MAX_SIZE));
+                    RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(new UnpooledHeapByteBuf(ByteBufAllocator.DEFAULT, 0, BountyBlockNetworking.MAX_SIZE), inventory.player.registryAccess());
                     buf.writeEnum(BountyBlockNetworking.BountyServerUpdateType.MULTI);
                     buf.writeShort(3);
                     writeBlockDataChange(buf, targetEntity.rerollsLeft, targetEntity.rerollCooldownLeft, targetEntity.boardId, targetEntity.tier, targetEntity.xp);
@@ -111,10 +114,12 @@ public class BountyBlockScreenHandler extends AbstractContainerMenu {
             buf.writeEnum(BountyBlockNetworking.BountyServerUpdateType.CLEAR_ACTIVE_CONTRACT);
         } else {
             buf.writeEnum(BountyBlockNetworking.BountyServerUpdateType.SET_ACTIVE_CONTRACT);
-            buf.writeNbt((CompoundTag) ContractInProgress.SERVER_CODEC.encode(contractProgress, NbtOps.INSTANCE, new CompoundTag()).get().left()
-                    .orElseThrow(() -> new RuntimeException("Failed to encode contract progress")));
-            buf.writeNbt((CompoundTag) Contract.CODEC.encode(contractProgress.getContract(), NbtOps.INSTANCE, new CompoundTag()).get().left()
-                    .orElseThrow(() -> new RuntimeException("Failed to encode contract")));
+            buf.writeNbt((CompoundTag) ContractInProgress.SERVER_CODEC.encode(contractProgress, NbtOps.INSTANCE, new CompoundTag()).getOrThrow(
+                    string -> new RuntimeException("Failed to encode contract progress")
+            ));
+            buf.writeNbt((CompoundTag) Contract.CODEC.encode(contractProgress.getContract(), NbtOps.INSTANCE, new CompoundTag()).getOrThrow(
+                    string -> new RuntimeException("Failed to encode contract")
+            ));
         }
     }
 
@@ -154,7 +159,7 @@ public class BountyBlockScreenHandler extends AbstractContainerMenu {
         targetEntity.setRandomContractInSlot(id);
 
         var stack = Contract.fromId(contract).contractStack();
-        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         tag.putString(ContractItem.TAG_CONTRACT_ID, contract.toString());
         tag.putUUID(ContractItem.TAG_PLAYER, player.getUUID());
 
@@ -197,7 +202,7 @@ public class BountyBlockScreenHandler extends AbstractContainerMenu {
     }
 
     private void updatePlayerScreen(ServerPlayer player) {
-        FriendlyByteBuf newBuf = new FriendlyByteBuf(new UnpooledHeapByteBuf(ByteBufAllocator.DEFAULT, 0, BountyBlockNetworking.MAX_SIZE));
+        RegistryFriendlyByteBuf newBuf = new RegistryFriendlyByteBuf(new UnpooledHeapByteBuf(ByteBufAllocator.DEFAULT, 0, BountyBlockNetworking.MAX_SIZE), player.registryAccess());
         writeActiveContractInfo(newBuf, player);
         writeUpdateContracts(newBuf, targetEntity);
         NetworkManager.sendToPlayer(player, BountyBlockNetworking.ID_SCREEN_UPDATE, newBuf);
@@ -219,7 +224,7 @@ public class BountyBlockScreenHandler extends AbstractContainerMenu {
             if (updateType == BountyBlockNetworking.BountyServerUpdateType.UPDATE_CONTRACTS) {
                 contracts = Contract.CODEC.listOf()
                         .decode(NbtOps.INSTANCE, Objects.requireNonNull(buf.readNbt()).get("list"))
-                        .getOrThrow(false, error -> { throw new RuntimeException(error); })
+                        .getOrThrow(error -> { throw new RuntimeException(error); })
                         .getFirst()
                         .toArray(new Contract[3]);
                 onContractUpdate.invoke();
@@ -235,11 +240,11 @@ public class BountyBlockScreenHandler extends AbstractContainerMenu {
                 Platform.isDevelopmentEnvironment();
                 var nbt = buf.readNbt();
                 activeContractProgress = ContractInProgress.SERVER_CODEC.decode(NbtOps.INSTANCE, nbt)
-                        .getOrThrow(false, error -> { throw new RuntimeException(error); })
+                        .getOrThrow(error -> { throw new RuntimeException(error); })
                         .getFirst();
                 nbt = buf.readNbt();
                 activeContract = Contract.CODEC.decode(NbtOps.INSTANCE, nbt)
-                        .getOrThrow(false, error -> { throw new RuntimeException(error); })
+                        .getOrThrow(error -> { throw new RuntimeException(error); })
                         .getFirst();
             }
             if (updateType == BountyBlockNetworking.BountyServerUpdateType.CLEAR_ACTIVE_CONTRACT) {

@@ -1,5 +1,6 @@
 package net.satisfy.wildernature.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -18,6 +19,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.wildernature.block.entity.CompletionistBannerEntity;
 import net.satisfy.wildernature.registry.ObjectRegistry;
+import net.satisfy.wildernature.util.WilderNatureIdentifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,6 +31,11 @@ public class CompletionistBannerBlock extends BaseEntityBlock {
     public CompletionistBannerBlock(Properties properties) {
         super(properties);
         makeDefaultState();
+    }
+    public static final MapCodec<CompletionistBannerBlock> CODEC = simpleCodec(CompletionistBannerBlock::new);
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Nullable
@@ -101,17 +108,17 @@ public class CompletionistBannerBlock extends BaseEntityBlock {
 
     public ResourceLocation getRenderTexture() {
         if (this == ObjectRegistry.WOLF_TRAPPER_BANNER.get()) {
-            return new ResourceLocation("wildernature", "textures/banner/wolf_trapper.png");
+            return WilderNatureIdentifier.of("textures/banner/wolf_trapper.png");
         } else if (this == ObjectRegistry.BUNNY_STALKER_BANNER.get()) {
-            return new ResourceLocation("wildernature", "textures/banner/rabbit_hunter.png");
+            return WilderNatureIdentifier.of("textures/banner/rabbit_hunter.png");
         } else if (this == ObjectRegistry.BUNNY_STALKER_WALL_BANNER.get()) {
-            return new ResourceLocation("wildernature", "textures/banner/rabbit_hunter.png");
+            return WilderNatureIdentifier.of("textures/banner/rabbit_hunter.png");
         } else if (this == ObjectRegistry.COD_CATCHER_BANNER.get()) {
-            return new ResourceLocation("wildernature", "textures/banner/cod_catcher.png");
+            return WilderNatureIdentifier.of("textures/banner/cod_catcher.png");
         } else if (this == ObjectRegistry.COD_CATCHER_WALL_BANNER.get()) {
-            return new ResourceLocation("wildernature", "textures/banner/cod_catcher.png");
+            return WilderNatureIdentifier.of("textures/banner/cod_catcher.png");
         }
 
-        return new ResourceLocation("wildernature", "textures/banner/wolf_trapper.png");
+        return WilderNatureIdentifier.of("textures/banner/wolf_trapper.png");
     }
 }

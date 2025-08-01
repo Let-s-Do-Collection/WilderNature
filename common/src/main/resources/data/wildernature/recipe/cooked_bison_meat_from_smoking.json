@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smoking",
+  "cookingtime": 100,
+  "experience": 0.35,
+  "ingredient": {
+    "item": "wildernature:bison_meat"
+  },
+  "result": {
+    "id": "wildernature:cooked_bison_meat",
+    "count": 1
+  }
+}

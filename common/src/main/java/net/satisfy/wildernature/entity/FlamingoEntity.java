@@ -1,5 +1,6 @@
 package net.satisfy.wildernature.entity;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -88,7 +89,7 @@ public class FlamingoEntity extends Animal {
 
             @Override
             public AttributeInstance getAttribute(Attribute movementSpeed) {
-                return FlamingoEntity.this.getAttribute(movementSpeed);
+                return FlamingoEntity.this.getAttribute(BuiltInRegistries.ATTRIBUTE.wrapAsHolder(movementSpeed));
             }
         }));
     }
@@ -121,9 +122,9 @@ public class FlamingoEntity extends Animal {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(STANDING, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(STANDING, false);
     }
 
     @Override

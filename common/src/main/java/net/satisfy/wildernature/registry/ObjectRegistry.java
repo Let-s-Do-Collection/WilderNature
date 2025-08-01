@@ -44,7 +44,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> BLUNDERBUSS = registerItem("blunderbuss", BlunderBussItem::new);
     public static final RegistrySupplier<Item> FLINT_AMMUNITION = registerItem("flint_ammunition", () -> new AmmunitionItem(getSettings().rarity(Rarity.UNCOMMON), 5));
     public static final RegistrySupplier<Item> DIAMOND_AMMUNITION = registerItem("diamond_ammunition", () -> new AmmunitionItem(getSettings().rarity(Rarity.COMMON), 9));
-    public static final RegistrySupplier<Item> FUR_CLOAK = registerItem("fur_cloak", () -> new FurCloakItem(ArmorMaterials.LEATHER, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+    public static final RegistrySupplier<Item> FUR_CLOAK = registerItem("fur_cloak", () -> new FurCloakItem(ArmorMaterials.LEATHER.value(), ArmorItem.Type.CHESTPLATE, new Item.Properties()));
     public static final RegistrySupplier<Item> FISH_OIL = registerItem("fish_oil", () -> new Item(getSettings().stacksTo(16)));
     public static final RegistrySupplier<Item> LOOT_BAG = registerItem("loot_bag", () -> new LootBagItem(getSettings().rarity(Rarity.COMMON)));
     public static final RegistrySupplier<Item> BISON_HORN = registerItem("bison_horn", () -> new BisonHornItem(new Item.Properties().stacksTo(1), SoundRegistry.BISON_HORN.get()));
@@ -69,18 +69,18 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> FLAMINGO_SPAWN_EGG = registerItem("flamingo_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityRegistry.FLAMINGO, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> TRUFFLE = registerItem("truffle", () -> new Item(getSettings().rarity(Rarity.RARE)));
     public static final RegistrySupplier<Block> HAZELNUT_BUSH = registerWithoutItem("hazelnut_bush", () -> new HazelnutBushBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).randomTicks().noCollission().sound(SoundType.SWEET_BERRY_BUSH).pushReaction(PushReaction.DESTROY)));
-    public static final RegistrySupplier<Item> HAZELNUT = registerItem("hazelnut", () -> new ItemNameBlockItem(ObjectRegistry.HAZELNUT_BUSH.get(), getSettings().food((new FoodProperties.Builder()).nutrition(4).saturationMod(0.3F).fast().build())));
-    public static final RegistrySupplier<Block> BOUNTY_BOARD = registerWithItem("bounty_board", () -> new BountyBoardBlock(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS)));
-    public static final RegistrySupplier<Block> DEER_TROPHY = registerWithItem("deer_trophy", () -> new DeerTrophyBlock(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS)));
-    public static final RegistrySupplier<Block> RED_WOLF_TROPHY = registerWithItem("red_wolf_trophy", () -> new RedWolfTrophyBlock(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS)));
-    public static final RegistrySupplier<Block> BISON_TROPHY = registerWithItem("bison_trophy", () -> new BisonTrophyBlock(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS)));
+    public static final RegistrySupplier<Item> HAZELNUT = registerItem("hazelnut", () -> new ItemNameBlockItem(ObjectRegistry.HAZELNUT_BUSH.get(), getSettings().food((new FoodProperties.Builder()).nutrition(4).saturationModifier(0.3F).fast().build())));
+    public static final RegistrySupplier<Block> BOUNTY_BOARD = registerWithItem("bounty_board", () -> new BountyBoardBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)));
+    public static final RegistrySupplier<Block> DEER_TROPHY = registerWithItem("deer_trophy", () -> new DeerTrophyBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)));
+    public static final RegistrySupplier<Block> RED_WOLF_TROPHY = registerWithItem("red_wolf_trophy", () -> new RedWolfTrophyBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)));
+    public static final RegistrySupplier<Block> BISON_TROPHY = registerWithItem("bison_trophy", () -> new BisonTrophyBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)));
     public static final RegistrySupplier<Block> WOLF_TRAPPER_BANNER = registerWithItem("wolf_trapper_banner", () -> new CompletionistBannerBlock(BlockBehaviour.Properties.of().strength(1F).instrument(NoteBlockInstrument.BASS).noCollission().sound(SoundType.WOOD)));
     public static final RegistrySupplier<Block> WOLF_TRAPPER_WALL_BANNER = registerWithoutItem("wolf_trapper_wall_banner", () -> new CompletionistWallBannerBlock(BlockBehaviour.Properties.of().strength(1F).instrument(NoteBlockInstrument.BASS).noCollission().sound(SoundType.WOOD)));
     public static final RegistrySupplier<Block> BUNNY_STALKER_BANNER = registerWithItem("bunny_stalker_banner", () -> new CompletionistBannerBlock(BlockBehaviour.Properties.of().strength(1F).instrument(NoteBlockInstrument.BASS).noCollission().sound(SoundType.WOOD)));
     public static final RegistrySupplier<Block> BUNNY_STALKER_WALL_BANNER = registerWithoutItem("bunny_stalker_wall_banner", () -> new CompletionistWallBannerBlock(BlockBehaviour.Properties.of().strength(1F).instrument(NoteBlockInstrument.BASS).noCollission().sound(SoundType.WOOD)));
     public static final RegistrySupplier<Block> COD_CATCHER_BANNER = registerWithItem("cod_catcher_banner", () -> new CompletionistBannerBlock(BlockBehaviour.Properties.of().strength(1F).instrument(NoteBlockInstrument.BASS).noCollission().sound(SoundType.WOOD)));
     public static final RegistrySupplier<Block> COD_CATCHER_WALL_BANNER = registerWithoutItem("cod_catcher_wall_banner", () -> new CompletionistWallBannerBlock(BlockBehaviour.Properties.of().strength(1F).instrument(NoteBlockInstrument.BASS).noCollission().sound(SoundType.WOOD)));
-    public static final RegistrySupplier<Item> STYLIN_PURPLE_HAT = registerItem("stylin_purple_hat", () -> new StylinPurpleHatItem(ArmorMaterials.LEATHER, ArmorItem.Type.HELMET, getSettings().rarity(Rarity.RARE), new WilderNatureIdentifier("textures/models/armor/stylin_purple_hat.png")));
+    public static final RegistrySupplier<Item> STYLIN_PURPLE_HAT = registerItem("stylin_purple_hat", () -> new StylinPurpleHatItem(ArmorMaterials.LEATHER.value(), ArmorItem.Type.HELMET, getSettings().rarity(Rarity.RARE), WilderNatureIdentifier.of("textures/models/armor/stylin_purple_hat.png")));
 
     /**
      * Ideas for Items:
@@ -130,14 +130,14 @@ public class ObjectRegistry {
     }
 
     public static <T extends Block> RegistrySupplier<T> registerWithItem(String name, Supplier<T> block) {
-        return WilderNatureUtil.registerWithItem(BLOCKS, BLOCK_REGISTRAR, ITEMS, ITEM_REGISTRAR, new WilderNatureIdentifier(name), block);
+        return WilderNatureUtil.registerWithItem(BLOCKS, BLOCK_REGISTRAR, ITEMS, ITEM_REGISTRAR, WilderNatureIdentifier.of(name), block);
     }
 
     public static <T extends Block> RegistrySupplier<T> registerWithoutItem(String path, Supplier<T> block) {
-        return WilderNatureUtil.registerWithoutItem(BLOCKS, BLOCK_REGISTRAR, new WilderNatureIdentifier(path), block);
+        return WilderNatureUtil.registerWithoutItem(BLOCKS, BLOCK_REGISTRAR, WilderNatureIdentifier.of(path), block);
     }
 
     public static <T extends Item> RegistrySupplier<T> registerItem(String path, Supplier<T> itemSupplier) {
-        return WilderNatureUtil.registerItem(ITEMS, ITEM_REGISTRAR, new WilderNatureIdentifier(path), itemSupplier);
+        return WilderNatureUtil.registerItem(ITEMS, ITEM_REGISTRAR, WilderNatureIdentifier.of(path), itemSupplier);
     }
 }

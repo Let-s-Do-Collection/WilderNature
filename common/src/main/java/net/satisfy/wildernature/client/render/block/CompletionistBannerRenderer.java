@@ -20,9 +20,10 @@ import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.block.CompletionistBannerBlock;
 import net.satisfy.wildernature.block.CompletionistWallBannerBlock;
 import net.satisfy.wildernature.block.entity.CompletionistBannerEntity;
+import net.satisfy.wildernature.util.WilderNatureIdentifier;
 
 public class CompletionistBannerRenderer implements BlockEntityRenderer<CompletionistBannerEntity> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(WilderNature.MOD_ID, "banner"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("banner"), "main");
 
     public static final String FLAG = "flag";
     private static final String POLE = "pole";

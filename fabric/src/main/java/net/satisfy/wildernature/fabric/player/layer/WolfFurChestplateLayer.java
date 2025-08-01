@@ -41,7 +41,7 @@ public class WolfFurChestplateLayer<T extends LivingEntity, M extends HumanoidMo
 
                 poseStack.pushPose();
                 poseStack.translate(0.0d, 0.0d, 0.0d);
-                renderColoredCutoutModel(this.model, getTextureLocation(entity), poseStack, multiBufferSource, i, entity, 1.0f, 1.0f, 1.0f);
+                renderColoredCutoutModel(this.model, getTextureLocation(entity), poseStack, multiBufferSource, i, entity, 1);
                 poseStack.popPose();
             }
         }

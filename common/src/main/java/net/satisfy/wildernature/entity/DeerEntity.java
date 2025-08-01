@@ -3,6 +3,7 @@ package net.satisfy.wildernature.entity;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -54,10 +55,11 @@ public class DeerEntity extends Animal {
         return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.27000001192092896).add(Attributes.MAX_HEALTH, 10.0).add(Attributes.ATTACK_DAMAGE, 1.5);
     }
 
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_TYPE_ID, 0);
-        this.entityData.define(DATA_FLAGS_ID, 0);
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_TYPE_ID, 0);
+        builder.define(DATA_FLAGS_ID, 0);
     }
 
     @Override
@@ -80,17 +82,12 @@ public class DeerEntity extends Animal {
         this.goalSelector.addGoal(++i, new DeerAvoidEntityGoal<>(this, Player.class));
         this.goalSelector.addGoal(++i, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.15D));
-        this.goalSelector.addGoal(2, new TemptGoal(this, 1.2D, Ingredient.of(Items.GRASS), false));
+        this.goalSelector.addGoal(2, new TemptGoal(this, 1.2D, Ingredient.of(Items.SHORT_GRASS), false));
         this.goalSelector.addGoal(3, new FollowParentGoal(this, 1.1D));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1D));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 3f));
         this.goalSelector.addGoal(6, new DeerEatingGoal(this));
         this.goalSelector.addGoal(7, new DeerLookAroundGoal(this));
-    }
-
-    @Override
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions entityDimensions) {
-        return this.isBaby() ? entityDimensions.height * 0.4F : entityDimensions.height * 0.5F;
     }
 
     @Override
@@ -116,7 +113,7 @@ public class DeerEntity extends Animal {
 
     @Override
     public boolean isFood(ItemStack itemStack) {
-        return itemStack.is(Items.GRASS);
+        return itemStack.is(Items.SHORT_GRASS);
     }
 
     public void setupAnimationStates() {
@@ -254,7 +251,7 @@ public class DeerEntity extends Animal {
             counter++;
         }
 
-        public static final AttributeModifier modifier = new AttributeModifier("deer_eat_do_not_move", -1000, AttributeModifier.Operation.ADDITION);
+        public static final AttributeModifier modifier = new AttributeModifier(ResourceLocation.parse("deer_eat_do_not_move"), -1000, AttributeModifier.Operation.ADD_VALUE);
 
         @Override
         public void start() {
@@ -309,7 +306,7 @@ public class DeerEntity extends Animal {
             counter++;
         }
 
-        public static final AttributeModifier modifier = new AttributeModifier("deer_look_around_do_not_move", -1000, AttributeModifier.Operation.ADDITION);
+        public static final AttributeModifier modifier = new AttributeModifier(ResourceLocation.parse("deer_look_around_do_not_move"), -1000, AttributeModifier.Operation.ADD_VALUE);
 
         @Override
         public void start() {

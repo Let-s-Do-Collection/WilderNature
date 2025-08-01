@@ -8,10 +8,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.TurkeyModel;
 import net.satisfy.wildernature.entity.TurkeyEntity;
+import net.satisfy.wildernature.util.WilderNatureIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 public class TurkeyRenderer extends MobRenderer<TurkeyEntity, TurkeyModel<TurkeyEntity>> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(WilderNature.MOD_ID, "textures/entity/turkey.png");
+    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/turkey.png");
 
     public TurkeyRenderer(EntityRendererProvider.Context context) {
         super(context, new TurkeyModel<>(context.bakeLayer(TurkeyModel.LAYER_LOCATION)), 0.7f);

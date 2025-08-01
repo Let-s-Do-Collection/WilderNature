@@ -5,8 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "wildernature.fabric.mixins.refmap.json",
   "mixins": [
-    "CreeperMixin",
-    "FoodDataMixin"
+    "CreeperMixin"
   ],
   "client": [
   ],

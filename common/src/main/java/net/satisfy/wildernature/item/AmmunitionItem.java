@@ -41,7 +41,7 @@ public class AmmunitionItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
         tooltip.add(Component.translatable("tooltip.wildernature.ammunition", damage).withStyle(ChatFormatting.DARK_GREEN));
     }
 

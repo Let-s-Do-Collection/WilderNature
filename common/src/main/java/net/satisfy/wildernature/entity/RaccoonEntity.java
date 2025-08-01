@@ -1,8 +1,10 @@
 package net.satisfy.wildernature.entity;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -66,10 +68,10 @@ public class RaccoonEntity extends Animal {
         return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.20000001192092896).add(Attributes.MAX_HEALTH, 6.0).add(Attributes.ATTACK_DAMAGE, 1.5);
     }
 
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_TYPE_ID, 0);
-        this.entityData.define(DATA_FLAGS_ID, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_TYPE_ID, 0);
+        builder.define(DATA_FLAGS_ID, 0);
     }
 
     @Override
@@ -118,7 +120,7 @@ public class RaccoonEntity extends Animal {
 
             @Override
             public AttributeInstance getAttribute(Attribute movementSpeed) {
-                return RaccoonEntity.this.getAttribute(movementSpeed);
+                return RaccoonEntity.this.getAttribute(BuiltInRegistries.ATTRIBUTE.wrapAsHolder(movementSpeed));
             }
 
         }));
@@ -171,16 +173,6 @@ public class RaccoonEntity extends Animal {
         } else {
             washTicks = 0;
         }
-    }
-
-    @Override
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions entityDimensions) {
-        return this.isBaby() ? entityDimensions.height * 0.4F : entityDimensions.height * 0.5F;
-    }
-
-    @Override
-    public @NotNull EntityDimensions getDimensions(Pose pose) {
-        return new EntityDimensions(0.1f, 0.1f, false);
     }
 
     @Override
@@ -289,7 +281,7 @@ public class RaccoonEntity extends Animal {
     public static class RaccoonDoorInteractGoal extends DoorInteractGoal {
 
         private final RaccoonEntity raccoon;
-        public static final AttributeModifier modifier = new AttributeModifier("racoon_door_do_not_move", -1000, AttributeModifier.Operation.ADDITION);
+        public static final AttributeModifier modifier = new AttributeModifier(ResourceLocation.parse("racoon_door_do_not_move"), -1000, AttributeModifier.Operation.ADD_VALUE);
         int counter = 0;
 
         public RaccoonDoorInteractGoal(RaccoonEntity raccoon) {

@@ -2,6 +2,8 @@ package net.satisfy.wildernature.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -10,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -30,12 +33,13 @@ import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.Foods;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.entity.ai.*;
 import net.satisfy.wildernature.entity.animation.ServerAnimationDurations;
@@ -57,7 +61,7 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(OwlEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> HOOTING = SynchedEntityData.defineId(OwlEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(OwlEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDimensions FLYING_DIMENSION = new EntityDimensions(0.7F, 1.4F, false);
+    private static final EntityDimensions FLYING_DIMENSION = EntityDimensions.fixed(0.7F, 1.4F);
     private static final Predicate<LivingEntity> IS_OWL_TARGET = e -> e.getType().is(TagsRegistry.OWL_TARGETS);
 
     private float leaningPitch;
@@ -67,8 +71,8 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
         super(entityType, level);
 
         this.moveControl = new FlyingMoveControl(this, 0, false);
-        this.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, -1.0F);
+        this.setPathfindingMalus(PathType.DAMAGE_FIRE, -1.0F);
+        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
     }
 
     public static AttributeSupplier.@NotNull Builder createMobAttributes() {
@@ -188,7 +192,7 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
 
             @Override
             public AttributeInstance getAttribute(Attribute movementSpeed) {
-                return OwlEntity.this.getAttribute(movementSpeed);
+                return OwlEntity.this.getAttribute(BuiltInRegistries.ATTRIBUTE.wrapAsHolder(movementSpeed));
             }
         }));
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
@@ -204,7 +208,7 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
         if (uUID != null) {
             assert owl != null;
             owl.setOwnerUUID(uUID);
-            owl.setTame(true);
+            owl.setTame(true, true);
         }
         return owl;
     }
@@ -273,8 +277,8 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
     }
 
     @Override
-    public void setTame(boolean tamed) {
-        super.setTame(tamed);
+    public void setTame(boolean tamed, boolean flag) {
+        super.setTame(tamed, flag);
 
         if (tamed) {
             Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(20.0D);
@@ -298,7 +302,7 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
                         stack.shrink(1);
                     }
 
-                    this.heal((float) Objects.requireNonNull(item.getFoodProperties()).getNutrition());
+                    this.heal((float) item.getDefaultInstance().getOrDefault(DataComponents.FOOD, Foods.CARROT).nutrition());
                 }
                 return InteractionResult.SUCCESS;
             }
@@ -339,8 +343,7 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
 
     @Override
     public boolean isFood(ItemStack stack) {
-        Item item = stack.getItem();
-        return item.isEdible() && item.getFoodProperties() != null && item.getFoodProperties().isMeat();
+        return stack.has(DataComponents.FOOD) && stack.get(DataComponents.FOOD) != null && stack.is(ItemTags.MEAT);
     }
 
     @Override
@@ -359,18 +362,13 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
     }
 
     @Override
-    public @NotNull EntityDimensions getDimensions(Pose pose) {
-        return getStandingState() == StandingState.STANDING ? super.getDimensions(pose) : FLYING_DIMENSION;
-    }
-
-    @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        getEntityData().define(STANDING_STATE, 0);
-        getEntityData().define(OWL_STATE, 0);
-        getEntityData().define(ATTACKING, false);
-        getEntityData().define(HOOTING, false);
-        getEntityData().define(SLEEPING, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(STANDING_STATE, 0);
+        builder.define(OWL_STATE, 0);
+        builder.define(ATTACKING, false);
+        builder.define(HOOTING, false);
+        builder.define(SLEEPING, false);
     }
 
     @Override
@@ -420,7 +418,7 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
 
     @Override
     public double getMeleeAttackRangeSqr_(LivingEntity target) {
-        return getMeleeAttackRangeSqr(target);
+        return this.distanceToSqr(target);
     }
 
     @Override
