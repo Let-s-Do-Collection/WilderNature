@@ -26,6 +26,7 @@ public class BulletEntity extends Fireball {
     private double knockbackStrength = 0;
     private int ticksSinceFired;
     private Vec3 initialPosition;
+    private int lifeTicks = 40;
 
     public BulletEntity(EntityType<? extends Fireball> entityType, Level level) {
         super(entityType, level);
@@ -44,6 +45,11 @@ public class BulletEntity extends Fireball {
 
     @Override
     public void tick() {
+        if (--lifeTicks <= 0) {
+            discard();
+            return;
+        }
+
         if (initialPosition == null) {
             initialPosition = this.position();
         }
@@ -72,7 +78,8 @@ public class BulletEntity extends Fireball {
 
             int lastHurtResistant = target.invulnerableTime;
             if (ignoreInvulnerability) target.invulnerableTime = 0;
-            boolean damaged = target.hurt(level().damageSources().indirectMagic(this, shooter), (float) bullet.modifyDamage(damage, this, target, shooter, level()));
+            boolean damaged = target.hurt(level().damageSources().indirectMagic(this, shooter),
+                    (float) bullet.modifyDamage(damage, this, target, shooter, level()));
 
             if (damaged && target instanceof LivingEntity livingTarget) {
                 if (knockbackStrength > 0) {
@@ -97,6 +104,7 @@ public class BulletEntity extends Fireball {
         super.addAdditionalSaveData(compound);
         compound.putInt("tickssincefired", ticksSinceFired);
         compound.putDouble("damage", damage);
+        compound.putInt("lifeTicks", lifeTicks);
         if (ignoreInvulnerability) compound.putBoolean("ignoreinvulnerability", true);
         if (knockbackStrength != 0) compound.putDouble("knockback", knockbackStrength);
     }
@@ -106,6 +114,7 @@ public class BulletEntity extends Fireball {
         super.readAdditionalSaveData(compound);
         ticksSinceFired = compound.getInt("tickssincefired");
         damage = compound.getDouble("damage");
+        lifeTicks = compound.getInt("lifeTicks");
         ignoreInvulnerability = compound.getBoolean("ignoreinvulnerability");
         knockbackStrength = compound.getDouble("knockback");
     }
@@ -120,6 +129,10 @@ public class BulletEntity extends Fireball {
 
     public void setIgnoreInvulnerability(boolean ignoreInvulnerability) {
         this.ignoreInvulnerability = ignoreInvulnerability;
+    }
+
+    public void setLifeTicks(int ticks) {
+        this.lifeTicks = ticks;
     }
 
     @Override

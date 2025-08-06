@@ -52,4 +52,8 @@ public class AmmunitionItem extends Item {
     public double modifyDamage(double damage, BulletEntity projectile, Entity target, @Nullable Entity shooter, Level world) {
         return damage;
     }
+
+    public int getDamage() {
+        return damage;
+    }
 }
