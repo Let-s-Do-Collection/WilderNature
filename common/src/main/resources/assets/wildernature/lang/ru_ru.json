@@ -301,5 +301,9 @@
   "wildernature.tier3": "",
   "wildernature.tier4": "",
   "wildernature.tier5": "",
-  "contract.wildernature.tier2_zombie.desc": "Победите 35 зомби"
+  "contract.wildernature.tier2_zombie.desc": "Победите 35 зомби",
+  "text.gui.wildernature.bounty.contract_expired": "Вы не выполнили контракт за указанное время.",
+  "text.gui.wildernature.bounty.contract_removed_due_to_timeout": "Срок действия контракта истёк, а контракт убран из инвентаря.",
+  "text.gui.wildernature.bounty.time_remaining": "Оставшееся время: %d минут, %d секунд",
+  "text.gui.wildernature.bounty.delete_contract": "Отказаться от текущего контракта"
 }
