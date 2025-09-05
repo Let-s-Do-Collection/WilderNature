@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.fabric.mixin;
+package net.satisfy.wildernature.fabric.core.mixin;
 
 import dev.emi.trinkets.api.TrinketsApi;
 import net.minecraft.world.entity.EntitySelector;

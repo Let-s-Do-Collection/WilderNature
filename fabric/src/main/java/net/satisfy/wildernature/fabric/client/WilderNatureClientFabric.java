@@ -14,8 +14,8 @@ import net.satisfy.wildernature.client.WilderNatureClient;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.util.Truffling;
 import net.satisfy.wildernature.fabric.client.renderer.StylinPurpleHatRenderer;
-import net.satisfy.wildernature.fabric.player.layer.WolfFurChestplateLayer;
-import net.satisfy.wildernature.fabric.player.model.WolfFurChestplateModel;
+import net.satisfy.wildernature.fabric.core.player.layer.WolfFurChestplateLayer;
+import net.satisfy.wildernature.fabric.core.player.model.WolfFurChestplateModel;
 
 import java.util.List;
 

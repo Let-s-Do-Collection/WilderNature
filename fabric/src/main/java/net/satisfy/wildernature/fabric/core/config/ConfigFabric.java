@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.fabric.config;
+package net.satisfy.wildernature.fabric.core.config;
 
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
@@ -12,6 +12,7 @@ public class ConfigFabric implements ConfigData {
     public boolean removeForestAnimals = true;
     public boolean addJungleAnimals = true;
     public boolean spawnHazelnutBush = true;
+    public boolean spawnTermiteMound = true;
 
     public int PelicanSpawnWeight = 7;
     public int PelicanMinGroupSize = 3;

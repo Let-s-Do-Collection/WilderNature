@@ -30,8 +30,8 @@ import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.TagsRegistry;
 import net.satisfy.wildernature.core.util.Truffling;
-import net.satisfy.wildernature.fabric.config.ConfigFabric;
-import net.satisfy.wildernature.fabric.world.PlacedFeatures;
+import net.satisfy.wildernature.fabric.core.config.ConfigFabric;
+import net.satisfy.wildernature.fabric.core.world.PlacedFeatures;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -68,11 +68,17 @@ public class WilderNatureFabric implements ModInitializer {
         ConfigFabric config = AutoConfig.getConfigHolder(ConfigFabric.class).getConfig();
         BiomeModification world = BiomeModifications.create(WilderNature.identifier("world_features"));
         Predicate<BiomeSelectionContext> spawns_patch_hazelnut_bush = getWilderNatureSelector();
+        Predicate<BiomeSelectionContext> spawnTermiteMound = getWilderNatureSelector();
 
         if (config.spawnHazelnutBush) {
             world.add(ModificationPhase.ADDITIONS, spawns_patch_hazelnut_bush, ctx -> ctx.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.PATCH_HAZELNUT_BUSH));
         } else {
             world.add(ModificationPhase.REMOVALS, spawns_patch_hazelnut_bush, ctx -> ctx.getGenerationSettings().removeFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.PATCH_HAZELNUT_BUSH));
+        }
+        if (config.spawnTermiteMound) {
+            world.add(ModificationPhase.ADDITIONS, spawnTermiteMound, ctx -> ctx.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.TERMITE_MOUND));
+        } else {
+            world.add(ModificationPhase.REMOVALS, spawnTermiteMound, ctx -> ctx.getGenerationSettings().removeFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.TERMITE_MOUND));
         }
     }
 

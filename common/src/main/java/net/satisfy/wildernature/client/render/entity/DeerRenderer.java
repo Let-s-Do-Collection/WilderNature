@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 @Environment(value = EnvType.CLIENT)
 public class DeerRenderer extends MobRenderer<DeerEntity, DeerModel> {
     private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/entity/deer.png");
+    private static final ResourceLocation WHITE_TEXTURE = WilderNature.identifier("textures/entity/deer_white.png");
+    
 
     public DeerRenderer(EntityRendererProvider.Context context) {
         super(context, new DeerModel(context.bakeLayer(DeerModel.LAYER_LOCATION)), 0.7f);
@@ -23,7 +25,7 @@ public class DeerRenderer extends MobRenderer<DeerEntity, DeerModel> {
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(DeerEntity entity) {
-        return TEXTURE;
+        return entity.isWhite() ? WHITE_TEXTURE : TEXTURE;
     }
 
     @Override

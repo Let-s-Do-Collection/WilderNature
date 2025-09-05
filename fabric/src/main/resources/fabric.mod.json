@@ -22,7 +22,7 @@
       "net.satisfy.wildernature.fabric.client.WilderNatureClientFabric"
     ],
     "modmenu": [
-      "net.satisfy.wildernature.fabric.config.ModMenu"
+      "net.satisfy.wildernature.fabric.core.config.ModMenu"
     ]
   },
   "depends": {

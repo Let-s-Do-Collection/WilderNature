@@ -6,7 +6,10 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -20,6 +23,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -35,11 +40,19 @@ public class DeerEntity extends Animal {
     private static final int FLAG_LOOKING_AROUND = 0x00000010;
     private static final EntityDataAccessor<Integer> DATA_TYPE_ID;
     private static final EntityDataAccessor<Integer> DATA_FLAGS_ID;
+    private static final int CALL_COOLDOWN_TICKS = 200;
+    private static final double CALL_RADIUS = 24.0;
+    private static final EntityDataAccessor<Boolean> DATA_WHITE;
+    private int callCooldown = 0;
+    private int alarmTicks = 0;
+    @Nullable private Vec3 fleeFrom = null;
 
     static {
         DATA_TYPE_ID = SynchedEntityData.defineId(DeerEntity.class, EntityDataSerializers.INT);
         DATA_FLAGS_ID = SynchedEntityData.defineId(DeerEntity.class, EntityDataSerializers.INT);
+        DATA_WHITE = SynchedEntityData.defineId(DeerEntity.class, EntityDataSerializers.BOOLEAN);
     }
+
 
     public final AnimationState idleState = new AnimationState();
     public final AnimationState lookAroundState = new AnimationState();
@@ -55,11 +68,16 @@ public class DeerEntity extends Animal {
         return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.27000001192092896).add(Attributes.MAX_HEALTH, 10.0).add(Attributes.ATTACK_DAMAGE, 1.5);
     }
 
+    protected SoundEvent getCallSound() {
+        return SoundRegistry.DEER_HURT.get();
+    }
+
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_TYPE_ID, 0);
         builder.define(DATA_FLAGS_ID, 0);
+        builder.define(DATA_WHITE, false);
     }
 
     @Override
@@ -88,6 +106,27 @@ public class DeerEntity extends Animal {
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 3f));
         this.goalSelector.addGoal(6, new DeerEatingGoal(this));
         this.goalSelector.addGoal(7, new DeerLookAroundGoal(this));
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        SpawnGroupData out = super.finalizeSpawn(level, difficulty, reason, spawnData);
+        if (random.nextFloat() < 0.01F) entityData.set(DATA_WHITE, true);
+        return out;
+    }
+
+    public boolean isWhite() {
+        return entityData.get(DATA_WHITE);
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        super.die(source);
+        Entity e = source.getEntity();
+        if (e instanceof Player p) {
+            p.addEffect(new MobEffectInstance(MobEffects.BAD_OMEN, 72000, 0));
+            p.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 6000, 1));
+        }
     }
 
     @Override
@@ -184,6 +223,47 @@ public class DeerEntity extends Animal {
         if (this.level().isClientSide) {
             this.setupAnimationStates();
         }
+
+        if (callCooldown > 0) callCooldown--;
+        if (alarmTicks > 0) {
+            alarmTicks--;
+            if (fleeFrom != null && !level().isClientSide) {
+                Vec3 dir = position().subtract(fleeFrom).normalize();
+                if (dir.lengthSqr() > 0.001) {
+                    Vec3 target = position().add(dir.scale(8.0));
+                    getNavigation().moveTo(target.x, target.y, target.z, 1.6D);
+                }
+            }
+            if (alarmTicks == 0) {
+                stopRunningAnim();
+                fleeFrom = null;
+            }
+        }
+    }
+
+    private void broadcastCall(boolean warning, @Nullable Entity threat) {
+        if (callCooldown > 0) return;
+        if (level().isClientSide) return;
+        callCooldown = CALL_COOLDOWN_TICKS;
+        SoundEvent snd = warning ? getHurtSound(damageSources().generic()) : getCallSound();
+        level().playSound(null, getX(), getY(), getZ(), snd, getSoundSource(), 1.0F, 1.0F);
+        for (DeerEntity d : level().getEntitiesOfClass(DeerEntity.class, getBoundingBox().inflate(CALL_RADIUS))) {
+            if (d != this) d.onHeardCall(this, warning, threat);
+        }
+    }
+
+    private void onHeardCall(DeerEntity source, boolean warning, @Nullable Entity threat) {
+        if (warning) {
+            triggerPanic(threat != null ? threat.position() : source.position());
+        } else {
+            if (!isDeerRunning() && random.nextFloat() < 0.35F && globalCooldown == 0) startLookingAround();
+        }
+    }
+
+    private void triggerPanic(Vec3 threatPos) {
+        startRunningAnim();
+        alarmTicks = 100;
+        fleeFrom = threatPos;
     }
 
     public static class DeerAvoidEntityGoal<T extends LivingEntity> extends AvoidEntityGoal<T> {
@@ -205,6 +285,7 @@ public class DeerEntity extends Animal {
         @Override
         public void start() {
             deer.startRunningAnim();
+            deer.broadcastCall(true, this.toAvoid);
             super.start();
         }
 
@@ -270,6 +351,13 @@ public class DeerEntity extends Animal {
         }
     }
 
+    @Override
+    public boolean hurt(DamageSource damageSource, float amount) {
+        Entity e = damageSource.getEntity();
+        broadcastCall(true, e);
+        return super.hurt(damageSource, amount);
+    }
+
     public static class DeerLookAroundGoal extends Goal {
         private final DeerEntity target;
         private int counter;
@@ -313,6 +401,7 @@ public class DeerEntity extends Animal {
             counter = 0;
             Objects.requireNonNull(target.getAttribute(Attributes.MOVEMENT_SPEED)).addTransientModifier(modifier);
             target.startLookingAround();
+            if (target.random.nextFloat() < 0.15F) target.broadcastCall(false, null);
             super.start();
         }
 

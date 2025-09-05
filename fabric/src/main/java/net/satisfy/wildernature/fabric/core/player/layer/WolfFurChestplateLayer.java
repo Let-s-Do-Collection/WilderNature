@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.fabric.player.layer;
+package net.satisfy.wildernature.fabric.core.player.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.satisfy.wildernature.client.WilderNatureClient;
 import net.satisfy.wildernature.core.item.FurCloakItem;
 import net.satisfy.wildernature.fabric.api.FurCloakTrinket;
-import net.satisfy.wildernature.fabric.player.model.WolfFurChestplateModel;
+import net.satisfy.wildernature.fabric.core.player.model.WolfFurChestplateModel;
 import org.jetbrains.annotations.NotNull;
 
 public class WolfFurChestplateLayer<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {

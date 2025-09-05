@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.fabric.config;
+package net.satisfy.wildernature.fabric.core.config;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
