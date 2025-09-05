@@ -7,15 +7,14 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.satisfy.wildernature.entity.TurkeyEntity;
-import net.satisfy.wildernature.entity.animation.TurkeyAnimation;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.core.entity.TurkeyEntity;
+import net.satisfy.wildernature.core.entity.animation.TurkeyAnimation;
 import org.jetbrains.annotations.NotNull;
 
 public class TurkeyModel<T extends Entity> extends HierarchicalModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("turkeymodel"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNature.identifier("turkeymodel"), "main");
 
     private final ModelPart root;
 

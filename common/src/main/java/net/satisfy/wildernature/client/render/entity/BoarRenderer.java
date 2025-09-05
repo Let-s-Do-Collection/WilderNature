@@ -7,14 +7,14 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.BoarModel;
-import net.satisfy.wildernature.entity.BoarEntity;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.core.entity.BoarEntity;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
 public class BoarRenderer extends MobRenderer<BoarEntity, BoarModel<BoarEntity>> {
-    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/boar.png");
+    private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/entity/boar.png");
 
     public BoarRenderer(EntityRendererProvider.Context context) {
         super(context, new BoarModel<>(context.bakeLayer(BoarModel.LAYER_LOCATION)), 0.7f);

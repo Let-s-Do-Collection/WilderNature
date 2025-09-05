@@ -7,15 +7,15 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.DeerModel;
-import net.satisfy.wildernature.entity.DeerEntity;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.core.entity.DeerEntity;
 import org.jetbrains.annotations.NotNull;
 
 
 @Environment(value = EnvType.CLIENT)
 public class DeerRenderer extends MobRenderer<DeerEntity, DeerModel> {
-    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/deer.png");
+    private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/entity/deer.png");
 
     public DeerRenderer(EntityRendererProvider.Context context) {
         super(context, new DeerModel(context.bakeLayer(DeerModel.LAYER_LOCATION)), 0.7f);

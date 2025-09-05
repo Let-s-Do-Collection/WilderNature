@@ -7,13 +7,13 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.satisfy.wildernature.entity.HedgehogEntity;
-import net.satisfy.wildernature.entity.animation.HedgehogAnimation;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.core.entity.HedgehogEntity;
+import net.satisfy.wildernature.core.entity.animation.HedgehogAnimation;
 import org.jetbrains.annotations.NotNull;
 
 public class HedgehogModel<T extends HedgehogEntity> extends HierarchicalModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("hedgehog"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNature.identifier("hedgehog"), "main");
     private final ModelPart root;
 
     public HedgehogModel(ModelPart root) {

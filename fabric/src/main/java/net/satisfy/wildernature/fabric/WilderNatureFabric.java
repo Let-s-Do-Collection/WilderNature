@@ -7,18 +7,13 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.*;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
-import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalBiomeTags;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -31,30 +26,19 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.registry.ObjectRegistry;
-import net.satisfy.wildernature.util.Truffling;
-import net.satisfy.wildernature.util.contract.ContractReloader;
+import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
+import net.satisfy.wildernature.core.registry.ObjectRegistry;
+import net.satisfy.wildernature.core.registry.TagsRegistry;
+import net.satisfy.wildernature.core.util.Truffling;
 import net.satisfy.wildernature.fabric.config.ConfigFabric;
 import net.satisfy.wildernature.fabric.world.PlacedFeatures;
-import net.satisfy.wildernature.registry.EntityRegistry;
-import net.satisfy.wildernature.registry.TagsRegistry;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.function.Predicate;
 
 public class WilderNatureFabric implements ModInitializer {
-
-    @SuppressWarnings("unused")
-    private static Predicate<BiomeSelectionContext> getWilderNatureSelector(String path) {
-        return BiomeSelectors.tag(TagKey.create(Registries.BIOME, WilderNatureIdentifier.of(path)));
-    }
-
-    private static Predicate<BiomeSelectionContext> getBloomingNatureSelector() {
-        return BiomeSelectors.tag(TagKey.create(Registries.BIOME, WilderNatureIdentifier.of("spawns_patch_hazelnut_bush")));
+    private static Predicate<BiomeSelectionContext> getWilderNatureSelector() {
+        return BiomeSelectors.tag(TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_patch_hazelnut_bush")));
     }
 
 
@@ -63,10 +47,8 @@ public class WilderNatureFabric implements ModInitializer {
         AutoConfig.register(ConfigFabric.class, GsonConfigSerializer::new);
         WilderNature.init();
         registerFuel();
-        WilderNature.commonInit();
         addSpawns();
         addBiomeModification();
-        addResourcerLoader();
         UseItemCallback.EVENT.register((player, level, interactionHand) -> {
             if (!Truffling.isTruffled(player.getItemInHand(interactionHand))) {
                 return InteractionResultHolder.pass(ItemStack.EMPTY);
@@ -84,8 +66,8 @@ public class WilderNatureFabric implements ModInitializer {
 
     void addBiomeModification() {
         ConfigFabric config = AutoConfig.getConfigHolder(ConfigFabric.class).getConfig();
-        BiomeModification world = BiomeModifications.create(WilderNatureIdentifier.of("world_features"));
-        Predicate<BiomeSelectionContext> spawns_patch_hazelnut_bush = getBloomingNatureSelector();
+        BiomeModification world = BiomeModifications.create(WilderNature.identifier("world_features"));
+        Predicate<BiomeSelectionContext> spawns_patch_hazelnut_bush = getWilderNatureSelector();
 
         if (config.spawnHazelnutBush) {
             world.add(ModificationPhase.ADDITIONS, spawns_patch_hazelnut_bush, ctx -> ctx.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.PATCH_HAZELNUT_BUSH));
@@ -94,41 +76,27 @@ public class WilderNatureFabric implements ModInitializer {
         }
     }
 
-    private void addResourcerLoader() {
-        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
-            @Override
-            public ResourceLocation getFabricId() {
-                return WilderNatureIdentifier.of("contractloader");
-            }
-            final ContractReloader dataReloader = new ContractReloader();
-            @Override
-            public @NotNull CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, ProfilerFiller profilerFiller, ProfilerFiller profilerFiller2, Executor executor, Executor executor2) {
-                return dataReloader.reload(preparationBarrier, resourceManager, profilerFiller, profilerFiller2, executor, executor2);
-            }
-        });
-    }
-
     private void registerFuel() {
         FuelRegistry.INSTANCE.add(ObjectRegistry.FISH_OIL.get(), 1600);
     }
 
     void addSpawns() {
         ConfigFabric config = AutoConfig.getConfigHolder(ConfigFabric.class).getConfig();
-        addMobSpawn(TagsRegistry.SPAWNS_PELICAN, EntityRegistry.PELICAN.get(), config.PelicanSpawnWeight, config.PelicanMinGroupSize, config.PelicanMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_DEER, EntityRegistry.DEER.get(), config.DeerSpawnWeight, config.DeerMinGroupSize, config.DeerMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_RACCOON, EntityRegistry.RACCOON.get(), config.RaccoonSpawnWeight, config.RaccoonMinGroupSize, config.RaccoonMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_SQUIRREL, EntityRegistry.SQUIRREL.get(), config.SquirrelSpawnWeight, config.SquirrelMinGroupSize, config.SquirrelMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_RED_WOLF, EntityRegistry.RED_WOLF.get(), config.RedWolfSpawnWeight, config.RedWolfMinGroupSize, config.RedWolfMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_OWL, EntityRegistry.OWL.get(), config.OwlSpawnWeight, config.OwlMinGroupSize, config.OwlMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_BOAR, EntityRegistry.BOAR.get(), config.BoarSpawnWeight, config.BoarMinGroupSize, config.BoarMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_BISON, EntityRegistry.BISON.get(), config.BisonSpawnWeight, config.BisonMinGroupSize, config.BisonMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_TURKEY, EntityRegistry.TURKEY.get(), config.TurkeySpawnWeight, config.TurkeyMinGroupSize, config.TurkeyMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_DOG, EntityRegistry.DOG.get(), config.DogSpawnWeight, config.DogMinGroupSize, config.DogMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_MINISHEEP, EntityRegistry.MINISHEEP.get(), config.MiniSheepSpawnWeight, config.MiniSheepMinGroupSize, config.MiniSheepMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_PENGUIN, EntityRegistry.PENGUIN.get(), config.PenguinSpawnWeight, config.PenguinMinGroupSize, config.PenguinMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_CASSOWARY, EntityRegistry.CASSOWARY.get(), config.CassowarySpawnWeight, config.CassowaryMinGroupSize, config.CassowaryMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_FLAMINGO, EntityRegistry.FLAMINGO.get(), config.FlamingoSpawnWeight, config.FlamingoMinGroupSize, config.FlamingoMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_HEDGEHOG, EntityRegistry.HEDGEHOG.get(), config.HedgehogSpawnWeight, config.HedgehogMinGroupSize, config.HedgehogMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_PELICAN, EntityTypeRegistry.PELICAN.get(), config.PelicanSpawnWeight, config.PelicanMinGroupSize, config.PelicanMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_DEER, EntityTypeRegistry.DEER.get(), config.DeerSpawnWeight, config.DeerMinGroupSize, config.DeerMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_RACCOON, EntityTypeRegistry.RACCOON.get(), config.RaccoonSpawnWeight, config.RaccoonMinGroupSize, config.RaccoonMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_SQUIRREL, EntityTypeRegistry.SQUIRREL.get(), config.SquirrelSpawnWeight, config.SquirrelMinGroupSize, config.SquirrelMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_RED_WOLF, EntityTypeRegistry.RED_WOLF.get(), config.RedWolfSpawnWeight, config.RedWolfMinGroupSize, config.RedWolfMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_OWL, EntityTypeRegistry.OWL.get(), config.OwlSpawnWeight, config.OwlMinGroupSize, config.OwlMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_BOAR, EntityTypeRegistry.BOAR.get(), config.BoarSpawnWeight, config.BoarMinGroupSize, config.BoarMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_BISON, EntityTypeRegistry.BISON.get(), config.BisonSpawnWeight, config.BisonMinGroupSize, config.BisonMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_TURKEY, EntityTypeRegistry.TURKEY.get(), config.TurkeySpawnWeight, config.TurkeyMinGroupSize, config.TurkeyMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_DOG, EntityTypeRegistry.DOG.get(), config.DogSpawnWeight, config.DogMinGroupSize, config.DogMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_MINISHEEP, EntityTypeRegistry.MINISHEEP.get(), config.MiniSheepSpawnWeight, config.MiniSheepMinGroupSize, config.MiniSheepMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_PENGUIN, EntityTypeRegistry.PENGUIN.get(), config.PenguinSpawnWeight, config.PenguinMinGroupSize, config.PenguinMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_CASSOWARY, EntityTypeRegistry.CASSOWARY.get(), config.CassowarySpawnWeight, config.CassowaryMinGroupSize, config.CassowaryMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_FLAMINGO, EntityTypeRegistry.FLAMINGO.get(), config.FlamingoSpawnWeight, config.FlamingoMinGroupSize, config.FlamingoMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_HEDGEHOG, EntityTypeRegistry.HEDGEHOG.get(), config.HedgehogSpawnWeight, config.HedgehogMinGroupSize, config.HedgehogMaxGroupSize);
 
         if (config.removeSavannaAnimals) {
             removeSpawn(BiomeTags.IS_SAVANNA, List.of(EntityType.SHEEP, EntityType.PIG, EntityType.CHICKEN, EntityType.COW));
@@ -146,31 +114,31 @@ public class WilderNatureFabric implements ModInitializer {
             addMobSpawn(BiomeTags.IS_JUNGLE, EntityType.FROG, 8, 3, 4);
         }
 
-        SpawnPlacements.register(EntityRegistry.SQUIRREL.get(), SpawnPlacementTypes.ON_GROUND,
+        SpawnPlacements.register(EntityTypeRegistry.SQUIRREL.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        SpawnPlacements.register(EntityRegistry.OWL.get(), SpawnPlacementTypes.ON_GROUND,
+        SpawnPlacements.register(EntityTypeRegistry.OWL.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING, AmbientCreature::checkMobSpawnRules);
-        SpawnPlacements.register(EntityRegistry.TURKEY.get(), SpawnPlacementTypes.ON_GROUND,
+        SpawnPlacements.register(EntityTypeRegistry.TURKEY.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        SpawnPlacements.register(EntityRegistry.RACCOON.get(), SpawnPlacementTypes.ON_GROUND,
+        SpawnPlacements.register(EntityTypeRegistry.RACCOON.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        SpawnPlacements.register(EntityRegistry.PELICAN.get(), SpawnPlacementTypes.ON_GROUND,
+        SpawnPlacements.register(EntityTypeRegistry.PELICAN.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        SpawnPlacements.register(EntityRegistry.DEER.get(), SpawnPlacementTypes.ON_GROUND,
+        SpawnPlacements.register(EntityTypeRegistry.DEER.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        SpawnPlacements.register(EntityRegistry.RED_WOLF.get(), SpawnPlacementTypes.ON_GROUND,
+        SpawnPlacements.register(EntityTypeRegistry.RED_WOLF.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        SpawnPlacements.register(EntityRegistry.BOAR.get(), SpawnPlacementTypes.ON_GROUND,
+        SpawnPlacements.register(EntityTypeRegistry.BOAR.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        SpawnPlacements.register(EntityRegistry.BISON.get(), SpawnPlacementTypes.ON_GROUND,
+        SpawnPlacements.register(EntityTypeRegistry.BISON.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        SpawnPlacements.register(EntityRegistry.DOG.get(), SpawnPlacementTypes.ON_GROUND,
+        SpawnPlacements.register(EntityTypeRegistry.DOG.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        SpawnPlacements.register(EntityRegistry.MINISHEEP.get(), SpawnPlacementTypes.ON_GROUND,
+        SpawnPlacements.register(EntityTypeRegistry.MINISHEEP.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        SpawnPlacements.register(EntityRegistry.PENGUIN.get(), SpawnPlacementTypes.ON_GROUND,
+        SpawnPlacements.register(EntityTypeRegistry.PENGUIN.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        SpawnPlacements.register(EntityRegistry.CASSOWARY.get(), SpawnPlacementTypes.ON_GROUND,
+        SpawnPlacements.register(EntityTypeRegistry.CASSOWARY.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
     }
 

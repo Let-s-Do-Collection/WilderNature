@@ -8,13 +8,13 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.Entity;
-import net.satisfy.wildernature.entity.CassowaryEntity;
-import net.satisfy.wildernature.entity.animation.CassowaryAnimation;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.core.entity.CassowaryEntity;
+import net.satisfy.wildernature.core.entity.animation.CassowaryAnimation;
 import org.jetbrains.annotations.NotNull;
 
 public class CassowaryModel<T extends Entity> extends HierarchicalModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("cassowary"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNature.identifier("cassowary"), "main");
     private final ModelPart root;
 
     public CassowaryModel(ModelPart root) {

@@ -7,7 +7,7 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.Optional;
 
-import static net.satisfy.wildernature.registry.ObjectRegistry.*;
+import static net.satisfy.wildernature.core.registry.ObjectRegistry.FUR_CLOAK;
 
 @SuppressWarnings("unused")
 public class FurCloakTrinket extends TrinketItem {

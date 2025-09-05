@@ -9,8 +9,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.satisfy.wildernature.item.StylinPurpleHatItem;
-import net.satisfy.wildernature.registry.ArmorRegistry;
+import net.satisfy.wildernature.core.item.StylinPurpleHatItem;
+import net.satisfy.wildernature.core.registry.ArmorRegistry;
 
 public class StylinPurpleHatRenderer implements ArmorRenderer {
     @Override

@@ -7,14 +7,14 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.DogModel;
-import net.satisfy.wildernature.entity.DogEntity;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.core.entity.DogEntity;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
 public class DogRenderer extends MobRenderer<DogEntity, DogModel<DogEntity>> {
-    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/dog.png");
+    private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/entity/dog.png");
 
     public DogRenderer(EntityRendererProvider.Context context) {
         super(context, new DogModel<>(context.bakeLayer(DogModel.LAYER_LOCATION)), 0.7f);

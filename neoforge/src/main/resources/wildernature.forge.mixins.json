@@ -1,12 +1,12 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "net.satisfy.wildernature.neoforge.mixin",
+  "package": "net.satisfy.wildernature.neoforge.core.mixin",
   "compatibilityLevel": "JAVA_17",
   "refmap": "wildernature.forge.mixins.refmap.json",
   "mixins": [
-    "FoodDataMixin",
-    "HatItemMixin"
+    "CatMixin",
+    "MobAccessor"
   ],
   "client": [
   ],

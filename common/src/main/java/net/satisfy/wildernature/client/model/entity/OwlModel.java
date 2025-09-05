@@ -6,14 +6,14 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.satisfy.wildernature.entity.OwlEntity;
-import net.satisfy.wildernature.entity.animation.OwlAnimation;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.core.entity.OwlEntity;
+import net.satisfy.wildernature.core.entity.animation.OwlAnimation;
 import org.jetbrains.annotations.NotNull;
 
 public class OwlModel extends HierarchicalModel<OwlEntity> implements HeadedModel {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("owl"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNature.identifier("owl"), "main");
     private final ModelPart root;
     private final ModelPart head;
 

@@ -7,15 +7,15 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.MiniSheepModel;
-import net.satisfy.wildernature.entity.MiniSheepEntity;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.core.entity.MiniSheepEntity;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
 public class MiniSheepRenderer extends MobRenderer<MiniSheepEntity, MiniSheepModel<MiniSheepEntity>> {
-    private static final ResourceLocation SHEARED_TEXTURE = WilderNatureIdentifier.of("textures/entity/minisheep_sheared.png");
-    private static final ResourceLocation DEFAULT_TEXTURE = WilderNatureIdentifier.of("textures/entity/minisheep.png");
+    private static final ResourceLocation SHEARED_TEXTURE = WilderNature.identifier("textures/entity/minisheep_sheared.png");
+    private static final ResourceLocation DEFAULT_TEXTURE = WilderNature.identifier("textures/entity/minisheep.png");
 
     public MiniSheepRenderer(EntityRendererProvider.Context context) {
         super(context, new MiniSheepModel<>(context.bakeLayer(MiniSheepModel.LAYER_LOCATION)), 0.7f);

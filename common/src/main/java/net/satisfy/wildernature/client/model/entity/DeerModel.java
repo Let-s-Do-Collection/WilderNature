@@ -7,16 +7,14 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.entity.DeerEntity;
-import net.satisfy.wildernature.entity.animation.DeerAnimation;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.core.entity.DeerEntity;
+import net.satisfy.wildernature.core.entity.animation.DeerAnimation;
 import org.jetbrains.annotations.NotNull;
 
 public class DeerModel extends HierarchicalModel<DeerEntity> {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("deer"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNature.identifier("deer"), "main");
     private final ModelPart deer;
     private final ModelPart head;
 

@@ -11,9 +11,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.satisfy.wildernature.client.WilderNatureClient;
+import net.satisfy.wildernature.core.item.FurCloakItem;
 import net.satisfy.wildernature.fabric.api.FurCloakTrinket;
 import net.satisfy.wildernature.fabric.player.model.WolfFurChestplateModel;
-import net.satisfy.wildernature.item.FurCloakItem;
 import org.jetbrains.annotations.NotNull;
 
 public class WolfFurChestplateLayer<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {

@@ -7,16 +7,16 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.FlamingoModel;
-import net.satisfy.wildernature.entity.FlamingoEntity;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.core.entity.FlamingoEntity;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
 public class FlamingoRenderer extends MobRenderer<FlamingoEntity, FlamingoModel<FlamingoEntity>> {
-    private static final ResourceLocation WHITE_TEXTURE = WilderNatureIdentifier.of("textures/entity/flamingo_white.png");
-    private static final ResourceLocation PINK_TEXTURE = WilderNatureIdentifier.of("textures/entity/flamingo_pink.png");
-    private static final ResourceLocation RED_TEXTURE = WilderNatureIdentifier.of("textures/entity/flamingo_red.png");
+    private static final ResourceLocation WHITE_TEXTURE = WilderNature.identifier("textures/entity/flamingo_white.png");
+    private static final ResourceLocation PINK_TEXTURE = WilderNature.identifier("textures/entity/flamingo_pink.png");
+    private static final ResourceLocation RED_TEXTURE = WilderNature.identifier("textures/entity/flamingo_red.png");
 
     public FlamingoRenderer(EntityRendererProvider.Context context) {
         super(context, new FlamingoModel<>(context.bakeLayer(FlamingoModel.LAYER_LOCATION)), 0.7f);

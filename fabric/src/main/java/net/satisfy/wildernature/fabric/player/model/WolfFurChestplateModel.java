@@ -10,11 +10,11 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.WilderNature;
 
 public class WolfFurChestplateModel<T extends Entity> extends EntityModel<T> {
 
-    public static final ResourceLocation WOLF_FUR_CHESTPLATE_TEXTURE = WilderNatureIdentifier.of("textures/models/armor/fur_cloak.png");
+    public static final ResourceLocation WOLF_FUR_CHESTPLATE_TEXTURE = WilderNature.identifier("textures/models/armor/fur_cloak.png");
 
     private final ModelPart chestplate;
     private final ModelPart cape;

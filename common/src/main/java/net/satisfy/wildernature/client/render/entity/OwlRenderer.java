@@ -10,12 +10,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.OwlModel;
-import net.satisfy.wildernature.entity.OwlEntity;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.core.entity.OwlEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class OwlRenderer extends MobRenderer<OwlEntity, OwlModel> {
-    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/owl.png");
+    private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/entity/owl.png");
 
     public OwlRenderer(EntityRendererProvider.Context context) {
         super(context, new OwlModel(context.bakeLayer(OwlModel.LAYER_LOCATION)), 0.5F);

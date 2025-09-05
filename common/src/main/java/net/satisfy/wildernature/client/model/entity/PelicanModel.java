@@ -8,13 +8,13 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.Entity;
-import net.satisfy.wildernature.entity.PelicanEntity;
-import net.satisfy.wildernature.entity.animation.PelicanAnimation;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.core.entity.PelicanEntity;
+import net.satisfy.wildernature.core.entity.animation.PelicanAnimation;
 import org.jetbrains.annotations.NotNull;
 
 public class PelicanModel<T extends Entity> extends HierarchicalModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("pelican"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNature.identifier("pelican"), "main");
     private final ModelPart root;
 
     public PelicanModel(ModelPart root) {

@@ -7,15 +7,15 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.HedgehogModel;
-import net.satisfy.wildernature.entity.HedgehogEntity;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.core.entity.HedgehogEntity;
 import org.jetbrains.annotations.NotNull;
 
 
 @Environment(value = EnvType.CLIENT)
 public class HedgehogRenderer extends MobRenderer<HedgehogEntity, HedgehogModel<HedgehogEntity>> {
-    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/hedgehog.png");
+    private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/entity/hedgehog.png");
 
     public HedgehogRenderer(EntityRendererProvider.Context context) {
         super(context, new HedgehogModel<>(context.bakeLayer(HedgehogModel.LAYER_LOCATION)), 0.7f);

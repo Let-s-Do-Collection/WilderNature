@@ -10,15 +10,15 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.satisfy.wildernature.entity.MiniSheepEntity;
-import net.satisfy.wildernature.entity.animation.MiniSheepAnimation;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.core.entity.MiniSheepEntity;
+import net.satisfy.wildernature.core.entity.animation.MiniSheepAnimation;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(EnvType.CLIENT)
 public class MiniSheepModel<T extends MiniSheepEntity> extends HierarchicalModel<T> {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("minisheep"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNature.identifier("minisheep"), "main");
     private final ModelPart mini_sheep;
     private final ModelPart head;
 

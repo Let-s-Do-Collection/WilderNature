@@ -10,14 +10,14 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
-import net.satisfy.wildernature.block.BountyBoardBlock;
-import net.satisfy.wildernature.block.entity.BountyBoardBlockEntity;
+import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.block.BountyBoardModel;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.core.block.BountyBoardBlock;
+import net.satisfy.wildernature.core.block.entity.BountyBoardBlockEntity;
 import org.joml.Quaternionf;
 
 public class BountyBoardRenderer implements BlockEntityRenderer<BountyBoardBlockEntity> {
-    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/bounty_board.png");
+    private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/entity/bounty_board.png");
     private final BountyBoardModel<?> model;
 
     public BountyBoardRenderer(BlockEntityRendererProvider.Context context) {

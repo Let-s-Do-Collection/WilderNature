@@ -10,15 +10,15 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.satisfy.wildernature.entity.RedWolfEntity;
-import net.satisfy.wildernature.entity.animation.RedWolfAnimation;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.core.entity.RedWolfEntity;
+import net.satisfy.wildernature.core.entity.animation.RedWolfAnimation;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
 public class RedWolfModel<T extends RedWolfEntity> extends HierarchicalModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("red_wolf"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNature.identifier("red_wolf"), "main");
     private static final String REAL_TAIL = "real_tail";
     private final ModelPart root;
 

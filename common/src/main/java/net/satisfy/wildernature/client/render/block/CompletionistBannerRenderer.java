@@ -17,13 +17,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.block.CompletionistBannerBlock;
-import net.satisfy.wildernature.block.CompletionistWallBannerBlock;
-import net.satisfy.wildernature.block.entity.CompletionistBannerEntity;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.core.block.CompletionistBannerBlock;
+import net.satisfy.wildernature.core.block.CompletionistWallBannerBlock;
+import net.satisfy.wildernature.core.block.entity.CompletionistBannerEntity;
 
 public class CompletionistBannerRenderer implements BlockEntityRenderer<CompletionistBannerEntity> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("banner"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNature.identifier("banner"), "main");
 
     public static final String FLAG = "flag";
     private static final String POLE = "pole";

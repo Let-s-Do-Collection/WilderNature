@@ -7,14 +7,13 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.PenguinModel;
-import net.satisfy.wildernature.entity.PenguinEntity;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.core.entity.PenguinEntity;
 import org.jetbrains.annotations.NotNull;
 
 
 public class PenguinRenderer extends MobRenderer<PenguinEntity, PenguinModel<PenguinEntity>> {
 
-    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/penguin.png");
+    private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/entity/penguin.png");
 
     public PenguinRenderer(EntityRendererProvider.Context context) {
         super(context, new PenguinModel<>(context.bakeLayer(PenguinModel.LAYER_LOCATION)), 0.9f);

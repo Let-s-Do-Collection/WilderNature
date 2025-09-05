@@ -1,0 +1,14 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "wildernature:block/termite_mound1",
+        "weight": 1
+      },
+      {
+        "model": "wildernature:block/termite_mound0",
+        "weight": 6
+      }
+    ]
+  }
+}

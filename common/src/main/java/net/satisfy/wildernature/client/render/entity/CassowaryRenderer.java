@@ -7,12 +7,11 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.CassowaryModel;
-import net.satisfy.wildernature.entity.CassowaryEntity;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.core.entity.CassowaryEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class CassowaryRenderer extends MobRenderer<CassowaryEntity, CassowaryModel<CassowaryEntity>> {
-    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/cassowary.png");
+    private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/entity/cassowary.png");
 
     public CassowaryRenderer(EntityRendererProvider.Context context) {
         super(context, new CassowaryModel<>(context.bakeLayer(CassowaryModel.LAYER_LOCATION)), 0.7f);

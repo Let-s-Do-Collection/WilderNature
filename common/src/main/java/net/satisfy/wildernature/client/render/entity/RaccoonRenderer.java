@@ -7,15 +7,15 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.RaccoonModel;
-import net.satisfy.wildernature.entity.RaccoonEntity;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.core.entity.RaccoonEntity;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
 public class RaccoonRenderer extends MobRenderer<RaccoonEntity, RaccoonModel<RaccoonEntity>> {
-    private static final ResourceLocation RACCOON_TEXTURE = WilderNatureIdentifier.of("textures/entity/raccoon.png");
-    private static final ResourceLocation RACOON_SLEEP_TEXTURE = WilderNatureIdentifier.of("textures/entity/raccoon.png");
+    private static final ResourceLocation RACCOON_TEXTURE = WilderNature.identifier("textures/entity/raccoon.png");
+    private static final ResourceLocation RACOON_SLEEP_TEXTURE = WilderNature.identifier("textures/entity/raccoon.png");
 
     public RaccoonRenderer(EntityRendererProvider.Context context) {
         super(context, new RaccoonModel<>(context.bakeLayer(RaccoonModel.LAYER_LOCATION)), 0.7f);

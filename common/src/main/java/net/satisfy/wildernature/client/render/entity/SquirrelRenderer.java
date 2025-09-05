@@ -7,8 +7,8 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.SquirrelModel;
-import net.satisfy.wildernature.entity.SquirrelEntity;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.core.entity.SquirrelEntity;
+import org.jetbrains.annotations.NotNull;
 
 
 @Environment(EnvType.CLIENT)
@@ -19,7 +19,7 @@ public class SquirrelRenderer extends MobRenderer<SquirrelEntity, SquirrelModel>
     }
 
     @Override
-    public ResourceLocation getTextureLocation(SquirrelEntity entity) {
-        return WilderNatureIdentifier.of("textures/entity/squirrel.png");
+    public @NotNull ResourceLocation getTextureLocation(SquirrelEntity entity) {
+        return WilderNature.identifier("textures/entity/squirrel.png");
     }
 }

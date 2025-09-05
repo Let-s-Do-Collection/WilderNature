@@ -11,11 +11,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.satisfy.wildernature.client.WilderNatureClient;
+import net.satisfy.wildernature.core.registry.ObjectRegistry;
+import net.satisfy.wildernature.core.util.Truffling;
 import net.satisfy.wildernature.fabric.client.renderer.StylinPurpleHatRenderer;
 import net.satisfy.wildernature.fabric.player.layer.WolfFurChestplateLayer;
 import net.satisfy.wildernature.fabric.player.model.WolfFurChestplateModel;
-import net.satisfy.wildernature.registry.ObjectRegistry;
-import net.satisfy.wildernature.util.Truffling;
 
 import java.util.List;
 

@@ -6,9 +6,9 @@
   "client": [
   ],
   "mixins": [
-    "CatMixin",
-    "MobAccessor",
-    "ServerPlayerMixin"
+    "net.satisfy.wildernature.core.mixin.CatMixin",
+    "net.satisfy.wildernature.core.mixin.MobAccessor",
+    "net.satisfy.wildernature.core.mixin.ServerPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

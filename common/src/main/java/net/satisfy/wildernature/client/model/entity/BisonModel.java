@@ -7,14 +7,14 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.satisfy.wildernature.entity.BisonEntity;
-import net.satisfy.wildernature.entity.animation.BisonAnimation;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.core.entity.BisonEntity;
+import net.satisfy.wildernature.core.entity.animation.BisonAnimation;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class BisonModel<T extends BisonEntity> extends HierarchicalModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNatureIdentifier.of("bison"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNature.identifier("bison"), "main");
     private final ModelPart root;
 
     public BisonModel(ModelPart root) {

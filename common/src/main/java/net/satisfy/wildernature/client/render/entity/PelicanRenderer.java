@@ -7,12 +7,11 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.PelicanModel;
-import net.satisfy.wildernature.entity.PelicanEntity;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.core.entity.PelicanEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class PelicanRenderer extends MobRenderer<PelicanEntity, PelicanModel<PelicanEntity>> {
-    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/pelican.png");
+    private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/entity/pelican.png");
 
     public PelicanRenderer(EntityRendererProvider.Context context) {
         super(context, new PelicanModel<>(context.bakeLayer(PelicanModel.LAYER_LOCATION)), 0.7f);

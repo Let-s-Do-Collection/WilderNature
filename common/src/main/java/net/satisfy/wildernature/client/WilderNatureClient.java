@@ -4,28 +4,24 @@ import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import dev.architectury.registry.client.rendering.RenderTypeRegistry;
-import dev.architectury.registry.menu.MenuRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.satisfy.wildernature.client.gui.handlers.BountyBlockScreenHandler;
-import net.satisfy.wildernature.client.gui.screens.BountyBlockScreen;
 import net.satisfy.wildernature.client.model.armor.StylinPurpleHatModel;
 import net.satisfy.wildernature.client.model.block.BountyBoardModel;
 import net.satisfy.wildernature.client.model.entity.*;
 import net.satisfy.wildernature.client.render.block.BountyBoardRenderer;
 import net.satisfy.wildernature.client.render.block.CompletionistBannerRenderer;
 import net.satisfy.wildernature.client.render.entity.*;
-import net.satisfy.wildernature.network.BountyEntrypoints;
-import net.satisfy.wildernature.registry.ObjectRegistry;
-import net.satisfy.wildernature.util.WilderNatureUtil;
+import net.satisfy.wildernature.core.registry.ObjectRegistry;
+import net.satisfy.wildernature.core.util.WilderNatureUtil;
 
-import static net.satisfy.wildernature.registry.EntityRegistry.*;
-import static net.satisfy.wildernature.registry.ObjectRegistry.*;
-import static net.satisfy.wildernature.util.WilderNatureUtil.makeHorn;
+import static net.satisfy.wildernature.core.registry.EntityTypeRegistry.*;
+import static net.satisfy.wildernature.core.registry.ObjectRegistry.*;
+import static net.satisfy.wildernature.core.util.WilderNatureUtil.makeHorn;
 
 @Environment(EnvType.CLIENT)
 public class WilderNatureClient {
@@ -37,17 +33,13 @@ public class WilderNatureClient {
         BlockEntityRendererRegistry.register(COMPLETIONIST_BANNER_ENTITY.get(), CompletionistBannerRenderer::new);
         BlockEntityRendererRegistry.register(BOUNTY_BOARD_ENTITY.get(), BountyBoardRenderer::new);
 
-        MenuRegistry.registerScreenFactory(BountyBlockScreenHandler.BOUNTY_BLOCK.get(), BountyBlockScreen::new);
-
         makeHorn(ObjectRegistry.BISON_HORN.get());
-
     }
 
     public static void preInitClient() {
         registerEntityRenderers();
         registerEntityModelLayer();
         WilderNatureUtil.init();
-        BountyEntrypoints.clientEntry();
     }
 
     public static void registerEntityRenderers() {
@@ -55,6 +47,7 @@ public class WilderNatureClient {
         EntityRendererRegistry.register(BOAR, BoarRenderer::new);
         EntityRendererRegistry.register(CASSOWARY, CassowaryRenderer::new);
         EntityRendererRegistry.register(DEER, DeerRenderer::new);
+        EntityRendererRegistry.register(TERMITE, TermiteRenderer::new);
         EntityRendererRegistry.register(DOG, DogRenderer::new);
         EntityRendererRegistry.register(FLAMINGO, FlamingoRenderer::new);
         EntityRendererRegistry.register(HEDGEHOG, HedgehogRenderer::new);
@@ -73,6 +66,7 @@ public class WilderNatureClient {
         EntityModelLayerRegistry.register(StylinPurpleHatModel.LAYER_LOCATION, StylinPurpleHatModel::createBodyLayer);
         EntityModelLayerRegistry.register(BisonModel.LAYER_LOCATION, BisonModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BoarModel.LAYER_LOCATION, BoarModel::getTexturedModelData);
+        EntityModelLayerRegistry.register(TermiteModel.LAYER_LOCATION, TermiteModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BountyBoardModel.LAYER_LOCATION, BountyBoardModel::getTexturedModelData);
         EntityModelLayerRegistry.register(CassowaryModel.LAYER_LOCATION, CassowaryModel::getTexturedModelData);
         EntityModelLayerRegistry.register(CompletionistBannerRenderer.LAYER_LOCATION, CompletionistBannerRenderer::createBodyLayer);

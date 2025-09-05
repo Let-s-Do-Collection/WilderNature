@@ -7,15 +7,15 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.RedWolfModel;
-import net.satisfy.wildernature.entity.RedWolfEntity;
-import net.satisfy.wildernature.util.WilderNatureIdentifier;
+import net.satisfy.wildernature.core.entity.RedWolfEntity;
 import org.jetbrains.annotations.NotNull;
 
 
 @Environment(value = EnvType.CLIENT)
 public class RedWolfRenderer extends MobRenderer<RedWolfEntity, RedWolfModel<RedWolfEntity>> {
-    private static final ResourceLocation TEXTURE = WilderNatureIdentifier.of("textures/entity/red_wolf.png");
+    private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/entity/red_wolf.png");
 
     public RedWolfRenderer(EntityRendererProvider.Context context) {
         super(context, new RedWolfModel<>(context.bakeLayer(RedWolfModel.LAYER_LOCATION)), 0.7f);
