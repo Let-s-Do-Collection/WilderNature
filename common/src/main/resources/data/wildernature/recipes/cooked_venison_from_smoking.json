@@ -3,10 +3,11 @@
   "cookingtime": 100,
   "experience": 0.35,
   "ingredient": {
-    "item": "wildernature:cassowary_meat"
+    "item": "wildernature:venison"
   },
   "result": {
-    "id": "wildernature:cooked_cassowary_meat"
+    "id": "wildernature:cooked_venison",
+    "count": 1
   },
   "category": "food"
 }

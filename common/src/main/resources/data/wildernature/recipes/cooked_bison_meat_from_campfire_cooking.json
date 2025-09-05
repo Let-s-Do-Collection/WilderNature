@@ -3,10 +3,10 @@
   "cookingtime": 600,
   "experience": 0.35,
   "ingredient": {
-    "item": "wildernature:venison"
+    "item": "wildernature:bison_meat"
   },
   "result": {
-    "id": "wildernature:cooked_venison",
+    "id": "wildernature:cooked_bison_meat",
     "count": 1
   },
   "category": "food"

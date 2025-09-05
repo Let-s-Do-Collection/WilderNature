@@ -6,8 +6,7 @@
     "item": "wildernature:venison"
   },
   "result": {
-    "id": "wildernature:cooked_venison",
-    "count": 1
+    "id": "wildernature:cooked_venison"
   },
   "category": "food"
 }
