@@ -3,7 +3,6 @@
   "minVersion": "0.8",
   "package": "net.satisfy.wildernature.neoforge.core.mixin",
   "compatibilityLevel": "JAVA_17",
-  "refmap": "wildernature.forge.mixins.refmap.json",
   "mixins": [
     "CatMixin",
     "MobAccessor"
@@ -11,6 +10,6 @@
   "client": [
   ],
   "injectors": {
-    "defaultRequire": -1
+    "defaultRequire": 0
   }
 }

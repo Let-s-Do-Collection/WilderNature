@@ -1,15 +1,14 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "net.satisfy.wildernature.fabric.mixin",
+  "package": "net.satisfy.wildernature.fabric.core.mixin",
   "compatibilityLevel": "JAVA_17",
-  "refmap": "wildernature.fabric.mixins.refmap.json",
   "mixins": [
-    "net.satisfy.wildernature.fabric.core.mixin.CreeperMixin"
+    "CatMixin"
   ],
   "client": [
   ],
   "injectors": {
-    "defaultRequire": -1
+    "defaultRequire": 0
   }
 }

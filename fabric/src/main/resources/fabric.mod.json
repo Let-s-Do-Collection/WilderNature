@@ -32,7 +32,6 @@
     "architectury": ">=9.0.8"
   },
   "mixins": [
-    "wildernature-common.mixins.json",
     "wildernature.fabric.mixins.json"
   ]
 }

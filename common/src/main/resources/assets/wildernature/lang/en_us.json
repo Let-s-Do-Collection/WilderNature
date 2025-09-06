@@ -308,5 +308,8 @@
   "text.gui.wildernature.bounty.delete_contract": "Delete your current Contract",
   "item.wildernature.termite_spawn_egg": "Termite Spawn Egg",
   "entity.wildernature.termite": "Termite",
-  "block.wildernature.termite_mound": "Termite Mound"
+  "block.wildernature.termite_mound": "Termite Mound",
+  "tooltip.wildernature.canbeplacedwall": "Can be Placed on Walls",
+  "tooltip.wildernature.canbeplaced": "Can be Placed",
+  "tooltip.wildernature.bountyboard": "The Bounty Board seems empty..."
 }

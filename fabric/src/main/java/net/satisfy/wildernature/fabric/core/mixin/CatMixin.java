@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.mixin;
+package net.satisfy.wildernature.fabric.core.mixin;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Cat.class)
 public abstract class CatMixin extends Mob {
+    
     protected CatMixin(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
     }
