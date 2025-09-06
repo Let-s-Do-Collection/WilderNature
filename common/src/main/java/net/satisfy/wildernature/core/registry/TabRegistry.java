@@ -16,6 +16,7 @@ public class TabRegistry {
             .icon(() -> new ItemStack(ObjectRegistry.BOUNTY_BOARD.get()))
             .title(Component.translatable("creative_tab.wildernature"))
             .displayItems((parameters, out) -> {
+                out.accept(ObjectRegistry.TERMITE_MOUND.get());
                 out.accept(ObjectRegistry.HAZELNUT.get());
                 out.accept(ObjectRegistry.BISON_MEAT.get());
                 out.accept(ObjectRegistry.COOKED_BISON_MEAT.get());
@@ -37,7 +38,6 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.LOOT_BAG.get());
                 out.accept(ObjectRegistry.FUR_CLOAK.get());
                 out.accept(ObjectRegistry.BOUNTY_BOARD.get());
-                out.accept(ObjectRegistry.TERMITE_MOUND.get());
                 out.accept(ObjectRegistry.RED_WOLF_TROPHY.get());
                 out.accept(ObjectRegistry.DEER_TROPHY.get());
                 out.accept(ObjectRegistry.BISON_TROPHY.get());
