@@ -47,10 +47,10 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> FISH_OIL = registerItem("fish_oil", () -> new Item(getSettings().stacksTo(16)));
     public static final RegistrySupplier<Item> LOOT_BAG = registerItem("loot_bag", () -> new LootBagItem(getSettings().rarity(Rarity.COMMON)));
     public static final RegistrySupplier<Item> BISON_HORN = registerItem("bison_horn", () -> new BisonHornItem(new Item.Properties().stacksTo(1), SoundRegistry.BISON_HORN.get()));
-    public static final RegistrySupplier<Item> UNCOMMON_CONTRACT = registerItem("uncommon_contract", () -> new ContractItem(getSettings().rarity(Rarity.UNCOMMON)));
-    public static final RegistrySupplier<Item> COMMON_CONTRACT = registerItem("common_contract", () -> new ContractItem(getSettings().rarity(Rarity.RARE)));
-    public static final RegistrySupplier<Item> RARE_CONTRACT = registerItem("rare_contract", () -> new ContractItem(getSettings().rarity(Rarity.EPIC)));
-    public static final RegistrySupplier<Item> LEVELING_CONTRACT = registerItem("leveling_contract", () -> new ContractItem(getSettings().rarity(Rarity.UNCOMMON)));
+    public static final RegistrySupplier<Item> UNCOMMON_CONTRACT = registerItem("uncommon_contract", () -> new Item(getSettings().rarity(Rarity.UNCOMMON)));
+    public static final RegistrySupplier<Item> COMMON_CONTRACT = registerItem("common_contract", () -> new Item(getSettings().rarity(Rarity.RARE)));
+    public static final RegistrySupplier<Item> RARE_CONTRACT = registerItem("rare_contract", () -> new Item(getSettings().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> LEVELING_CONTRACT = registerItem("leveling_contract", () -> new Item(getSettings().rarity(Rarity.UNCOMMON)));
     public static final RegistrySupplier<Item> DEER_SPAWN_EGG = registerItem("deer_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.DEER, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> RED_WOLF_SPAWN_EGG = registerItem("red_wolf_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.RED_WOLF, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> RACCOON_SPAWN_EGG = registerItem("raccoon_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.RACCOON, -1, -1, getSettings()));
