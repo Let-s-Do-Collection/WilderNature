@@ -1,7 +1,6 @@
 package net.satisfy.wildernature;
 
 import net.minecraft.resources.ResourceLocation;
-import net.satisfy.wildernature.core.event.TermiteTriggers;
 import net.satisfy.wildernature.core.registry.*;
 
 public class WilderNature {
@@ -16,7 +15,6 @@ public class WilderNature {
         EntityTypeRegistry.init();
         RecipeRegistry.init();
         TabRegistry.init();
-        TermiteTriggers.init();
         SoundRegistry.init();
     }
 }

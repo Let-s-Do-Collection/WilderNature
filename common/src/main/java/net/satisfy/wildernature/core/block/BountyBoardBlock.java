@@ -5,8 +5,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -17,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -184,21 +181,16 @@ public class BountyBoardBlock extends BaseEntityBlock {
     }
 
     @Override
-    public @NotNull BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
-        if (!world.isClientSide()) {
-            state.getValue(PART);
-            BlockPos basePos = getBasePos(world.getBlockState(pos), pos);
-            var entity = world.getBlockEntity(basePos);
-            assert entity instanceof BountyBoardBlockEntity;
-            var blockEntityTag = new CompoundTag();
-            var tag = new CompoundTag();
-            tag.put("BlockEntityTag", blockEntityTag);
-            var stack = new ItemStack(ObjectRegistry.BOUNTY_BOARD.get());
-            stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(tag));
-            world.addFreshEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack));
-            destroyAdjacentBlocks(world, basePos);
+    public @NotNull BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide()) {
+            BlockPos basePos = getBasePos(level.getBlockState(pos), pos);
+
+            ItemStack stack = new ItemStack(ObjectRegistry.BOUNTY_BOARD.get());
+            level.addFreshEntity(new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), stack));
+
+            destroyAdjacentBlocks(level, basePos);
         }
-        return super.playerWillDestroy(world, pos, state, player);
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Nullable
@@ -238,7 +230,5 @@ public class BountyBoardBlock extends BaseEntityBlock {
         list.add(Component.translatable("tooltip.wildernature.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
         list.add(Component.empty());
         list.add(Component.translatable("tooltip.wildernature.bountyboard").withStyle(ChatFormatting.GRAY));
-
-
     }
 }

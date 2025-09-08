@@ -16,12 +16,12 @@ import net.satisfy.wildernature.client.model.entity.*;
 import net.satisfy.wildernature.client.render.block.BountyBoardRenderer;
 import net.satisfy.wildernature.client.render.block.CompletionistBannerRenderer;
 import net.satisfy.wildernature.client.render.entity.*;
+import net.satisfy.wildernature.client.util.WilderNatureClientUtil;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
-import net.satisfy.wildernature.core.util.WilderNatureUtil;
 
+import static net.satisfy.wildernature.client.util.WilderNatureClientUtil.makeHorn;
 import static net.satisfy.wildernature.core.registry.EntityTypeRegistry.*;
 import static net.satisfy.wildernature.core.registry.ObjectRegistry.*;
-import static net.satisfy.wildernature.core.util.WilderNatureUtil.makeHorn;
 
 @Environment(EnvType.CLIENT)
 public class WilderNatureClient {
@@ -39,7 +39,7 @@ public class WilderNatureClient {
     public static void preInitClient() {
         registerEntityRenderers();
         registerEntityModelLayer();
-        WilderNatureUtil.init();
+        WilderNatureClientUtil.init();
     }
 
     public static void registerEntityRenderers() {

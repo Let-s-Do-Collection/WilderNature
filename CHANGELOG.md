@@ -1,3 +1,10 @@
+[1.1.2]
+
+**Fixed:**
+* Fixed a crash when breaking the **Bounty Board**. Dropped items no longer contain invalid/empty BlockEntityTag data.
+
+***
+
 [1.1.1]
 
 **Fixed:**
