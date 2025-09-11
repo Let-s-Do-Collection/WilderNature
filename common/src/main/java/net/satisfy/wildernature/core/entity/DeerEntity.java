@@ -19,6 +19,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Pillager;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -122,8 +123,13 @@ public class DeerEntity extends Animal {
     @Override
     public void die(DamageSource source) {
         super.die(source);
-        Entity e = source.getEntity();
-        if (e instanceof Player p) {
+        if (!isWhite()) return;
+
+        Entity killer = source.getEntity();
+        if (killer instanceof Projectile proj) {
+            killer = proj.getOwner();
+        }
+        if (killer instanceof Player p) {
             p.addEffect(new MobEffectInstance(MobEffects.BAD_OMEN, 72000, 0));
             p.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 6000, 1));
         }

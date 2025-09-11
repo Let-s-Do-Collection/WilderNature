@@ -1,3 +1,13 @@
+[1.1.3]
+
+**Added**
+- White deer now apply **Bad Omen** (60 min) and **Slowness II** (5 min) to the player who kills them (directly or with projectiles).
+
+**Changed**
+- Normal deer deaths no longer trigger any player debuffs.
+
+***
+
 [1.1.2]
 
 **Fixed:**
