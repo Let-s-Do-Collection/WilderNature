@@ -80,6 +80,7 @@ public class RaccoonEntity extends Animal {
         this.goalSelector.addGoal(++i, new FloatGoal(this));
         this.goalSelector.addGoal(++i, new PanicGoal(this, 1.4));
         this.goalSelector.addGoal(++i, new RaccoonDoorInteractGoal(this));
+        this.goalSelector.addGoal(++i, new HarvestBerryBushGoal(this, 1.0));
         this.goalSelector.addGoal(++i, new RaccoonAvoidEntityGoal<>(this, Player.class));
         this.goalSelector.addGoal(++i, new RaccoonAvoidEntityGoal<>(this, Villager.class));
         this.goalSelector.addGoal(++i, new BreedGoal(this, 1.0));
@@ -178,6 +179,11 @@ public class RaccoonEntity extends Animal {
     @Override
     public void refreshDimensions() {
         super.refreshDimensions();
+    }
+
+    @Override
+    public boolean isInvulnerableTo(DamageSource source) {
+        return source.is(DamageTypes.SWEET_BERRY_BUSH) || super.isInvulnerableTo(source);
     }
 
     @Override
@@ -336,4 +342,42 @@ public class RaccoonEntity extends Animal {
             raccoon.stopOpenDoorAnim();
         }
     }
+    public static class HarvestBerryBushGoal extends MoveToBlockGoal {
+    private final RaccoonEntity raccoon;
+
+    public HarvestBerryBushGoal(RaccoonEntity raccoon, double speed) {
+        super(raccoon, speed, 8);
+        this.raccoon = raccoon;
+    }
+
+    @Override
+    protected boolean isValidTarget(LevelReader level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        return state.is(Blocks.SWEET_BERRY_BUSH) && state.getValue(SweetBerryBushBlock.AGE) >= 2;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (this.isReachedTarget()) {
+            BlockState state = raccoon.level().getBlockState(this.blockPos);
+            if (state.is(Blocks.SWEET_BERRY_BUSH) && state.getValue(SweetBerryBushBlock.AGE) >= 2) {
+                int dropCount = 1 + raccoon.getRandom().nextInt(2); // 1–2 berries
+                ItemStack berries = new ItemStack(Items.SWEET_BERRIES, dropCount);
+
+                // Put in mouth if raccoon isn't already holding food
+                if (raccoon.getMainHandItem().isEmpty()) {
+                    raccoon.setItemSlot(EquipmentSlot.MAINHAND, berries);
+                } else {
+                    Block.popResource(raccoon.level(), blockPos, berries); // drop them
+                }
+
+                // Reset bush to small stage
+                raccoon.level().setBlock(blockPos, state.setValue(SweetBerryBushBlock.AGE, 1), 2);
+                raccoon.playSound(SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, 1.0F, 1.0F);
+            }
+        }
+    }
+}
+
 }
