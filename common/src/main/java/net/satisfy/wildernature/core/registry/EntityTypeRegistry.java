@@ -35,6 +35,7 @@ public class EntityTypeRegistry {
     public static final RegistrySupplier<EntityType<PenguinEntity>> PENGUIN = createEntity("penguin", () -> EntityType.Builder.of(PenguinEntity::new, MobCategory.CREATURE).sized(0.7f, 0.9f).clientTrackingRange(10).build(WilderNature.identifier("penguin").toString()));
     public static final RegistrySupplier<EntityType<RaccoonEntity>> RACCOON = createEntity("raccoon", () -> EntityType.Builder.of(RaccoonEntity::new, MobCategory.CREATURE).sized(0.6f, 0.6f).build(WilderNature.identifier("raccoon").toString()));
     public static final RegistrySupplier<EntityType<RedWolfEntity>> RED_WOLF = createEntity("red_wolf", () -> EntityType.Builder.of(RedWolfEntity::new, MobCategory.CREATURE).sized(0.7f, 0.9f).clientTrackingRange(10).build(String.valueOf(WilderNature.identifier("red_wolf"))));
+    public static final RegistrySupplier<EntityType<SealEntity>> SEAL = createEntity("seal", () -> EntityType.Builder.of(SealEntity::new, MobCategory.CREATURE).sized(1.2f, 0.9f).clientTrackingRange(10).build(String.valueOf(WilderNature.identifier("seal"))));
     public static final RegistrySupplier<EntityType<SquirrelEntity>> SQUIRREL = createEntity("squirrel", () -> EntityType.Builder.of(SquirrelEntity::new, MobCategory.CREATURE).sized(0.4f, 0.9f).build(WilderNature.identifier("squirrel").toString()));
     public static final RegistrySupplier<EntityType<TurkeyEntity>> TURKEY = createEntity("turkey", () -> EntityType.Builder.of(TurkeyEntity::new, MobCategory.CREATURE).sized(0.6F, 1.0F).build(WilderNature.identifier("turkey").toString()));
     public static final RegistrySupplier<EntityType<BulletEntity>> BULLET = createEntity("bullet", () -> EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC).sized(0.3125f, 0.3125f).clientTrackingRange(64).updateInterval(2).build(WilderNature.identifier("bullet").toString()));
@@ -64,6 +65,7 @@ public class EntityTypeRegistry {
         EntityAttributeRegistry.register(PENGUIN, PenguinEntity::createMobAttributes);
         EntityAttributeRegistry.register(RACCOON, RaccoonEntity::createMobAttributes);
         EntityAttributeRegistry.register(RED_WOLF, RedWolfEntity::createMobAttributes);
+        EntityAttributeRegistry.register(SEAL, SquirrelEntity::createMobAttributes);
         EntityAttributeRegistry.register(SQUIRREL, SquirrelEntity::createMobAttributes);
         EntityAttributeRegistry.register(TURKEY, TurkeyEntity::createMobAttributes);
     }
