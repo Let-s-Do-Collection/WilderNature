@@ -103,7 +103,8 @@ public class WilderNatureFabric implements ModInitializer {
         addMobSpawn(TagsRegistry.SPAWNS_CASSOWARY, EntityTypeRegistry.CASSOWARY.get(), config.CassowarySpawnWeight, config.CassowaryMinGroupSize, config.CassowaryMaxGroupSize);
         addMobSpawn(TagsRegistry.SPAWNS_FLAMINGO, EntityTypeRegistry.FLAMINGO.get(), config.FlamingoSpawnWeight, config.FlamingoMinGroupSize, config.FlamingoMaxGroupSize);
         addMobSpawn(TagsRegistry.SPAWNS_HEDGEHOG, EntityTypeRegistry.HEDGEHOG.get(), config.HedgehogSpawnWeight, config.HedgehogMinGroupSize, config.HedgehogMaxGroupSize);
-
+        addMobSpawn(TagsRegistry.SPAWNS_SEAL, EntityTypeRegistry.SEAL.get(), config.SealSpawnWeight, config.SealMinGroupSize, config.SealMaxGroupSize);
+        
         if (config.removeSavannaAnimals) {
             removeSpawn(BiomeTags.IS_SAVANNA, List.of(EntityType.SHEEP, EntityType.PIG, EntityType.CHICKEN, EntityType.COW));
         }
@@ -145,6 +146,8 @@ public class WilderNatureFabric implements ModInitializer {
         SpawnPlacements.register(EntityTypeRegistry.PENGUIN.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         SpawnPlacements.register(EntityTypeRegistry.CASSOWARY.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
+        SpawnPlacements.register(EntityTypeRegistry.SEAL.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
     }
 
