@@ -108,13 +108,14 @@ modrinth {
 
     dependencies {
         required.project "architectury-api"
+        required.project "curios"
     }
 }
 
 curseforge {
     apiKey = System.getenv("CURSEFORGE_API_KEY")
     project {
-        id = "1071657"
+        id = "858691"
         releaseType = "release"
         addGameVersion rootProject.minecraft_version
         addGameVersion "NeoForge"
@@ -126,6 +127,7 @@ curseforge {
 
         relations {
             requiredDependency "architectury-api"
+            requiredDependency "curios"
         }
     }
 }

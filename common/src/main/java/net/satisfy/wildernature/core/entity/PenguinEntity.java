@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -108,8 +109,9 @@ public class PenguinEntity extends Animal {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return false;
+        return stack.is(ItemTags.FISHES);
     }
+
 
     public static class BoatDrivingGoal extends Goal {
         private final Mob entity;

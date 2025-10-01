@@ -50,6 +50,7 @@ public class MiniSheepEntity extends Animal implements Shearable {
         super(entityType, level);
     }
 
+
     protected void registerGoals() {
         this.eatBlockGoal = new EatBlockGoal(this);
         this.goalSelector.addGoal(1, new FloatGoal(this));
@@ -251,6 +252,6 @@ public class MiniSheepEntity extends Animal implements Shearable {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return false;
+        return stack.is(Items.WHEAT);
     }
 }

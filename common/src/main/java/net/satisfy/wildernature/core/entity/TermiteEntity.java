@@ -10,6 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
@@ -107,7 +108,7 @@ public class TermiteEntity extends Animal {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(Blocks.OAK_PLANKS.asItem()) || stack.is(Blocks.SPRUCE_PLANKS.asItem()) || stack.is(Blocks.BIRCH_PLANKS.asItem()) || stack.is(Blocks.JUNGLE_PLANKS.asItem()) || stack.is(Blocks.ACACIA_PLANKS.asItem()) || stack.is(Blocks.DARK_OAK_PLANKS.asItem()) || stack.is(Blocks.MANGROVE_PLANKS.asItem()) || stack.is(Blocks.CHERRY_PLANKS.asItem()) || stack.is(Blocks.BAMBOO_PLANKS.asItem()) || stack.is(Blocks.CRIMSON_PLANKS.asItem()) || stack.is(Blocks.WARPED_PLANKS.asItem());
+        return stack.is(ItemTags.PLANKS);
     }
 
     class ReturnHomeGoal extends Goal {

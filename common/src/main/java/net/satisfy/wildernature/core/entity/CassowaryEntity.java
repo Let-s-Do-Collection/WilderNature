@@ -17,6 +17,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
@@ -144,6 +145,9 @@ public class CassowaryEntity extends Animal implements EntityWithAttackAnimation
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return false;
+        return stack.is(Items.WHEAT_SEEDS)
+                || stack.is(Items.MELON_SEEDS)
+                || stack.is(Items.PUMPKIN_SEEDS)
+                || stack.is(Items.BEETROOT_SEEDS);
     }
 }

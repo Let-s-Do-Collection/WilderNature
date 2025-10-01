@@ -78,7 +78,7 @@ public class BisonEntity extends Animal implements EntityWithAttackAnimation {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return false;
+        return stack.is(Items.SHORT_GRASS);
     }
 
     public static @NotNull AttributeSupplier.Builder createMobAttributes() {
