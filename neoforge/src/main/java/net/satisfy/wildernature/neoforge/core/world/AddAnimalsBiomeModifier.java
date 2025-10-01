@@ -45,6 +45,7 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
         registerEntity(EntityTypeRegistry.CASSOWARY.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.HEDGEHOG.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.FLAMINGO.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
+        registerEntity(EntityTypeRegistry.SEAL.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
     }
 
     @Override
@@ -66,8 +67,9 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_CASSOWARY, EntityTypeRegistry.CASSOWARY.get(), 12, 3, 4);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_HEDGEHOG, EntityTypeRegistry.HEDGEHOG.get(), 9, 2, 3);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_FLAMINGO, EntityTypeRegistry.FLAMINGO.get(), 10, 4, 6);
+            addMobSpawn(builder, biome, TagsRegistry.SPAWNS_SEAL, EntityTypeRegistry.SEAL.get(), 8, 2, 6);
             addMobSpawn(builder, biome, BiomeTags.IS_JUNGLE, EntityType.FROG, 8, 3, 4);
-
+            
         }
     }
 
