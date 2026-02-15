@@ -1,4 +1,4 @@
-![Wilder Nature](https://lets-do.ch/assets/mod-logos/wildernature.png)
+![Wilder Nature](https://lets-do.ch/assets/mod-logos/wildernature.webp)
 
 <br>
 
