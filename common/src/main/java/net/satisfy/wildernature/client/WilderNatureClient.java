@@ -2,6 +2,7 @@ package net.satisfy.wildernature.client;
 
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
+import dev.architectury.registry.client.particle.ParticleProviderRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import dev.architectury.registry.client.rendering.RenderTypeRegistry;
 import net.fabricmc.api.EnvType;
@@ -12,12 +13,42 @@ import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.client.model.armor.StylinPurpleHatModel;
 import net.satisfy.wildernature.client.model.block.BountyBoardModel;
-import net.satisfy.wildernature.client.model.entity.*;
+import net.satisfy.wildernature.client.model.entity.BisonModel;
+import net.satisfy.wildernature.client.model.entity.BoarModel;
+import net.satisfy.wildernature.client.model.entity.CassowaryModel;
+import net.satisfy.wildernature.client.model.entity.DeerModel;
+import net.satisfy.wildernature.client.model.entity.DogModel;
+import net.satisfy.wildernature.client.model.entity.FlamingoModel;
+import net.satisfy.wildernature.client.model.entity.HedgehogModel;
+import net.satisfy.wildernature.client.model.entity.MiniSheepModel;
+import net.satisfy.wildernature.client.model.entity.OwlModel;
+import net.satisfy.wildernature.client.model.entity.PelicanModel;
+import net.satisfy.wildernature.client.model.entity.PenguinModel;
+import net.satisfy.wildernature.client.model.entity.RaccoonModel;
+import net.satisfy.wildernature.client.model.entity.RedWolfModel;
+import net.satisfy.wildernature.client.model.entity.SquirrelModel;
+import net.satisfy.wildernature.client.model.entity.TurkeyModel;
+import net.satisfy.wildernature.client.particle.SleepingParticle;
 import net.satisfy.wildernature.client.render.block.BountyBoardRenderer;
 import net.satisfy.wildernature.client.render.block.CompletionistBannerRenderer;
-import net.satisfy.wildernature.client.render.entity.*;
+import net.satisfy.wildernature.client.render.entity.BisonRenderer;
+import net.satisfy.wildernature.client.render.entity.BoarRenderer;
+import net.satisfy.wildernature.client.render.entity.CassowaryRenderer;
+import net.satisfy.wildernature.client.render.entity.DeerRenderer;
+import net.satisfy.wildernature.client.render.entity.DogRenderer;
+import net.satisfy.wildernature.client.render.entity.FlamingoRenderer;
+import net.satisfy.wildernature.client.render.entity.HedgehogRenderer;
+import net.satisfy.wildernature.client.render.entity.MiniSheepRenderer;
+import net.satisfy.wildernature.client.render.entity.OwlRenderer;
+import net.satisfy.wildernature.client.render.entity.PelicanRenderer;
+import net.satisfy.wildernature.client.render.entity.PenguinRenderer;
+import net.satisfy.wildernature.client.render.entity.RaccoonRenderer;
+import net.satisfy.wildernature.client.render.entity.RedWolfRenderer;
+import net.satisfy.wildernature.client.render.entity.SquirrelRenderer;
+import net.satisfy.wildernature.client.render.entity.TurkeyRenderer;
 import net.satisfy.wildernature.client.util.WilderNatureClientUtil;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
+import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 
 import static net.satisfy.wildernature.client.util.WilderNatureClientUtil.makeHorn;
 import static net.satisfy.wildernature.core.registry.EntityTypeRegistry.*;
@@ -33,6 +64,8 @@ public class WilderNatureClient {
 
         BlockEntityRendererRegistry.register(COMPLETIONIST_BANNER_BLOCK_ENTITY.get(), CompletionistBannerRenderer::new);
         BlockEntityRendererRegistry.register(BOUNTY_BOARD_BLOCK_ENTITY.get(), BountyBoardRenderer::new);
+
+        ParticleProviderRegistry.register(ParticleTypeRegistry.SLEEPING.get(), SleepingParticle.Provider::new);
 
         makeHorn(ObjectRegistry.BISON_HORN.get());
     }

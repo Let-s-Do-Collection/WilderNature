@@ -10,11 +10,14 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.WilderNatureClient;
+import net.satisfy.wildernature.client.particle.SleepingParticle;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
+import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import net.satisfy.wildernature.neoforge.client.extensions.WilderNatureHatExtensions;
 import net.satisfy.wildernature.neoforge.core.player.layer.WolfFurChestplateLayer;
 import net.satisfy.wildernature.neoforge.core.player.model.WolfFurChestplateModel;
@@ -33,6 +36,12 @@ public class WilderNatureClientNeoForge {
     public static void onClientSetup(FMLClientSetupEvent event) {
         WilderNatureClient.onInitializeClient();
     }
+
+    @SubscribeEvent
+    public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(ParticleTypeRegistry.SLEEPING.get(), SleepingParticle.Provider::new);
+        }
+
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(WilderNatureClient.WOLF_FUR_CHESTPLATE_LAYER, WolfFurChestplateModel::createBodyLayer);

@@ -13,6 +13,7 @@ public class WilderNature {
     public static void init() {
         ObjectRegistry.init();
         EntityTypeRegistry.init();
+        ParticleTypeRegistry.init();
         RecipeRegistry.init();
         TabRegistry.init();
         SoundRegistry.init();

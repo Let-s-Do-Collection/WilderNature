@@ -1,35 +1,47 @@
 [1.1.5]
 
 **Fixed**
-- Idle Animation for most entities are now more fluent
-- HazelnutBushes transforming into SweetberryBushes when being bone mealed
-- 
+* Idle Animation for most entities are now more fluent
+* HazelnutBushes transforming into SweetberryBushes when being bone mealed
+
 
 **Changed**
-- Recolored HazelnutBushes
-- Recolored FishOil 
-- Turkeys now lay TurkeyEggs instead of Eggs
+* Recolored HazelnutBushes
+* Recolored FishOil 
+* Turkeys now lay TurkeyEggs instead of Eggs
+  * **Owl Rework**
+  * Completely overhauled owl behavior and AI
+  * Owls now search for natural perches before sleeping
+  * Added realistic sleep preparation with randomized timing
+  * Improved wake*up logic with threat detection and visual feedback
+  * Refined flying and landing behavior for proper perch alignment
+  * Introduced dynamic night hunting with randomized hunt windows
+  * Owls now target undead mobs during hunting phases
+  * Added interaction with dropped rotten flesh, including consuming behavior
+  * Improved overall AI flow with smoother transitions between states
+  * Reduced repetitive behavior through cooldowns and randomness
+  * Enhanced animation handling for sleep, movement, and ambient actions
 
 ***
 
 [1.1.4]
 
 **Fixed**
-- Fixed NeoForge config registration and syncing
-- Added proper breeding food items for bison, cassowary, minisheep, penguin and red wolf
+* Fixed NeoForge config registration and syncing
+* Added proper breeding food items for bison, cassowary, minisheep, penguin and red wolf
 
 **Changed**
-- `TermiteSpawnEgg` Texture
+* `TermiteSpawnEgg` Texture
   
 ***
 
 [1.1.3]
 
 **Added**
-- White deer now apply **Bad Omen** (60 min) and **Slowness II** (5 min) to the player who kills them (directly or with projectiles).
+* White deer now apply **Bad Omen** (60 min) and **Slowness II** (5 min) to the player who kills them (directly or with projectiles).
 
 **Changed**
-- Normal deer deaths no longer trigger any player debuffs.
+* Normal deer deaths no longer trigger any player debuffs.
 
 ***
 
@@ -43,7 +55,7 @@
 [1.1.1]
 
 **Fixed:**
-* Fixed dedicated server crash caused by `ContractItem` using client-only `Minecraft` reference.
+* Fixed dedicated server crash caused by `ContractItem` using client*only `Minecraft` reference.
 
 ***
 

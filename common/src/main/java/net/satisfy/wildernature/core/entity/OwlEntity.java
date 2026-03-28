@@ -3,6 +3,8 @@ package net.satisfy.wildernature.core.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -12,18 +14,34 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.AnimationState;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.BreedGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
@@ -32,131 +50,208 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.Foods;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.satisfy.wildernature.core.entity.ai.*;
+import net.satisfy.wildernature.core.entity.ai.AnimationAttackGoal;
+import net.satisfy.wildernature.core.entity.ai.EntityWithAttackAnimation;
+import net.satisfy.wildernature.core.entity.ai.FlyingFollowOwnerGoal;
+import net.satisfy.wildernature.core.entity.ai.PredicateTemptGoal;
+import net.satisfy.wildernature.core.entity.ai.RandomAction;
+import net.satisfy.wildernature.core.entity.ai.RandomActionGoal;
 import net.satisfy.wildernature.core.entity.animation.ServerAnimationDurations;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
+import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundRegistry;
 import net.satisfy.wildernature.core.registry.TagsRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Comparator;
 import java.util.EnumSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
 
 public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackAnimation {
     private static final EntityDataAccessor<Integer> STANDING_STATE = SynchedEntityData.defineId(OwlEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> OWL_STATE = SynchedEntityData.defineId(OwlEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(OwlEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> HOOTING = SynchedEntityData.defineId(OwlEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(OwlEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDimensions FLYING_DIMENSION = EntityDimensions.fixed(0.7F, 1.4F);
-    private static final Predicate<LivingEntity> IS_OWL_TARGET = e -> e.getType().is(TagsRegistry.OWL_TARGETS);
+    private static final Predicate<LivingEntity> IS_OWL_TARGET = entity -> entity.getType().is(TagsRegistry.OWL_TARGETS);
 
     private float leaningPitch;
     private float lastLeaningPitch;
+    private int sleepCooldownTicks;
+    private int sleepPreparationTicks;
+    private int requiredSleepPreparationTicks;
+    private int huntScheduleNight = -1;
+    private boolean huntsThisNight;
+    private int huntStartTime;
+    private int huntEndTime;
+    private int rottenFleshCooldownTicks;
+
+    public AnimationState flyingState = new AnimationState();
+    public AnimationState hootState = new AnimationState();
+    public AnimationState attackState = new AnimationState();
+    public AnimationState sleepState = new AnimationState();
 
     public OwlEntity(EntityType<? extends ShoulderRidingEntity> entityType, Level level) {
         super(entityType, level);
-
         this.moveControl = new FlyingMoveControl(this, 0, false);
         this.setPathfindingMalus(PathType.DAMAGE_FIRE, -1.0F);
         this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
+        this.requiredSleepPreparationTicks = this.getRandomSleepPreparationTicks();
     }
 
     public static AttributeSupplier.@NotNull Builder createMobAttributes() {
-        return Mob.createMobAttributes().add(Attributes.FLYING_SPEED, 0.8D).add(Attributes.MAX_HEALTH, 8.0).add(Attributes.MOVEMENT_SPEED, 0.4D).add(Attributes.ATTACK_DAMAGE, 2D);
+        return Mob.createMobAttributes()
+                .add(Attributes.FLYING_SPEED, 0.8D)
+                .add(Attributes.MAX_HEALTH, 8.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.4D)
+                .add(Attributes.ATTACK_DAMAGE, 2.0D);
     }
 
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        int i = 0;
-        this.goalSelector.addGoal(++i, new AvoidEntityGoal<>(this, Player.class, 32, 2, 2) {
+        int goalPriority = 0;
+
+        this.goalSelector.addGoal(++goalPriority, new AvoidEntityGoal<>(this, Player.class, 32.0F, 2.0D, 2.0D) {
             @Override
             public boolean canUse() {
                 return super.canUse() && isInPanicRightNow();
             }
         });
-        this.goalSelector.addGoal(++i, new PanicGoal(this, 1.75D) {
+
+        this.goalSelector.addGoal(++goalPriority, new PanicGoal(this, 1.75D) {
+            @Override
             protected boolean findRandomPosition() {
-                Vec3 vec3 = DefaultRandomPos.getPos(this.mob, 20, 20);
-                if (vec3 == null) {
+                Vec3 randomPosition = DefaultRandomPos.getPos(this.mob, 20, 20);
+                if (randomPosition == null) {
                     return false;
-                } else {
-                    this.posX = vec3.x;
-                    this.posY = vec3.y;
-                    this.posZ = vec3.z;
-                    return true;
                 }
+                this.posX = randomPosition.x;
+                this.posY = randomPosition.y;
+                this.posZ = randomPosition.z;
+                return true;
             }
         });
-        this.goalSelector.addGoal(++i, new SleepGoal(this));
-        this.goalSelector.addGoal(++i, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(++i, new FloatGoal(this) {
+
+        this.goalSelector.addGoal(++goalPriority, new EatRottenFleshGoal(this, 1.15D));
+        this.goalSelector.addGoal(++goalPriority, new MoveToSleepPerchGoal(this, 1.0D));
+        this.goalSelector.addGoal(++goalPriority, new SleepGoal(this));
+        this.goalSelector.addGoal(++goalPriority, new BreedGoal(this, 1.0D));
+
+        this.goalSelector.addGoal(++goalPriority, new FloatGoal(this) {
             @Override
             public boolean canUse() {
-                return super.canUse() && !isSleeping();
+                return super.canUse() && canUseActiveBehavior();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return super.canContinueToUse() && !isSleeping();
+                return super.canContinueToUse() && canUseActiveBehavior();
             }
         });
-        this.goalSelector.addGoal(++i, new SitWhenOrderedToGoal(this));
-        this.goalSelector.addGoal(++i, new AnimationAttackGoal(this, 1.0D, true, (int) ServerAnimationDurations.owl_attack * 20, 15) {
+
+        this.goalSelector.addGoal(++goalPriority, new SitWhenOrderedToGoal(this));
+
+        this.goalSelector.addGoal(++goalPriority, new AnimationAttackGoal(this, 1.0D, true, (int) ServerAnimationDurations.owl_attack * 20, 15) {
             @Override
             public boolean canUse() {
-                return super.canUse() && !isSleeping();
+                return super.canUse() && canUseActiveBehavior() && canHuntNow();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return super.canContinueToUse() && !isSleeping();
+                return super.canContinueToUse() && canUseActiveBehavior() && canHuntNow();
             }
         });
-        this.goalSelector.addGoal(++i, new FlyingFollowOwnerGoal(this, 1.2D, 10.0F, 2.0F, true) {
+
+        this.goalSelector.addGoal(++goalPriority, new FlyingFollowOwnerGoal(this, 1.2D, 10.0F, 2.0F, true) {
             @Override
             public boolean canUse() {
-                return super.canUse() && !isSleeping();
+                return super.canUse() && canUseActiveBehavior() && !canHuntNow();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return super.canContinueToUse() && !isSleeping();
+                return super.canContinueToUse() && canUseActiveBehavior() && !canHuntNow();
             }
         });
-        this.goalSelector.addGoal(++i, new PredicateTemptGoal(this, 1.2D, this::isFood, false) {
+
+        this.goalSelector.addGoal(++goalPriority, new PredicateTemptGoal(this, 1.2D, this::isFood, false) {
             @Override
             public boolean canUse() {
-                return super.canUse() && !isSleeping();
+                return super.canUse() && canUseActiveBehavior() && !canHuntNow();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return super.canContinueToUse() && !isSleeping();
+                return super.canContinueToUse() && canUseActiveBehavior() && !canHuntNow();
             }
         });
-        this.goalSelector.addGoal(++i, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(++i, new ExtendedFlyOntoTree(this, 1D, 0.5F));
-        this.goalSelector.addGoal(++i, new RandomStrollGoal(this, 1D));
-        this.goalSelector.addGoal(++i, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(++i, new RandomActionGoal(new RandomAction() {
 
+        this.goalSelector.addGoal(++goalPriority, new LookAtPlayerGoal(this, Player.class, 8.0F) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && canUseActiveBehavior();
+            }
 
+            @Override
+            public boolean canContinueToUse() {
+                return super.canContinueToUse() && canUseActiveBehavior();
+            }
+        });
+
+        this.goalSelector.addGoal(++goalPriority, new ExtendedFlyOntoTree(this, 1.0D, 0.5F) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && canUseActiveBehavior() && !canSearchForSleepPerch() && !canHuntNow();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return super.canContinueToUse() && canUseActiveBehavior() && !canSearchForSleepPerch() && !canHuntNow();
+            }
+        });
+
+        this.goalSelector.addGoal(++goalPriority, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && canUseActiveBehavior() && !canSearchForSleepPerch() && !canHuntNow();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return super.canContinueToUse() && canUseActiveBehavior() && !canSearchForSleepPerch() && !canHuntNow();
+            }
+        });
+
+        this.goalSelector.addGoal(++goalPriority, new RandomLookAroundGoal(this) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && canUseActiveBehavior();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return super.canContinueToUse() && canUseActiveBehavior();
+            }
+        });
+
+        this.goalSelector.addGoal(++goalPriority, new RandomActionGoal(new RandomAction() {
             @Override
             public boolean isInterruptable() {
                 return false;
@@ -172,13 +267,13 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
                 if (onGround()) {
                     setHooting(true);
                 }
-                var owlSound = SoundRegistry.OWL_AMBIENT.get();
-                level().playSound(null, OwlEntity.this, owlSound, SoundSource.NEUTRAL, 1f, 1f);
+                SoundEvent owlAmbientSound = SoundRegistry.OWL_AMBIENT.get();
+                level().playSound(null, OwlEntity.this, owlAmbientSound, SoundSource.NEUTRAL, 1.0F, 1.0F);
             }
 
             @Override
             public boolean isPossible() {
-                return !isAttacking() && !isSleeping();
+                return !isAttacking() && canUseActiveBehavior() && !canSearchForSleepPerch() && !canHuntNow();
             }
 
             @Override
@@ -188,90 +283,99 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
 
             @Override
             public float chance() {
-                return 0.01f;
+                return 0.01F;
             }
 
             @Override
-            public AttributeInstance getAttribute(Attribute movementSpeed) {
-                return OwlEntity.this.getAttribute(BuiltInRegistries.ATTRIBUTE.wrapAsHolder(movementSpeed));
+            public AttributeInstance getAttribute(Attribute movementSpeedAttribute) {
+                return OwlEntity.this.getAttribute(BuiltInRegistries.ATTRIBUTE.wrapAsHolder(movementSpeedAttribute));
             }
         }));
+
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        this.targetSelector.addGoal(3, new NonTameRandomTargetGoal<>(this, LivingEntity.class, false, IS_OWL_TARGET));
-    }
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, entity -> canHuntNow() && entity.getType().is(EntityTypeTags.UNDEAD)) {
+            @Override
+            public boolean canUse() {
+                return canHuntNow() && super.canUse();
+            }
 
-    @Nullable
-    @Override
-    public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
-        OwlEntity owl = EntityTypeRegistry.OWL.get().create(serverLevel);
-        UUID uUID = this.getOwnerUUID();
-        if (uUID != null) {
-            assert owl != null;
-            owl.setOwnerUUID(uUID);
-            owl.setTame(true, true);
-        }
-        return owl;
-    }
-
-    @Override
-    protected @NotNull PathNavigation createNavigation(Level level) {
-        FlyingPathNavigation birdNavigation = new FlyingPathNavigation(this, level);
-        birdNavigation.setCanPassDoors(true);
-        birdNavigation.setCanFloat(false);
-        birdNavigation.setCanOpenDoors(false);
-        return birdNavigation;
-    }
-
-
-    @Override
-    public float getSwimAmount(float f) {
-        return Mth.rotLerp(f, lastLeaningPitch, leaningPitch);
+            @Override
+            public boolean canContinueToUse() {
+                return canHuntNow() && super.canContinueToUse();
+            }
+        });
+        this.targetSelector.addGoal(4, new NonTameRandomTargetGoal<>(this, LivingEntity.class, false, IS_OWL_TARGET));
     }
 
     @Override
     public void tick() {
         super.tick();
-        setStandingState(onGround() || isInWater() || isOrderedToSit() ? StandingState.STANDING : StandingState.FLYING);
 
-        lastLeaningPitch = leaningPitch;
-        switch (getStandingState()) {
-            case STANDING -> this.leaningPitch = Math.max(0.0F, this.leaningPitch - 2F);
-            case FLYING -> this.leaningPitch = Math.min(7F, this.leaningPitch + 1.5F);
+        this.updateNightHuntSchedule();
+
+        if (this.sleepCooldownTicks > 0) {
+            this.sleepCooldownTicks--;
         }
-        if (level().isClientSide()) {
-            setupAnimationStates();
+
+        if (this.rottenFleshCooldownTicks > 0) {
+            this.rottenFleshCooldownTicks--;
+        }
+
+        if (this.canPrepareForSleep()) {
+            this.sleepPreparationTicks++;
+        } else {
+            this.resetSleepPreparation();
+        }
+
+        if (this.isSleeping() && !this.canContinueSleeping()) {
+            this.wakeUp();
+        }
+
+        this.setStandingState(this.onGround() || this.isInWater() || this.isOrderedToSit() || this.isSleeping() || this.isValidSleepPerch() ? StandingState.STANDING : StandingState.FLYING);
+
+        this.lastLeaningPitch = this.leaningPitch;
+        switch (this.getStandingState()) {
+            case STANDING -> this.leaningPitch = Math.max(0.0F, this.leaningPitch - 2.0F);
+            case FLYING -> this.leaningPitch = Math.min(7.0F, this.leaningPitch + 1.5F);
+        }
+
+        if (this.level().isClientSide()) {
+            this.setupAnimationStates();
+            this.spawnSleepingParticle();
         }
     }
 
-    private boolean hasWakeUpTriggerNearby() {
-        AABB checkBox = this.getBoundingBox().inflate(6.0D, 3.0D, 6.0D);
-        return !this.level().getEntitiesOfClass(LivingEntity.class, checkBox, entity -> entity.isAlive() && entity != this).isEmpty();
+    private void updateNightHuntSchedule() {
+        long currentNight = this.level().getDayTime() / 24000L;
+        if (currentNight == this.huntScheduleNight) {
+            return;
+        }
+
+        this.huntScheduleNight = (int) currentNight;
+        this.huntsThisNight = this.random.nextFloat() < 0.4F;
+
+        if (this.huntsThisNight) {
+            this.huntStartTime = 13000 + this.random.nextInt(9000);
+            int huntDuration = 600 + this.random.nextInt(1600);
+            this.huntEndTime = Math.min(23999, this.huntStartTime + huntDuration);
+        } else {
+            this.huntStartTime = 0;
+            this.huntEndTime = 0;
+        }
     }
 
+    public boolean canHuntNow() {
+        if (!this.level().isNight()) {
+            return false;
+        }
 
-    public AnimationState flyingState = new AnimationState();
-    public AnimationState hootState = new AnimationState();
-    public AnimationState attackState = new AnimationState();
-    public AnimationState sleepState = new AnimationState();
+        if (this.isSleeping()) {
+            return false;
+        }
 
-    @SuppressWarnings("unused")
-    private void setupAnimationStates() {
-        var standingState = getStandingState();
-        var owlState = getOwlState();
-        flyingState.animateWhen(standingState == StandingState.FLYING, this.tickCount);
-        attackState.animateWhen(this.isAttacking(), this.tickCount);
-        hootState.animateWhen(this.isHooting(), this.tickCount);
-        sleepState.animateWhen(isSleeping(), this.tickCount);
-
-    }
-
-    private boolean isHooting() {
-        return this.entityData.get(HOOTING);
-    }
-
-    private void setHooting(boolean hooting) {
-        this.entityData.set(HOOTING, hooting);
+        int timeOfDay = (int) (this.level().getDayTime() % 24000L);
+        return this.huntsThisNight && timeOfDay >= this.huntStartTime && timeOfDay <= this.huntEndTime;
     }
 
     @Override
@@ -284,8 +388,8 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
     }
 
     @Override
-    public void setTame(boolean tamed, boolean flag) {
-        super.setTame(tamed, flag);
+    public void setTame(boolean tamed, boolean applyTamingSideEffects) {
+        super.setTame(tamed, applyTamingSideEffects);
 
         if (tamed) {
             Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(20.0D);
@@ -295,112 +399,145 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
             Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(6.0D);
             Objects.requireNonNull(this.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(2.0D);
         }
-
     }
 
     @Override
     public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        Item item = stack.getItem();
-        if (this.isTame()) {
-            if (this.isFood(stack) && this.getHealth() < this.getMaxHealth()) {
-                if (!level().isClientSide()) {
-                    if (!player.isCreative()) {
-                        stack.shrink(1);
-                    }
+        ItemStack itemStack = player.getItemInHand(hand);
+        Item item = itemStack.getItem();
 
+        if (this.isTame()) {
+            if (this.isFood(itemStack) && this.getHealth() < this.getMaxHealth()) {
+                if (!this.level().isClientSide()) {
+                    if (!player.isCreative()) {
+                        itemStack.shrink(1);
+                    }
                     this.heal((float) item.getDefaultInstance().getOrDefault(DataComponents.FOOD, Foods.CARROT).nutrition());
                 }
                 return InteractionResult.SUCCESS;
             }
 
-            InteractionResult actionResult = super.mobInteract(player, hand);
-            if ((!actionResult.consumesAction() || this.isBaby()) && this.isOwnedBy(player)) {
-                if (!level().isClientSide()) {
-                    setOrderedToSit(!isOrderedToSit());
+            InteractionResult interactionResult = super.mobInteract(player, hand);
+            if ((!interactionResult.consumesAction() || this.isBaby()) && this.isOwnedBy(player)) {
+                if (!this.level().isClientSide()) {
+                    this.wakeUp();
+                    this.setOrderedToSit(!this.isOrderedToSit());
                     this.jumping = false;
                     this.navigation.stop();
                     this.setTarget(null);
                 }
                 return InteractionResult.SUCCESS;
             }
-            return actionResult;
-        } else {
-            if (isFood(stack) && this.getTarget() == null) {
-                if (!level().isClientSide()) {
-                    if (!player.isCreative()) {
-                        stack.shrink(1);
-                    }
-
-                    if (this.random.nextInt(3) == 0) {
-                        this.tame(player);
-                        this.navigation.stop();
-                        this.setTarget(null);
-                        setOrderedToSit(true);
-                        this.level().broadcastEntityEvent(this, (byte) 7);
-                    } else {
-                        this.level().broadcastEntityEvent(this, (byte) 6);
-                    }
-                }
-                return InteractionResult.SUCCESS;
-            }
+            return interactionResult;
         }
+
+        if (this.isFood(itemStack) && this.getTarget() == null) {
+            if (!this.level().isClientSide()) {
+                if (!player.isCreative()) {
+                    itemStack.shrink(1);
+                }
+
+                if (this.random.nextInt(3) == 0) {
+                    this.tame(player);
+                    this.navigation.stop();
+                    this.setTarget(null);
+                    this.setOrderedToSit(true);
+                    this.level().broadcastEntityEvent(this, (byte) 7);
+                } else {
+                    this.level().broadcastEntityEvent(this, (byte) 6);
+                }
+            }
+            return InteractionResult.SUCCESS;
+        }
+
         return super.mobInteract(player, hand);
     }
 
     @Override
-    public boolean isFood(ItemStack stack) {
-        return stack.has(DataComponents.FOOD) && stack.get(DataComponents.FOOD) != null && stack.is(ItemTags.MEAT);
+    public boolean isFood(ItemStack itemStack) {
+        return itemStack.has(DataComponents.FOOD) && itemStack.get(DataComponents.FOOD) != null && itemStack.is(ItemTags.MEAT);
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-
-        tag.putInt("OwlState", getEntityData().get(OWL_STATE));
-        tag.putInt("StandingState", getEntityData().get(STANDING_STATE));
+        tag.putInt("StandingState", this.getEntityData().get(STANDING_STATE));
+        tag.putBoolean("Sleeping", this.isSleeping());
+        tag.putInt("SleepCooldownTicks", this.sleepCooldownTicks);
+        tag.putInt("SleepPreparationTicks", this.sleepPreparationTicks);
+        tag.putInt("RequiredSleepPreparationTicks", this.requiredSleepPreparationTicks);
+        tag.putInt("HuntScheduleNight", this.huntScheduleNight);
+        tag.putBoolean("HuntsThisNight", this.huntsThisNight);
+        tag.putInt("HuntStartTime", this.huntStartTime);
+        tag.putInt("HuntEndTime", this.huntEndTime);
+        tag.putInt("RottenFleshCooldownTicks", this.rottenFleshCooldownTicks);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        setOwlState(OwlState.values()[tag.getInt("OwlState")]);
-        setStandingState(StandingState.values()[tag.getInt("StandingState")]);
+        this.setStandingState(StandingState.values()[tag.getInt("StandingState")]);
+        this.setSleeping(tag.getBoolean("Sleeping"));
+        this.sleepCooldownTicks = tag.getInt("SleepCooldownTicks");
+        this.sleepPreparationTicks = tag.getInt("SleepPreparationTicks");
+        this.requiredSleepPreparationTicks = tag.contains("RequiredSleepPreparationTicks") ? tag.getInt("RequiredSleepPreparationTicks") : this.getRandomSleepPreparationTicks();
+        this.huntScheduleNight = tag.getInt("HuntScheduleNight");
+        this.huntsThisNight = tag.getBoolean("HuntsThisNight");
+        this.huntStartTime = tag.getInt("HuntStartTime");
+        this.huntEndTime = tag.getInt("HuntEndTime");
+        this.rottenFleshCooldownTicks = tag.getInt("RottenFleshCooldownTicks");
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(STANDING_STATE, 0);
-        builder.define(OWL_STATE, 0);
         builder.define(ATTACKING, false);
         builder.define(HOOTING, false);
         builder.define(SLEEPING, false);
     }
 
     @Override
-    public boolean causeFallDamage(float f, float g, DamageSource damageSource) {
+    public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
         return false;
     }
 
     @Override
-    protected void checkFallDamage(double d, boolean bl, BlockState blockState, BlockPos blockPos) {
+    protected void checkFallDamage(double yMotion, boolean onGround, BlockState blockState, BlockPos blockPos) {
+    }
+
+    @Nullable
+    @Override
+    public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
+        OwlEntity owlEntity = EntityTypeRegistry.OWL.get().create(serverLevel);
+        UUID ownerUuid = this.getOwnerUUID();
+        if (ownerUuid != null && owlEntity != null) {
+            owlEntity.setOwnerUUID(ownerUuid);
+            owlEntity.setTame(true, true);
+        }
+        return owlEntity;
+    }
+
+    @Override
+    protected @NotNull PathNavigation createNavigation(Level level) {
+        FlyingPathNavigation flyingPathNavigation = new FlyingPathNavigation(this, level);
+        flyingPathNavigation.setCanPassDoors(true);
+        flyingPathNavigation.setCanFloat(false);
+        flyingPathNavigation.setCanOpenDoors(false);
+        return flyingPathNavigation;
+    }
+
+    @Override
+    public float getSwimAmount(float partialTick) {
+        return Mth.rotLerp(partialTick, this.lastLeaningPitch, this.leaningPitch);
     }
 
     public StandingState getStandingState() {
-        return StandingState.values()[getEntityData().get(STANDING_STATE)];
+        return StandingState.values()[this.getEntityData().get(STANDING_STATE)];
     }
 
     public void setStandingState(StandingState standingState) {
-        getEntityData().set(STANDING_STATE, standingState.ordinal());
-    }
-
-    public OwlState getOwlState() {
-        return OwlState.values()[getEntityData().get(OWL_STATE)];
-    }
-
-    public void setOwlState(OwlState owlState) {
-        getEntityData().set(OWL_STATE, owlState.ordinal());
+        this.getEntityData().set(STANDING_STATE, standingState.ordinal());
     }
 
     @Override
@@ -415,12 +552,13 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
 
     @Override
     protected @Nullable SoundEvent getHurtSound(DamageSource source) {
+        this.wakeUp();
         return SoundRegistry.OWL_HURT.get();
     }
 
     @Override
     public LivingEntity getTarget_() {
-        return getTarget();
+        return this.getTarget();
     }
 
     @Override
@@ -429,8 +567,8 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
     }
 
     @Override
-    public void setAttacking_(boolean b) {
-        this.entityData.set(ATTACKING, b);
+    public void setAttacking_(boolean attacking) {
+        this.entityData.set(ATTACKING, attacking);
     }
 
     public boolean isAttacking() {
@@ -438,8 +576,8 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
     }
 
     @Override
-    public Vec3 getPosition_(int i) {
-        return super.getPosition(i);
+    public Vec3 getPosition_(int positionIndex) {
+        return super.getPosition(positionIndex);
     }
 
     @Override
@@ -447,79 +585,498 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
         super.doHurtTarget(targetEntity);
     }
 
-
-    public enum StandingState {
-        STANDING, FLYING
-    }
-
-    public enum OwlState {
-        IDLE, ATTACKING
-    }
-
-
-    private static class ExtendedFlyOntoTree extends WaterAvoidingRandomStrollGoal {
-        public ExtendedFlyOntoTree(PathfinderMob pathAwareEntity, double speed, float probability) {
-            super(pathAwareEntity, speed, probability);
-        }
-
-        @Override
-        protected Vec3 getPosition() {
-            Vec3 vec3d = null;
-            if (this.mob.isInWaterOrBubble()) {
-                vec3d = LandRandomPos.getPos(this.mob, 15, 7);
-            }
-
-            if (this.mob.getRandom().nextFloat() >= this.probability) {
-                vec3d = this.getTreeTarget();
-            }
-
-            return vec3d == null ? super.getPosition() : vec3d;
-        }
-
-        private Vec3 getTreeTarget() {
-            BlockPos blockPos = this.mob.getOnPos();
-            BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
-            BlockPos.MutableBlockPos mutable2 = new BlockPos.MutableBlockPos();
-            Iterable<BlockPos> iterable = BlockPos.betweenClosed(Mth.floor(this.mob.getX() - 3.0D), Mth.floor(this.mob.getY() - 6.0D), Mth.floor(this.mob.getZ() - 3.0D), Mth.floor(this.mob.getX() + 3.0D), Mth.floor(this.mob.getY() + 6.0D), Mth.floor(this.mob.getZ() + 3.0D));
-            Iterator<BlockPos> var5 = iterable.iterator();
-
-            BlockPos blockPos2;
-            boolean bl;
-            do {
-                do {
-                    if (!var5.hasNext()) {
-                        return null;
-                    }
-
-                    blockPos2 = var5.next();
-                }
-                while (blockPos.equals(blockPos2));
-
-                BlockState blockState = this.mob.level().getBlockState(mutable2.setWithOffset(blockPos2, Direction.DOWN));
-                bl = blockState.getBlock() instanceof LeavesBlock || blockState.is(BlockTags.LOGS);
-            }
-            while (!bl || !this.mob.level().isEmptyBlock(blockPos2) || !this.mob.level().isEmptyBlock(mutable.setWithOffset(blockPos2, Direction.UP)));
-
-            return Vec3.atBottomCenterOf(blockPos2);
-        }
-    }
-
-    private void setSleeping(boolean b) {
-        this.entityData.set(SLEEPING, b);
-    }
-
-    public boolean isInPanicRightNow() {
-        return getLastHurtByMob() != null || isOnFire();
-    }
-
     @Override
     public boolean isSleeping() {
         return this.entityData.get(SLEEPING);
     }
 
+    public boolean canUseActiveBehavior() {
+        return !this.isSleeping() && !this.isPassenger();
+    }
+
+    public boolean canPrepareForSleep() {
+        return this.level().isDay()
+                && !this.canHuntNow()
+                && !this.isInPanicRightNow()
+                && !this.isAttacking()
+                && this.getTarget() == null
+                && !this.isInWaterOrBubble()
+                && !this.isOrderedToSit()
+                && !this.isPassenger()
+                && !this.isVehicle()
+                && !this.isLeashed()
+                && !this.isPanickingFromNearbyThreat()
+                && this.hasValidSleepLocationForCurrentState();
+    }
+
+    public boolean canStartSleeping() {
+        return !this.isSleeping()
+                && this.sleepCooldownTicks <= 0
+                && this.canPrepareForSleep()
+                && this.sleepPreparationTicks >= this.requiredSleepPreparationTicks;
+    }
+
+    public boolean canContinueSleeping() {
+        return this.isSleeping()
+                && this.level().isDay()
+                && !this.canHuntNow()
+                && !this.isInPanicRightNow()
+                && !this.isInWaterOrBubble()
+                && !this.isPassenger()
+                && !this.isOrderedToSit()
+                && this.hasValidSleepLocationForCurrentState()
+                && !this.hasWakeUpTriggerNearby();
+    }
+
+    public boolean canSearchForSleepPerch() {
+        return !this.isTame()
+                && this.level().isDay()
+                && !this.canHuntNow()
+                && !this.isSleeping()
+                && this.sleepCooldownTicks <= 0
+                && !this.isInPanicRightNow()
+                && !this.isAttacking()
+                && this.getTarget() == null
+                && !this.isInWaterOrBubble()
+                && !this.isOrderedToSit()
+                && !this.isPassenger()
+                && !this.isVehicle()
+                && !this.isLeashed()
+                && !this.hasThreatNearby()
+                && !this.isValidSleepPerch();
+    }
+
+    public boolean hasValidSleepLocationForCurrentState() {
+        return this.isTame() || this.isValidSleepPerch();
+    }
+
+    public boolean isValidSleepPerch() {
+        BlockPos currentBlockPosition = this.blockPosition();
+        BlockState currentBlockState = this.level().getBlockState(currentBlockPosition);
+        if (currentBlockState.is(BlockTags.LOGS) || currentBlockState.getBlock() instanceof LeavesBlock) {
+            return true;
+        }
+
+        BlockPos belowBlockPosition = currentBlockPosition.below();
+        BlockState belowBlockState = this.level().getBlockState(belowBlockPosition);
+        return belowBlockState.is(BlockTags.LOGS) || belowBlockState.getBlock() instanceof LeavesBlock;
+    }
+
+    public boolean isValidSleepPerchSupport(BlockPos blockPos) {
+        BlockState blockState = this.level().getBlockState(blockPos);
+        return blockState.is(BlockTags.LOGS) || blockState.getBlock() instanceof LeavesBlock;
+    }
+
+    public boolean hasReachedPerchTarget(BlockPos blockPos) {
+        Vec3 perchCenter = Vec3.atBottomCenterOf(blockPos);
+        double deltaX = this.getX() - perchCenter.x;
+        double deltaZ = this.getZ() - perchCenter.z;
+        double horizontalDistance = deltaX * deltaX + deltaZ * deltaZ;
+        double verticalDistance = Math.abs(this.getY() - perchCenter.y);
+        return horizontalDistance <= 1.75D && verticalDistance <= 2.5D;
+    }
+
+    public void snapToPerch(BlockPos blockPos) {
+        Vec3 perchCenter = Vec3.atBottomCenterOf(blockPos);
+        this.setPos(perchCenter.x, perchCenter.y, perchCenter.z);
+        this.setDeltaMovement(Vec3.ZERO);
+        this.navigation.stop();
+    }
+
+    @Nullable
+    public BlockPos findNearbySleepPerch() {
+        BlockPos bestPerchPosition = null;
+        double bestDistance = Double.MAX_VALUE;
+        Iterable<BlockPos> nearbyPositions = BlockPos.betweenClosed(
+                Mth.floor(this.getX() - 8.0D),
+                Mth.floor(this.getY() - 4.0D),
+                Mth.floor(this.getZ() - 8.0D),
+                Mth.floor(this.getX() + 8.0D),
+                Mth.floor(this.getY() + 6.0D),
+                Mth.floor(this.getZ() + 8.0D)
+        );
+
+        for (BlockPos candidateSupportPosition : nearbyPositions) {
+            if (!this.isValidSleepPerchSupport(candidateSupportPosition)) {
+                continue;
+            }
+
+            BlockPos candidatePerchPosition = candidateSupportPosition.above();
+            if (!this.level().isEmptyBlock(candidatePerchPosition) || !this.level().isEmptyBlock(candidatePerchPosition.above())) {
+                continue;
+            }
+
+            double distanceToCandidate = this.distanceToSqr(Vec3.atBottomCenterOf(candidatePerchPosition));
+            if (distanceToCandidate < 2.0D) {
+                continue;
+            }
+
+            if (distanceToCandidate < bestDistance) {
+                bestDistance = distanceToCandidate;
+                bestPerchPosition = candidatePerchPosition.immutable();
+            }
+        }
+
+        return bestPerchPosition;
+    }
+
+    @Nullable
+    public ItemEntity findNearbyRottenFlesh() {
+        if (this.rottenFleshCooldownTicks > 0) {
+            return null;
+        }
+
+        List<ItemEntity> rottenFleshEntities = this.level().getEntitiesOfClass(
+                ItemEntity.class,
+                this.getBoundingBox().inflate(10.0D, 4.0D, 10.0D),
+                itemEntity -> itemEntity.isAlive() && itemEntity.getItem().is(Items.ROTTEN_FLESH)
+        );
+
+        if (rottenFleshEntities.isEmpty()) {
+            return null;
+        }
+
+        rottenFleshEntities.sort(Comparator.comparingDouble(this::distanceToSqr));
+        return rottenFleshEntities.get(0);
+    }
+
+    public void consumeRottenFlesh(ItemEntity itemEntity) {
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        ItemStack rottenFleshStack = itemEntity.getItem().copy();
+
+        serverLevel.sendParticles(
+                new ItemParticleOption(ParticleTypes.ITEM, rottenFleshStack),
+                itemEntity.getX(),
+                itemEntity.getY() + 0.1D,
+                itemEntity.getZ(),
+                8,
+                0.1D,
+                0.1D,
+                0.1D,
+                0.02D
+        );
+
+        itemEntity.discard();
+        this.rottenFleshCooldownTicks = 40;
+    }
+
+    public boolean hasThreatNearby() {
+        AABB threatCheckBox = this.getBoundingBox().inflate(8.0D, 4.0D, 8.0D);
+        return !this.level().getEntitiesOfClass(LivingEntity.class, threatCheckBox, this::isRelevantThreat).isEmpty();
+    }
+
+    public boolean hasWakeUpTriggerNearby() {
+        AABB wakeUpCheckBox = this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D);
+        return !this.level().getEntitiesOfClass(LivingEntity.class, wakeUpCheckBox, this::isRelevantWakeUpTrigger).isEmpty();
+    }
+
+    public boolean isInPanicRightNow() {
+        return this.getLastHurtByMob() != null || this.isOnFire();
+    }
+
+    private void setupAnimationStates() {
+        StandingState standingState = this.getStandingState();
+        this.flyingState.animateWhen(standingState == StandingState.FLYING, this.tickCount);
+        this.attackState.animateWhen(this.isAttacking(), this.tickCount);
+        this.hootState.animateWhen(this.isHooting(), this.tickCount);
+        this.sleepState.animateWhen(this.isSleeping(), this.tickCount);
+    }
+
+    private void spawnSleepingParticle() {
+        if (!this.isSleeping()) {
+            return;
+        }
+
+        if (this.tickCount % 12 != 0) {
+            return;
+        }
+
+        double particleX = this.getX() + (this.random.nextDouble() - 0.5D) * 0.2D;
+        double particleY = this.getY() + this.getBbHeight() * 0.8D;
+        double particleZ = this.getZ() + (this.random.nextDouble() - 0.5D) * 0.2D;
+        double particleVelocityX = (this.random.nextDouble() - 0.5D) * 0.01D;
+        double particleVelocityY = 0.01D + this.random.nextDouble() * 0.01D;
+        double particleVelocityZ = (this.random.nextDouble() - 0.5D) * 0.01D;
+
+        this.level().addParticle(
+                ParticleTypeRegistry.SLEEPING.get(),
+                particleX,
+                particleY,
+                particleZ,
+                particleVelocityX,
+                particleVelocityY,
+                particleVelocityZ
+        );
+    }
+
+    private boolean isHooting() {
+        return this.entityData.get(HOOTING);
+    }
+
+    private void setHooting(boolean hooting) {
+        this.entityData.set(HOOTING, hooting);
+    }
+
+    private void setSleeping(boolean sleeping) {
+        this.entityData.set(SLEEPING, sleeping);
+    }
+
+    private boolean isRelevantThreat(LivingEntity entity) {
+        if (!entity.isAlive() || entity == this) {
+            return false;
+        }
+
+        if (entity == this.getOwner()) {
+            return false;
+        }
+
+        if (entity instanceof Player player) {
+            return !this.isOwnedBy(player);
+        }
+
+        if (entity instanceof OwnableEntity ownableEntity) {
+            LivingEntity ownableOwner = ownableEntity.getOwner();
+            if (ownableOwner != null && ownableOwner == this.getOwner()) {
+                return false;
+            }
+        }
+
+        return entity == this.getTarget()
+                || entity.getLastHurtMob() == this
+                || entity.getLastHurtByMob() == this
+                || entity.getType().is(TagsRegistry.OWL_TARGETS);
+    }
+
+    private boolean isRelevantWakeUpTrigger(LivingEntity entity) {
+        if (!entity.isAlive() || entity == this) {
+            return false;
+        }
+
+        if (entity == this.getOwner()) {
+            return true;
+        }
+
+        if (entity instanceof Player player) {
+            return !this.isOwnedBy(player);
+        }
+
+        if (entity == this.getTarget()) {
+            return true;
+        }
+
+        return entity.getType().is(TagsRegistry.OWL_TARGETS)
+                || entity.getLastHurtMob() == this
+                || entity.getLastHurtByMob() == this;
+    }
+
+    private boolean isPanickingFromNearbyThreat() {
+        return this.hasThreatNearby();
+    }
+
+    private int getRandomSleepPreparationTicks() {
+        return 40;
+    }
+
+    private int getRandomSleepCooldownTicks() {
+        return 200 + this.random.nextInt(201);
+    }
+
+    private void resetSleepPreparation() {
+        this.sleepPreparationTicks = 0;
+        this.requiredSleepPreparationTicks = this.getRandomSleepPreparationTicks();
+    }
+
+    private void startSleeping() {
+        this.setSleeping(true);
+        this.setHooting(false);
+        this.setAttacking_(false);
+        this.setTarget(null);
+        this.navigation.stop();
+        this.setDeltaMovement(Vec3.ZERO);
+    }
+
+    private void wakeUp() {
+        if (!this.isSleeping()) {
+            this.resetSleepPreparation();
+            return;
+        }
+
+        this.setSleeping(false);
+        this.sleepCooldownTicks = this.getRandomSleepCooldownTicks();
+        this.resetSleepPreparation();
+
+        if (this.level() instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(
+                    ParticleTypes.ANGRY_VILLAGER,
+                    this.getX(),
+                    this.getY() + this.getBbHeight() + 0.2D,
+                    this.getZ(),
+                    1,
+                    0.0D,
+                    0.0D,
+                    0.0D,
+                    0.0D
+            );
+        }
+    }
+
+    public enum StandingState {
+        STANDING,
+        FLYING
+    }
+
+    private static class ExtendedFlyOntoTree extends WaterAvoidingRandomStrollGoal {
+        public ExtendedFlyOntoTree(PathfinderMob pathfinderMob, double speedModifier, float probability) {
+            super(pathfinderMob, speedModifier, probability);
+        }
+
+        @Override
+        protected Vec3 getPosition() {
+            Vec3 targetPosition = null;
+            if (this.mob.isInWaterOrBubble()) {
+                targetPosition = LandRandomPos.getPos(this.mob, 15, 7);
+            }
+
+            if (this.mob.getRandom().nextFloat() >= this.probability) {
+                targetPosition = this.getTreeTarget();
+            }
+
+            return targetPosition == null ? super.getPosition() : targetPosition;
+        }
+
+        private Vec3 getTreeTarget() {
+            BlockPos currentBlockPos = this.mob.getOnPos();
+            BlockPos.MutableBlockPos upperCheckPosition = new BlockPos.MutableBlockPos();
+            BlockPos.MutableBlockPos lowerCheckPosition = new BlockPos.MutableBlockPos();
+            Iterable<BlockPos> nearbyPositions = BlockPos.betweenClosed(
+                    Mth.floor(this.mob.getX() - 3.0D),
+                    Mth.floor(this.mob.getY() - 6.0D),
+                    Mth.floor(this.mob.getZ() - 3.0D),
+                    Mth.floor(this.mob.getX() + 3.0D),
+                    Mth.floor(this.mob.getY() + 6.0D),
+                    Mth.floor(this.mob.getZ() + 3.0D)
+            );
+
+            for (BlockPos candidatePosition : nearbyPositions) {
+                if (currentBlockPos.equals(candidatePosition)) {
+                    continue;
+                }
+
+                BlockState supportingBlockState = this.mob.level().getBlockState(lowerCheckPosition.setWithOffset(candidatePosition, Direction.DOWN));
+                boolean validTreeBlock = supportingBlockState.getBlock() instanceof LeavesBlock || supportingBlockState.is(BlockTags.LOGS);
+                if (!validTreeBlock) {
+                    continue;
+                }
+
+                if (!this.mob.level().isEmptyBlock(candidatePosition)) {
+                    continue;
+                }
+
+                if (!this.mob.level().isEmptyBlock(upperCheckPosition.setWithOffset(candidatePosition, Direction.UP))) {
+                    continue;
+                }
+
+                return Vec3.atBottomCenterOf(candidatePosition);
+            }
+
+            return null;
+        }
+    }
+
+    private static class MoveToSleepPerchGoal extends Goal {
+        private final OwlEntity owl;
+        private final double speedModifier;
+        private BlockPos targetPerchPosition;
+        private int pathRecalculationTicks;
+        private int stuckTicks;
+
+        public MoveToSleepPerchGoal(OwlEntity owl, double speedModifier) {
+            this.owl = owl;
+            this.speedModifier = speedModifier;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            if (!this.owl.canSearchForSleepPerch()) {
+                return false;
+            }
+
+            this.targetPerchPosition = this.owl.findNearbySleepPerch();
+            return this.targetPerchPosition != null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.targetPerchPosition != null
+                    && this.owl.canSearchForSleepPerch()
+                    && !this.owl.isValidSleepPerch()
+                    && !this.owl.hasReachedPerchTarget(this.targetPerchPosition)
+                    && this.stuckTicks < 60;
+        }
+
+        @Override
+        public void start() {
+            this.pathRecalculationTicks = 0;
+            this.stuckTicks = 0;
+            this.moveToTargetPerch();
+        }
+
+        @Override
+        public void tick() {
+            if (this.targetPerchPosition == null) {
+                return;
+            }
+
+            if (this.owl.hasReachedPerchTarget(this.targetPerchPosition)) {
+                this.owl.snapToPerch(this.targetPerchPosition);
+                this.stuckTicks = 0;
+                return;
+            }
+
+            this.pathRecalculationTicks--;
+            if (this.pathRecalculationTicks <= 0 || this.owl.navigation.isDone()) {
+                this.pathRecalculationTicks = 10;
+                this.moveToTargetPerch();
+            }
+
+            Vec3 movement = this.owl.getDeltaMovement();
+            boolean barelyMoving = Math.abs(movement.x) < 0.01D
+                    && Math.abs(movement.y) < 0.01D
+                    && Math.abs(movement.z) < 0.01D;
+
+            if (this.owl.navigation.isDone() && barelyMoving) {
+                this.stuckTicks++;
+            } else {
+                this.stuckTicks = 0;
+            }
+        }
+
+        @Override
+        public void stop() {
+            this.owl.navigation.stop();
+            this.targetPerchPosition = null;
+            this.pathRecalculationTicks = 0;
+            this.stuckTicks = 0;
+        }
+
+        private void moveToTargetPerch() {
+            if (this.targetPerchPosition != null) {
+                this.owl.getNavigation().moveTo(
+                        this.targetPerchPosition.getX() + 0.5D,
+                        this.targetPerchPosition.getY(),
+                        this.targetPerchPosition.getZ() + 0.5D,
+                        this.speedModifier
+                );
+            }
+        }
+    }
+
     private static class SleepGoal extends Goal {
         private final OwlEntity owl;
-        private boolean keepSleeping;
 
         public SleepGoal(OwlEntity owlEntity) {
             this.owl = owlEntity;
@@ -528,11 +1085,12 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
 
         @Override
         public boolean canUse() {
-            return owl.level().isDay() && !owl.isInPanicRightNow();
+            return this.owl.canStartSleeping();
         }
 
+        @Override
         public boolean canContinueToUse() {
-            return keepSleeping && canUse();
+            return this.owl.canContinueSleeping();
         }
 
         @Override
@@ -543,22 +1101,90 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
         @Override
         public void start() {
             super.start();
-            keepSleeping = true;
-            owl.setSleeping(true);
+            this.owl.startSleeping();
         }
 
         @Override
         public void tick() {
-            if (owl.hasWakeUpTriggerNearby()) {
-                keepSleeping = false;
-                owl.setSleeping(false);
+            this.owl.navigation.stop();
+            this.owl.setDeltaMovement(Vec3.ZERO);
+            if (!this.owl.canContinueSleeping()) {
+                this.owl.wakeUp();
             }
         }
 
+        @Override
         public void stop() {
             super.stop();
-            keepSleeping = false;
-            owl.setSleeping(false);
+            this.owl.wakeUp();
+        }
+    }
+
+    private static class EatRottenFleshGoal extends Goal {
+        private final OwlEntity owl;
+        private final double speedModifier;
+        private ItemEntity targetRottenFlesh;
+
+        public EatRottenFleshGoal(OwlEntity owl, double speedModifier) {
+            this.owl = owl;
+            this.speedModifier = speedModifier;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            if (!this.owl.canHuntNow()) {
+                return false;
+            }
+
+            this.targetRottenFlesh = this.owl.findNearbyRottenFlesh();
+            return this.targetRottenFlesh != null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.targetRottenFlesh != null
+                    && this.targetRottenFlesh.isAlive()
+                    && this.targetRottenFlesh.getItem().is(Items.ROTTEN_FLESH)
+                    && this.owl.canHuntNow();
+        }
+
+        @Override
+        public void start() {
+            this.moveToTarget();
+        }
+
+        @Override
+        public void tick() {
+            if (this.targetRottenFlesh == null || !this.targetRottenFlesh.isAlive()) {
+                return;
+            }
+
+            if (this.owl.distanceToSqr(this.targetRottenFlesh) <= 2.25D) {
+                this.owl.consumeRottenFlesh(this.targetRottenFlesh);
+                this.targetRottenFlesh = null;
+                this.owl.navigation.stop();
+                return;
+            }
+
+            this.moveToTarget();
+        }
+
+        @Override
+        public void stop() {
+            this.targetRottenFlesh = null;
+            this.owl.navigation.stop();
+        }
+
+        private void moveToTarget() {
+            if (this.targetRottenFlesh != null) {
+                this.owl.getNavigation().moveTo(
+                        this.targetRottenFlesh.getX(),
+                        this.targetRottenFlesh.getY(),
+                        this.targetRottenFlesh.getZ(),
+                        this.speedModifier
+                );
+            }
         }
     }
 }
