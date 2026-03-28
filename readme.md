@@ -1,27 +1,119 @@
-<p align="center"><img src="https://imgur.com/XawqxIF.png" width="1200"></p>
-
-<h1 align="center">Welcome to WilderNature</h1>
-
-<p align="center">
-  Enjoy a new variety of animals!
+![Wilder Nature](https://lets-do.ch/assets/mod-logos/wildernature.webp)
 
 <br>
 
-
-Meet new friends on your adventures and discover new creatures - ranging from friendly to aggressive and neutral.<br>
-Adding new animals such as Deers, Red Wolves, Raccoons, and even rideable Rams!
+<p align="center">
+  <strong>Unleashed Wild & Bountiful Bounties</strong>
 </p>
 
-<h1 align="center">Available for</h1>
-<p align="center"><img src="https://imgur.com/gREqi3m.png" width="240" height="120"></p>
+<p align="center">
+  <em>The mod that adds a variety of wildlife to the Let's Do Collection</em>
+</p>
 
-<h1 align="center">Be Part of Our Journey</h1>
+<br>
 
 <p align="center">
-    <a title="discord" href="https://discord.gg/Vqu6wYZwdZ">
-        <img style="display: block; margin-left: auto; margin-right: auto;" src="https://1000logos.net/wp-content/uploads/2021/06/Discord-logo-2015.png" alt="" width="" height="140" />
-    </a>
-    <a title="patreon" href="https://www.patreon.com/user?u=78595058">
-        <img style="display: block; margin-left: auto; margin-right: auto;" src="https://cdn.icon-icons.com/icons2/2699/PNG/512/patreon_logo_icon_170869.png" alt="" width="" height="140" />
-    </a>
+  <em>"Tame the untamed"</em>
+</p>
+
+<br>
+
+Wilder Nature adds a *wild* variety of tamable and untamable wildlife, with intricate visuals and functions that enhance vanilla immersion. Breathe, steady yourself, and face any challenge with valor.
+
+<br>
+
+Venture forth. Show no fear.
+
+<br>
+
+Wilder Nature expands the roster of wildlife within the Let's Do Collection and breathes life into the world of Minecraft through dynamic creatures and hunting systems.
+
+<br>
+
+## Brave the Wilderness
+
+<br>
+
+- Set sight on and interact with the various wildlife found across your world  
+- New meats obtained by hunting the new wildlife  
+- New friends to make on your journeys  
+
+<br>
+
+Grab your blunderbuss, the hunt awaits.
+
+<br>
+
+## Fulfill Bounties and Collect Rewards
+
+<br>
+
+- Use the Bounty Board to obtain cool rewards from hunts. Temporarily disabled in 1.21.1  
+- Obtain a Bison Horn, the best way to show you're a master huntsman  
+- Turn fish into oil and fuel the fire to keep you warm at night  
+
+<br>
+
+The hunt rewards only the valorous.
+
+<br>
+
+## Decorative Elements
+
+<br>
+
+- Cool banners to decorate your hunting lodge  
+- Trophies of your kills that have useful effects  
+- A Stylin' Purple Hat, because why not?  
+
+<br>
+
+<p align="center">
+  <strong>Face the wilderness.</strong>
+</p>
+
+<p align="center">
+  <strong>Tame the untamable.</strong>
+</p>
+
+<p align="center">
+  <strong>Reap the rewards.</strong>
+</p>
+
+<br>
+
+<p align="center">
+  <em>Dedicated to MissLilitu</em>
+</p>
+
+<br>
+
+<div align="center">
+
+# The Let’s Do Collection
+
+<br>
+
+<a href="https://lets-do.ch/mods/">
+  <img src="https://github.com/Let-s-Do-Collection/Let-s-Do-Collection/raw/main/LOGO.png?raw=true" width="350" alt="The Let’s Do Collection">
+</a>
+
+<br>
+
+# Support & Community
+
+</div>
+
+<br>
+
+<p align="center">
+  Let’s Do grows through its community.
+</p>
+
+<br>
+
+<p align="center">
+  <a href="https://github.com/Let-s-Do-Collection/Let-s-Do-Collection">GitHub</a> •
+  <a href="https://discord.gg/Jb2bgpYr">Discord</a> •
+  <a href="https://www.patreon.com/c/u78595058">Patreon</a>
 </p>
