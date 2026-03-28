@@ -27,6 +27,7 @@ import net.satisfy.wildernature.core.entity.ai.AnimationAttackGoal;
 import net.satisfy.wildernature.core.entity.ai.EntityWithAttackAnimation;
 import net.satisfy.wildernature.core.entity.animation.ServerAnimationDurations;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
+import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.SoundRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +37,7 @@ public class TurkeyEntity extends Chicken implements EntityWithAttackAnimation {
     private static final Ingredient FOOD_ITEMS;
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(TurkeyEntity.class, EntityDataSerializers.BOOLEAN);
     public AnimationState attackAnimationState = new AnimationState();
+    private int turkeyEggTime;
 
     static {
         FOOD_ITEMS = Ingredient.of(
@@ -55,11 +57,12 @@ public class TurkeyEntity extends Chicken implements EntityWithAttackAnimation {
     public boolean isPelicanJockey;
     private float nextFlap = 1.0F;
 
-
     public TurkeyEntity(EntityType<? extends TurkeyEntity> entityType, Level level) {
         super(entityType, level);
         this.setPathfindingMalus(PathType.WATER, 0.0F);
+        this.turkeyEggTime = this.random.nextInt(6000) + 6000;
     }
+
 
     @Override
     public void tick() {
@@ -125,7 +128,10 @@ public class TurkeyEntity extends Chicken implements EntityWithAttackAnimation {
 
     @Override
     public void aiStep() {
+        this.eggTime = Integer.MAX_VALUE;
+
         super.aiStep();
+
         this.oFlap = this.flap;
         this.oFlapSpeed = this.flapSpeed;
         this.flapSpeed += (this.onGround() ? -1.0F : 3.0F) * 0.2F;
@@ -141,6 +147,12 @@ public class TurkeyEntity extends Chicken implements EntityWithAttackAnimation {
         }
 
         this.flap += this.flapping * 2.0F;
+
+        if (!this.level().isClientSide() && this.isAlive() && !this.isBaby() && --this.turkeyEggTime <= 0) {
+            this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+            this.spawnAtLocation(ObjectRegistry.TURKEY_EGG.get());
+            this.turkeyEggTime = this.random.nextInt(6000) + 6000;
+        }
     }
 
     protected boolean isFlapping() {

@@ -58,7 +58,6 @@ public class DeerEntity extends Animal {
     public final AnimationState idleState = new AnimationState();
     public final AnimationState lookAroundState = new AnimationState();
     public final AnimationState eatingState = new AnimationState();
-    private int idleAnimationTimeout = 0;
     public int globalCooldown = 0;
 
     public DeerEntity(EntityType<? extends Animal> entityType, Level world) {
@@ -162,11 +161,13 @@ public class DeerEntity extends Animal {
     }
 
     public void setupAnimationStates() {
-        if (this.idleAnimationTimeout <= 0) {
-            this.idleAnimationTimeout = this.random.nextInt(40) + 80;
-            this.idleState.start(this.tickCount);
+        boolean moving = this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-4;
+        boolean idleAllowed = !moving && !this.isDeerRunning() && !this.isEating() && !this.isLookingAround();
+
+        if (idleAllowed) {
+            this.idleState.startIfStopped(this.tickCount);
         } else {
-            --this.idleAnimationTimeout;
+            this.idleState.stop();
         }
     }
 

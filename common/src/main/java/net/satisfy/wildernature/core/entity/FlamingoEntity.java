@@ -29,7 +29,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class FlamingoEntity extends Animal {
     public final AnimationState idleAnimationState = new AnimationState();
-    private int idleAnimationTimeout = 0;
     public AnimationState standAnimationState = new AnimationState();
 
     private static final EntityDataAccessor<Boolean> STANDING = SynchedEntityData.defineId(FlamingoEntity.class, EntityDataSerializers.BOOLEAN);
@@ -103,14 +102,16 @@ public class FlamingoEntity extends Animal {
     }
 
     private void setupAnimationStates() {
-        standAnimationState.animateWhen(this.isStanding(), tickCount);
+        boolean moving = this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-4;
+        boolean idleAllowed = !moving && !this.isStanding();
 
-        if (this.idleAnimationTimeout <= 0) {
-            this.idleAnimationTimeout = this.random.nextInt(40) + 80;
-            this.idleAnimationState.start(this.tickCount);
+        if (idleAllowed) {
+            this.idleAnimationState.startIfStopped(this.tickCount);
         } else {
-            --this.idleAnimationTimeout;
+            this.idleAnimationState.stop();
         }
+
+        this.standAnimationState.animateWhen(this.isStanding(), this.tickCount);
     }
 
     private boolean isStanding() {

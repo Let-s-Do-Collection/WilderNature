@@ -7,6 +7,6 @@ import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 
 public class BountyBoardBlockEntity extends BlockEntity {
     public BountyBoardBlockEntity(BlockPos pos, BlockState state) {
-        super(EntityTypeRegistry.BOUNTY_BOARD_ENTITY.get(), pos, state);
+        super(EntityTypeRegistry.BOUNTY_BOARD_BLOCK_ENTITY.get(), pos, state);
     }
 }

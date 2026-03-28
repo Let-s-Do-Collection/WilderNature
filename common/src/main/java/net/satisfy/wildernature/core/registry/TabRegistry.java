@@ -16,7 +16,7 @@ public class TabRegistry {
             .icon(() -> new ItemStack(ObjectRegistry.BOUNTY_BOARD.get()))
             .title(Component.translatable("creative_tab.wildernature"))
             .displayItems((parameters, out) -> {
-                out.accept(ObjectRegistry.TERMITE_MOUND.get());
+                out.accept(ObjectRegistry.TRUFFLE_BAG.get());
                 out.accept(ObjectRegistry.HAZELNUT.get());
                 out.accept(ObjectRegistry.BISON_MEAT.get());
                 out.accept(ObjectRegistry.COOKED_BISON_MEAT.get());
@@ -33,6 +33,7 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.COMMON_CONTRACT.get());
                 out.accept(ObjectRegistry.RARE_CONTRACT.get());
                 out.accept(ObjectRegistry.BISON_HORN.get());
+                out.accept(ObjectRegistry.TURKEY_EGG.get());
                 out.accept(ObjectRegistry.FISH_OIL.get());
                 out.accept(ObjectRegistry.TRUFFLE.get());
                 out.accept(ObjectRegistry.LOOT_BAG.get());
@@ -52,7 +53,6 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.RACCOON_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.MINISHEEP_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.SQUIRREL_SPAWN_EGG.get());
-                out.accept(ObjectRegistry.TERMITE_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.PELICAN_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.BOAR_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.OWL_SPAWN_EGG.get());

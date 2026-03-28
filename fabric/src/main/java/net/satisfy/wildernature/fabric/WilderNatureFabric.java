@@ -84,6 +84,7 @@ public class WilderNatureFabric implements ModInitializer {
 
     private void registerFuel() {
         FuelRegistry.INSTANCE.add(ObjectRegistry.FISH_OIL.get(), 1600);
+        FuelRegistry.INSTANCE.add(ObjectRegistry.WOODMEAL.get(), 800);
     }
 
     void addSpawns() {

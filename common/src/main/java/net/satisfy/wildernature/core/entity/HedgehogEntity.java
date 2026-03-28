@@ -36,7 +36,6 @@ import java.util.List;
 
 public class HedgehogEntity extends Animal {
     public final AnimationState idleAnimationState = new AnimationState();
-    private int idleAnimationTimeout = 0;
     public AnimationState sniffAnimationState = new AnimationState();
 
     private static final EntityDataAccessor<Boolean> SNIFFING = SynchedEntityData.defineId(HedgehogEntity.class, EntityDataSerializers.BOOLEAN);
@@ -118,14 +117,16 @@ public class HedgehogEntity extends Animal {
     }
 
     private void setupAnimationStates() {
-        sniffAnimationState.animateWhen(this.isSniffing(), tickCount);
+        boolean moving = this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-4;
+        boolean idleAllowed = !moving && !this.isSniffing();
 
-        if (this.idleAnimationTimeout <= 0) {
-            this.idleAnimationTimeout = this.random.nextInt(40) + 80;
-            this.idleAnimationState.start(this.tickCount);
+        if (idleAllowed) {
+            this.idleAnimationState.startIfStopped(this.tickCount);
         } else {
-            --this.idleAnimationTimeout;
+            this.idleAnimationState.stop();
         }
+
+        this.sniffAnimationState.animateWhen(this.isSniffing(), this.tickCount);
     }
 
     private boolean isSniffing() {

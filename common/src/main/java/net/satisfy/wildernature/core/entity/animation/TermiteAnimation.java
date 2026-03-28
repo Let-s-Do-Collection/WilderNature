@@ -58,6 +58,7 @@ public class TermiteAnimation {
                                         AnimationChannel.Interpolations.LINEAR),
                                 new Keyframe(1.35f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM))).build();
+
         public static final AnimationDefinition WALK = AnimationDefinition.Builder.withLength(0.3f).looping()
                 .addAnimation("base",
                         new AnimationChannel(AnimationChannel.Targets.POSITION,

@@ -32,10 +32,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class CassowaryEntity extends Animal implements EntityWithAttackAnimation {
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(CassowaryEntity.class, EntityDataSerializers.BOOLEAN);
-
     public final AnimationState attackAnimationState = new AnimationState();
     public final AnimationState idleAnimationState = new AnimationState();
-    private int idleAnimationTimeout = 0;
 
     @Override
     public void tick() {
@@ -46,12 +44,16 @@ public class CassowaryEntity extends Animal implements EntityWithAttackAnimation
     }
 
     private void setupAnimationStates() {
-        if (this.idleAnimationTimeout <= 0) {
-            this.idleAnimationTimeout = this.random.nextInt(40) + 80;
-            this.idleAnimationState.start(this.tickCount);
+        boolean moving = this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-4;
+        boolean idleAllowed = !moving && !this.entityData.get(ATTACKING);
+
+        if (idleAllowed) {
+            this.idleAnimationState.startIfStopped(this.tickCount);
         } else {
-            --this.idleAnimationTimeout;
+            this.idleAnimationState.stop();
         }
+
+        this.attackAnimationState.animateWhen(this.entityData.get(ATTACKING), this.tickCount);
     }
 
     @Override

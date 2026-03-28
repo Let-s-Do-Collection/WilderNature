@@ -42,7 +42,6 @@ import java.util.List;
 
 public class DogEntity extends TamableAnimal implements EntityWithAttackAnimation {
     public final AnimationState idleAnimationState = new AnimationState();
-    private int idleAnimationTimeout = 0;
     public AnimationState howlingAnimationState = new AnimationState();
     public AnimationState attackAnimationState = new AnimationState();
     public final AnimationState sitAnimationState = new AnimationState();
@@ -158,19 +157,18 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
     }
 
     private void setupAnimationStates() {
-        handleIdleAnimation();
-        howlingAnimationState.animateWhen(this.isHowling(), this.tickCount);
-        attackAnimationState.animateWhen(this.isAttacking(), this.tickCount);
-        sitAnimationState.animateWhen(this.isOrderedToSit(), this.tickCount);
-    }
+        boolean moving = this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-4;
+        boolean idleAllowed = !moving && !this.isOrderedToSit() && !this.isHowling() && !this.isAttacking();
 
-    private void handleIdleAnimation() {
-        if (this.idleAnimationTimeout <= 0) {
-            this.idleAnimationTimeout = this.random.nextInt(40) + 80;
-            this.idleAnimationState.start(this.tickCount);
+        if (idleAllowed) {
+            this.idleAnimationState.startIfStopped(this.tickCount);
         } else {
-            --this.idleAnimationTimeout;
+            this.idleAnimationState.stop();
         }
+
+        this.howlingAnimationState.animateWhen(this.isHowling(), this.tickCount);
+        this.attackAnimationState.animateWhen(this.isAttacking(), this.tickCount);
+        this.sitAnimationState.animateWhen(this.isOrderedToSit(), this.tickCount);
     }
 
     private boolean isAttacking() {

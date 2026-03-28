@@ -70,7 +70,6 @@ public class BisonEntity extends Animal implements EntityWithAttackAnimation {
     public final AnimationState idleAnimationState = new AnimationState();
     public final AnimationState attackAnimationState = new AnimationState();
     public AnimationState rollingAnimationState = new AnimationState();
-    private int idleAnimationTimeout = 0;
 
     public BisonEntity(EntityType<? extends Animal> entityType, Level world) {
         super(entityType, world);
@@ -120,14 +119,17 @@ public class BisonEntity extends Animal implements EntityWithAttackAnimation {
     }
 
     private void setupAnimationStates() {
-        if (this.idleAnimationTimeout <= 0) {
-            this.idleAnimationTimeout = this.random.nextInt(40) + 80;
-            this.idleAnimationState.start(this.tickCount);
+        boolean moving = this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-4;
+        boolean idleAllowed = !moving && !this.isAttacking() && !this.isRolling();
+
+        if (idleAllowed) {
+            this.idleAnimationState.startIfStopped(this.tickCount);
         } else {
-            --this.idleAnimationTimeout;
+            this.idleAnimationState.stop();
         }
-        attackAnimationState.animateWhen(this.isAttacking(), tickCount);
-        rollingAnimationState.animateWhen(this.isRolling(), tickCount);
+
+        this.attackAnimationState.animateWhen(this.isAttacking(), this.tickCount);
+        this.rollingAnimationState.animateWhen(this.isRolling(), this.tickCount);
     }
 
     private boolean isRolling() {

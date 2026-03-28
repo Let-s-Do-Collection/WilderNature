@@ -21,6 +21,7 @@ import net.satisfy.wildernature.core.registry.ObjectRegistry;
 
 import static net.satisfy.wildernature.client.util.WilderNatureClientUtil.makeHorn;
 import static net.satisfy.wildernature.core.registry.EntityTypeRegistry.*;
+import static net.satisfy.wildernature.core.registry.EntityTypeRegistry.TURKEY_EGG;
 import static net.satisfy.wildernature.core.registry.ObjectRegistry.*;
 
 @Environment(EnvType.CLIENT)
@@ -30,8 +31,8 @@ public class WilderNatureClient {
     public static void onInitializeClient() {
         RenderTypeRegistry.register(RenderType.cutout(), DEER_TROPHY.get(), HAZELNUT_BUSH.get(), BOUNTY_BOARD.get());
 
-        BlockEntityRendererRegistry.register(COMPLETIONIST_BANNER_ENTITY.get(), CompletionistBannerRenderer::new);
-        BlockEntityRendererRegistry.register(BOUNTY_BOARD_ENTITY.get(), BountyBoardRenderer::new);
+        BlockEntityRendererRegistry.register(COMPLETIONIST_BANNER_BLOCK_ENTITY.get(), CompletionistBannerRenderer::new);
+        BlockEntityRendererRegistry.register(BOUNTY_BOARD_BLOCK_ENTITY.get(), BountyBoardRenderer::new);
 
         makeHorn(ObjectRegistry.BISON_HORN.get());
     }
@@ -47,7 +48,6 @@ public class WilderNatureClient {
         EntityRendererRegistry.register(BOAR, BoarRenderer::new);
         EntityRendererRegistry.register(CASSOWARY, CassowaryRenderer::new);
         EntityRendererRegistry.register(DEER, DeerRenderer::new);
-        EntityRendererRegistry.register(TERMITE, TermiteRenderer::new);
         EntityRendererRegistry.register(DOG, DogRenderer::new);
         EntityRendererRegistry.register(FLAMINGO, FlamingoRenderer::new);
         EntityRendererRegistry.register(HEDGEHOG, HedgehogRenderer::new);
@@ -60,13 +60,13 @@ public class WilderNatureClient {
         EntityRendererRegistry.register(SQUIRREL, SquirrelRenderer::new);
         EntityRendererRegistry.register(TURKEY, TurkeyRenderer::new);
         EntityRendererRegistry.register(BULLET, ThrownItemRenderer::new);
+        EntityRendererRegistry.register(TURKEY_EGG, ThrownItemRenderer::new);
     }
 
     public static void registerEntityModelLayer() {
         EntityModelLayerRegistry.register(StylinPurpleHatModel.LAYER_LOCATION, StylinPurpleHatModel::createBodyLayer);
         EntityModelLayerRegistry.register(BisonModel.LAYER_LOCATION, BisonModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BoarModel.LAYER_LOCATION, BoarModel::getTexturedModelData);
-        EntityModelLayerRegistry.register(TermiteModel.LAYER_LOCATION, TermiteModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BountyBoardModel.LAYER_LOCATION, BountyBoardModel::getTexturedModelData);
         EntityModelLayerRegistry.register(CassowaryModel.LAYER_LOCATION, CassowaryModel::getTexturedModelData);
         EntityModelLayerRegistry.register(CompletionistBannerRenderer.LAYER_LOCATION, CompletionistBannerRenderer::createBodyLayer);

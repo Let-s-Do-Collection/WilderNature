@@ -36,14 +36,9 @@ public class MiniSheepEntity extends Animal implements Shearable {
     private static final EntityDataAccessor<Boolean> SHEARED = SynchedEntityData.defineId(MiniSheepEntity.class, EntityDataSerializers.BOOLEAN);
     private int eatAnimationTick;
     private EatBlockGoal eatBlockGoal;
-    private int eatAnimationTimeout = 0;
 
     public final AnimationState idleAnimationState = new AnimationState();
-    private int idleAnimationTimeout = 0;
-
     public final AnimationState attackAnimationState = new AnimationState();
-    public int attackAnimationTimeout = 0;
-
     public final AnimationState eatAnimationState = new AnimationState();
 
     public MiniSheepEntity(EntityType<? extends Animal> entityType, Level level) {
@@ -65,34 +60,21 @@ public class MiniSheepEntity extends Animal implements Shearable {
     }
 
     private void setupAnimationStates() {
-        if (this.idleAnimationTimeout <= 0) {
-            this.idleAnimationTimeout = this.random.nextInt(40) + 80;
-            this.idleAnimationState.start(this.tickCount);
+        boolean moving = this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-4;
+
+        boolean eating = this.eatAnimationTick > 0;
+        boolean attacking = this.isAttacking();
+
+        boolean idleAllowed = !moving && !eating && !attacking;
+
+        if (idleAllowed) {
+            this.idleAnimationState.startIfStopped(this.tickCount);
         } else {
-            --this.idleAnimationTimeout;
+            this.idleAnimationState.stop();
         }
 
-        if (this.isAttacking() && attackAnimationTimeout <= 0) {
-            attackAnimationTimeout = 80;
-            attackAnimationState.start(this.tickCount);
-        } else if (!this.isAttacking()) {
-            attackAnimationState.stop();
-            attackAnimationTimeout = 0;
-        } else {
-            --this.attackAnimationTimeout;
-        }
-
-        if (this.eatAnimationTick > 0) {
-            if (this.eatAnimationTimeout <= 0) {
-                this.eatAnimationState.start(this.tickCount);
-                this.eatAnimationTimeout = 40;
-            } else {
-                this.eatAnimationTimeout--;
-            }
-        } else {
-            this.eatAnimationState.stop();
-            this.eatAnimationTimeout = 0;
-        }
+        this.attackAnimationState.animateWhen(attacking, this.tickCount);
+        this.eatAnimationState.animateWhen(eating, this.tickCount);
     }
 
     @Override

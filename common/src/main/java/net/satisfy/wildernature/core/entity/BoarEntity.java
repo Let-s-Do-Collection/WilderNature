@@ -36,7 +36,6 @@ public class BoarEntity extends Animal {
     }
 
     public final AnimationState idleAnimationState = new AnimationState();
-    private int idleAnimationTimeout = 0;
     private int digAnimationTick;
     private DigIntoGrassGoal digintoBlockGoal;
     private boolean isDigging = false;
@@ -59,13 +58,16 @@ public class BoarEntity extends Animal {
     }
 
     private void setupAnimationStates() {
-        if (this.idleAnimationTimeout <= 0) {
-            this.idleAnimationTimeout = this.random.nextInt(40) + 80;
-            this.idleAnimationState.start(this.tickCount);
+        boolean moving = this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-4;
+        boolean idleAllowed = !moving && !this.isDigging();
+
+        if (idleAllowed) {
+            this.idleAnimationState.startIfStopped(this.tickCount);
         } else {
-            --this.idleAnimationTimeout;
+            this.idleAnimationState.stop();
         }
     }
+
 
     @Override
     protected void updateWalkAnimation(float pPartialTick) {

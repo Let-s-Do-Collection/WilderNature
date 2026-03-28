@@ -18,15 +18,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import java.util.EnumSet;
+
 public class PenguinEntity extends Animal {
     public final AnimationState idleAnimationState = new AnimationState();
-    private int idleAnimationTimeout = 0;
 
     @Override
     public void tick() {
@@ -39,13 +41,14 @@ public class PenguinEntity extends Animal {
         }
     }
 
-
     private void setupAnimationStates() {
-        if (this.idleAnimationTimeout <= 0) {
-            this.idleAnimationTimeout = this.random.nextInt(40) + 80;
-            this.idleAnimationState.start(this.tickCount);
+        boolean moving = this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-4;
+        boolean idleAllowed = !moving;
+
+        if (idleAllowed) {
+            this.idleAnimationState.startIfStopped(this.tickCount);
         } else {
-            --this.idleAnimationTimeout;
+            this.idleAnimationState.stop();
         }
     }
 
@@ -118,69 +121,100 @@ public class PenguinEntity extends Animal {
         private Boat boat;
         private final double speed;
 
+        private Vec3 routeCenter;
+        private double routeRadius;
+        private double routeAngle;
+        private int dismountCooldown;
+
         public BoatDrivingGoal(Mob entity, double speed) {
             this.entity = entity;
             this.speed = speed;
+            setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
         }
 
         @Override
         public boolean canUse() {
-            if (entity.isPassenger() && entity.getVehicle() instanceof Boat) {
-                boat = (Boat) entity.getVehicle();
+            if (entity.isPassenger() && entity.getVehicle() instanceof Boat currentBoat && !currentBoat.isRemoved()) {
+                boat = currentBoat;
                 return true;
             }
+            boat = null;
             return false;
         }
 
         @Override
         public boolean canContinueToUse() {
-            return canUse() && !boat.isRemoved();
+            return boat != null && !boat.isRemoved() && entity.isPassenger() && entity.getVehicle() == boat;
         }
 
         @Override
         public void start() {
-            boat.setYRot(entity.getYRot());
+            routeCenter = boat.position();
+            routeRadius = 6.0 + entity.getRandom().nextInt(6);
+            routeAngle = entity.getRandom().nextDouble() * 6.283185307179586;
+            dismountCooldown = 80;
+            boat.setPaddleState(false, false);
         }
 
         @Override
         public void stop() {
+            if (boat != null) {
+                boat.setPaddleState(false, false);
+            }
             boat = null;
+            routeCenter = null;
         }
 
         @Override
         public void tick() {
-            if (boat == null) return;
+            if (boat == null || routeCenter == null) return;
 
-            if (isOnWater()) {
-                float yaw = entity.getYRot();
-                Vector3f moveDirection = new Vector3f((float) -Math.sin(Math.toRadians(yaw)), 0, (float) Math.cos(Math.toRadians(yaw)));
-                boat.setDeltaMovement(moveDirection.x() * speed * 1.25, boat.getDeltaMovement().y(), moveDirection.z() * speed * 1.25);
-                boat.setPaddleState(moveDirection.x() != 0 || moveDirection.z() != 0, moveDirection.x() != 0 || moveDirection.z() != 0);
+            if (dismountCooldown > 0) dismountCooldown--;
 
-            } else {
-                navigateToWater();
+            double targetX = routeCenter.x + Math.cos(routeAngle) * routeRadius;
+            double targetZ = routeCenter.z + Math.sin(routeAngle) * routeRadius;
+
+            double dx = targetX - boat.getX();
+            double dz = targetZ - boat.getZ();
+            double distSq = dx * dx + dz * dz;
+
+            if (distSq < 1.2) {
+                routeAngle += 0.12;
+                if (routeAngle > 6.283185307179586) routeAngle -= 6.283185307179586;
             }
-        }
 
-        private boolean isOnWater() {
-            BlockPos pos = boat.blockPosition();
-            BlockState blockState = entity.level().getBlockState(pos.below());
-            return blockState.is(Blocks.WATER);
-        }
+            double len = Math.sqrt(dx * dx + dz * dz);
+            if (len > 1.0E-4) {
+                dx /= len;
+                dz /= len;
+            } else {
+                dx = 0.0;
+                dz = 0.0;
+            }
 
-        private void navigateToWater() {
-            BlockPos boatPos = boat.blockPosition();
-            for (int dx = -5; dx <= 5; dx++) {
-                for (int dz = -5; dz <= 5; dz++) {
-                    BlockPos pos = boatPos.offset(dx, 0, dz);
-                    BlockState blockState = entity.level().getBlockState(pos);
-                    if (blockState.is(Blocks.WATER)) {
-                        double directionX = pos.getX() + 0.5 - boat.getX();
-                        double directionZ = pos.getZ() + 0.5 - boat.getZ();
-                        Vector3f direction = new Vector3f((float) directionX, 0, (float) directionZ).normalize();
-                        boat.setDeltaMovement(direction.x() * speed, boat.getDeltaMovement().y, direction.z() * speed);
-                        return;
-                    }
+            Vec3 current = boat.getDeltaMovement();
+            double desiredX = dx * speed;
+            double desiredZ = dz * speed;
+
+            double blendedX = current.x + (desiredX - current.x) * 0.25;
+            double blendedZ = current.z + (desiredZ - current.z) * 0.25;
+
+            boat.setDeltaMovement(blendedX, current.y, blendedZ);
+
+            boolean paddling = (blendedX * blendedX + blendedZ * blendedZ) > 1.0E-4;
+            boat.setPaddleState(paddling, paddling);
+
+            double cx = boat.getX() - routeCenter.x;
+            double cz = boat.getZ() - routeCenter.z;
+            double centerDistSq = cx * cx + cz * cz;
+
+            if (!entity.level().isClientSide() && dismountCooldown == 0 && centerDistSq < 2.0) {
+                if (entity.getRandom().nextFloat() < 0.02F) {
+                    boat.setPaddleState(false, false);
+                    entity.stopRiding();
+                    dismountCooldown = 200;
+                } else {
+                    dismountCooldown = 40;
                 }
             }
         }

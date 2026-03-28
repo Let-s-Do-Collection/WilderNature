@@ -62,7 +62,6 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> DOG_SPAWN_EGG = registerItem("dog_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.DOG, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> MINISHEEP_SPAWN_EGG = registerItem("minisheep_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.MINISHEEP, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> TURKEY_SPAWN_EGG = registerItem("turkey_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.TURKEY, -1, -1, getSettings()));
-    public static final RegistrySupplier<Item> TERMITE_SPAWN_EGG = registerItem("termite_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.TERMITE, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> PENGUIN_SPAWN_EGG = registerItem("penguin_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.PENGUIN, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> CASSOWARY_SPAWN_EGG = registerItem("cassowary_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.CASSOWARY, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> HEDGEHOG_SPAWN_EGG = registerItem("hedgehog_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.HEDGEHOG, -1, -1, getSettings()));
@@ -81,8 +80,8 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> COD_CATCHER_BANNER = registerWithItem("cod_catcher_banner", () -> new CompletionistBannerBlock(BlockBehaviour.Properties.of().strength(1F).instrument(NoteBlockInstrument.BASS).noCollission().sound(SoundType.WOOD)));
     public static final RegistrySupplier<Block> COD_CATCHER_WALL_BANNER = registerWithoutItem("cod_catcher_wall_banner", () -> new CompletionistWallBannerBlock(BlockBehaviour.Properties.of().strength(1F).instrument(NoteBlockInstrument.BASS).noCollission().sound(SoundType.WOOD)));
     public static final RegistrySupplier<Item> STYLIN_PURPLE_HAT = registerItem("stylin_purple_hat", () -> new StylinPurpleHatItem(ArmorMaterialRegistry.STYLIN_HAT.value(), ArmorItem.Type.HELMET, getSettings().rarity(Rarity.RARE), WilderNature.identifier("textures/models/armor/stylin_purple_hat.png")));
-    public static final RegistrySupplier<Block> TERMITE_MOUND = registerWithItem("termite_mound", () -> new TermiteBlock(Blocks.ROOTED_DIRT, BlockBehaviour.Properties.of().mapColor(MapColor.CLAY)));
-
+    public static final RegistrySupplier<Item> TURKEY_EGG = registerItem("turkey_egg", () -> new TurkeyEggItem(getSettings()));
+    public static final RegistrySupplier<Block> TRUFFLE_BAG = registerWithItem("truffle_bag", () -> new BagBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACK_WOOL)));
 
     /**
      * Ideas for Items:
@@ -90,11 +89,9 @@ public class ObjectRegistry {
      * Ideas for Animals:
      * Ram, rideable - just like a slow Horse with LOTS of health that pushes away all other entities
      * Birds & birdnest & treehouses
-     * Penguin
      * Koala
      * Chameleon
      * Hippos
-     * Moose
      * Beaver
      * Kangaroos
      * Jaguars

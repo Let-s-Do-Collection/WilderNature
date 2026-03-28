@@ -40,6 +40,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.entity.ai.*;
 import net.satisfy.wildernature.core.entity.animation.ServerAnimationDurations;
@@ -242,6 +243,12 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
             setupAnimationStates();
         }
     }
+
+    private boolean hasWakeUpTriggerNearby() {
+        AABB checkBox = this.getBoundingBox().inflate(6.0D, 3.0D, 6.0D);
+        return !this.level().getEntitiesOfClass(LivingEntity.class, checkBox, entity -> entity.isAlive() && entity != this).isEmpty();
+    }
+
 
     public AnimationState flyingState = new AnimationState();
     public AnimationState hootState = new AnimationState();
@@ -512,6 +519,7 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
 
     private static class SleepGoal extends Goal {
         private final OwlEntity owl;
+        private boolean keepSleeping;
 
         public SleepGoal(OwlEntity owlEntity) {
             this.owl = owlEntity;
@@ -524,9 +532,8 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
         }
 
         public boolean canContinueToUse() {
-            return canUse();
+            return keepSleeping && canUse();
         }
-
 
         @Override
         public boolean isInterruptable() {
@@ -536,18 +543,22 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
         @Override
         public void start() {
             super.start();
+            keepSleeping = true;
             owl.setSleeping(true);
         }
 
         @Override
         public void tick() {
-            super.tick();
+            if (owl.hasWakeUpTriggerNearby()) {
+                keepSleeping = false;
+                owl.setSleeping(false);
+            }
         }
 
         public void stop() {
             super.stop();
+            keepSleeping = false;
             owl.setSleeping(false);
         }
     }
-
 }

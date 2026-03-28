@@ -1,3 +1,17 @@
+[1.1.5]
+
+**Fixed**
+- Idle Animation for most entities are now more fluent
+- HazelnutBushes transforming into SweetberryBushes when being bone mealed
+- 
+
+**Changed**
+- Recolored HazelnutBushes
+- Recolored FishOil 
+- Turkeys now lay TurkeyEggs instead of Eggs
+
+***
+
 [1.1.4]
 
 **Fixed**

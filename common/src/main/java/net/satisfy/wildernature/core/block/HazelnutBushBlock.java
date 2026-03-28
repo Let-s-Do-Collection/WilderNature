@@ -32,26 +32,43 @@ public class HazelnutBushBlock extends SweetBerryBushBlock {
 
     @Override
     protected @NotNull ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
-        int i = blockState.getValue(AGE);
-        boolean flag = i == 3;
-        if (!flag && player.getItemInHand(interactionHand).is(Items.BONE_MEAL)) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        } else if (i > 1) {
-            int j = 1 + level.random.nextInt(2);
-            if (!player.getAbilities().instabuild) {
-                popResource(level, blockPos, new ItemStack(ObjectRegistry.HAZELNUT.get(), j + (flag ? 1 : 0)));
+        int age = blockState.getValue(AGE);
+
+        if (itemStack.is(Items.BONE_MEAL) && age < 3) {
+            if (!level.isClientSide) {
+                int grownAge = Math.min(3, age + 1 + level.random.nextInt(2));
+                BlockState grownState = blockState.setValue(AGE, grownAge);
+                level.setBlock(blockPos, grownState, 2);
+                level.gameEvent(GameEvent.BLOCK_CHANGE, blockPos, Context.of(player, grownState));
+
+                if (!player.getAbilities().instabuild) {
+                    itemStack.shrink(1);
+                }
             }
-            level.playSound(null, blockPos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.4F);
-            BlockState blockstate = blockState.setValue(AGE, 1);
-            level.setBlock(blockPos, blockstate, 2);
-            level.gameEvent(GameEvent.BLOCK_CHANGE, blockPos, Context.of(player, blockstate));
+
+            level.playSound(null, blockPos, SoundEvents.BONE_MEAL_USE, SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.4F);
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
-        } else {
-            return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
         }
+
+        boolean fullyGrown = age == 3;
+        if (age > 1) {
+            if (!level.isClientSide) {
+                int dropCount = 1 + level.random.nextInt(2);
+                popResource(level, blockPos, new ItemStack(ObjectRegistry.HAZELNUT.get(), dropCount + (fullyGrown ? 1 : 0)));
+
+                BlockState resetState = blockState.setValue(AGE, 1);
+                level.setBlock(blockPos, resetState, 2);
+                level.gameEvent(GameEvent.BLOCK_CHANGE, blockPos, Context.of(player, resetState));
+            }
+
+            level.playSound(null, blockPos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.4F);
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
+
+        return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
     }
 
     @Override
-    public void entityInside(BlockState arg, Level arg2, BlockPos arg3, Entity arg4) {
+    public void entityInside(BlockState blockState, Level level, BlockPos blockPos, Entity entity) {
     }
 }
