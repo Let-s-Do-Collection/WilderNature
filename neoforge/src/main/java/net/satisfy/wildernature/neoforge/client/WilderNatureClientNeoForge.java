@@ -16,6 +16,7 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.WilderNatureClient;
 import net.satisfy.wildernature.client.particle.AlertParticle;
+import net.satisfy.wildernature.client.particle.DenyParticle;
 import net.satisfy.wildernature.client.particle.QuestionParticle;
 import net.satisfy.wildernature.client.particle.SleepingParticle;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
@@ -44,6 +45,7 @@ public class WilderNatureClientNeoForge {
         event.registerSpriteSet(ParticleTypeRegistry.SLEEPING.get(), SleepingParticle.Provider::new);
         event.registerSpriteSet(ParticleTypeRegistry.QUESTION.get(), QuestionParticle.Provider::new);
         event.registerSpriteSet(ParticleTypeRegistry.ALERT.get(), AlertParticle.Provider::new);
+        event.registerSpriteSet(ParticleTypeRegistry.DENY.get(), DenyParticle.Provider::new);
     }
 
     @SubscribeEvent

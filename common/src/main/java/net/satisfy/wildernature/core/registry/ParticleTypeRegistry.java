@@ -13,6 +13,7 @@ public class ParticleTypeRegistry {
     public static final RegistrySupplier<SimpleParticleType> SLEEPING = PARTICLE_TYPES.register("sleeping", () -> new SimpleParticleType(false) {});
     public static final RegistrySupplier<SimpleParticleType> QUESTION = PARTICLE_TYPES.register("question", () -> new SimpleParticleType(false) {});
     public static final RegistrySupplier<SimpleParticleType> ALERT = PARTICLE_TYPES.register("alert", () -> new SimpleParticleType(false) {});
+    public static final RegistrySupplier<SimpleParticleType> DENY = PARTICLE_TYPES.register("deny", () -> new SimpleParticleType(false) {});
 
     public static void init() {
         PARTICLE_TYPES.register();

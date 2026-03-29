@@ -28,10 +28,20 @@
   * Implemented panic system with herd-wide reaction and natural flee behavior
   * Improved herd logic with leader following and persistence across reloads
   * Added dynamic sleeping behavior with preparation phase and wake-up triggers
+  * Deer now prefer sleeping on grass blocks
+  * Added shelter-seeking behavior during nighttime
   * Deer now react correctly to players in creative and spectator mode
   * Improved pathfinding during panic to prevent clustering and blocking
   * Added visual feedback using particles for awareness and alert states
-  * Enhanced animation handling including proper sleep animation integration
+
+* **Boar Rework**
+  * Reworked rooting behavior with improved pathfinding and target selection
+  * Boars now search for valid grass blocks before digging
+  * Added preparation phase before digging with visual feedback
+  * Introduced player interaction using Truffles to trigger rooting
+  * Rooting now uses a loottable system for configurable drops
+  * Added cooldown system to prevent excessive rooting
+  * Rooting now respects mobGriefing gamerule
 
 ***
 

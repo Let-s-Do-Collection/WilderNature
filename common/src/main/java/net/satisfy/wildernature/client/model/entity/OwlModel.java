@@ -69,14 +69,25 @@ public class OwlModel extends HierarchicalModel<OwlEntity> implements HeadedMode
     @Override
     public void setupAnim(OwlEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.root().getAllParts().forEach(ModelPart::resetPose);
-        animateWalk(OwlAnimation.walk, limbSwing, limbSwingAmount, 2f, 2.5f);
+
         if (entity.attackState.isStarted()) {
-            animate(entity.attackState, OwlAnimation.attack, ageInTicks);
+            this.animate(entity.attackState, OwlAnimation.attack, ageInTicks);
             return;
         }
-        animate(entity.flyingState, OwlAnimation.fly, ageInTicks);
-        animate(entity.hootState, OwlAnimation.hoot, ageInTicks);
-        animate(entity.sleepState, OwlAnimation.sleep, ageInTicks);
+
+        if (entity.isSleeping()) {
+            this.animate(entity.sleepState, OwlAnimation.sleep, ageInTicks);
+            return;
+        }
+
+        if (entity.getStandingState() == OwlEntity.StandingState.FLYING) {
+            this.animate(entity.flyingState, OwlAnimation.fly, ageInTicks);
+            return;
+        }
+
+        this.animate(entity.idleState, OwlAnimation.idle, ageInTicks, 1.0F);
+        this.animateWalk(OwlAnimation.walk, limbSwing, limbSwingAmount, 2.0F, 2.5F);
+        this.animate(entity.hootState, OwlAnimation.hoot, ageInTicks);
     }
 
     @Override

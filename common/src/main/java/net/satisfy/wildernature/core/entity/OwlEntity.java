@@ -105,6 +105,7 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
     public AnimationState hootState = new AnimationState();
     public AnimationState attackState = new AnimationState();
     public AnimationState sleepState = new AnimationState();
+    public AnimationState idleState = new AnimationState();
 
     public OwlEntity(EntityType<? extends ShoulderRidingEntity> entityType, Level level) {
         super(entityType, level);
@@ -779,6 +780,8 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
 
     private void setupAnimationStates() {
         StandingState standingState = this.getStandingState();
+        boolean idleAllowed = standingState == StandingState.STANDING && !this.isSleeping() && !this.isAttacking() && !this.isHooting();
+        this.idleState.animateWhen(idleAllowed, this.tickCount);
         this.flyingState.animateWhen(standingState == StandingState.FLYING, this.tickCount);
         this.attackState.animateWhen(this.isAttacking(), this.tickCount);
         this.hootState.animateWhen(this.isHooting(), this.tickCount);
@@ -801,15 +804,7 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
         double particleVelocityY = 0.01D + this.random.nextDouble() * 0.01D;
         double particleVelocityZ = (this.random.nextDouble() - 0.5D) * 0.01D;
 
-        this.level().addParticle(
-                ParticleTypeRegistry.SLEEPING.get(),
-                particleX,
-                particleY,
-                particleZ,
-                particleVelocityX,
-                particleVelocityY,
-                particleVelocityZ
-        );
+        this.level().addParticle(ParticleTypeRegistry.SLEEPING.get(), particleX, particleY, particleZ, particleVelocityX, particleVelocityY, particleVelocityZ);
     }
 
     private boolean isHooting() {
@@ -826,6 +821,10 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
 
     private boolean isRelevantThreat(LivingEntity entity) {
         if (!entity.isAlive() || entity == this) {
+            return false;
+        }
+
+        if (entity instanceof Player player && (player.isCreative() || player.isSpectator())) {
             return false;
         }
 
@@ -852,6 +851,10 @@ public class OwlEntity extends ShoulderRidingEntity implements EntityWithAttackA
 
     private boolean isRelevantWakeUpTrigger(LivingEntity entity) {
         if (!entity.isAlive() || entity == this) {
+            return false;
+        }
+
+        if (entity instanceof Player player && (player.isCreative() || player.isSpectator())) {
             return false;
         }
 

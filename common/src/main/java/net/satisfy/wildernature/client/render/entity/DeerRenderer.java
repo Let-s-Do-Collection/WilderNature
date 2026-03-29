@@ -12,12 +12,10 @@ import net.satisfy.wildernature.client.model.entity.DeerModel;
 import net.satisfy.wildernature.core.entity.DeerEntity;
 import org.jetbrains.annotations.NotNull;
 
-
 @Environment(value = EnvType.CLIENT)
 public class DeerRenderer extends MobRenderer<DeerEntity, DeerModel> {
     private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/entity/deer.png");
     private static final ResourceLocation WHITE_TEXTURE = WilderNature.identifier("textures/entity/deer_white.png");
-    
 
     public DeerRenderer(EntityRendererProvider.Context context) {
         super(context, new DeerModel(context.bakeLayer(DeerModel.LAYER_LOCATION)), 0.7f);
@@ -29,14 +27,18 @@ public class DeerRenderer extends MobRenderer<DeerEntity, DeerModel> {
     }
 
     @Override
-    public void render(DeerEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack,
-                       MultiBufferSource pBuffer, int pPackedLight) {
-        if (pEntity.isBaby()) {
-            pMatrixStack.scale(0.4f, 0.4f, 0.4f);
+    public void render(DeerEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        poseStack.pushPose();
+
+        if (entity.isBaby()) {
+            poseStack.scale(0.4f, 0.4f, 0.4f);
         }
 
-        super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
+        if (entity.isSleeping()) {
+            poseStack.translate(0.0D, -0.4D, 0.0D);
+        }
+
+        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
+        poseStack.popPose();
     }
 }
-
-
