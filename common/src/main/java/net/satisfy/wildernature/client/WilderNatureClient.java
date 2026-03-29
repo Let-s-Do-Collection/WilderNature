@@ -28,6 +28,8 @@ import net.satisfy.wildernature.client.model.entity.RaccoonModel;
 import net.satisfy.wildernature.client.model.entity.RedWolfModel;
 import net.satisfy.wildernature.client.model.entity.SquirrelModel;
 import net.satisfy.wildernature.client.model.entity.TurkeyModel;
+import net.satisfy.wildernature.client.particle.AlertParticle;
+import net.satisfy.wildernature.client.particle.QuestionParticle;
 import net.satisfy.wildernature.client.particle.SleepingParticle;
 import net.satisfy.wildernature.client.render.block.BountyBoardRenderer;
 import net.satisfy.wildernature.client.render.block.CompletionistBannerRenderer;
@@ -66,6 +68,8 @@ public class WilderNatureClient {
         BlockEntityRendererRegistry.register(BOUNTY_BOARD_BLOCK_ENTITY.get(), BountyBoardRenderer::new);
 
         ParticleProviderRegistry.register(ParticleTypeRegistry.SLEEPING.get(), SleepingParticle.Provider::new);
+        ParticleProviderRegistry.register(ParticleTypeRegistry.ALERT.get(), AlertParticle.Provider::new);
+        ParticleProviderRegistry.register(ParticleTypeRegistry.QUESTION.get(), QuestionParticle.Provider::new);
 
         makeHorn(ObjectRegistry.BISON_HORN.get());
     }

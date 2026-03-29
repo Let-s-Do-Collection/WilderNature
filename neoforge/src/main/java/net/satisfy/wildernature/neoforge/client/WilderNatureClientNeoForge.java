@@ -15,6 +15,8 @@ import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsE
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.WilderNatureClient;
+import net.satisfy.wildernature.client.particle.AlertParticle;
+import net.satisfy.wildernature.client.particle.QuestionParticle;
 import net.satisfy.wildernature.client.particle.SleepingParticle;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
@@ -40,7 +42,9 @@ public class WilderNatureClientNeoForge {
     @SubscribeEvent
     public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(ParticleTypeRegistry.SLEEPING.get(), SleepingParticle.Provider::new);
-        }
+        event.registerSpriteSet(ParticleTypeRegistry.QUESTION.get(), QuestionParticle.Provider::new);
+        event.registerSpriteSet(ParticleTypeRegistry.ALERT.get(), AlertParticle.Provider::new);
+    }
 
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {

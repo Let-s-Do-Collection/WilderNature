@@ -4,16 +4,16 @@
 * Idle Animation for most entities are now more fluent
 * HazelnutBushes transforming into SweetberryBushes when being bone mealed
 
-
 **Changed**
 * Recolored HazelnutBushes
-* Recolored FishOil 
+* Recolored FishOil
 * Turkeys now lay TurkeyEggs instead of Eggs
-  * **Owl Rework**
+
+* **Owl Rework**
   * Completely overhauled owl behavior and AI
   * Owls now search for natural perches before sleeping
   * Added realistic sleep preparation with randomized timing
-  * Improved wake*up logic with threat detection and visual feedback
+  * Improved wake-up logic with threat detection and visual feedback
   * Refined flying and landing behavior for proper perch alignment
   * Introduced dynamic night hunting with randomized hunt windows
   * Owls now target undead mobs during hunting phases
@@ -21,6 +21,17 @@
   * Improved overall AI flow with smoother transitions between states
   * Reduced repetitive behavior through cooldowns and randomness
   * Enhanced animation handling for sleep, movement, and ambient actions
+
+* **Deer Rework**
+  * Added awareness system reacting to player movement, sprinting, and held items
+  * Deer now gradually calm down over time when no threat is present
+  * Implemented panic system with herd-wide reaction and natural flee behavior
+  * Improved herd logic with leader following and persistence across reloads
+  * Added dynamic sleeping behavior with preparation phase and wake-up triggers
+  * Deer now react correctly to players in creative and spectator mode
+  * Improved pathfinding during panic to prevent clustering and blocking
+  * Added visual feedback using particles for awareness and alert states
+  * Enhanced animation handling including proper sleep animation integration
 
 ***
 
