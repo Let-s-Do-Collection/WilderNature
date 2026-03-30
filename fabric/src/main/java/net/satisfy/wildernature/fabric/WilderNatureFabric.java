@@ -76,15 +76,12 @@ public class WilderNatureFabric implements ModInitializer {
             world.add(ModificationPhase.REMOVALS, spawns_patch_hazelnut_bush, ctx -> ctx.getGenerationSettings().removeFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.PATCH_HAZELNUT_BUSH));
         }
         if (config.spawnTermiteMound) {
-            world.add(ModificationPhase.ADDITIONS, spawnTermiteMound, ctx -> ctx.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.TERMITE_MOUND));
         } else {
-            world.add(ModificationPhase.REMOVALS, spawnTermiteMound, ctx -> ctx.getGenerationSettings().removeFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.TERMITE_MOUND));
         }
     }
 
     private void registerFuel() {
         FuelRegistry.INSTANCE.add(ObjectRegistry.FISH_OIL.get(), 1600);
-        FuelRegistry.INSTANCE.add(ObjectRegistry.WOODMEAL.get(), 800);
     }
 
     void addSpawns() {

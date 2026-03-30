@@ -82,13 +82,14 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> STYLIN_PURPLE_HAT = registerItem("stylin_purple_hat", () -> new StylinPurpleHatItem(ArmorMaterialRegistry.STYLIN_HAT.value(), ArmorItem.Type.HELMET, getSettings().rarity(Rarity.RARE), WilderNature.identifier("textures/models/armor/stylin_purple_hat.png")));
     public static final RegistrySupplier<Item> TURKEY_EGG = registerItem("turkey_egg", () -> new TurkeyEggItem(getSettings()));
     public static final RegistrySupplier<Block> TRUFFLE_BAG = registerWithItem("truffle_bag", () -> new BagBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACK_WOOL)));
+    public static final RegistrySupplier<Block> HOLLOW_CACHE = registerWithItem("hollow_cache", () -> new HollowCacheBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD).noOcclusion()));
+
 
     /**
      * Ideas for Items:
      * Animal Compendium
      * Ideas for Animals:
      * Ram, rideable - just like a slow Horse with LOTS of health that pushes away all other entities
-     * Birds & birdnest & treehouses
      * Koala
      * Chameleon
      * Hippos

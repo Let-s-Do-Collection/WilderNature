@@ -15,10 +15,7 @@ import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsE
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.WilderNatureClient;
-import net.satisfy.wildernature.client.particle.AlertParticle;
-import net.satisfy.wildernature.client.particle.DenyParticle;
-import net.satisfy.wildernature.client.particle.QuestionParticle;
-import net.satisfy.wildernature.client.particle.SleepingParticle;
+import net.satisfy.wildernature.client.particle.*;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import net.satisfy.wildernature.neoforge.client.extensions.WilderNatureHatExtensions;
@@ -46,6 +43,11 @@ public class WilderNatureClientNeoForge {
         event.registerSpriteSet(ParticleTypeRegistry.QUESTION.get(), QuestionParticle.Provider::new);
         event.registerSpriteSet(ParticleTypeRegistry.ALERT.get(), AlertParticle.Provider::new);
         event.registerSpriteSet(ParticleTypeRegistry.DENY.get(), DenyParticle.Provider::new);
+        event.registerSpriteSet(ParticleTypeRegistry.TRUST_POSITIVE.get(), FloatingFeedbackParticle.TrustPositiveProvider::new);
+        event.registerSpriteSet(ParticleTypeRegistry.TRUST_NEGATIVE.get(), FloatingFeedbackParticle.TrustNegativeProvider::new);
+        event.registerSpriteSet(ParticleTypeRegistry.LOVE.get(), FloatingFeedbackParticle.LoveProvider::new);
+        event.registerSpriteSet(ParticleTypeRegistry.CACHE_OPEN.get(), CacheLeafParticle.OpenProvider::new);
+        event.registerSpriteSet(ParticleTypeRegistry.CACHE_CLOSE.get(), CacheLeafParticle.CloseProvider::new);
     }
 
     @SubscribeEvent

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "wildernature:block/hollow_cache",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "wildernature:block/hollow_cache"
+    },
+    "facing=south": {
+      "model": "wildernature:block/hollow_cache",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "wildernature:block/hollow_cache",
+      "y": 270
+    }
+  }
+}

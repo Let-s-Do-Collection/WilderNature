@@ -14,6 +14,11 @@ public class ParticleTypeRegistry {
     public static final RegistrySupplier<SimpleParticleType> QUESTION = PARTICLE_TYPES.register("question", () -> new SimpleParticleType(false) {});
     public static final RegistrySupplier<SimpleParticleType> ALERT = PARTICLE_TYPES.register("alert", () -> new SimpleParticleType(false) {});
     public static final RegistrySupplier<SimpleParticleType> DENY = PARTICLE_TYPES.register("deny", () -> new SimpleParticleType(false) {});
+    public static final RegistrySupplier<SimpleParticleType> TRUST_POSITIVE = PARTICLE_TYPES.register("trust_positive", () -> new SimpleParticleType(false) {});
+    public static final RegistrySupplier<SimpleParticleType> TRUST_NEGATIVE = PARTICLE_TYPES.register("trust_negative", () -> new SimpleParticleType(false) {});
+    public static final RegistrySupplier<SimpleParticleType> LOVE = PARTICLE_TYPES.register("love", () -> new SimpleParticleType(false) {});
+    public static final RegistrySupplier<SimpleParticleType> CACHE_OPEN = PARTICLE_TYPES.register("cache_open", () -> new SimpleParticleType(false) {});
+    public static final RegistrySupplier<SimpleParticleType> CACHE_CLOSE = PARTICLE_TYPES.register("cache_close", () -> new SimpleParticleType(false) {});
 
     public static void init() {
         PARTICLE_TYPES.register();

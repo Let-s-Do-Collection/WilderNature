@@ -38,7 +38,7 @@ public class CompletionistBannerRenderer implements BlockEntityRenderer<Completi
         this.bar = modelPart.getChild(BAR);
     }
 
-    public static LayerDefinition createBodyLayer() {
+    public static LayerDefinition getTexturedModelData() {
         MeshDefinition meshDefinition = new MeshDefinition();
         PartDefinition partDefinition = meshDefinition.getRoot();
         partDefinition.addOrReplaceChild(FLAG, CubeListBuilder.create().texOffs(0, 0).addBox(-10.0F, 0.0F, -1.0F, 20.0F, 40.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -44.0F, -1.0F, -0.0349F, 0.0F, 0.0F));

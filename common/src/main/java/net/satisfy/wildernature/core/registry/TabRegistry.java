@@ -17,6 +17,7 @@ public class TabRegistry {
             .title(Component.translatable("creative_tab.wildernature"))
             .displayItems((parameters, out) -> {
                 out.accept(ObjectRegistry.TRUFFLE_BAG.get());
+                out.accept(ObjectRegistry.HOLLOW_CACHE.get());
                 out.accept(ObjectRegistry.HAZELNUT.get());
                 out.accept(ObjectRegistry.BISON_MEAT.get());
                 out.accept(ObjectRegistry.COOKED_BISON_MEAT.get());

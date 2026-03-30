@@ -19,7 +19,7 @@ public class StylinPurpleHatModel<T extends Entity> extends EntityModel<T> {
     }
 
     @SuppressWarnings("unused")
-    public static LayerDefinition createBodyLayer() {
+    public static LayerDefinition getTexturedModelData() {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
 

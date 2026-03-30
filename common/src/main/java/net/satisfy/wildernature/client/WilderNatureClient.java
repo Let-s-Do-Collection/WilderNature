@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.client.model.armor.StylinPurpleHatModel;
 import net.satisfy.wildernature.client.model.block.BountyBoardModel;
+import net.satisfy.wildernature.client.model.block.HollowCacheModel;
 import net.satisfy.wildernature.client.model.entity.BisonModel;
 import net.satisfy.wildernature.client.model.entity.BoarModel;
 import net.satisfy.wildernature.client.model.entity.CassowaryModel;
@@ -28,12 +29,10 @@ import net.satisfy.wildernature.client.model.entity.RaccoonModel;
 import net.satisfy.wildernature.client.model.entity.RedWolfModel;
 import net.satisfy.wildernature.client.model.entity.SquirrelModel;
 import net.satisfy.wildernature.client.model.entity.TurkeyModel;
-import net.satisfy.wildernature.client.particle.AlertParticle;
-import net.satisfy.wildernature.client.particle.DenyParticle;
-import net.satisfy.wildernature.client.particle.QuestionParticle;
-import net.satisfy.wildernature.client.particle.SleepingParticle;
+import net.satisfy.wildernature.client.particle.*;
 import net.satisfy.wildernature.client.render.block.BountyBoardRenderer;
 import net.satisfy.wildernature.client.render.block.CompletionistBannerRenderer;
+import net.satisfy.wildernature.client.render.block.HollowCacheRenderer;
 import net.satisfy.wildernature.client.render.entity.BisonRenderer;
 import net.satisfy.wildernature.client.render.entity.BoarRenderer;
 import net.satisfy.wildernature.client.render.entity.CassowaryRenderer;
@@ -67,11 +66,17 @@ public class WilderNatureClient {
 
         BlockEntityRendererRegistry.register(COMPLETIONIST_BANNER_BLOCK_ENTITY.get(), CompletionistBannerRenderer::new);
         BlockEntityRendererRegistry.register(BOUNTY_BOARD_BLOCK_ENTITY.get(), BountyBoardRenderer::new);
+        BlockEntityRendererRegistry.register(HOLLOW_CACHE_BLOCK_ENTITY.get(), HollowCacheRenderer::new);
 
         ParticleProviderRegistry.register(ParticleTypeRegistry.SLEEPING.get(), SleepingParticle.Provider::new);
         ParticleProviderRegistry.register(ParticleTypeRegistry.ALERT.get(), AlertParticle.Provider::new);
         ParticleProviderRegistry.register(ParticleTypeRegistry.QUESTION.get(), QuestionParticle.Provider::new);
         ParticleProviderRegistry.register(ParticleTypeRegistry.DENY.get(), DenyParticle.Provider::new);
+        ParticleProviderRegistry.register(ParticleTypeRegistry.TRUST_POSITIVE.get(), FloatingFeedbackParticle.TrustPositiveProvider::new);
+        ParticleProviderRegistry.register(ParticleTypeRegistry.TRUST_NEGATIVE.get(), FloatingFeedbackParticle.TrustNegativeProvider::new);
+        ParticleProviderRegistry.register(ParticleTypeRegistry.LOVE.get(), FloatingFeedbackParticle.LoveProvider::new);
+        ParticleProviderRegistry.register(ParticleTypeRegistry.CACHE_OPEN.get(), CacheLeafParticle.OpenProvider::new);
+        ParticleProviderRegistry.register(ParticleTypeRegistry.CACHE_CLOSE.get(), CacheLeafParticle.CloseProvider::new);
 
         makeHorn(ObjectRegistry.BISON_HORN.get());
     }
@@ -103,12 +108,12 @@ public class WilderNatureClient {
     }
 
     public static void registerEntityModelLayer() {
-        EntityModelLayerRegistry.register(StylinPurpleHatModel.LAYER_LOCATION, StylinPurpleHatModel::createBodyLayer);
+        EntityModelLayerRegistry.register(StylinPurpleHatModel.LAYER_LOCATION, StylinPurpleHatModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BisonModel.LAYER_LOCATION, BisonModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BoarModel.LAYER_LOCATION, BoarModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BountyBoardModel.LAYER_LOCATION, BountyBoardModel::getTexturedModelData);
         EntityModelLayerRegistry.register(CassowaryModel.LAYER_LOCATION, CassowaryModel::getTexturedModelData);
-        EntityModelLayerRegistry.register(CompletionistBannerRenderer.LAYER_LOCATION, CompletionistBannerRenderer::createBodyLayer);
+        EntityModelLayerRegistry.register(CompletionistBannerRenderer.LAYER_LOCATION, CompletionistBannerRenderer::getTexturedModelData);
         EntityModelLayerRegistry.register(DeerModel.LAYER_LOCATION, DeerModel::getTexturedModelData);
         EntityModelLayerRegistry.register(DogModel.LAYER_LOCATION, DogModel::getTexturedModelData);
         EntityModelLayerRegistry.register(FlamingoModel.LAYER_LOCATION, FlamingoModel::getTexturedModelData);
@@ -121,5 +126,6 @@ public class WilderNatureClient {
         EntityModelLayerRegistry.register(RedWolfModel.LAYER_LOCATION, RedWolfModel::getTexturedModelData);
         EntityModelLayerRegistry.register(SquirrelModel.LAYER_LOCATION, SquirrelModel::getTexturedModelData);
         EntityModelLayerRegistry.register(TurkeyModel.LAYER_LOCATION, TurkeyModel::getTexturedModelData);
+        EntityModelLayerRegistry.register(HollowCacheModel.LAYER_LOCATION, HollowCacheModel::getTexturedModelData);
     }
 }
