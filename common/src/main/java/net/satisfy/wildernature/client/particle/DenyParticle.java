@@ -11,47 +11,47 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 public class DenyParticle extends TextureSheetParticle {
-    private static final int FADE_DURATION = 6;
+    private static final int FADE_DURATION = 5;
 
-    private final float orbitPhase;
-    private final float orbitSpeed;
-    private final float orbitRadius;
-    private final float verticalDrift;
+    private final float swayPhase;
+    private final float swaySpeed;
+    private final float swayAmount;
+    private final float upwardVelocity;
     private final float rotationSpeed;
     private final float targetAlpha;
     private final float maximumScale;
-    private final double centerX;
-    private final double centerY;
-    private final double centerZ;
+    private final double startX;
+    private final double startY;
+    private final double startZ;
 
     private float previousQuadSize;
     private float growthSpeed;
 
     protected DenyParticle(ClientLevel level, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         super(level, x, y, z, velocityX, velocityY, velocityZ);
-        this.friction = 0.96F;
+        this.friction = 0.92F;
         this.gravity = 0.0F;
         this.hasPhysics = false;
-        this.lifetime = 16 + this.random.nextInt(8);
-        this.orbitPhase = this.random.nextFloat() * Mth.TWO_PI;
-        this.orbitSpeed = 0.16F + this.random.nextFloat() * 0.08F;
-        this.orbitRadius = 0.16F + this.random.nextFloat() * 0.10F;
-        this.verticalDrift = 0.0008F + this.random.nextFloat() * 0.0012F;
-        this.rotationSpeed = (0.03F + this.random.nextFloat() * 0.03F) * (this.random.nextBoolean() ? 1.0F : -1.0F);
-        this.targetAlpha = 0.9F;
-        this.maximumScale = 0.16F + this.random.nextFloat() * 0.03F;
-        this.quadSize = 0.04F + this.random.nextFloat() * 0.015F;
+        this.lifetime = 22 + this.random.nextInt(8);
+        this.swayPhase = this.random.nextFloat() * Mth.TWO_PI;
+        this.swaySpeed = 0.22F + this.random.nextFloat() * 0.10F;
+        this.swayAmount = 0.025F + this.random.nextFloat() * 0.025F;
+        this.upwardVelocity = 0.012F + this.random.nextFloat() * 0.008F;
+        this.rotationSpeed = (0.01F + this.random.nextFloat() * 0.015F) * (this.random.nextBoolean() ? 1.0F : -1.0F);
+        this.targetAlpha = 0.95F;
+        this.maximumScale = 0.14F + this.random.nextFloat() * 0.02F;
+        this.quadSize = 0.06F + this.random.nextFloat() * 0.01F;
         this.previousQuadSize = this.quadSize;
-        this.growthSpeed = 0.02F;
+        this.growthSpeed = 0.012F;
         this.roll = this.random.nextFloat() * Mth.TWO_PI;
         this.oRoll = this.roll;
         this.alpha = 0.0F;
         this.rCol = 1.0F;
         this.gCol = 0.35F;
         this.bCol = 0.35F;
-        this.centerX = x;
-        this.centerY = y;
-        this.centerZ = z;
+        this.startX = x;
+        this.startY = y;
+        this.startZ = z;
     }
 
     @Override
@@ -68,17 +68,17 @@ public class DenyParticle extends TextureSheetParticle {
         }
 
         float progress = (float) this.age / (float) this.lifetime;
-        float angle = this.orbitPhase + progress * Mth.TWO_PI * this.orbitSpeed * 6.0F;
+        float swayAngle = this.swayPhase + this.age * this.swaySpeed;
 
-        this.x = this.centerX + Mth.cos(angle) * this.orbitRadius;
-        this.z = this.centerZ + Mth.sin(angle) * this.orbitRadius;
-        this.y = this.centerY + this.verticalDrift * this.age;
+        this.x = this.startX + Mth.sin(swayAngle) * this.swayAmount;
+        this.z = this.startZ + Mth.cos(swayAngle * 0.8F) * this.swayAmount * 0.6F;
+        this.y = this.startY + this.upwardVelocity * this.age;
 
         this.roll += this.rotationSpeed;
 
         if (this.quadSize < this.maximumScale) {
             this.quadSize = Math.min(this.maximumScale, this.quadSize + this.growthSpeed);
-            this.growthSpeed *= 0.82F;
+            this.growthSpeed *= 0.84F;
         }
 
         if (this.age < FADE_DURATION) {
@@ -91,6 +91,8 @@ public class DenyParticle extends TextureSheetParticle {
                 this.alpha = this.targetAlpha;
             }
         }
+
+        this.alpha *= 1.0F - progress * 0.15F;
     }
 
     @Override

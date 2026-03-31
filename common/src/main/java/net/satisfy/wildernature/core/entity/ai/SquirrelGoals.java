@@ -1,18 +1,23 @@
 package net.satisfy.wildernature.core.entity.ai;
 
+import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.satisfy.wildernature.core.block.HazelnutBushBlock;
 import net.satisfy.wildernature.core.block.HollowCacheBlock;
 import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
 import net.satisfy.wildernature.core.entity.SquirrelEntity;
@@ -39,7 +44,7 @@ public class SquirrelGoals {
                 return false;
             }
 
-            if (this.squirrel.isSheltering() || this.squirrel.isDeliveringGift() || this.squirrel.isWiggling() || this.squirrel.isBaby() || this.squirrel.isPanicking()) {
+            if (this.squirrel.isSheltering() || this.squirrel.isDeliveringGift() || this.squirrel.isWiggling() || this.squirrel.isBaby() || this.squirrel.isPanicking() || this.squirrel.isForaging()) {
                 return false;
             }
 
@@ -191,7 +196,7 @@ public class SquirrelGoals {
 
         @Override
         public boolean canUse() {
-            if (this.squirrel.isSheltering() || this.squirrel.isDeliveringGift() || this.squirrel.isWiggling() || this.squirrel.isBaby()) {
+            if (this.squirrel.isSheltering() || this.squirrel.isDeliveringGift() || this.squirrel.isWiggling() || this.squirrel.isBaby() || this.squirrel.isForaging()) {
                 return false;
             }
 
@@ -423,25 +428,26 @@ public class SquirrelGoals {
         }
 
         private boolean hasTreeCover(BlockPos standPos) {
-            BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
+            BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
 
-            for (int dy = 1; dy <= 4; dy++) {
-                m.set(standPos.getX(), standPos.getY() + dy, standPos.getZ());
-                BlockState state = this.squirrel.level().getBlockState(m);
-                if (state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS)) {
+            for (int verticalOffset = 1; verticalOffset <= 4; verticalOffset++) {
+                mutableBlockPos.set(standPos.getX(), standPos.getY() + verticalOffset, standPos.getZ());
+                BlockState checkedState = this.squirrel.level().getBlockState(mutableBlockPos);
+                if (checkedState.is(BlockTags.LEAVES) || checkedState.is(BlockTags.LOGS)) {
                     return true;
                 }
             }
 
-            for (int dx = -2; dx <= 2; dx++) {
-                for (int dz = -2; dz <= 2; dz++) {
-                    m.set(standPos.getX() + dx, standPos.getY() + 1, standPos.getZ() + dz);
-                    BlockState state = this.squirrel.level().getBlockState(m);
-                    if (state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS)) {
+            for (int horizontalOffsetX = -2; horizontalOffsetX <= 2; horizontalOffsetX++) {
+                for (int horizontalOffsetZ = -2; horizontalOffsetZ <= 2; horizontalOffsetZ++) {
+                    mutableBlockPos.set(standPos.getX() + horizontalOffsetX, standPos.getY() + 1, standPos.getZ() + horizontalOffsetZ);
+                    BlockState checkedState = this.squirrel.level().getBlockState(mutableBlockPos);
+                    if (checkedState.is(BlockTags.LEAVES) || checkedState.is(BlockTags.LOGS)) {
                         return true;
                     }
                 }
             }
+
             return false;
         }
 
@@ -489,7 +495,7 @@ public class SquirrelGoals {
                 return false;
             }
 
-            if (this.squirrel.getCacheStoreCooldownTicks() > 0 || this.squirrel.isPanicking() || this.squirrel.isWiggling() || this.squirrel.isDeliveringGift() || this.squirrel.isSheltering() || this.squirrel.level().isNight()) {
+            if (this.squirrel.getCacheStoreCooldownTicks() > 0 || this.squirrel.isPanicking() || this.squirrel.isWiggling() || this.squirrel.isDeliveringGift() || this.squirrel.isSheltering() || this.squirrel.level().isNight() || this.squirrel.isForaging()) {
                 return false;
             }
 
@@ -602,38 +608,226 @@ public class SquirrelGoals {
         @Nullable
         private BlockPos findNearestAvailableCache() {
             BlockPos originPos = this.squirrel.blockPosition();
-            BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
-            BlockPos closest = null;
-            double closestDist = Double.MAX_VALUE;
+            BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+            BlockPos closestCachePos = null;
+            double closestDistance = Double.MAX_VALUE;
+            int horizontalRange = Math.min(12, SquirrelEntity.CACHE_SEARCH_RANGE);
 
-            int range = Math.min(12, SquirrelEntity.CACHE_SEARCH_RANGE);
+            for (int offsetX = -horizontalRange; offsetX <= horizontalRange; offsetX++) {
+                for (int offsetY = -5; offsetY <= 5; offsetY++) {
+                    for (int offsetZ = -horizontalRange; offsetZ <= horizontalRange; offsetZ++) {
+                        mutableBlockPos.set(originPos.getX() + offsetX, originPos.getY() + offsetY, originPos.getZ() + offsetZ);
 
-            for (int x = -range; x <= range; x++) {
-                for (int y = -5; y <= 5; y++) {
-                    for (int z = -range; z <= range; z++) {
-                        mutable.set(originPos.getX() + x, originPos.getY() + y, originPos.getZ() + z);
-
-                        if (!this.squirrel.level().getBlockState(mutable).is(ObjectRegistry.HOLLOW_CACHE.get())) {
+                        if (!this.squirrel.level().getBlockState(mutableBlockPos).is(ObjectRegistry.HOLLOW_CACHE.get())) {
                             continue;
                         }
 
-                        if (!(this.squirrel.level().getBlockEntity(mutable) instanceof HollowCacheBlockEntity be)) {
+                        if (!(this.squirrel.level().getBlockEntity(mutableBlockPos) instanceof HollowCacheBlockEntity hollowCacheBlockEntity)) {
                             continue;
                         }
 
-                        if (!be.hasFreeSlot()) {
+                        if (!hollowCacheBlockEntity.hasFreeSlot()) {
                             continue;
                         }
 
-                        double dist = mutable.distSqr(originPos);
-                        if (dist < closestDist) {
-                            closestDist = dist;
-                            closest = mutable.immutable();
+                        double checkedDistance = mutableBlockPos.distSqr(originPos);
+                        if (checkedDistance < closestDistance) {
+                            closestDistance = checkedDistance;
+                            closestCachePos = mutableBlockPos.immutable();
                         }
                     }
                 }
             }
-            return closest;
+
+            return closestCachePos;
+        }
+    }
+
+    public static class SquirrelForageGoal extends Goal {
+        private static final int SEARCH_COOLDOWN_MIN = 80;
+        private static final int SEARCH_COOLDOWN_MAX = 140;
+
+        private final SquirrelEntity squirrel;
+        private final double speedModifier;
+        private BlockPos targetBushPos;
+        private ItemEntity targetItemEntity;
+        private int searchCooldownTicks;
+        private int harvestDelayTicks;
+
+        public SquirrelForageGoal(SquirrelEntity squirrel, double speedModifier) {
+            this.squirrel = squirrel;
+            this.speedModifier = speedModifier;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            if (this.squirrel.isPanicking() || this.squirrel.isWiggling() || this.squirrel.isDeliveringGift() || this.squirrel.isSheltering() || this.squirrel.isBaby() || this.squirrel.isForaging()) {
+                return false;
+            }
+
+            if (this.squirrel.level().isNight()) {
+                return false;
+            }
+
+            if (this.squirrel.getForageCooldownTicks() > 0 || !this.squirrel.hasFreeInventorySlot()) {
+                return false;
+            }
+
+            if (this.targetItemEntity != null && this.targetItemEntity.isAlive() && this.isValidForageItem(this.targetItemEntity)) {
+                return true;
+            }
+
+            if (this.targetBushPos != null && this.isValidBush(this.targetBushPos)) {
+                return true;
+            }
+
+            if (this.searchCooldownTicks > 0) {
+                this.searchCooldownTicks--;
+                return false;
+            }
+
+            this.targetItemEntity = this.findNearbyItem();
+            if (this.targetItemEntity != null) {
+                this.targetBushPos = null;
+                this.searchCooldownTicks = this.getNextSearchCooldown();
+                return true;
+            }
+
+            this.targetBushPos = this.findNearestBush();
+            this.searchCooldownTicks = this.getNextSearchCooldown();
+            return this.targetBushPos != null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            if (this.squirrel.isPanicking() || this.squirrel.level().isNight() || !this.squirrel.hasFreeInventorySlot()) {
+                return false;
+            }
+
+            if (this.targetItemEntity != null) {
+                return this.targetItemEntity.isAlive() && this.isValidForageItem(this.targetItemEntity);
+            }
+
+            return this.targetBushPos != null && this.isValidBush(this.targetBushPos);
+        }
+
+        @Override
+        public void start() {
+            this.squirrel.setForaging(true);
+            this.harvestDelayTicks = 0;
+        }
+
+        @Override
+        public void stop() {
+            this.squirrel.setForaging(false);
+            this.squirrel.getNavigation().stop();
+            this.targetBushPos = null;
+            this.targetItemEntity = null;
+            this.harvestDelayTicks = 0;
+        }
+
+        @Override
+        public void tick() {
+            if (this.targetItemEntity != null && this.targetItemEntity.isAlive() && this.isValidForageItem(this.targetItemEntity)) {
+                this.squirrel.getNavigation().moveTo(this.targetItemEntity, this.speedModifier);
+
+                if (this.squirrel.distanceToSqr(this.targetItemEntity) < 2.0D) {
+                    ItemStack itemStack = this.targetItemEntity.getItem();
+                    if (!itemStack.isEmpty() && this.squirrel.canForageItem(itemStack) && this.squirrel.tryStoreSingleItem(itemStack)) {
+                        this.squirrel.startForageCooldown();
+                    }
+
+                    if (itemStack.isEmpty()) {
+                        this.targetItemEntity.discard();
+                    }
+
+                    this.targetItemEntity = null;
+                }
+                return;
+            }
+
+            if (this.targetBushPos == null) {
+                return;
+            }
+
+            if (!this.targetBushPos.closerToCenterThan(this.squirrel.position(), 1.8D)) {
+                this.squirrel.getNavigation().moveTo(this.targetBushPos.getX() + 0.5D, this.targetBushPos.getY(), this.targetBushPos.getZ() + 0.5D, this.speedModifier);
+                return;
+            }
+
+            this.squirrel.getNavigation().stop();
+            this.squirrel.getLookControl().setLookAt(this.targetBushPos.getX() + 0.5D, this.targetBushPos.getY(), this.targetBushPos.getZ() + 0.5D);
+
+            if (this.harvestDelayTicks <= 0) {
+                this.harvestDelayTicks = SquirrelEntity.FORAGE_WIGGLE_DURATION;
+                this.squirrel.startWiggle(SquirrelEntity.FORAGE_WIGGLE_DURATION);
+                return;
+            }
+
+            this.harvestDelayTicks--;
+
+            if (this.harvestDelayTicks > 0) {
+                return;
+            }
+
+            if (this.isValidBush(this.targetBushPos) && this.squirrel.level() instanceof ServerLevel serverLevel) {
+                this.squirrel.harvestHazelnutBush(serverLevel, this.targetBushPos, this.squirrel.level().getBlockState(this.targetBushPos));
+                this.squirrel.startForageCooldown();
+            }
+
+            this.targetBushPos = null;
+        }
+
+        private int getNextSearchCooldown() {
+            return SEARCH_COOLDOWN_MIN + this.squirrel.getRandom().nextInt(SEARCH_COOLDOWN_MAX - SEARCH_COOLDOWN_MIN + 1);
+        }
+
+        @Nullable
+        private ItemEntity findNearbyItem() {
+            List<ItemEntity> nearbyItemEntities = this.squirrel.level().getEntitiesOfClass(ItemEntity.class, this.squirrel.getBoundingBox().inflate(SquirrelEntity.FORAGE_ITEM_SEARCH_RANGE), this::isValidForageItem);
+            if (nearbyItemEntities.isEmpty()) {
+                return null;
+            }
+
+            return nearbyItemEntities.stream().min(Comparator.comparingDouble(this.squirrel::distanceToSqr)).orElse(null);
+        }
+
+        private boolean isValidForageItem(ItemEntity itemEntity) {
+            return itemEntity.isAlive() && this.squirrel.canForageItem(itemEntity.getItem());
+        }
+
+        @Nullable
+        private BlockPos findNearestBush() {
+            BlockPos originPos = this.squirrel.blockPosition();
+            BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+            BlockPos closestBushPos = null;
+            double closestDistance = Double.MAX_VALUE;
+
+            for (int offsetX = -SquirrelEntity.FORAGE_BUSH_SEARCH_RANGE; offsetX <= SquirrelEntity.FORAGE_BUSH_SEARCH_RANGE; offsetX++) {
+                for (int offsetY = -3; offsetY <= 3; offsetY++) {
+                    for (int offsetZ = -SquirrelEntity.FORAGE_BUSH_SEARCH_RANGE; offsetZ <= SquirrelEntity.FORAGE_BUSH_SEARCH_RANGE; offsetZ++) {
+                        mutableBlockPos.set(originPos.getX() + offsetX, originPos.getY() + offsetY, originPos.getZ() + offsetZ);
+
+                        if (!this.isValidBush(mutableBlockPos)) {
+                            continue;
+                        }
+
+                        double checkedDistance = mutableBlockPos.distSqr(originPos);
+                        if (checkedDistance < closestDistance) {
+                            closestDistance = checkedDistance;
+                            closestBushPos = mutableBlockPos.immutable();
+                        }
+                    }
+                }
+            }
+
+            return closestBushPos;
+        }
+
+        private boolean isValidBush(BlockPos blockPos) {
+            BlockState blockState = this.squirrel.level().getBlockState(blockPos);
+            return blockState.getBlock() instanceof HazelnutBushBlock && blockState.hasProperty(HazelnutBushBlock.AGE) && blockState.getValue(HazelnutBushBlock.AGE) >= 2;
         }
     }
 }

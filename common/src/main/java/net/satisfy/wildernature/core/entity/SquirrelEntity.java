@@ -3,6 +3,7 @@ package net.satisfy.wildernature.core.entity;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.registries.Registries;
@@ -18,11 +19,7 @@ import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.AnimationState;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
@@ -39,13 +36,17 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.core.block.HazelnutBushBlock;
 import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
 import net.satisfy.wildernature.core.entity.ai.BetterWallClimberNavigation;
 import net.satisfy.wildernature.core.entity.ai.SquirrelGoals;
@@ -64,6 +65,7 @@ public class SquirrelEntity extends Animal {
     private static final EntityDataAccessor<Boolean> DATA_WIGGLING = SynchedEntityData.defineId(SquirrelEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(SquirrelEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_SHELTERING = SynchedEntityData.defineId(SquirrelEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_FORAGING = SynchedEntityData.defineId(SquirrelEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final Ingredient TEMPT_INGREDIENT = Ingredient.of(TagsRegistry.SQUIRREL_HOLDABLE);
     private static final ResourceKey<LootTable> GIFT_LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE, WilderNature.identifier("gameplay/squirrel_gifts"));
@@ -95,7 +97,6 @@ public class SquirrelEntity extends Animal {
     public static final int SHELTER_LOCAL_WANDER_RADIUS = 2;
     public static final int SHELTER_LOCAL_WANDER_COOLDOWN_MIN = 60;
     public static final int SHELTER_LOCAL_WANDER_COOLDOWN_MAX = 140;
-    public static final int SHELTER_SEARCH_RANGE = 12;
 
     public static final int INVENTORY_SIZE = 12;
     public static final int CACHE_SEARCH_RANGE = 12;
@@ -103,9 +104,16 @@ public class SquirrelEntity extends Animal {
     public static final int CACHE_STORE_COOLDOWN_MIN = 200;
     public static final int CACHE_STORE_COOLDOWN_MAX = 400;
 
+    public static final int FORAGE_BUSH_SEARCH_RANGE = 10;
+    public static final int FORAGE_ITEM_SEARCH_RANGE = 8;
+    public static final int FORAGE_WIGGLE_DURATION = 16;
+    public static final int FORAGE_COOLDOWN_MIN = 80;
+    public static final int FORAGE_COOLDOWN_MAX = 160;
+
     private static final byte TRUST_POSITIVE_EVENT = 40;
     private static final byte TRUST_NEGATIVE_EVENT = 41;
     private static final byte LOVE_EVENT = 42;
+    private static final byte TRUST_DENY_EVENT = 43;
 
     public final AnimationState idleAnimationState = new AnimationState();
     public final AnimationState wiggleAnimationState = new AnimationState();
@@ -117,6 +125,9 @@ public class SquirrelEntity extends Animal {
     private int giftWiggleTicks;
     private int wiggleTicks;
     private int cacheStoreCooldownTicks;
+    private int forageCooldownTicks;
+    private int pendingTrustItemTicks;
+    private UUID pendingTrustPlayerUuid;
 
     private UUID giftTargetPlayerUuid;
     private UUID lastTrustedPlayerUuid;
@@ -128,7 +139,7 @@ public class SquirrelEntity extends Animal {
     }
 
     public static AttributeSupplier.@NotNull Builder createMobAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.MOVEMENT_SPEED, 0.4D);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.MOVEMENT_SPEED, 0.3D);
     }
 
     @Override
@@ -140,16 +151,17 @@ public class SquirrelEntity extends Animal {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.0D));
-        this.goalSelector.addGoal(2, new SquirrelGoals.SquirrelDeliverGiftGoal(this));
-        this.goalSelector.addGoal(3, new SquirrelGoals.SquirrelSeekShelterGoal(this, 1.0D));
-        this.goalSelector.addGoal(4, new SquirrelGoals.SquirrelStoreInventoryGoal(this, 1.0D));
+        this.goalSelector.addGoal(2, new SquirrelGoals.SquirrelSeekShelterGoal(this, 1.0D));
+        this.goalSelector.addGoal(3, new SquirrelGoals.SquirrelStoreInventoryGoal(this, 1.0D));
+        this.goalSelector.addGoal(4, new SquirrelGoals.SquirrelForageGoal(this, 1.05D));
         this.goalSelector.addGoal(5, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new SquirrelGoals.SquirrelGiftTriggerGoal(this));
-        this.goalSelector.addGoal(7, new TemptGoal(this, 1.0D, TEMPT_INGREDIENT, false));
-        this.goalSelector.addGoal(8, new FollowParentGoal(this, 1.0D));
-        this.goalSelector.addGoal(9, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(11, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(7, new SquirrelGoals.SquirrelDeliverGiftGoal(this));
+        this.goalSelector.addGoal(8, new TemptGoal(this, 1.0D, TEMPT_INGREDIENT, false));
+        this.goalSelector.addGoal(9, new FollowParentGoal(this, 1.0D));
+        this.goalSelector.addGoal(10, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(11, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(12, new RandomLookAroundGoal(this));
     }
 
     @Override
@@ -161,6 +173,7 @@ public class SquirrelEntity extends Animal {
         builder.define(DATA_WIGGLING, false);
         builder.define(DATA_VARIANT, VARIANT_UNSET);
         builder.define(DATA_SHELTERING, false);
+        builder.define(DATA_FORAGING, false);
     }
 
     @Override
@@ -175,6 +188,7 @@ public class SquirrelEntity extends Animal {
         compoundTag.putInt("WiggleTicks", this.wiggleTicks);
         compoundTag.putInt("Variant", this.getVariant());
         compoundTag.putInt("CacheStoreCooldown", this.cacheStoreCooldownTicks);
+        compoundTag.putInt("ForageCooldown", this.forageCooldownTicks);
         if (!this.pendingGiftStack.isEmpty()) {
             compoundTag.put("PendingGiftStack", this.pendingGiftStack.saveOptional(this.registryAccess()));
         }
@@ -198,6 +212,7 @@ public class SquirrelEntity extends Animal {
         this.giftWiggleTicks = compoundTag.getInt("GiftWiggleTicks");
         this.wiggleTicks = compoundTag.getInt("WiggleTicks");
         this.cacheStoreCooldownTicks = compoundTag.getInt("CacheStoreCooldown");
+        this.forageCooldownTicks = compoundTag.getInt("ForageCooldown");
         this.setWiggling(this.wiggleTicks > 0);
         this.setVariant(compoundTag.contains("Variant") ? compoundTag.getInt("Variant") : VARIANT_UNSET);
         this.pendingGiftStack = compoundTag.contains("PendingGiftStack") ? ItemStack.parseOptional(this.registryAccess(), compoundTag.getCompound("PendingGiftStack")) : ItemStack.EMPTY;
@@ -254,6 +269,10 @@ public class SquirrelEntity extends Animal {
         return this.entityData.get(DATA_SHELTERING);
     }
 
+    public boolean isForaging() {
+        return this.entityData.get(DATA_FORAGING);
+    }
+
     public int getGiftCooldownTicks() {
         return this.giftCooldownTicks;
     }
@@ -268,6 +287,10 @@ public class SquirrelEntity extends Animal {
 
     public int getCacheStoreCooldownTicks() {
         return this.cacheStoreCooldownTicks;
+    }
+
+    public int getForageCooldownTicks() {
+        return this.forageCooldownTicks;
     }
 
     public ItemStack getPendingGiftStack() {
@@ -309,6 +332,10 @@ public class SquirrelEntity extends Animal {
 
     public void setSheltering(boolean sheltering) {
         this.entityData.set(DATA_SHELTERING, sheltering);
+    }
+
+    public void setForaging(boolean foraging) {
+        this.entityData.set(DATA_FORAGING, foraging);
     }
 
     private void updateVariantFromBiome() {
@@ -365,8 +392,8 @@ public class SquirrelEntity extends Animal {
     }
 
     public boolean hasStoredItems() {
-        for (ItemStack itemStack : this.squirrelInventory) {
-            if (!itemStack.isEmpty()) {
+        for (ItemStack storedItemStack : this.squirrelInventory) {
+            if (!storedItemStack.isEmpty()) {
                 return true;
             }
         }
@@ -374,8 +401,8 @@ public class SquirrelEntity extends Animal {
     }
 
     public boolean hasFreeInventorySlot() {
-        for (ItemStack itemStack : this.squirrelInventory) {
-            if (itemStack.isEmpty()) {
+        for (ItemStack storedItemStack : this.squirrelInventory) {
+            if (storedItemStack.isEmpty()) {
                 return true;
             }
         }
@@ -398,7 +425,8 @@ public class SquirrelEntity extends Animal {
                 int transferableCount = Math.min(itemStack.getCount(), existingStack.getMaxStackSize() - existingStack.getCount());
                 if (transferableCount > 0) {
                     existingStack.grow(transferableCount);
-                    return true;
+                    itemStack.shrink(transferableCount);
+                    return itemStack.isEmpty();
                 }
             }
         }
@@ -406,7 +434,7 @@ public class SquirrelEntity extends Animal {
         return false;
     }
 
-    private boolean tryStoreSingleItem(ItemStack sourceStack) {
+    public boolean tryStoreSingleItem(ItemStack sourceStack) {
         if (sourceStack.isEmpty()) {
             return false;
         }
@@ -418,6 +446,41 @@ public class SquirrelEntity extends Animal {
         }
 
         return false;
+    }
+
+    public boolean storeForagedItem(ItemStack itemStack) {
+        if (itemStack.isEmpty()) {
+            return false;
+        }
+
+        ItemStack singleStack = itemStack.copyWithCount(1);
+        return this.tryStoreInSquirrelInventory(singleStack);
+    }
+
+    public boolean canForageItem(ItemStack itemStack) {
+        return !itemStack.isEmpty() && itemStack.is(ObjectRegistry.HAZELNUT.get()) && this.hasFreeInventorySlot();
+    }
+
+    public void harvestHazelnutBush(ServerLevel serverLevel, BlockPos blockPos, BlockState blockState) {
+        if (!serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+            return;
+        }
+        if (!(blockState.getBlock() instanceof HazelnutBushBlock) || !blockState.hasProperty(HazelnutBushBlock.AGE) || blockState.getValue(HazelnutBushBlock.AGE) < 2) {
+            return;
+        }
+
+        int hazelnutCount = 1 + serverLevel.random.nextInt(2);
+        if (blockState.getValue(HazelnutBushBlock.AGE) >= 3) {
+            hazelnutCount++;
+        }
+
+        for (int hazelnutIndex = 0; hazelnutIndex < hazelnutCount; hazelnutIndex++) {
+            if (!this.storeForagedItem(new ItemStack(ObjectRegistry.HAZELNUT.get()))) {
+                Block.popResource(serverLevel, blockPos, new ItemStack(ObjectRegistry.HAZELNUT.get()));
+            }
+        }
+
+        serverLevel.setBlock(blockPos, blockState.setValue(HazelnutBushBlock.AGE, 1), 2);
     }
 
     public boolean depositInventoryIntoCache(HollowCacheBlockEntity hollowCacheBlockEntity) {
@@ -448,6 +511,10 @@ public class SquirrelEntity extends Animal {
 
     public void startCacheStoreCooldown() {
         this.cacheStoreCooldownTicks = CACHE_STORE_COOLDOWN_MIN + this.random.nextInt(CACHE_STORE_COOLDOWN_MAX - CACHE_STORE_COOLDOWN_MIN + 1);
+    }
+
+    public void startForageCooldown() {
+        this.forageCooldownTicks = FORAGE_COOLDOWN_MIN + this.random.nextInt(FORAGE_COOLDOWN_MAX - FORAGE_COOLDOWN_MIN + 1);
     }
 
     public void startWiggle(int durationTicks) {
@@ -505,14 +572,23 @@ public class SquirrelEntity extends Animal {
             return super.mobInteract(player, hand);
         }
 
-        if (this.canAcceptTrustItem(itemStack) && this.feedCooldownTicks <= 0 && !this.isBaby() && this.hasFreeInventorySlot()) {
+        if (this.isFood(itemStack) && this.canFallInLove()) {
             if (!this.level().isClientSide()) {
-                if (this.tryStoreSingleItem(itemStack)) {
-                    int trustGain = this.getTrustGain(itemStack);
-                    this.feedCooldownTicks = FEED_COOLDOWN_TICKS;
-                    this.lastTrustedPlayerUuid = player.getUUID();
-                    this.addTrust(trustGain);
-                }
+                this.usePlayerItem(player, hand, itemStack);
+                this.setInLove(player);
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide());
+        }
+
+        if (this.canAcceptTrustItem(itemStack) && this.feedCooldownTicks <= 0 && !this.isBaby() && this.hasFreeInventorySlot() && this.getMainHandItem().isEmpty()) {
+            if (!this.level().isClientSide()) {
+                ItemStack singleStack = itemStack.copyWithCount(1);
+                this.setItemSlot(EquipmentSlot.MAINHAND, singleStack);
+                itemStack.shrink(1);
+                this.feedCooldownTicks = FEED_COOLDOWN_TICKS;
+                this.pendingTrustItemTicks = 40;
+                this.pendingTrustPlayerUuid = player.getUUID();
+                this.startWiggle(40);
             }
             return InteractionResult.sidedSuccess(this.level().isClientSide());
         }
@@ -529,6 +605,11 @@ public class SquirrelEntity extends Animal {
 
         if (id == TRUST_NEGATIVE_EVENT) {
             this.spawnParticles(ParticleTypeRegistry.TRUST_NEGATIVE.get());
+            return;
+        }
+
+        if (id == TRUST_DENY_EVENT) {
+            this.spawnParticles(ParticleTypeRegistry.DENY.get());
             return;
         }
 
@@ -578,6 +659,39 @@ public class SquirrelEntity extends Animal {
             this.cacheStoreCooldownTicks--;
         }
 
+        if (this.forageCooldownTicks > 0) {
+            this.forageCooldownTicks--;
+        }
+
+        if (this.pendingTrustItemTicks > 0) {
+            this.pendingTrustItemTicks--;
+
+            if (this.pendingTrustItemTicks == 0 && !this.level().isClientSide()) {
+                ItemStack heldStack = this.getMainHandItem();
+
+                if (!heldStack.isEmpty()) {
+                    boolean accepted = this.random.nextFloat() < 0.8F;
+
+                    if (accepted && this.tryStoreInSquirrelInventory(heldStack.copy())) {
+                        this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+                        Player targetPlayer = this.pendingTrustPlayerUuid != null ? this.level().getPlayerByUUID(this.pendingTrustPlayerUuid) : null;
+                        if (targetPlayer != null) {
+                            this.lastTrustedPlayerUuid = targetPlayer.getUUID();
+                        }
+                        this.addTrust(this.getTrustGain(heldStack));
+                        this.level().broadcastEntityEvent(this, TRUST_POSITIVE_EVENT);
+                    } else {
+                        this.dropGift(heldStack.copy());
+                        this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+                        this.setTrustLevel(this.getTrustLevel() - 1);
+                        this.level().broadcastEntityEvent(this, TRUST_DENY_EVENT);
+                    }
+                }
+
+                this.pendingTrustPlayerUuid = null;
+            }
+        }
+
         if (this.wiggleTicks > 0) {
             this.wiggleTicks--;
             if (this.wiggleTicks <= 0) {
@@ -589,9 +703,11 @@ public class SquirrelEntity extends Animal {
             this.setupAnimationStates();
         } else {
             this.setClimbing(this.horizontalCollision);
+            this.updateVariantFromBiome();
 
-            if (this.getVariant() == VARIANT_UNSET) {
-                this.updateVariantFromBiome();
+            if (this.isSheltering() && this.level().isNight() && this.getDeltaMovement().horizontalDistanceSqr() < 1.0E-4D && this.random.nextInt(20) == 0) {
+                ServerLevel serverLevel = (ServerLevel) this.level();
+                serverLevel.sendParticles(ParticleTypeRegistry.SLEEPING.get(), this.getX(), this.getY() + 0.8D, this.getZ(), 1, 0.1D, 0.05D, 0.1D, 0.0D);
             }
         }
     }
@@ -678,10 +794,6 @@ public class SquirrelEntity extends Animal {
             }
 
             targetPlayer = nearbyPlayers.stream().min(Comparator.comparingDouble(this::distanceToSqr)).orElse(null);
-        }
-
-        if (targetPlayer == null) {
-            return false;
         }
 
         ItemStack giftStack = this.rollGift();
