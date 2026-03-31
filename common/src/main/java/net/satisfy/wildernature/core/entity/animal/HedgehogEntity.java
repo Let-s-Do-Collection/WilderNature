@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.entity;
+package net.satisfy.wildernature.core.entity.animal;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;

@@ -11,7 +11,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.core.entity.RedWolfEntity;
+import net.satisfy.wildernature.core.entity.animal.RedWolfEntity;
 import net.satisfy.wildernature.core.entity.animation.RedWolfAnimation;
 import org.jetbrains.annotations.NotNull;
 

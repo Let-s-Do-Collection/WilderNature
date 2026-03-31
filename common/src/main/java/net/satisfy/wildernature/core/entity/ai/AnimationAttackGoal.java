@@ -4,65 +4,74 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 
-public class AnimationAttackGoal extends MeleeAttackGoal {
-    private final EntityWithAttackAnimation animationEntity;
+import java.util.function.Consumer;
+
+public class AnimationAttackGoal<T extends PathfinderMob> extends MeleeAttackGoal {
+    private final T animationEntity;
+    private final Consumer<Boolean> attackingSetter;
     private int counter;
     private final int attackDelay;
     private final int attackTick;
-    private int timeout = 0;
+    private int timeout;
 
-    public AnimationAttackGoal(EntityWithAttackAnimation pMob, double pSpeedModifier, boolean pFollowingTargetEvenIfNotSeen, int attackDelay, int attackTick) {
-        super((PathfinderMob) pMob, pSpeedModifier, pFollowingTargetEvenIfNotSeen);
+    public AnimationAttackGoal(T animationEntity, double speedModifier, boolean followingTargetEvenIfNotSeen, int attackDelay, int attackTick, Consumer<Boolean> attackingSetter) {
+        super(animationEntity, speedModifier, followingTargetEvenIfNotSeen);
+        this.animationEntity = animationEntity;
+        this.attackingSetter = attackingSetter;
         this.attackDelay = attackDelay;
         this.attackTick = attackTick;
-        animationEntity = pMob;
+        this.timeout = 0;
     }
 
     @Override
     public void start() {
-        timeout = 0;
+        this.timeout = 0;
         super.start();
     }
 
     @Override
     public boolean canContinueToUse() {
-        return super.canContinueToUse() && timeout < 20 * 3;
+        return super.canContinueToUse() && this.timeout < 60;
     }
 
     @Override
     public void tick() {
         super.tick();
-        var target = animationEntity.getTarget_();
-        if (target != null) {
-            checkAndPerformAttack(target);
+        LivingEntity targetEntity = this.animationEntity.getTarget();
+        if (targetEntity != null) {
+            this.checkAndPerformAttack(targetEntity);
         }
-        animationEntity.setAttacking_(counter != 0);
+        this.attackingSetter.accept(this.counter != 0);
 
-        if (counter != 0)
-            counter++;
-        if (counter >= attackDelay) {
-            counter = 0;
+        if (this.counter != 0) {
+            this.counter++;
+        }
+
+        if (this.counter >= this.attackDelay) {
+            this.counter = 0;
         }
     }
 
     @Override
     protected void checkAndPerformAttack(LivingEntity targetEntity) {
         if (this.isTimeToAttack() && this.mob.isWithinMeleeAttackRange(targetEntity) && this.mob.getSensing().hasLineOfSight(targetEntity)) {
-            if (counter == 0) {
-                counter++;
+            if (this.counter == 0) {
+                this.counter++;
             }
-            if (counter == attackTick) {
-                this.animationEntity.doHurtTarget_(targetEntity);
+
+            if (this.counter == this.attackTick) {
+                this.animationEntity.doHurtTarget(targetEntity);
             }
-            timeout = 0;
+
+            this.timeout = 0;
         } else {
-            timeout++;
+            this.timeout++;
         }
     }
 
     @Override
     public void stop() {
-        animationEntity.setAttacking_(false);
+        this.attackingSetter.accept(false);
         super.stop();
     }
 }

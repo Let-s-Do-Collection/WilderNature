@@ -10,7 +10,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.core.entity.DogEntity;
+import net.satisfy.wildernature.core.entity.animal.DogEntity;
 import net.satisfy.wildernature.core.entity.animation.DogAnimation;
 import org.jetbrains.annotations.NotNull;
 

@@ -13,7 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileItem;
 import net.minecraft.world.level.Level;
-import net.satisfy.wildernature.core.entity.ThrownTurkeyEgg;
+import net.satisfy.wildernature.core.entity.projectile.ThrownTurkeyEgg;
 import org.jetbrains.annotations.NotNull;
 
 public class TurkeyEggItem extends Item implements ProjectileItem {

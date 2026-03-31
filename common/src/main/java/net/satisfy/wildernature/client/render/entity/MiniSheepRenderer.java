@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.MiniSheepModel;
-import net.satisfy.wildernature.core.entity.MiniSheepEntity;
+import net.satisfy.wildernature.core.entity.animal.MiniSheepEntity;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)

@@ -9,7 +9,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.Entity;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.core.entity.TurkeyEntity;
+import net.satisfy.wildernature.core.entity.animal.TurkeyEntity;
 import net.satisfy.wildernature.core.entity.animation.TurkeyAnimation;
 import org.jetbrains.annotations.NotNull;
 

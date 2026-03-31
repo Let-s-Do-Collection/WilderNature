@@ -12,7 +12,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.core.entity.BisonEntity;
+import net.satisfy.wildernature.core.entity.animal.BisonEntity;
 import net.satisfy.wildernature.core.entity.animation.BisonAnimation;
 import org.jetbrains.annotations.NotNull;
 

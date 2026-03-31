@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.entity;
+package net.satisfy.wildernature.core.entity.animal;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -16,7 +16,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -47,7 +46,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.entity.ai.AnimationAttackGoal;
-import net.satisfy.wildernature.core.entity.ai.EntityWithAttackAnimation;
 import net.satisfy.wildernature.core.entity.animation.ServerAnimationDurations;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundRegistry;
@@ -61,7 +59,7 @@ import java.util.Objects;
 import java.util.Map;
 import java.util.HashMap;
 
-public class BisonEntity extends Animal implements EntityWithAttackAnimation {
+public class BisonEntity extends Animal {
     private static final EntityDataAccessor<Integer> ANGER_TIME = SynchedEntityData.defineId(BisonEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(BisonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> ROLLING = SynchedEntityData.defineId(BisonEntity.class, EntityDataSerializers.BOOLEAN);
@@ -70,6 +68,7 @@ public class BisonEntity extends Animal implements EntityWithAttackAnimation {
     public final AnimationState idleAnimationState = new AnimationState();
     public final AnimationState attackAnimationState = new AnimationState();
     public AnimationState rollingAnimationState = new AnimationState();
+    private static final int ATTACK_DURATION = 16;
 
     public BisonEntity(EntityType<? extends Animal> entityType, Level world) {
         super(entityType, world);
@@ -151,28 +150,8 @@ public class BisonEntity extends Animal implements EntityWithAttackAnimation {
         return this.entityData.get(ATTACKING);
     }
 
-    @Override
-    public LivingEntity getTarget_() {
-        return getTarget();
-    }
-
-    @Override
-    public double getMeleeAttackRangeSqr_(LivingEntity target) {
-        return this.distanceToSqr(target);
-    }
-
-    public void setAttacking_(boolean attacking) {
+    public void setAttacking(boolean attacking) {
         this.entityData.set(ATTACKING, attacking);
-    }
-
-    @Override
-    public Vec3 getPosition_(int i) {
-        return super.getPosition(i);
-    }
-
-    @Override
-    public void doHurtTarget_(LivingEntity targetEntity) {
-        super.doHurtTarget(targetEntity);
     }
 
     public boolean isAngry() {
@@ -200,8 +179,7 @@ public class BisonEntity extends Animal implements EntityWithAttackAnimation {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new AnimationAttackGoal(this, 1.0D, true, (int) (ServerAnimationDurations.bison_attack * 20), 5));
-        this.goalSelector.addGoal(1, new BisonPanicGoal(this));
+        this.goalSelector.addGoal(1, new AnimationAttackGoal<>(this, 1.0D, true, ATTACK_DURATION, 5, this::setAttacking));        this.goalSelector.addGoal(1, new BisonPanicGoal(this));
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Wolf.class, 12.0F, 1.35, 1.6));
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Creeper.class, 10.0F, 1.35, 1.6));
         this.goalSelector.addGoal(2, new BisonHerdRunGoal(this));

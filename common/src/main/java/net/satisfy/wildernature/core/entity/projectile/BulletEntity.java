@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.entity;
+package net.satisfy.wildernature.core.entity.projectile;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;

@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.entity;
+package net.satisfy.wildernature.core.entity.animal;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -8,10 +8,20 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.AnimationState;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.BreedGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.FollowParentGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.TemptGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
@@ -21,26 +31,54 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
-import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.entity.ai.AnimationAttackGoal;
-import net.satisfy.wildernature.core.entity.ai.EntityWithAttackAnimation;
 import net.satisfy.wildernature.core.entity.animation.ServerAnimationDurations;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PelicanEntity extends Animal implements EntityWithAttackAnimation {
-    private static final Ingredient FOOD_ITEMS;
+public class PelicanEntity extends Animal {
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.COD, Items.SALMON, Items.PUFFERFISH, Items.COOKED_COD, Items.COOKED_SALMON);
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(PelicanEntity.class, EntityDataSerializers.BOOLEAN);
+
     public final AnimationState attackAnimationState = new AnimationState();
     public final AnimationState idleAnimationState = new AnimationState();
+
+    public PelicanEntity(EntityType<? extends PelicanEntity> entityType, Level level) {
+        super(entityType, level);
+        this.setPathfindingMalus(PathType.WATER, 0.0F);
+    }
+
+    public static AttributeSupplier.@NotNull Builder createMobAttributes() {
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 8.0D)
+                .add(Attributes.FOLLOW_RANGE, 24.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.22D)
+                .add(Attributes.ATTACK_DAMAGE, 0.5D)
+                .add(Attributes.ATTACK_KNOCKBACK, 0.0D)
+                .add(Attributes.ATTACK_SPEED, 1.0D);
+    }
+
+    @Override
+    protected void registerGoals() {
+        int goalPriority = 0;
+        this.goalSelector.addGoal(++goalPriority, new AnimationAttackGoal<>(this, 1.0D, true, (int) (ServerAnimationDurations.turkey_attack + 2), 8, this::setAttacking));
+        this.goalSelector.addGoal(++goalPriority, new FloatGoal(this));
+        this.goalSelector.addGoal(++goalPriority, new BreedGoal(this, 1.0D));
+        this.goalSelector.addGoal(++goalPriority, new TemptGoal(this, 1.0D, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(++goalPriority, new FollowParentGoal(this, 1.1D));
+        this.goalSelector.addGoal(++goalPriority, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(++goalPriority, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(++goalPriority, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(0, new HurtByTargetGoal(this).setAlertOthers());
+    }
 
     @Override
     public void tick() {
         super.tick();
         if (this.level().isClientSide()) {
-            setupAnimationStates();
+            this.setupAnimationStates();
         }
     }
 
@@ -59,29 +97,19 @@ public class PelicanEntity extends Animal implements EntityWithAttackAnimation {
     }
 
     @Override
-    protected void updateWalkAnimation(float pPartialTick) {
-        float f;
+    protected void updateWalkAnimation(float partialTick) {
+        float walkSpeed;
         if (this.getPose() == Pose.STANDING) {
-            f = Math.min(pPartialTick * 6F, 1f);
+            walkSpeed = Math.min(partialTick * 6.0F, 1.0F);
         } else {
-            f = 0f;
+            walkSpeed = 0.0F;
         }
 
-        this.walkAnimation.update(f, 0.2f);
+        this.walkAnimation.update(walkSpeed, 0.2F);
     }
 
-    public void setAttacking_(boolean attacking) {
+    public void setAttacking(boolean attacking) {
         this.entityData.set(ATTACKING, attacking);
-    }
-
-    @Override
-    public Vec3 getPosition_(int i) {
-        return super.getPosition(i);
-    }
-
-    @Override
-    public void doHurtTarget_(LivingEntity targetEntity) {
-        super.doHurtTarget(targetEntity);
     }
 
     public boolean isAttacking() {
@@ -92,42 +120,6 @@ public class PelicanEntity extends Animal implements EntityWithAttackAnimation {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(ATTACKING, false);
-    }
-
-    @Override
-    public LivingEntity getTarget_() {
-        return getTarget();
-    }
-
-    public double getMeleeAttackRangeSqr_(LivingEntity entity) {
-        return this.distanceToSqr(entity);
-    }
-
-    static {
-        FOOD_ITEMS = Ingredient.of(Items.COD, Items.SALMON, Items.PUFFERFISH, Items.COOKED_COD, Items.COOKED_SALMON);
-    }
-
-    public PelicanEntity(EntityType<? extends PelicanEntity> entityType, Level level) {
-        super(entityType, level);
-        this.setPathfindingMalus(PathType.WATER, 0.0F);
-    }
-
-    public static AttributeSupplier.@NotNull Builder createMobAttributes() {
-        return Animal.createLivingAttributes().add(Attributes.MAX_HEALTH, 8).add(Attributes.FOLLOW_RANGE, 24D).add(Attributes.MOVEMENT_SPEED, 0.22).add(Attributes.ATTACK_DAMAGE, 0.5f).add(Attributes.ATTACK_KNOCKBACK, 0D).add(Attributes.ATTACK_SPEED, 1F);
-    }
-
-    @Override
-    protected void registerGoals() {
-        int i = 0;
-        this.goalSelector.addGoal(++i, new AnimationAttackGoal(this, 1.0D, true, (int) (ServerAnimationDurations.turkey_attack + 2), 8));
-        this.goalSelector.addGoal(++i, new FloatGoal(this));
-        this.goalSelector.addGoal(++i, new BreedGoal(this, 1.0));
-        this.goalSelector.addGoal(++i, new TemptGoal(this, 1.0, FOOD_ITEMS, false));
-        this.goalSelector.addGoal(++i, new FollowParentGoal(this, 1.1));
-        this.goalSelector.addGoal(++i, new WaterAvoidingRandomStrollGoal(this, 1.0));
-        this.goalSelector.addGoal(++i, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(++i, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(0, new HurtByTargetGoal(this).setAlertOthers());
     }
 
     @Override

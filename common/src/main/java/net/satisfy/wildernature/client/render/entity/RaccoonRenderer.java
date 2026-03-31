@@ -9,16 +9,18 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.RaccoonModel;
-import net.satisfy.wildernature.core.entity.RaccoonEntity;
+import net.satisfy.wildernature.client.render.entity.layer.RaccoonHeldItemLayer;
+import net.satisfy.wildernature.core.entity.animal.RaccoonEntity;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
 public class RaccoonRenderer extends MobRenderer<RaccoonEntity, RaccoonModel<RaccoonEntity>> {
     private static final ResourceLocation RACCOON_TEXTURE = WilderNature.identifier("textures/entity/raccoon.png");
-    private static final ResourceLocation RACOON_SLEEP_TEXTURE = WilderNature.identifier("textures/entity/raccoon.png");
+    private static final ResourceLocation RACCOON_SLEEP_TEXTURE = WilderNature.identifier("textures/entity/raccoon_sleep.png");
 
     public RaccoonRenderer(EntityRendererProvider.Context context) {
         super(context, new RaccoonModel<>(context.bakeLayer(RaccoonModel.LAYER_LOCATION)), 0.7f);
+        this.addLayer(new RaccoonHeldItemLayer(this, context.getItemInHandRenderer()));
     }
 
     @Override
@@ -26,8 +28,9 @@ public class RaccoonRenderer extends MobRenderer<RaccoonEntity, RaccoonModel<Rac
         super.setupRotations(livingEntity, poseStack, f, g, h, i);
     }
 
+    @Override
     public @NotNull ResourceLocation getTextureLocation(RaccoonEntity entity) {
-        return entity.isSleeping() ? RACOON_SLEEP_TEXTURE : RACCOON_TEXTURE;
+        return entity.isSleeping() ? RACCOON_SLEEP_TEXTURE : RACCOON_TEXTURE;
     }
 
     @Override

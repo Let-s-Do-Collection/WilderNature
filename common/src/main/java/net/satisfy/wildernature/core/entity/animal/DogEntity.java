@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.entity;
+package net.satisfy.wildernature.core.entity.animal;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -11,12 +11,26 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.AnimationState;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.BreedGoal;
+import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
+import net.minecraft.world.entity.ai.goal.FollowParentGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
+import net.minecraft.world.entity.ai.goal.TemptGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Cat;
@@ -26,12 +40,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.entity.ai.AnimationAttackGoal;
-import net.satisfy.wildernature.core.entity.ai.EntityWithAttackAnimation;
 import net.satisfy.wildernature.core.entity.ai.RandomAction;
 import net.satisfy.wildernature.core.entity.ai.RandomActionGoal;
-import net.satisfy.wildernature.core.entity.animation.ServerAnimationDurations;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +51,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 
-public class DogEntity extends TamableAnimal implements EntityWithAttackAnimation {
+public class DogEntity extends TamableAnimal {
     public final AnimationState idleAnimationState = new AnimationState();
     public AnimationState howlingAnimationState = new AnimationState();
     public AnimationState attackAnimationState = new AnimationState();
@@ -51,10 +62,11 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
     private static final EntityDataAccessor<Boolean> SITTING = SynchedEntityData.defineId(DogEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final double MOVEMENT_SPEED = 0.23;
-
     private static final double MAX_HEALTH = 12.0;
     private static final double ATTACK_DAMAGE = 3.0;
     private static final float SOUND_VOLUME = 0.3F;
+    private static final int BITE_DURATION = 34;
+    private static final int HOWL_DURATION = 70;
 
     public DogEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
@@ -76,18 +88,17 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(0, new AnimationAttackGoal(this, 1.2f, true,
-                (int) (ServerAnimationDurations.dog_bite * 20), 7));
+        this.goalSelector.addGoal(0, new AnimationAttackGoal<>(this, 1.2D, true, BITE_DURATION, 7, this::setAttacking));
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.15D));
         this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
-        this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 1.25d, 18f, 7f));
+        this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 1.25D, 18.0F, 7.0F));
         this.goalSelector.addGoal(2, new TemptGoal(this, 1.2D, Ingredient.of(Items.BONE), false));
         this.goalSelector.addGoal(3, new FollowParentGoal(this, 1.1D));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1D));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 3f));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 3.0F));
         this.goalSelector.addGoal(6, new PanicGoal(this, 2.0D));
         this.goalSelector.addGoal(7, new GoAfterCatGoal(this));
-        this.goalSelector.addGoal(7, createRandomActionGoal());
+        this.goalSelector.addGoal(7, this.createRandomActionGoal());
 
         this.targetSelector.addGoal(10, new HurtByTargetGoal(this));
     }
@@ -117,19 +128,18 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
             @Override
             public void onTick(int tick) {
                 if (tick == 20) {
-                    level().playSound(null, DogEntity.this, SoundRegistry.DOG_AMBIENT.get(),
-                            SoundSource.NEUTRAL, 1, 1);
+                    level().playSound(null, DogEntity.this, SoundRegistry.DOG_AMBIENT.get(), SoundSource.NEUTRAL, 1.0F, 1.0F);
                 }
             }
 
             @Override
             public int duration() {
-                return (int) (ServerAnimationDurations.dog_howl * 20);
+                return HOWL_DURATION;
             }
 
             @Override
             public float chance() {
-                return 0.005f;
+                return 0.005F;
             }
 
             @Override
@@ -142,16 +152,15 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
     @Override
     public void tick() {
         super.tick();
-        handleSittingState();
+        this.handleSittingState();
 
         if (this.level().isClientSide()) {
-            setupAnimationStates();
+            this.setupAnimationStates();
         }
     }
 
     private void handleSittingState() {
-        if (!this.level().isClientSide() && this.isTame()
-                && this.entityData.get(SITTING) != this.isOrderedToSit()) {
+        if (!this.level().isClientSide() && this.isTame() && this.entityData.get(SITTING) != this.isOrderedToSit()) {
             this.setOrderedToSit(this.entityData.get(SITTING));
         }
     }
@@ -172,7 +181,11 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
     }
 
     private boolean isAttacking() {
-        return entityData.get(ATTACKING);
+        return this.entityData.get(ATTACKING);
+    }
+
+    public void setAttacking(boolean attacking) {
+        this.entityData.set(ATTACKING, attacking);
     }
 
     private boolean isHowling() {
@@ -219,9 +232,8 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
 
     @Override
     protected void updateWalkAnimation(float partialTick) {
-        float f = (this.getPose() == Pose.STANDING) ?
-                Math.min(partialTick * 6F, 1f) : 0f;
-        this.walkAnimation.update(f, 0.2f);
+        float walkSpeed = this.getPose() == Pose.STANDING ? Math.min(partialTick * 6.0F, 1.0F) : 0.0F;
+        this.walkAnimation.update(walkSpeed, 0.2F);
     }
 
     @Override
@@ -251,29 +263,29 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
 
     @Override
     public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
-        ItemStack itemstack = player.getItemInHand(hand);
+        ItemStack itemStack = player.getItemInHand(hand);
 
         if (this.level().isClientSide()) {
-            boolean flag = this.isOwnedBy(player) || this.isTame()
-                    || (itemstack.is(Items.BONE) && !this.isTame());
-            return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
-        } else {
-            return handleServerSideInteraction(player, itemstack, hand);
+            boolean shouldConsume = this.isOwnedBy(player) || this.isTame() || itemStack.is(Items.BONE) && !this.isTame();
+            return shouldConsume ? InteractionResult.CONSUME : InteractionResult.PASS;
         }
+
+        return this.handleServerSideInteraction(player, itemStack, hand);
     }
 
-    private InteractionResult handleServerSideInteraction(Player player, ItemStack itemstack, InteractionHand hand) {
+    private InteractionResult handleServerSideInteraction(Player player, ItemStack itemStack, InteractionHand hand) {
         if (this.isTame()) {
             if (this.isOwnedBy(player)) {
-                if (itemstack.is(Items.BONE)) {
-                    return handleHealing();
-                } else {
-                    return handleNonBoneInteraction(player);
+                if (itemStack.is(Items.BONE)) {
+                    return this.handleHealing();
                 }
+
+                return this.handleNonBoneInteraction(player);
             }
-        } else if (itemstack.is(Items.BONE)) {
-            return handleTaming(player, itemstack);
+        } else if (itemStack.is(Items.BONE)) {
+            return this.handleTaming(player, itemStack);
         }
+
         return super.mobInteract(player, hand);
     }
 
@@ -283,23 +295,25 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
             this.gameEvent(GameEvent.ENTITY_INTERACT, this);
             return InteractionResult.SUCCESS;
         }
+
         return InteractionResult.CONSUME;
     }
 
     private InteractionResult handleNonBoneInteraction(Player player) {
-        InteractionResult interactionresult = super.mobInteract(player, InteractionHand.MAIN_HAND);
-        if (!interactionresult.consumesAction() || this.isBaby()) {
+        InteractionResult interactionResult = super.mobInteract(player, InteractionHand.MAIN_HAND);
+        if (!interactionResult.consumesAction() || this.isBaby()) {
             this.setOrderedToSit(!this.isOrderedToSit());
             this.jumping = false;
             this.navigation.stop();
             this.setTarget(null);
             return InteractionResult.SUCCESS;
         }
-        return interactionresult;
+
+        return interactionResult;
     }
 
-    private InteractionResult handleTaming(Player player, ItemStack itemstack) {
-        this.usePlayerItem(player, InteractionHand.MAIN_HAND, itemstack);
+    private InteractionResult handleTaming(Player player, ItemStack itemStack) {
+        this.usePlayerItem(player, InteractionHand.MAIN_HAND, itemStack);
         if (this.random.nextInt(3) == 0) {
             this.tame(player);
             this.navigation.stop();
@@ -309,42 +323,18 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
         } else {
             this.level().broadcastEntityEvent(this, (byte) 6);
         }
+
         return InteractionResult.SUCCESS;
     }
 
-    @Override
-    public LivingEntity getTarget_() {
-        return getTarget();
-    }
-
-    @Override
-    public double getMeleeAttackRangeSqr_(LivingEntity target) {
-        return this.distanceToSqr(target);
-    }
-
-    @Override
-    public void setAttacking_(boolean b) {
-        this.entityData.set(ATTACKING, b);
-    }
-
-    @Override
-    public Vec3 getPosition_(int i) {
-        return super.getPosition(i);
-    }
-
-    @Override
-    public void doHurtTarget_(LivingEntity targetEntity) {
-        super.doHurtTarget(targetEntity);
-    }
-
     public static class GoAfterCatGoal extends Goal {
+        private static final int CAT_SEARCH_INTERVAL = 20;
+        private static final double CAT_DETECTION_RANGE_SQR = 256.0D;
+
         private final DogEntity dog;
         private List<Cat> catList;
-        private int lastCatUpdate = 0;
+        private int lastCatUpdate;
         private Cat targetCat;
-
-        private static final int CAT_SEARCH_INTERVAL = 20;
-        private static final double CAT_DETECTION_RANGE_SQR = 16 * 16;
 
         public GoAfterCatGoal(DogEntity dogEntity) {
             this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.TARGET));
@@ -353,28 +343,27 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
 
         @Override
         public boolean canUse() {
-            return !getNearbyCats().isEmpty();
+            return !this.getNearbyCats().isEmpty();
         }
 
         @Override
         public void start() {
             super.start();
-            updateTargetCat();
+            this.updateTargetCat();
         }
 
         @Override
         public void tick() {
             super.tick();
-            updateTargetCat();
+            this.updateTargetCat();
             if (this.targetCat != null) {
-                this.dog.getNavigation().moveTo(this.targetCat, 1.5);
+                this.dog.getNavigation().moveTo(this.targetCat, 1.5D);
             }
         }
 
         @Override
         public boolean canContinueToUse() {
-            return this.targetCat != null && this.targetCat.isAlive()
-                    && this.targetCat.distanceToSqr(this.dog) <= CAT_DETECTION_RANGE_SQR;
+            return this.targetCat != null && this.targetCat.isAlive() && this.targetCat.distanceToSqr(this.dog) <= CAT_DETECTION_RANGE_SQR;
         }
 
         @Override
@@ -383,12 +372,11 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
         }
 
         private List<Cat> getNearbyCats() {
-            if (this.catList == null || dog.tickCount - lastCatUpdate >= CAT_SEARCH_INTERVAL) {
-                this.catList = dog.level().getNearbyEntities(Cat.class,
-                        TargetingConditions.forNonCombat(), dog,
-                        dog.getBoundingBox().inflate(16));
-                lastCatUpdate = dog.tickCount;
+            if (this.catList == null || this.dog.tickCount - this.lastCatUpdate >= CAT_SEARCH_INTERVAL) {
+                this.catList = this.dog.level().getNearbyEntities(Cat.class, TargetingConditions.forNonCombat(), this.dog, this.dog.getBoundingBox().inflate(16.0D));
+                this.lastCatUpdate = this.dog.tickCount;
             }
+
             return this.catList;
         }
 
@@ -397,11 +385,11 @@ public class DogEntity extends TamableAnimal implements EntityWithAttackAnimatio
                 double closestDistance = Double.MAX_VALUE;
                 Cat closestCat = null;
 
-                for (Cat cat : this.catList) {
-                    double distance = cat.distanceToSqr(this.dog);
+                for (Cat catEntity : this.catList) {
+                    double distance = catEntity.distanceToSqr(this.dog);
                     if (distance < closestDistance) {
                         closestDistance = distance;
-                        closestCat = cat;
+                        closestCat = catEntity;
                     }
                 }
 

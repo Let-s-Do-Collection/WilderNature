@@ -15,7 +15,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.core.entity.BoarEntity;
+import net.satisfy.wildernature.core.entity.animal.BoarEntity;
 import net.satisfy.wildernature.core.entity.animation.BoarAnimation;
 import org.jetbrains.annotations.NotNull;
 

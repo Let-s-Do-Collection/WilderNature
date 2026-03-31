@@ -11,7 +11,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.core.entity.MiniSheepEntity;
+import net.satisfy.wildernature.core.entity.animal.MiniSheepEntity;
 import net.satisfy.wildernature.core.entity.animation.MiniSheepAnimation;
 import org.jetbrains.annotations.NotNull;
 

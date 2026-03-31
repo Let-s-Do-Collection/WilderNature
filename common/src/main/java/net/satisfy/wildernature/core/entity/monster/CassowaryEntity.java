@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.entity;
+package net.satisfy.wildernature.core.entity.monster;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -8,10 +8,18 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.AnimationState;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.BreedGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.FollowParentGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
@@ -21,31 +29,45 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
-import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.entity.ai.AnimationAttackGoal;
-import net.satisfy.wildernature.core.entity.ai.EntityWithAttackAnimation;
-import net.satisfy.wildernature.core.entity.animation.ServerAnimationDurations;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CassowaryEntity extends Animal implements EntityWithAttackAnimation {
+public class CassowaryEntity extends Animal {
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(CassowaryEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final int ATTACK_DURATION = 27;
+
     public final AnimationState attackAnimationState = new AnimationState();
     public final AnimationState idleAnimationState = new AnimationState();
+
+    public CassowaryEntity(EntityType<? extends CassowaryEntity> entityType, Level level) {
+        super(entityType, level);
+        this.setPathfindingMalus(PathType.WATER, 0.0F);
+    }
+
+    public static AttributeSupplier.@NotNull Builder createMobAttributes() {
+        return Animal.createLivingAttributes()
+                .add(Attributes.MAX_HEALTH, 14.0D)
+                .add(Attributes.FOLLOW_RANGE, 24.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.25D)
+                .add(Attributes.ATTACK_DAMAGE, 4.5D)
+                .add(Attributes.ATTACK_KNOCKBACK, 1.5D)
+                .add(Attributes.ATTACK_SPEED, 1.0D);
+    }
 
     @Override
     public void tick() {
         super.tick();
         if (this.level().isClientSide()) {
-            setupAnimationStates();
+            this.setupAnimationStates();
         }
     }
 
     private void setupAnimationStates() {
         boolean moving = this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-4;
-        boolean idleAllowed = !moving && !this.entityData.get(ATTACKING);
+        boolean idleAllowed = !moving && !this.isAttacking();
 
         if (idleAllowed) {
             this.idleAnimationState.startIfStopped(this.tickCount);
@@ -53,33 +75,27 @@ public class CassowaryEntity extends Animal implements EntityWithAttackAnimation
             this.idleAnimationState.stop();
         }
 
-        this.attackAnimationState.animateWhen(this.entityData.get(ATTACKING), this.tickCount);
+        this.attackAnimationState.animateWhen(this.isAttacking(), this.tickCount);
     }
 
     @Override
-    protected void updateWalkAnimation(float pPartialTick) {
-        float f;
+    protected void updateWalkAnimation(float partialTick) {
+        float walkSpeed;
         if (this.getPose() == Pose.STANDING) {
-            f = Math.min(pPartialTick * 6F, 1f);
+            walkSpeed = Math.min(partialTick * 6.0F, 1.0F);
         } else {
-            f = 0f;
+            walkSpeed = 0.0F;
         }
 
-        this.walkAnimation.update(f, 0.2f);
+        this.walkAnimation.update(walkSpeed, 0.2F);
     }
 
-    public void setAttacking_(boolean attacking) {
+    public boolean isAttacking() {
+        return this.entityData.get(ATTACKING);
+    }
+
+    public void setAttacking(boolean attacking) {
         this.entityData.set(ATTACKING, attacking);
-    }
-
-    @Override
-    public Vec3 getPosition_(int i) {
-        return super.getPosition(i);
-    }
-
-    @Override
-    public void doHurtTarget_(LivingEntity targetEntity) {
-        super.doHurtTarget(targetEntity);
     }
 
     @Override
@@ -89,32 +105,14 @@ public class CassowaryEntity extends Animal implements EntityWithAttackAnimation
     }
 
     @Override
-    public LivingEntity getTarget_() {
-        return getTarget();
-    }
-
-    public double getMeleeAttackRangeSqr_(LivingEntity entity) {
-        return entity.distanceTo(entity);
-    }
-
-    public CassowaryEntity(EntityType<? extends CassowaryEntity> entityType, Level level) {
-        super(entityType, level);
-        this.setPathfindingMalus(PathType.WATER, 0.0F);
-    }
-
-    public static AttributeSupplier.@NotNull Builder createMobAttributes() {
-        return Animal.createLivingAttributes().add(Attributes.MAX_HEALTH, 14).add(Attributes.FOLLOW_RANGE, 24D).add(Attributes.MOVEMENT_SPEED, 0.25).add(Attributes.ATTACK_DAMAGE, 4.5f).add(Attributes.ATTACK_KNOCKBACK, 1.5D).add(Attributes.ATTACK_SPEED, 1F);
-    }
-
-    @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new AnimationAttackGoal(this, 1.0D, true, (int) (ServerAnimationDurations.cassowary_attack * 20 + 2), 8));
+        this.goalSelector.addGoal(1, new AnimationAttackGoal<>(this, 1.0D, true, ATTACK_DURATION, 8, this::setAttacking));
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.15D));
         this.goalSelector.addGoal(2, new FollowParentGoal(this, 1.1D));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 3f));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 3.0F));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1D));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }

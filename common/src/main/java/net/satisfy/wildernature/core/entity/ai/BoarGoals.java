@@ -7,7 +7,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import net.satisfy.wildernature.core.entity.BoarEntity;
+import net.satisfy.wildernature.core.entity.animal.BoarEntity;
 
 import java.util.EnumSet;
 import java.util.Objects;

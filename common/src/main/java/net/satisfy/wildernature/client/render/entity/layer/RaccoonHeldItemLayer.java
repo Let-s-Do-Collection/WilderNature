@@ -11,41 +11,39 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.satisfy.wildernature.client.model.entity.SquirrelModel;
-import net.satisfy.wildernature.core.entity.animal.SquirrelEntity;
+import net.satisfy.wildernature.client.model.entity.RaccoonModel;
+import net.satisfy.wildernature.core.entity.animal.RaccoonEntity;
 
 @Environment(EnvType.CLIENT)
-public class SquirrelHeldItemLayer extends RenderLayer<SquirrelEntity, SquirrelModel> {
+public class RaccoonHeldItemLayer extends RenderLayer<RaccoonEntity, RaccoonModel<RaccoonEntity>> {
     private final ItemInHandRenderer itemInHandRenderer;
 
-    public SquirrelHeldItemLayer(RenderLayerParent<SquirrelEntity, SquirrelModel> renderer, ItemInHandRenderer itemInHandRenderer) {
+    public RaccoonHeldItemLayer(RenderLayerParent<RaccoonEntity, RaccoonModel<RaccoonEntity>> renderer, ItemInHandRenderer itemInHandRenderer) {
         super(renderer);
         this.itemInHandRenderer = itemInHandRenderer;
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, SquirrelEntity entity, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, RaccoonEntity entity, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
         ItemStack itemStack = entity.getMainHandItem();
         if (itemStack.isEmpty()) {
             return;
         }
 
         ModelPart rootPart = this.getParentModel().root();
-        ModelPart hipsPart = rootPart.getChild("hips");
-        ModelPart torsoPart = hipsPart.getChild("torso");
-        ModelPart headPart = torsoPart.getChild("h_head");
+        ModelPart bodyPart = rootPart.getChild("body");
+        ModelPart headPart = bodyPart.getChild("head");
 
         poseStack.pushPose();
         rootPart.translateAndRotate(poseStack);
-        hipsPart.translateAndRotate(poseStack);
-        torsoPart.translateAndRotate(poseStack);
+        bodyPart.translateAndRotate(poseStack);
         headPart.translateAndRotate(poseStack);
 
         if (entity.isBaby()) {
             poseStack.scale(0.85F, 0.85F, 0.85F);
         }
 
-        poseStack.translate(0.0F, 0.1F, -0.45F);
+        poseStack.translate(0.0F, 0.1F, -0.5F);
         poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
         poseStack.mulPose(Axis.ZN.rotationDegrees(33.0F));
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));

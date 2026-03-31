@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.PelicanModel;
-import net.satisfy.wildernature.core.entity.PelicanEntity;
+import net.satisfy.wildernature.core.entity.animal.PelicanEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class PelicanRenderer extends MobRenderer<PelicanEntity, PelicanModel<PelicanEntity>> {

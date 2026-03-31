@@ -9,7 +9,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.satisfy.wildernature.core.entity.BulletEntity;
+import net.satisfy.wildernature.core.entity.projectile.BulletEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

@@ -1,47 +1,62 @@
 [1.1.5]
 
 **Fixed**
-* Idle Animation for most entities are now more fluent
-* HazelnutBushes transforming into SweetberryBushes when being bone mealed
+* Idle animations for most entities are now much smoother and more natural.
+* Hazelnut Bushes no longer turn into Sweetberry Bushes when bone mealed.
 
 **Changed**
-* Recolored HazelnutBushes
-* Recolored FishOil
-* Turkeys now lay TurkeyEggs instead of Eggs
+* Recolored Hazelnut Bushes.
+* Recolored Fish Oil.
+* Turkeys now lay Turkey Eggs instead of regular Eggs.
 
-* **Owl Rework**
-  * Completely overhauled owl behavior and AI
-  * Owls now search for natural perches before sleeping
-  * Added realistic sleep preparation with randomized timing
-  * Improved wake-up logic with threat detection and visual feedback
-  * Refined flying and landing behavior for proper perch alignment
-  * Introduced dynamic night hunting with randomized hunt windows
-  * Owls now target undead mobs during hunting phases
-  * Added interaction with dropped rotten flesh, including consuming behavior
-  * Improved overall AI flow with smoother transitions between states
-  * Reduced repetitive behavior through cooldowns and randomness
-  * Enhanced animation handling for sleep, movement, and ambient actions
+**Owl Rework**
+* Completely overhauled owl behavior and AI.
+* Owls now look for natural perches before going to sleep.
+* Added realistic sleep preparation with randomized timing.
+* Improved wake*up logic, including better threat detection and visual feedback.
+* Refined flying and landing so they properly align with perches.
+* Owls now hunt at night with randomized hunting windows.
+* They will actively target undead mobs during hunts.
+* Added interaction with dropped rotten flesh — owls can now find and eat it.
+* Overall AI flow feels much smoother with better state transitions.
+* Reduced repetitive behavior using cooldowns and more randomness.
+* Improved animations for sleeping, flying, movement, and idle actions.
 
-* **Deer Rework**
-  * Added awareness system reacting to player movement, sprinting, and held items
-  * Deer now gradually calm down over time when no threat is present
-  * Implemented panic system with herd-wide reaction and natural flee behavior
-  * Improved herd logic with leader following and persistence across reloads
-  * Added dynamic sleeping behavior with preparation phase and wake-up triggers
-  * Deer now prefer sleeping on grass blocks
-  * Added shelter-seeking behavior during nighttime
-  * Deer now react correctly to players in creative and spectator mode
-  * Improved pathfinding during panic to prevent clustering and blocking
-  * Added visual feedback using particles for awareness and alert states
+**Deer Rework**
+* Deer now have an awareness system that reacts to player movement, sprinting, and held items.
+* They gradually calm down over time if no threat is nearby.
+* Added a proper panic system with herd*wide reactions and more natural fleeing behavior.
+* Improved herd logic — they now follow a leader and the group persists better after reloading the world.
+* Added dynamic sleeping behavior with a preparation phase and proper wake*up triggers.
+* Deer prefer sleeping on grass blocks.
+* They now seek shelter during the night.
+* Deer react correctly to players in Creative and Spectator mode.
+* Panic pathfinding has been improved to prevent deer from bunching up or blocking each other.
+* Added particle effects for awareness and alert states.
 
-* **Boar Rework**
-  * Reworked rooting behavior with improved pathfinding and target selection
-  * Boars now search for valid grass blocks before digging
-  * Added preparation phase before digging with visual feedback
-  * Introduced player interaction using Truffles to trigger rooting
-  * Rooting now uses a loottable system for configurable drops
-  * Added cooldown system to prevent excessive rooting
-  * Rooting now respects mobGriefing gamerule
+**Boar Rework**
+* Completely reworked rooting behavior with better pathfinding and smarter target selection.
+* Boars now properly search for valid grass blocks before digging.
+* Added a visible preparation phase before they start rooting.
+* You can now use Truffles to encourage boars to root.
+* Rooting now uses a loot table system, making drops fully configurable.
+* Added cooldowns so they don’t root excessively.
+* Rooting now properly respects the `mobGriefing` gamerule.
+
+**Squirrel Rework**
+* Fully reworked squirrel behavior and AI.
+* Added a trust system based on item interactions.
+* Squirrels inspect offered items before deciding to accept or reject them.
+* Accepted items raise trust, while rejected ones are dropped with visual feedback.
+* You can now see the item they’re holding while they evaluate or carry it.
+* Squirrels now forage from Hazelnut Bushes and pick up dropped Hazelnuts.
+* They can harvest Hazelnut Bushes and store the nuts in their own inventory.
+* Added interaction with hollow caches — squirrels can deposit stored items into nearby ones.
+* Highly trusted squirrels can now give you gifts by delivery.
+* Better overall AI priority handling between foraging, sheltering, storing, and gifting.
+
+**Added**
+* Hollow Cache - a Tree Stump spawning in Forest and Plains Biomes. 
 
 ***
 

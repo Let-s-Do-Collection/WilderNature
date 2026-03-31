@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.OwlModel;
-import net.satisfy.wildernature.core.entity.OwlEntity;
+import net.satisfy.wildernature.core.entity.animal.OwlEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class OwlRenderer extends MobRenderer<OwlEntity, OwlModel> {

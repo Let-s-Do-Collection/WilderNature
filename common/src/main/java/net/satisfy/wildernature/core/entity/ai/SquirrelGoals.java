@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.wildernature.core.block.HazelnutBushBlock;
 import net.satisfy.wildernature.core.block.HollowCacheBlock;
 import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
-import net.satisfy.wildernature.core.entity.SquirrelEntity;
+import net.satisfy.wildernature.core.entity.animal.SquirrelEntity;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.Nullable;
 
