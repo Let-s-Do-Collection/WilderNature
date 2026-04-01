@@ -1,7 +1,10 @@
 package net.satisfy.wildernature.core.entity.animal;
 
+import java.util.List;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -44,7 +47,10 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
+import net.satisfy.wildernature.core.entity.CacheEatingMob;
 import net.satisfy.wildernature.core.entity.ai.BoarGoals;
+import net.satisfy.wildernature.core.entity.ai.CacheEatGoal;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
@@ -52,13 +58,9 @@ import net.satisfy.wildernature.core.registry.SoundRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
-public class BoarEntity extends Animal {
-
+public class BoarEntity extends Animal implements CacheEatingMob {
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.BEEF, Items.CHICKEN, Items.BEETROOT, Items.SWEET_BERRIES, Items.POTATO, Items.COOKED_COD, Items.COOKED_SALMON, Items.CARROT);
     private static final ResourceKey<LootTable> ROOTING_LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE, WilderNature.identifier("gameplay/boar_rooting"));
-
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(BoarEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final int ROOTING_ANIMATION_TICKS = 40;
@@ -67,6 +69,8 @@ public class BoarEntity extends Animal {
     private static final int DENY_ANIMATION_TICKS = 16;
     private static final int SLEEPING_PARTICLE_INTERVAL_TICKS = 14;
     private static final double WAKE_UP_RADIUS = 6.0D;
+    private static final int CACHE_SEARCH_RANGE = 12;
+    private static final int CACHE_EAT_DURATION_TICKS = 28;
 
     public final AnimationState idleAnimationState = new AnimationState();
     public final AnimationState diggingAnimationState = new AnimationState();
@@ -117,6 +121,7 @@ public class BoarEntity extends Animal {
             public boolean canUse() {
                 return super.canUse() && !BoarEntity.this.isSleeping();
             }
+
             @Override
             public boolean canContinueToUse() {
                 return super.canContinueToUse() && !BoarEntity.this.isSleeping();
@@ -128,6 +133,7 @@ public class BoarEntity extends Animal {
             public boolean canUse() {
                 return super.canUse() && !BoarEntity.this.isSleeping();
             }
+
             @Override
             public boolean canContinueToUse() {
                 return super.canContinueToUse() && !BoarEntity.this.isSleeping();
@@ -139,6 +145,7 @@ public class BoarEntity extends Animal {
             public boolean canUse() {
                 return super.canUse() && !BoarEntity.this.isSleeping();
             }
+
             @Override
             public boolean canContinueToUse() {
                 return super.canContinueToUse() && !BoarEntity.this.isSleeping();
@@ -150,12 +157,14 @@ public class BoarEntity extends Animal {
             public boolean canUse() {
                 return super.canUse() && !BoarEntity.this.isSleeping();
             }
+
             @Override
             public boolean canContinueToUse() {
                 return super.canContinueToUse() && !BoarEntity.this.isSleeping();
             }
         });
 
+        this.goalSelector.addGoal(++goalPriority, new CacheEatGoal<>(this, 1.1D));
         this.goalSelector.addGoal(++goalPriority, new BoarGoals.BoarRootingGoal(this));
 
         this.goalSelector.addGoal(++goalPriority, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
@@ -163,6 +172,7 @@ public class BoarEntity extends Animal {
             public boolean canUse() {
                 return super.canUse() && !BoarEntity.this.isDigging() && !BoarEntity.this.isSleeping();
             }
+
             @Override
             public boolean canContinueToUse() {
                 return super.canContinueToUse() && !BoarEntity.this.isDigging() && !BoarEntity.this.isSleeping();
@@ -174,6 +184,7 @@ public class BoarEntity extends Animal {
             public boolean canUse() {
                 return super.canUse() && !BoarEntity.this.isDigging() && !BoarEntity.this.isSleeping();
             }
+
             @Override
             public boolean canContinueToUse() {
                 return super.canContinueToUse() && !BoarEntity.this.isDigging() && !BoarEntity.this.isSleeping();
@@ -185,6 +196,7 @@ public class BoarEntity extends Animal {
             public boolean canUse() {
                 return super.canUse() && !BoarEntity.this.isDigging() && !BoarEntity.this.isSleeping();
             }
+
             @Override
             public boolean canContinueToUse() {
                 return super.canContinueToUse() && !BoarEntity.this.isDigging() && !BoarEntity.this.isSleeping();
@@ -244,11 +256,7 @@ public class BoarEntity extends Animal {
             }
 
             if (this.level() instanceof ServerLevel serverLevel && this.tickCount % SLEEPING_PARTICLE_INTERVAL_TICKS == 0) {
-                serverLevel.sendParticles(ParticleTypeRegistry.SLEEPING.get(),
-                        this.getX() + (this.random.nextDouble() - 0.5D) * 0.4D,
-                        this.getY() + this.getBbHeight() * 0.75D,
-                        this.getZ() + (this.random.nextDouble() - 0.5D) * 0.4D,
-                        1, 0.0D, 0.0D, 0.0D, 0.0D);
+                serverLevel.sendParticles(ParticleTypeRegistry.SLEEPING.get(), this.getX() + (this.random.nextDouble() - 0.5D) * 0.4D, this.getY() + this.getBbHeight() * 0.75D, this.getZ() + (this.random.nextDouble() - 0.5D) * 0.4D, 1, 0.0D, 0.0D, 0.0D, 0.0D);
             }
 
             this.getNavigation().stop();
@@ -346,10 +354,18 @@ public class BoarEntity extends Animal {
     }
 
     public boolean tryStartRootingFromPlayer() {
-        if (this.isBaby()) return false;
-        if (this.isDigging()) return false;
-        if (this.isSleeping()) return false;
-        if (this.getRootingCooldownTicks() > 0) return false;
+        if (this.isBaby()) {
+            return false;
+        }
+        if (this.isDigging()) {
+            return false;
+        }
+        if (this.isSleeping()) {
+            return false;
+        }
+        if (this.getRootingCooldownTicks() > 0) {
+            return false;
+        }
 
         BlockPos bestPosition = null;
         double bestDistance = Double.MAX_VALUE;
@@ -358,10 +374,14 @@ public class BoarEntity extends Animal {
         for (int xOffset = -PLAYER_ROOTING_SEARCH_RADIUS; xOffset <= PLAYER_ROOTING_SEARCH_RADIUS; xOffset++) {
             for (int zOffset = -PLAYER_ROOTING_SEARCH_RADIUS; zOffset <= PLAYER_ROOTING_SEARCH_RADIUS; zOffset++) {
                 BlockPos blockPosition = origin.offset(xOffset, 0, zOffset);
-                if (!this.level().getBlockState(blockPosition).is(Blocks.GRASS_BLOCK)) continue;
+                if (!this.level().getBlockState(blockPosition).is(Blocks.GRASS_BLOCK)) {
+                    continue;
+                }
 
                 BlockPos standPosition = blockPosition.above();
-                if (!this.level().isEmptyBlock(standPosition) || !this.level().isEmptyBlock(standPosition.above())) continue;
+                if (!this.level().isEmptyBlock(standPosition) || !this.level().isEmptyBlock(standPosition.above())) {
+                    continue;
+                }
 
                 double distanceToPosition = this.distanceToSqr(Vec3.atBottomCenterOf(standPosition));
                 if (distanceToPosition < bestDistance) {
@@ -371,7 +391,9 @@ public class BoarEntity extends Animal {
             }
         }
 
-        if (bestPosition == null) return false;
+        if (bestPosition == null) {
+            return false;
+        }
 
         this.wakeUp();
         this.requestedRootingTarget = bestPosition;
@@ -434,13 +456,16 @@ public class BoarEntity extends Animal {
     }
 
     public void finishRooting(BlockPos blockPos) {
-        if (!(this.level() instanceof ServerLevel serverLevel)) return;
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
 
-        if (!this.level().getBlockState(blockPos).is(Blocks.GRASS_BLOCK)) return;
+        if (!this.level().getBlockState(blockPos).is(Blocks.GRASS_BLOCK)) {
+            return;
+        }
 
         this.level().levelEvent(2001, blockPos, Block.getId(Blocks.GRASS_BLOCK.defaultBlockState()));
-        serverLevel.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.GRASS_BLOCK.defaultBlockState()),
-                blockPos.getX() + 0.5D, blockPos.getY() + 1.0D, blockPos.getZ() + 0.5D, 10, 0.25D, 0.25D, 0.25D, 0.5D);
+        serverLevel.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.GRASS_BLOCK.defaultBlockState()), blockPos.getX() + 0.5D, blockPos.getY() + 1.0D, blockPos.getZ() + 0.5D, 10, 0.25D, 0.25D, 0.25D, 0.5D);
 
         if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
             this.level().setBlock(blockPos, Blocks.COARSE_DIRT.defaultBlockState(), 2);
@@ -500,21 +525,98 @@ public class BoarEntity extends Animal {
         this.rootingCooldownTicks = tag.getInt("RootingCooldownTicks");
         this.denyAnimationTick = tag.getInt("DenyAnimationTick");
         this.sleepPreparationTicks = tag.getInt("SleepPreparationTicks");
-        this.requiredSleepPreparationTicks = tag.contains("RequiredSleepPreparationTicks")
-                ? tag.getInt("RequiredSleepPreparationTicks")
-                : 80 + this.random.nextInt(80);
+        this.requiredSleepPreparationTicks = tag.contains("RequiredSleepPreparationTicks") ? tag.getInt("RequiredSleepPreparationTicks") : 80 + this.random.nextInt(80);
         this.sleepCooldownTicks = tag.getInt("SleepCooldownTicks");
         this.forceRooting = tag.getBoolean("ForceRooting");
 
         if (tag.contains("RequestedRootingTargetX") && tag.contains("RequestedRootingTargetY") && tag.contains("RequestedRootingTargetZ")) {
-            this.requestedRootingTarget = new BlockPos(
-                    tag.getInt("RequestedRootingTargetX"),
-                    tag.getInt("RequestedRootingTargetY"),
-                    tag.getInt("RequestedRootingTargetZ")
-            );
+            this.requestedRootingTarget = new BlockPos(tag.getInt("RequestedRootingTargetX"), tag.getInt("RequestedRootingTargetY"), tag.getInt("RequestedRootingTargetZ"));
         } else {
             this.requestedRootingTarget = null;
         }
+    }
+
+    @Override
+    public boolean canUseCacheEatGoal() {
+        return this.getHealth() < this.getMaxHealth() && !this.isSleeping() && !this.isDigging() && !this.isPanicking() && !this.isBaby();
+    }
+
+    @Override
+    public boolean canContinueCacheEatGoal() {
+        return !this.isSleeping() && !this.isDigging() && !this.isPanicking();
+    }
+
+    @Override
+    public int getCacheEatSearchRange() {
+        return CACHE_SEARCH_RANGE;
+    }
+
+    @Override
+    public int getCacheEatDurationTicks() {
+        return CACHE_EAT_DURATION_TICKS;
+    }
+
+    @Override
+    public boolean hasEdibleItemInCache(HollowCacheBlockEntity hollowCacheBlockEntity) {
+        for (int slotIndex = 0; slotIndex < hollowCacheBlockEntity.getContainerSize(); slotIndex++) {
+            ItemStack itemStack = hollowCacheBlockEntity.getItem(slotIndex);
+            if (itemStack.has(DataComponents.FOOD)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public ItemStack takeFoodFromCache(HollowCacheBlockEntity hollowCacheBlockEntity) {
+        for (int slotIndex = 0; slotIndex < hollowCacheBlockEntity.getContainerSize(); slotIndex++) {
+            ItemStack itemStack = hollowCacheBlockEntity.getItem(slotIndex);
+            if (itemStack.has(DataComponents.FOOD)) {
+                return hollowCacheBlockEntity.removeItem(slotIndex, 1);
+            }
+        }
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public void healFromCacheFood(ItemStack itemStack) {
+        if (!itemStack.isEmpty()) {
+            this.heal(3.0F);
+        }
+    }
+
+    @Override
+    public void spawnCacheEatParticles(ServerLevel serverLevel, ItemStack itemStack) {
+        if (!itemStack.isEmpty()) {
+            for (int particleIndex = 0; particleIndex < 8; particleIndex++) {
+                double offsetX = (this.random.nextDouble() - 0.5D) * 0.4D;
+                double offsetY = this.random.nextDouble() * 0.3D + 0.55D;
+                double offsetZ = (this.random.nextDouble() - 0.5D) * 0.4D;
+                double velocityX = (this.random.nextDouble() - 0.5D) * 0.08D;
+                double velocityY = this.random.nextDouble() * 0.08D;
+                double velocityZ = (this.random.nextDouble() - 0.5D) * 0.08D;
+                serverLevel.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, itemStack), this.getX() + offsetX, this.getY() + offsetY, this.getZ() + offsetZ, 1, velocityX, velocityY, velocityZ, 0.0D);
+            }
+        }
+    }
+
+    @Override
+    public void onCacheEatGoalStarted() {
+        this.wakeUp();
+    }
+
+    @Override
+    public void onCacheEatStarted(ItemStack itemStack) {
+        this.getNavigation().stop();
+        this.setDeltaMovement(Vec3.ZERO);
+    }
+
+    @Override
+    public void onCacheEatFinished(ItemStack itemStack) {
+    }
+
+    @Override
+    public void onCacheEatGoalStopped() {
     }
 
     @Override

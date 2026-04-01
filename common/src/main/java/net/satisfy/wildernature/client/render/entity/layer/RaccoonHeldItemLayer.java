@@ -31,11 +31,12 @@ public class RaccoonHeldItemLayer extends RenderLayer<RaccoonEntity, RaccoonMode
         }
 
         ModelPart rootPart = this.getParentModel().root();
-        ModelPart bodyPart = rootPart.getChild("body");
+        ModelPart raccoonPart = rootPart.getChild("raccoon");
+        ModelPart bodyPart = raccoonPart.getChild("body");
         ModelPart headPart = bodyPart.getChild("head");
 
         poseStack.pushPose();
-        rootPart.translateAndRotate(poseStack);
+        raccoonPart.translateAndRotate(poseStack);
         bodyPart.translateAndRotate(poseStack);
         headPart.translateAndRotate(poseStack);
 
@@ -43,7 +44,7 @@ public class RaccoonHeldItemLayer extends RenderLayer<RaccoonEntity, RaccoonMode
             poseStack.scale(0.85F, 0.85F, 0.85F);
         }
 
-        poseStack.translate(0.0F, 0.1F, -0.5F);
+        poseStack.translate(0.0F, 0.15F, -0.5F);
         poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
         poseStack.mulPose(Axis.ZN.rotationDegrees(33.0F));
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));

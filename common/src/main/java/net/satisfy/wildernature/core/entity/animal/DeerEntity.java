@@ -66,6 +66,7 @@ public class DeerEntity extends Animal {
     private static final double WAKE_UP_RADIUS = 8.0D;
     private static final double HERD_SEARCH_RADIUS = 12.0D;
     private static final double PANIC_SHARE_RADIUS = 20.0D;
+
     private static final double PANIC_NAVIGATION_SPEED = 1.95D;
 
     private int callCooldown = 0;

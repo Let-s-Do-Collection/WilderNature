@@ -73,6 +73,6 @@ public class RaccoonModel<T extends RaccoonEntity> extends HierarchicalModel<T> 
 
     @Override
     public @NotNull ModelPart root() {
-        return this.root.getChild("raccoon");
+        return this.root;
     }
 }
