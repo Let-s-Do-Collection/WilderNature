@@ -74,6 +74,24 @@ This update focuses on making the WilderNature entities more soulful and adding 
 * Highly trusted squirrels can now give you gifts by delivery
 * Better overall AI priority handling between foraging, sheltering, storing, and gifting
 
+**Dog Rework**
+* Added a fully reworked dog with active utility and personality driven behavior
+* Dogs will now hunt skeletons and interact with their drops
+* After killing a skeleton, dogs may deliver bones either to their owner or to their burrow depending on context
+* Introduced a small inventory system, allowing dogs to carry and manage collected items
+* Dogs can pick up bones from the ground and store them for later use
+* Added burrow system, dogs can dig their own burrow in grass blocks
+* Digging includes a visible digging phase with particles and sound feedback
+* Dogs will deposit collected items into their burrow with a short interaction phase
+* Burrows act as shared storage and can be used by other entities
+* Added carrying behavior, dogs visibly hold and transport items in their mouth
+* Added proud delivery behavior when bringing items back to the player
+* Dogs will bark and react to nearby raccoons, helping to protect the area
+* Added creeper alert behavior with cooldown, dogs will howl when danger is nearby
+* Dogs now seek shelter when it is raining instead of standing in the open
+* Added digging, carrying, and interaction animations for better visual feedback
+* Overall behavior feels more intentional, reactive, and useful as a companion
+
 **Hedgehog Rework**
 * Added defensive curl behavior when threats are nearby, greatly reducing incoming damage
 * Curled hedgehogs now damage nearby entities on contact, similar to thorns
@@ -90,6 +108,7 @@ This update focuses on making the WilderNature entities more soulful and adding 
 **Added**
 * Hollow Cache, a Tree Stump spawning in Forest and Plains Biomes
 * Mushroom Colonies - a renewable source for brown and red mushrooms
+* Burrow, a hole digged by Dogs - used by multiple entities to store and hide loot
 
 **Farm And Charm Compat**
 * If installed, Boars can transform Dirt & Coarse Dirt into Fertilized Soil 

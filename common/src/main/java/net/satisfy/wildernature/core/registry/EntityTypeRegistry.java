@@ -10,6 +10,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.core.block.entity.BountyBoardBlockEntity;
+import net.satisfy.wildernature.core.block.entity.BurrowBlockEntity;
 import net.satisfy.wildernature.core.block.entity.CompletionistBannerEntity;
 import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
 import net.satisfy.wildernature.core.entity.animal.BisonEntity;
@@ -37,6 +38,7 @@ public class EntityTypeRegistry {
     public static final RegistrySupplier<BlockEntityType<CompletionistBannerEntity>> COMPLETIONIST_BANNER_BLOCK_ENTITY = createBlockEntity("completionist_banner", () -> BlockEntityType.Builder.of(CompletionistBannerEntity::new, ObjectRegistry.WOLF_TRAPPER_BANNER.get(), ObjectRegistry.WOLF_TRAPPER_WALL_BANNER.get(), ObjectRegistry.BUNNY_STALKER_BANNER.get(), ObjectRegistry.BUNNY_STALKER_WALL_BANNER.get(), ObjectRegistry.COD_CATCHER_BANNER.get(), ObjectRegistry.COD_CATCHER_WALL_BANNER.get()).build(null));
     public static final RegistrySupplier<BlockEntityType<BountyBoardBlockEntity>> BOUNTY_BOARD_BLOCK_ENTITY = createBlockEntity("bounty_board", () -> BlockEntityType.Builder.of(BountyBoardBlockEntity::new, ObjectRegistry.BOUNTY_BOARD.get()).build(null));
     public static final RegistrySupplier<BlockEntityType<HollowCacheBlockEntity>> HOLLOW_CACHE_BLOCK_ENTITY = createBlockEntity("hollow_cache", () -> BlockEntityType.Builder.of(HollowCacheBlockEntity::new, ObjectRegistry.HOLLOW_CACHE.get()).build(null));
+    public static final RegistrySupplier<BlockEntityType<BurrowBlockEntity>> BURROW_BLOCK_ENTITY = createBlockEntity("burrow", () -> BlockEntityType.Builder.of(BurrowBlockEntity::new, ObjectRegistry.BURROW.get()).build(null));
 
     public static final RegistrySupplier<EntityType<BisonEntity>> BISON = createEntity("bison", () -> EntityType.Builder.of(BisonEntity::new, MobCategory.CREATURE).sized(1.8f, 2.2f).build(WilderNature.identifier("bison").toString()));
     public static final RegistrySupplier<EntityType<BoarEntity>> BOAR = createEntity("boar", () -> EntityType.Builder.of(BoarEntity::new, MobCategory.CREATURE).sized(1.1f, 1.1f).build(WilderNature.identifier("boar").toString()));
