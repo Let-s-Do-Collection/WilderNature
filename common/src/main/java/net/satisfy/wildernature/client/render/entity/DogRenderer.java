@@ -6,11 +6,9 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.client.model.entity.DogModel;
+import net.satisfy.wildernature.client.model.entity.model.DogModel;
 import net.satisfy.wildernature.core.entity.animal.DogEntity;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Random;
 
 public class DogRenderer extends MobRenderer<DogEntity, DogModel<DogEntity>> {
     private static final ResourceLocation BROWN = WilderNature.identifier("textures/entity/dog_brown.png");

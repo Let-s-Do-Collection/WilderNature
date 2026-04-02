@@ -10,7 +10,6 @@ import net.satisfy.wildernature.WilderNature;
 
 public class TagsRegistry {
     public static final TagKey<Item> SQUIRREL_HOLDABLE = TagKey.create(Registries.ITEM, WilderNature.identifier("squirrel_holdable"));
-    public static final TagKey<Item> CAN_BE_TRUFFLED = TagKey.create(Registries.ITEM, WilderNature.identifier("can_be_truffled"));
     public static final TagKey<Item> LOOT_BAG_BLACKLIST = TagKey.create(Registries.ITEM, WilderNature.identifier("loot_bag_blacklist"));
     public static final TagKey<Block> MAKES_BLOCK_GLOW = TagKey.create(Registries.BLOCK, WilderNature.identifier("makes_block_glow"));
     public static final TagKey<Biome> SPAWNS_DEER = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_deer"));
@@ -22,12 +21,9 @@ public class TagsRegistry {
     public static final TagKey<Biome> SPAWNS_RED_WOLF = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_red_wolf"));
     public static final TagKey<Biome> SPAWNS_SQUIRREL = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_squirrel"));
     public static final TagKey<Biome> SPAWNS_DOG = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_dog"));
-    public static final TagKey<Biome> SPAWNS_PENGUIN = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_penguin"));
     public static final TagKey<Biome> SPAWNS_MINISHEEP = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_minisheep"));
     public static final TagKey<Biome> SPAWNS_CASSOWARY = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_cassowary"));
     public static final TagKey<Biome> SPAWNS_HEDGEHOG = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_hedgehog"));
-    public static final TagKey<Biome> SPAWNS_FLAMINGO = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_flamingo"));
-    public static final TagKey<Biome> SPAWNS_PELICAN = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_pelican"));
     public static final TagKey<EntityType<?>> OWL_TARGETS = TagKey.create(Registries.ENTITY_TYPE, WilderNature.identifier("owl_targets"));
 }
 

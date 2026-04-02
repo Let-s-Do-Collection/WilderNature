@@ -27,8 +27,6 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.COOKED_CASSOWARY_MEAT.get());
                 out.accept(ObjectRegistry.TURKEY_MEAT.get());
                 out.accept(ObjectRegistry.COOKED_TURKEY_MEAT.get());
-                out.accept(ObjectRegistry.PELICAN_MEAT.get());
-                out.accept(ObjectRegistry.COOKED_PELICAN_MEAT.get());
                 out.accept(ObjectRegistry.UNCOMMON_CONTRACT.get());
                 out.accept(ObjectRegistry.LEVELING_CONTRACT.get());
                 out.accept(ObjectRegistry.COMMON_CONTRACT.get());
@@ -54,14 +52,11 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.RACCOON_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.MINISHEEP_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.SQUIRREL_SPAWN_EGG.get());
-                out.accept(ObjectRegistry.PELICAN_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.BOAR_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.OWL_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.BISON_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.TURKEY_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.DOG_SPAWN_EGG.get());
-                out.accept(ObjectRegistry.FLAMINGO_SPAWN_EGG.get());
-                out.accept(ObjectRegistry.PENGUIN_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.HEDGEHOG_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.CASSOWARY_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.STYLIN_PURPLE_HAT.get());

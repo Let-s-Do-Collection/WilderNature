@@ -54,7 +54,7 @@ import net.satisfy.wildernature.core.entity.CacheEatingMob;
 import net.satisfy.wildernature.core.entity.ai.EatFromBlockGoal;
 import net.satisfy.wildernature.core.entity.ai.RandomAction;
 import net.satisfy.wildernature.core.entity.ai.RandomActionGoal;
-import net.satisfy.wildernature.core.entity.animation.ServerAnimationDurations;
+import net.satisfy.wildernature.client.model.entity.animation.ServerAnimationDurations;
 import net.satisfy.wildernature.core.entity.monster.CassowaryEntity;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;

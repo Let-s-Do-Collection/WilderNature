@@ -9,7 +9,6 @@ import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.neoforge.core.world.AddAnimalsBiomeModifier;
 
 public class WilderNatureBiomeModifiers {
-
     public static DeferredRegister<MapCodec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS =
             DeferredRegister.create(NeoForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, WilderNature.MOD_ID);
 

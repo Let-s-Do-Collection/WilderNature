@@ -6,7 +6,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.core.util.Truffling;
+import net.satisfy.wildernature.core.util.WilderNatureUtil;
 
 @EventBusSubscriber(modid = WilderNature.MOD_ID, value = Dist.CLIENT)
 public class WilderNatureClientNeoForgeEvents {
@@ -14,6 +14,6 @@ public class WilderNatureClientNeoForgeEvents {
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent event) {
         ItemStack itemStack = event.getItemStack();
-        Truffling.addTruffledTooltip(itemStack, event.getToolTip());
+        WilderNatureUtil.Truffling.addTruffledTooltip(itemStack, event.getToolTip());
     }
 }

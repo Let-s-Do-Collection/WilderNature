@@ -59,7 +59,7 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.entity.ai.*;
-import net.satisfy.wildernature.core.entity.animation.ServerAnimationDurations;
+import net.satisfy.wildernature.client.model.entity.animation.ServerAnimationDurations;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundRegistry;

@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.client.model.entity.RaccoonModel;
+import net.satisfy.wildernature.client.model.entity.model.RaccoonModel;
 import net.satisfy.wildernature.client.render.entity.layer.RaccoonHeldItemLayer;
 import net.satisfy.wildernature.core.entity.animal.RaccoonEntity;
 import org.jetbrains.annotations.NotNull;

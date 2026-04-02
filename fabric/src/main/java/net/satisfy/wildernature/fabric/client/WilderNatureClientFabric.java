@@ -12,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.satisfy.wildernature.client.WilderNatureClient;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
-import net.satisfy.wildernature.core.util.Truffling;
 import net.satisfy.wildernature.fabric.client.renderer.StylinPurpleHatRenderer;
 import net.satisfy.wildernature.fabric.core.player.layer.WolfFurChestplateLayer;
 import net.satisfy.wildernature.fabric.core.player.model.WolfFurChestplateModel;

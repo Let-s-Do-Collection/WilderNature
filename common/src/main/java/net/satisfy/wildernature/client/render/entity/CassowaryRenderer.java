@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.client.model.entity.CassowaryModel;
+import net.satisfy.wildernature.client.model.entity.model.CassowaryModel;
 import net.satisfy.wildernature.core.entity.monster.CassowaryEntity;
 import org.jetbrains.annotations.NotNull;
 

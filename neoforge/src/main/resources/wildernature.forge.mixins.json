@@ -4,8 +4,7 @@
   "package": "net.satisfy.wildernature.neoforge.core.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "CatMixin",
-    "MobAccessor"
+    "CatMixin"
   ],
   "client": [
   ],

@@ -12,7 +12,7 @@ import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
-import net.satisfy.wildernature.core.util.Truffling;
+import net.satisfy.wildernature.core.util.WilderNatureUtil;
 import net.satisfy.wildernature.neoforge.core.registry.WilderNatureBiomeModifiers;
 import net.satisfy.wildernature.neoforge.core.registry.WilderNatureConfig;
 
@@ -37,8 +37,8 @@ public class WilderNatureNeoForge {
 
     private void onFoodEating(LivingEntityUseItemEvent event) {
         var player = event.getEntity();
-        if (!Truffling.isTruffled(player.getItemInHand(player.getUsedItemHand()))) return;
-        var add = Truffling.getAdditionalFoodValue();
+        if (!WilderNatureUtil.Truffling.isTruffled(player.getItemInHand(player.getUsedItemHand()))) return;
+        var add = WilderNatureUtil.Truffling.getAdditionalFoodValue();
         FoodProperties props = player.getItemInHand(player.getUsedItemHand()).get(DataComponents.FOOD);
         if (props != null) {
             props.nutrition = props.nutrition() + (int)(props.nutrition() * 0.2F) + add.nutrition();

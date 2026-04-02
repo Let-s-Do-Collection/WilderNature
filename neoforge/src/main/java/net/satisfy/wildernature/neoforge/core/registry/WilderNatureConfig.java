@@ -5,165 +5,177 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class WilderNatureConfig {
     public static ModConfigSpec COMMON_CONFIG;
+
     public static final ModConfigSpec.BooleanValue REMOVE_SAVANNA_ANIMALS;
     public static final ModConfigSpec.BooleanValue REMOVE_SWAMP_ANIMALS;
     public static final ModConfigSpec.BooleanValue REMOVE_JUNGLE_ANIMALS;
     public static final ModConfigSpec.BooleanValue REMOVE_FOREST_ANIMALS;
     public static final ModConfigSpec.BooleanValue ADD_JUNGLE_ANIMALS;
     public static final ModConfigSpec.BooleanValue SPAWN_HAZELNUT_BUSH;
-    public static final ModConfigSpec.IntValue PELICAN_SPAWN_WEIGHT;
-    public static final ModConfigSpec.IntValue PELICAN_MIN_GROUP_SIZE;
-    public static final ModConfigSpec.IntValue PELICAN_MAX_GROUP_SIZE;
+
     public static final ModConfigSpec.IntValue DEER_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue DEER_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue DEER_MAX_GROUP_SIZE;
+
     public static final ModConfigSpec.IntValue RACCOON_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue RACCOON_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue RACCOON_MAX_GROUP_SIZE;
+
     public static final ModConfigSpec.IntValue SQUIRREL_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue SQUIRREL_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue SQUIRREL_MAX_GROUP_SIZE;
+
     public static final ModConfigSpec.IntValue RED_WOLF_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue RED_WOLF_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue RED_WOLF_MAX_GROUP_SIZE;
+
     public static final ModConfigSpec.IntValue OWL_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue OWL_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue OWL_MAX_GROUP_SIZE;
+
     public static final ModConfigSpec.IntValue BOAR_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue BOAR_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue BOAR_MAX_GROUP_SIZE;
+
     public static final ModConfigSpec.IntValue BISON_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue BISON_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue BISON_MAX_GROUP_SIZE;
+
     public static final ModConfigSpec.IntValue TURKEY_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue TURKEY_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue TURKEY_MAX_GROUP_SIZE;
+
     public static final ModConfigSpec.IntValue DOG_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue DOG_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue DOG_MAX_GROUP_SIZE;
+
     public static final ModConfigSpec.IntValue MINISHEEP_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue MINISHEEP_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue MINISHEEP_MAX_GROUP_SIZE;
-    public static final ModConfigSpec.IntValue PENGUIN_SPAWN_WEIGHT;
-    public static final ModConfigSpec.IntValue PENGUIN_MIN_GROUP_SIZE;
-    public static final ModConfigSpec.IntValue PENGUIN_MAX_GROUP_SIZE;
+
     public static final ModConfigSpec.IntValue CASSOWARY_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue CASSOWARY_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue CASSOWARY_MAX_GROUP_SIZE;
+
     public static final ModConfigSpec.IntValue HEDGEHOG_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue HEDGEHOG_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue HEDGEHOG_MAX_GROUP_SIZE;
-    public static final ModConfigSpec.IntValue FLAMINGO_SPAWN_WEIGHT;
-    public static final ModConfigSpec.IntValue FLAMINGO_MIN_GROUP_SIZE;
-    public static final ModConfigSpec.IntValue FLAMINGO_MAX_GROUP_SIZE;
+
+    public static boolean removeSavannaAnimals;
+    public static boolean removeSwampAnimals;
+    public static boolean removeJungleAnimals;
+    public static boolean removeForestAnimals;
+    public static boolean addJungleAnimals;
+    public static boolean spawnHazelnutBush;
+
+    public static int deerSpawnWeight;
+    public static int deerMinGroupSize;
+    public static int deerMaxGroupSize;
+
+    public static int raccoonSpawnWeight;
+    public static int raccoonMinGroupSize;
+    public static int raccoonMaxGroupSize;
+
+    public static int squirrelSpawnWeight;
+    public static int squirrelMinGroupSize;
+    public static int squirrelMaxGroupSize;
+
+    public static int redWolfSpawnWeight;
+    public static int redWolfMinGroupSize;
+    public static int redWolfMaxGroupSize;
+
+    public static int owlSpawnWeight;
+    public static int owlMinGroupSize;
+    public static int owlMaxGroupSize;
+
+    public static int boarSpawnWeight;
+    public static int boarMinGroupSize;
+    public static int boarMaxGroupSize;
+
+    public static int bisonSpawnWeight;
+    public static int bisonMinGroupSize;
+    public static int bisonMaxGroupSize;
+
+    public static int turkeySpawnWeight;
+    public static int turkeyMinGroupSize;
+    public static int turkeyMaxGroupSize;
+
+    public static int dogSpawnWeight;
+    public static int dogMinGroupSize;
+    public static int dogMaxGroupSize;
+
+    public static int minisheepSpawnWeight;
+    public static int minisheepMinGroupSize;
+    public static int minisheepMaxGroupSize;
+
+    public static int cassowarySpawnWeight;
+    public static int cassowaryMinGroupSize;
+    public static int cassowaryMaxGroupSize;
+
+    public static int hedgehogSpawnWeight;
+    public static int hedgehogMinGroupSize;
+    public static int hedgehogMaxGroupSize;
 
     static {
-        ModConfigSpec.Builder b = new ModConfigSpec.Builder();
-        REMOVE_SAVANNA_ANIMALS = b.define("removeSavannaAnimals", true);
-        REMOVE_SWAMP_ANIMALS = b.define("removeSwampAnimals", true);
-        REMOVE_JUNGLE_ANIMALS = b.define("removeJungleAnimals", true);
-        REMOVE_FOREST_ANIMALS = b.define("removeForestAnimals", true);
-        ADD_JUNGLE_ANIMALS = b.define("addJungleAnimals", true);
-        SPAWN_HAZELNUT_BUSH = b.define("spawnHazelnutBush", true);
-        PELICAN_SPAWN_WEIGHT = b.defineInRange("pelicanSpawnWeight", 5, 0, 1000);
-        PELICAN_MIN_GROUP_SIZE = b.defineInRange("pelicanMinGroupSize", 3, 1, 10);
-        PELICAN_MAX_GROUP_SIZE = b.defineInRange("pelicanMaxGroupSize", 5, 1, 10);
-        DEER_SPAWN_WEIGHT = b.defineInRange("deerSpawnWeight", 12, 0, 1000);
-        DEER_MIN_GROUP_SIZE = b.defineInRange("deerMinGroupSize", 2, 1, 10);
-        DEER_MAX_GROUP_SIZE = b.defineInRange("deerMaxGroupSize", 4, 1, 10);
-        RACCOON_SPAWN_WEIGHT = b.defineInRange("raccoonSpawnWeight", 8, 0, 1000);
-        RACCOON_MIN_GROUP_SIZE = b.defineInRange("raccoonMinGroupSize", 2, 1, 10);
-        RACCOON_MAX_GROUP_SIZE = b.defineInRange("raccoonMaxGroupSize", 3, 1, 10);
-        SQUIRREL_SPAWN_WEIGHT = b.defineInRange("squirrelSpawnWeight", 8, 0, 1000);
-        SQUIRREL_MIN_GROUP_SIZE = b.defineInRange("squirrelMinGroupSize", 2, 1, 10);
-        SQUIRREL_MAX_GROUP_SIZE = b.defineInRange("squirrelMaxGroupSize", 2, 1, 10);
-        RED_WOLF_SPAWN_WEIGHT = b.defineInRange("redWolfSpawnWeight", 10, 0, 1000);
-        RED_WOLF_MIN_GROUP_SIZE = b.defineInRange("redWolfMinGroupSize", 2, 1, 10);
-        RED_WOLF_MAX_GROUP_SIZE = b.defineInRange("redWolfMaxGroupSize", 4, 1, 10);
-        OWL_SPAWN_WEIGHT = b.defineInRange("owlSpawnWeight", 12, 0, 1000);
-        OWL_MIN_GROUP_SIZE = b.defineInRange("owlMinGroupSize", 3, 1, 10);
-        OWL_MAX_GROUP_SIZE = b.defineInRange("owlMaxGroupSize", 3, 1, 10);
-        BOAR_SPAWN_WEIGHT = b.defineInRange("boarSpawnWeight", 14, 0, 1000);
-        BOAR_MIN_GROUP_SIZE = b.defineInRange("boarMinGroupSize", 4, 1, 10);
-        BOAR_MAX_GROUP_SIZE = b.defineInRange("boarMaxGroupSize", 5, 1, 10);
-        BISON_SPAWN_WEIGHT = b.defineInRange("bisonSpawnWeight", 10, 0, 1000);
-        BISON_MIN_GROUP_SIZE = b.defineInRange("bisonMinGroupSize", 3, 1, 10);
-        BISON_MAX_GROUP_SIZE = b.defineInRange("bisonMaxGroupSize", 5, 1, 10);
-        TURKEY_SPAWN_WEIGHT = b.defineInRange("turkeySpawnWeight", 12, 0, 1000);
-        TURKEY_MIN_GROUP_SIZE = b.defineInRange("turkeyMinGroupSize", 3, 1, 10);
-        TURKEY_MAX_GROUP_SIZE = b.defineInRange("turkeyMaxGroupSize", 5, 1, 10);
-        DOG_SPAWN_WEIGHT = b.defineInRange("dogSpawnWeight", 2, 0, 1000);
-        DOG_MIN_GROUP_SIZE = b.defineInRange("dogMinGroupSize", 1, 1, 10);
-        DOG_MAX_GROUP_SIZE = b.defineInRange("dogMaxGroupSize", 1, 1, 10);
-        MINISHEEP_SPAWN_WEIGHT = b.defineInRange("minisheepSpawnWeight", 8, 0, 1000);
-        MINISHEEP_MIN_GROUP_SIZE = b.defineInRange("minisheepMinGroupSize", 2, 1, 10);
-        MINISHEEP_MAX_GROUP_SIZE = b.defineInRange("minisheepMaxGroupSize", 4, 1, 10);
-        PENGUIN_SPAWN_WEIGHT = b.defineInRange("penguinSpawnWeight", 10, 0, 1000);
-        PENGUIN_MIN_GROUP_SIZE = b.defineInRange("penguinMinGroupSize", 2, 1, 10);
-        PENGUIN_MAX_GROUP_SIZE = b.defineInRange("penguinMaxGroupSize", 5, 1, 10);
-        CASSOWARY_SPAWN_WEIGHT = b.defineInRange("cassowarySpawnWeight", 12, 0, 1000);
-        CASSOWARY_MIN_GROUP_SIZE = b.defineInRange("cassowaryMinGroupSize", 3, 1, 10);
-        CASSOWARY_MAX_GROUP_SIZE = b.defineInRange("cassowaryMaxGroupSize", 4, 1, 10);
-        FLAMINGO_SPAWN_WEIGHT = b.defineInRange("flamingoSpawnWeight", 9, 0, 1000);
-        FLAMINGO_MIN_GROUP_SIZE = b.defineInRange("flamingoMinGroupSize", 3, 1, 10);
-        FLAMINGO_MAX_GROUP_SIZE = b.defineInRange("flamingoMaxGroupSize", 6, 1, 10);
-        HEDGEHOG_SPAWN_WEIGHT = b.defineInRange("hedgehogSpawnWeight", 10, 0, 1000);
-        HEDGEHOG_MIN_GROUP_SIZE = b.defineInRange("hedgehogMinGroupSize", 2, 1, 10);
-        HEDGEHOG_MAX_GROUP_SIZE = b.defineInRange("hedgehogMaxGroupSize", 4, 1, 10);
-        COMMON_CONFIG = b.build();
-    }
+        ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
-    public static boolean remove_SAVANNA_ANIMALS;
-    public static boolean remove_SWAMP_ANIMALS;
-    public static boolean remove_JUNGLE_ANIMALS;
-    public static boolean remove_FOREST_ANIMALS;
-    public static boolean add_JUNGLE_ANIMALS;
-    public static boolean spawn_HAZELNUT_BUSH;
-    public static int sPELICAN_SPAWN_WEIGHT;
-    public static int sPELICAN_MIN_GROUP_SIZE;
-    public static int sPELICAN_MAX_GROUP_SIZE;
-    public static int sDEER_SPAWN_WEIGHT;
-    public static int sDEER_MIN_GROUP_SIZE;
-    public static int sDEER_MAX_GROUP_SIZE;
-    public static int sRACCOON_SPAWN_WEIGHT;
-    public static int sRACCOON_MIN_GROUP_SIZE;
-    public static int sRACCOON_MAX_GROUP_SIZE;
-    public static int sSQUIRREL_SPAWN_WEIGHT;
-    public static int sSQUIRREL_MIN_GROUP_SIZE;
-    public static int sSQUIRREL_MAX_GROUP_SIZE;
-    public static int sRED_WOLF_SPAWN_WEIGHT;
-    public static int sRED_WOLF_MIN_GROUP_SIZE;
-    public static int sRED_WOLF_MAX_GROUP_SIZE;
-    public static int sOWL_SPAWN_WEIGHT;
-    public static int sOWL_MIN_GROUP_SIZE;
-    public static int sOWL_MAX_GROUP_SIZE;
-    public static int sBOAR_SPAWN_WEIGHT;
-    public static int sBOAR_MIN_GROUP_SIZE;
-    public static int sBOAR_MAX_GROUP_SIZE;
-    public static int sBISON_SPAWN_WEIGHT;
-    public static int sBISON_MIN_GROUP_SIZE;
-    public static int sBISON_MAX_GROUP_SIZE;
-    public static int sTURKEY_SPAWN_WEIGHT;
-    public static int sTURKEY_MIN_GROUP_SIZE;
-    public static int sTURKEY_MAX_GROUP_SIZE;
-    public static int sDOG_SPAWN_WEIGHT;
-    public static int sDOG_MIN_GROUP_SIZE;
-    public static int sDOG_MAX_GROUP_SIZE;
-    public static int sMINISHEEP_SPAWN_WEIGHT;
-    public static int sMINISHEEP_MIN_GROUP_SIZE;
-    public static int sMINISHEEP_MAX_GROUP_SIZE;
-    public static int sPENGUIN_SPAWN_WEIGHT;
-    public static int sPENGUIN_MIN_GROUP_SIZE;
-    public static int sPENGUIN_MAX_GROUP_SIZE;
-    public static int sCASSOWARY_SPAWN_WEIGHT;
-    public static int sCASSOWARY_MIN_GROUP_SIZE;
-    public static int sCASSOWARY_MAX_GROUP_SIZE;
-    public static int sHEDGEHOG_SPAWN_WEIGHT;
-    public static int sHEDGEHOG_MIN_GROUP_SIZE;
-    public static int sHEDGEHOG_MAX_GROUP_SIZE;
-    public static int sFLAMINGO_SPAWN_WEIGHT;
-    public static int sFLAMINGO_MIN_GROUP_SIZE;
-    public static int sFLAMINGO_MAX_GROUP_SIZE;
+        REMOVE_SAVANNA_ANIMALS = builder.define("removeSavannaAnimals", true);
+        REMOVE_SWAMP_ANIMALS = builder.define("removeSwampAnimals", true);
+        REMOVE_JUNGLE_ANIMALS = builder.define("removeJungleAnimals", true);
+        REMOVE_FOREST_ANIMALS = builder.define("removeForestAnimals", true);
+        ADD_JUNGLE_ANIMALS = builder.define("addJungleAnimals", true);
+        SPAWN_HAZELNUT_BUSH = builder.define("spawnHazelnutBush", true);
+
+        DEER_SPAWN_WEIGHT = builder.defineInRange("deerSpawnWeight", 12, 0, 1000);
+        DEER_MIN_GROUP_SIZE = builder.defineInRange("deerMinGroupSize", 2, 1, 10);
+        DEER_MAX_GROUP_SIZE = builder.defineInRange("deerMaxGroupSize", 4, 1, 10);
+
+        RACCOON_SPAWN_WEIGHT = builder.defineInRange("raccoonSpawnWeight", 8, 0, 1000);
+        RACCOON_MIN_GROUP_SIZE = builder.defineInRange("raccoonMinGroupSize", 2, 1, 10);
+        RACCOON_MAX_GROUP_SIZE = builder.defineInRange("raccoonMaxGroupSize", 3, 1, 10);
+
+        SQUIRREL_SPAWN_WEIGHT = builder.defineInRange("squirrelSpawnWeight", 8, 0, 1000);
+        SQUIRREL_MIN_GROUP_SIZE = builder.defineInRange("squirrelMinGroupSize", 2, 1, 10);
+        SQUIRREL_MAX_GROUP_SIZE = builder.defineInRange("squirrelMaxGroupSize", 2, 1, 10);
+
+        RED_WOLF_SPAWN_WEIGHT = builder.defineInRange("redWolfSpawnWeight", 10, 0, 1000);
+        RED_WOLF_MIN_GROUP_SIZE = builder.defineInRange("redWolfMinGroupSize", 2, 1, 10);
+        RED_WOLF_MAX_GROUP_SIZE = builder.defineInRange("redWolfMaxGroupSize", 4, 1, 10);
+
+        OWL_SPAWN_WEIGHT = builder.defineInRange("owlSpawnWeight", 12, 0, 1000);
+        OWL_MIN_GROUP_SIZE = builder.defineInRange("owlMinGroupSize", 3, 1, 10);
+        OWL_MAX_GROUP_SIZE = builder.defineInRange("owlMaxGroupSize", 3, 1, 10);
+
+        BOAR_SPAWN_WEIGHT = builder.defineInRange("boarSpawnWeight", 14, 0, 1000);
+        BOAR_MIN_GROUP_SIZE = builder.defineInRange("boarMinGroupSize", 4, 1, 10);
+        BOAR_MAX_GROUP_SIZE = builder.defineInRange("boarMaxGroupSize", 5, 1, 10);
+
+        BISON_SPAWN_WEIGHT = builder.defineInRange("bisonSpawnWeight", 10, 0, 1000);
+        BISON_MIN_GROUP_SIZE = builder.defineInRange("bisonMinGroupSize", 3, 1, 10);
+        BISON_MAX_GROUP_SIZE = builder.defineInRange("bisonMaxGroupSize", 5, 1, 10);
+
+        TURKEY_SPAWN_WEIGHT = builder.defineInRange("turkeySpawnWeight", 12, 0, 1000);
+        TURKEY_MIN_GROUP_SIZE = builder.defineInRange("turkeyMinGroupSize", 3, 1, 10);
+        TURKEY_MAX_GROUP_SIZE = builder.defineInRange("turkeyMaxGroupSize", 5, 1, 10);
+
+        DOG_SPAWN_WEIGHT = builder.defineInRange("dogSpawnWeight", 2, 0, 1000);
+        DOG_MIN_GROUP_SIZE = builder.defineInRange("dogMinGroupSize", 1, 1, 10);
+        DOG_MAX_GROUP_SIZE = builder.defineInRange("dogMaxGroupSize", 1, 1, 10);
+
+        MINISHEEP_SPAWN_WEIGHT = builder.defineInRange("minisheepSpawnWeight", 8, 0, 1000);
+        MINISHEEP_MIN_GROUP_SIZE = builder.defineInRange("minisheepMinGroupSize", 2, 1, 10);
+        MINISHEEP_MAX_GROUP_SIZE = builder.defineInRange("minisheepMaxGroupSize", 4, 1, 10);
+
+        CASSOWARY_SPAWN_WEIGHT = builder.defineInRange("cassowarySpawnWeight", 12, 0, 1000);
+        CASSOWARY_MIN_GROUP_SIZE = builder.defineInRange("cassowaryMinGroupSize", 3, 1, 10);
+        CASSOWARY_MAX_GROUP_SIZE = builder.defineInRange("cassowaryMaxGroupSize", 4, 1, 10);
+
+        HEDGEHOG_SPAWN_WEIGHT = builder.defineInRange("hedgehogSpawnWeight", 10, 0, 1000);
+        HEDGEHOG_MIN_GROUP_SIZE = builder.defineInRange("hedgehogMinGroupSize", 2, 1, 10);
+        HEDGEHOG_MAX_GROUP_SIZE = builder.defineInRange("hedgehogMaxGroupSize", 4, 1, 10);
+
+        COMMON_CONFIG = builder.build();
+    }
 
     public static void onLoad(ModConfigEvent.Loading event) {
         if (event.getConfig().getSpec() != COMMON_CONFIG) return;
@@ -176,56 +188,59 @@ public class WilderNatureConfig {
     }
 
     public static void sync() {
-        remove_SAVANNA_ANIMALS = REMOVE_SAVANNA_ANIMALS.get();
-        remove_SWAMP_ANIMALS = REMOVE_SWAMP_ANIMALS.get();
-        remove_JUNGLE_ANIMALS = REMOVE_JUNGLE_ANIMALS.get();
-        remove_FOREST_ANIMALS = REMOVE_FOREST_ANIMALS.get();
-        add_JUNGLE_ANIMALS = ADD_JUNGLE_ANIMALS.get();
-        spawn_HAZELNUT_BUSH = SPAWN_HAZELNUT_BUSH.get();
-        sPELICAN_SPAWN_WEIGHT = PELICAN_SPAWN_WEIGHT.get();
-        sPELICAN_MIN_GROUP_SIZE = PELICAN_MIN_GROUP_SIZE.get();
-        sPELICAN_MAX_GROUP_SIZE = PELICAN_MAX_GROUP_SIZE.get();
-        sDEER_SPAWN_WEIGHT = DEER_SPAWN_WEIGHT.get();
-        sDEER_MIN_GROUP_SIZE = DEER_MIN_GROUP_SIZE.get();
-        sDEER_MAX_GROUP_SIZE = DEER_MAX_GROUP_SIZE.get();
-        sRACCOON_SPAWN_WEIGHT = RACCOON_SPAWN_WEIGHT.get();
-        sRACCOON_MIN_GROUP_SIZE = RACCOON_MIN_GROUP_SIZE.get();
-        sRACCOON_MAX_GROUP_SIZE = RACCOON_MAX_GROUP_SIZE.get();
-        sSQUIRREL_SPAWN_WEIGHT = SQUIRREL_SPAWN_WEIGHT.get();
-        sSQUIRREL_MIN_GROUP_SIZE = SQUIRREL_MIN_GROUP_SIZE.get();
-        sSQUIRREL_MAX_GROUP_SIZE = SQUIRREL_MAX_GROUP_SIZE.get();
-        sRED_WOLF_SPAWN_WEIGHT = RED_WOLF_SPAWN_WEIGHT.get();
-        sRED_WOLF_MIN_GROUP_SIZE = RED_WOLF_MIN_GROUP_SIZE.get();
-        sRED_WOLF_MAX_GROUP_SIZE = RED_WOLF_MAX_GROUP_SIZE.get();
-        sOWL_SPAWN_WEIGHT = OWL_SPAWN_WEIGHT.get();
-        sOWL_MIN_GROUP_SIZE = OWL_MIN_GROUP_SIZE.get();
-        sOWL_MAX_GROUP_SIZE = OWL_MAX_GROUP_SIZE.get();
-        sBOAR_SPAWN_WEIGHT = BOAR_SPAWN_WEIGHT.get();
-        sBOAR_MIN_GROUP_SIZE = BOAR_MIN_GROUP_SIZE.get();
-        sBOAR_MAX_GROUP_SIZE = BOAR_MAX_GROUP_SIZE.get();
-        sBISON_SPAWN_WEIGHT = BISON_SPAWN_WEIGHT.get();
-        sBISON_MIN_GROUP_SIZE = BISON_MIN_GROUP_SIZE.get();
-        sBISON_MAX_GROUP_SIZE = BISON_MAX_GROUP_SIZE.get();
-        sTURKEY_SPAWN_WEIGHT = TURKEY_SPAWN_WEIGHT.get();
-        sTURKEY_MIN_GROUP_SIZE = TURKEY_MIN_GROUP_SIZE.get();
-        sTURKEY_MAX_GROUP_SIZE = TURKEY_MAX_GROUP_SIZE.get();
-        sDOG_SPAWN_WEIGHT = DOG_SPAWN_WEIGHT.get();
-        sDOG_MIN_GROUP_SIZE = DOG_MIN_GROUP_SIZE.get();
-        sDOG_MAX_GROUP_SIZE = DOG_MAX_GROUP_SIZE.get();
-        sMINISHEEP_SPAWN_WEIGHT = MINISHEEP_SPAWN_WEIGHT.get();
-        sMINISHEEP_MIN_GROUP_SIZE = MINISHEEP_MIN_GROUP_SIZE.get();
-        sMINISHEEP_MAX_GROUP_SIZE = MINISHEEP_MAX_GROUP_SIZE.get();
-        sPENGUIN_SPAWN_WEIGHT = PENGUIN_SPAWN_WEIGHT.get();
-        sPENGUIN_MIN_GROUP_SIZE = PENGUIN_MIN_GROUP_SIZE.get();
-        sPENGUIN_MAX_GROUP_SIZE = PENGUIN_MAX_GROUP_SIZE.get();
-        sCASSOWARY_SPAWN_WEIGHT = CASSOWARY_SPAWN_WEIGHT.get();
-        sCASSOWARY_MIN_GROUP_SIZE = CASSOWARY_MIN_GROUP_SIZE.get();
-        sCASSOWARY_MAX_GROUP_SIZE = CASSOWARY_MAX_GROUP_SIZE.get();
-        sHEDGEHOG_SPAWN_WEIGHT = HEDGEHOG_SPAWN_WEIGHT.get();
-        sHEDGEHOG_MIN_GROUP_SIZE = HEDGEHOG_MIN_GROUP_SIZE.get();
-        sHEDGEHOG_MAX_GROUP_SIZE = HEDGEHOG_MAX_GROUP_SIZE.get();
-        sFLAMINGO_SPAWN_WEIGHT = FLAMINGO_SPAWN_WEIGHT.get();
-        sFLAMINGO_MIN_GROUP_SIZE = FLAMINGO_MIN_GROUP_SIZE.get();
-        sFLAMINGO_MAX_GROUP_SIZE = FLAMINGO_MAX_GROUP_SIZE.get();
+        removeSavannaAnimals = REMOVE_SAVANNA_ANIMALS.get();
+        removeSwampAnimals = REMOVE_SWAMP_ANIMALS.get();
+        removeJungleAnimals = REMOVE_JUNGLE_ANIMALS.get();
+        removeForestAnimals = REMOVE_FOREST_ANIMALS.get();
+        addJungleAnimals = ADD_JUNGLE_ANIMALS.get();
+        spawnHazelnutBush = SPAWN_HAZELNUT_BUSH.get();
+
+        deerSpawnWeight = DEER_SPAWN_WEIGHT.get();
+        deerMinGroupSize = DEER_MIN_GROUP_SIZE.get();
+        deerMaxGroupSize = DEER_MAX_GROUP_SIZE.get();
+
+        raccoonSpawnWeight = RACCOON_SPAWN_WEIGHT.get();
+        raccoonMinGroupSize = RACCOON_MIN_GROUP_SIZE.get();
+        raccoonMaxGroupSize = RACCOON_MAX_GROUP_SIZE.get();
+
+        squirrelSpawnWeight = SQUIRREL_SPAWN_WEIGHT.get();
+        squirrelMinGroupSize = SQUIRREL_MIN_GROUP_SIZE.get();
+        squirrelMaxGroupSize = SQUIRREL_MAX_GROUP_SIZE.get();
+
+        redWolfSpawnWeight = RED_WOLF_SPAWN_WEIGHT.get();
+        redWolfMinGroupSize = RED_WOLF_MIN_GROUP_SIZE.get();
+        redWolfMaxGroupSize = RED_WOLF_MAX_GROUP_SIZE.get();
+
+        owlSpawnWeight = OWL_SPAWN_WEIGHT.get();
+        owlMinGroupSize = OWL_MIN_GROUP_SIZE.get();
+        owlMaxGroupSize = OWL_MAX_GROUP_SIZE.get();
+
+        boarSpawnWeight = BOAR_SPAWN_WEIGHT.get();
+        boarMinGroupSize = BOAR_MIN_GROUP_SIZE.get();
+        boarMaxGroupSize = BOAR_MAX_GROUP_SIZE.get();
+
+        bisonSpawnWeight = BISON_SPAWN_WEIGHT.get();
+        bisonMinGroupSize = BISON_MIN_GROUP_SIZE.get();
+        bisonMaxGroupSize = BISON_MAX_GROUP_SIZE.get();
+
+        turkeySpawnWeight = TURKEY_SPAWN_WEIGHT.get();
+        turkeyMinGroupSize = TURKEY_MIN_GROUP_SIZE.get();
+        turkeyMaxGroupSize = TURKEY_MAX_GROUP_SIZE.get();
+
+        dogSpawnWeight = DOG_SPAWN_WEIGHT.get();
+        dogMinGroupSize = DOG_MIN_GROUP_SIZE.get();
+        dogMaxGroupSize = DOG_MAX_GROUP_SIZE.get();
+
+        minisheepSpawnWeight = MINISHEEP_SPAWN_WEIGHT.get();
+        minisheepMinGroupSize = MINISHEEP_MIN_GROUP_SIZE.get();
+        minisheepMaxGroupSize = MINISHEEP_MAX_GROUP_SIZE.get();
+
+        cassowarySpawnWeight = CASSOWARY_SPAWN_WEIGHT.get();
+        cassowaryMinGroupSize = CASSOWARY_MIN_GROUP_SIZE.get();
+        cassowaryMaxGroupSize = CASSOWARY_MAX_GROUP_SIZE.get();
+
+        hedgehogSpawnWeight = HEDGEHOG_SPAWN_WEIGHT.get();
+        hedgehogMinGroupSize = HEDGEHOG_MIN_GROUP_SIZE.get();
+        hedgehogMaxGroupSize = HEDGEHOG_MAX_GROUP_SIZE.get();
     }
 }

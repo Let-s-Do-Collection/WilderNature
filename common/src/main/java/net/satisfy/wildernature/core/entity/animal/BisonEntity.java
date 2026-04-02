@@ -46,7 +46,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.entity.ai.AnimationAttackGoal;
-import net.satisfy.wildernature.core.entity.animation.ServerAnimationDurations;
+import net.satisfy.wildernature.client.model.entity.animation.ServerAnimationDurations;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundRegistry;
 import org.jetbrains.annotations.NotNull;

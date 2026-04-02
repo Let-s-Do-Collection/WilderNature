@@ -29,7 +29,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
 import net.satisfy.wildernature.core.entity.animal.RaccoonEntity;
-import net.satisfy.wildernature.core.entity.animation.ServerAnimationDurations;
+import net.satisfy.wildernature.client.model.entity.animation.ServerAnimationDurations;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;

@@ -14,6 +14,7 @@ import net.neoforged.neoforge.common.world.ModifiableBiomeInfo;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.TagsRegistry;
 import net.satisfy.wildernature.neoforge.core.registry.WilderNatureBiomeModifiers;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,21 +35,18 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
         registerEntity(EntityTypeRegistry.OWL.get(), Heightmap.Types.MOTION_BLOCKING, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.TURKEY.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.RACCOON.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        registerEntity(EntityTypeRegistry.PELICAN.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.DEER.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.RED_WOLF.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.BOAR.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.BISON.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.DOG.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.MINISHEEP.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        registerEntity(EntityTypeRegistry.PENGUIN.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.CASSOWARY.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.HEDGEHOG.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        registerEntity(EntityTypeRegistry.FLAMINGO.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
     }
 
     @Override
-    public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+    public void modify(@NotNull Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.@NotNull Builder builder) {
         if (phase.equals(Phase.ADD)) {
             registerEntities();
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_DEER, EntityTypeRegistry.DEER.get(), 12, 2, 4);
@@ -59,13 +57,10 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_BOAR, EntityTypeRegistry.BOAR.get(), 14, 5, 5);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_BISON, EntityTypeRegistry.BISON.get(), 10, 3, 5);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_TURKEY, EntityTypeRegistry.TURKEY.get(), 12, 3, 5);
-            addMobSpawn(builder, biome, TagsRegistry.SPAWNS_PELICAN, EntityTypeRegistry.PELICAN.get(), 5, 3, 4);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_DOG, EntityTypeRegistry.DOG.get(), 4, 1, 1);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_MINISHEEP, EntityTypeRegistry.MINISHEEP.get(), 8, 2, 4);
-            addMobSpawn(builder, biome, TagsRegistry.SPAWNS_PENGUIN, EntityTypeRegistry.PENGUIN.get(), 10, 2, 5);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_CASSOWARY, EntityTypeRegistry.CASSOWARY.get(), 12, 3, 4);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_HEDGEHOG, EntityTypeRegistry.HEDGEHOG.get(), 9, 2, 3);
-            addMobSpawn(builder, biome, TagsRegistry.SPAWNS_FLAMINGO, EntityTypeRegistry.FLAMINGO.get(), 10, 4, 6);
             addMobSpawn(builder, biome, BiomeTags.IS_JUNGLE, EntityType.FROG, 8, 3, 4);
 
         }
@@ -79,7 +74,7 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
     }
 
     @Override
-    public MapCodec<? extends BiomeModifier> codec() {
+    public @NotNull MapCodec<? extends BiomeModifier> codec() {
         return WilderNatureBiomeModifiers.ADD_ANIMALS_CODEC.get();
     }
 }

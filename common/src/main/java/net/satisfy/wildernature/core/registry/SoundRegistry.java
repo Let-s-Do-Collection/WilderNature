@@ -28,9 +28,6 @@ public class SoundRegistry {
     public static final RegistrySupplier<SoundEvent> BISON_HORN = create("bison_horn");
     public static final RegistrySupplier<SoundEvent> BISON_ANGRY = create("bison_angry");
     public static final RegistrySupplier<SoundEvent> BISON_DEATH = create("bison_death");
-    public static final RegistrySupplier<SoundEvent> PELICAN_AMBIENT = create("pelican_ambient");
-    public static final RegistrySupplier<SoundEvent> PELICAN_HURT = create("pelican_hurt");
-    public static final RegistrySupplier<SoundEvent> PELICAN_DEATH = create("pelican_death");
     public static final RegistrySupplier<SoundEvent> TURKEY_AMBIENT = create("turkey_ambient");
     public static final RegistrySupplier<SoundEvent> TURKEY_HURT = create("turkey_hurt");
     public static final RegistrySupplier<SoundEvent> TURKEY_DEATH = create("turkey_death");
@@ -41,15 +38,9 @@ public class SoundRegistry {
     public static final RegistrySupplier<SoundEvent> RED_WOLF_HURT = create("red_wolf_hurt");
     public static final RegistrySupplier<SoundEvent> RED_WOLF_DEATH = create("red_wolf_death");
     public static final RegistrySupplier<SoundEvent> RED_WOLF_AGGRO = create("red_wolf_aggro");
-    public static final RegistrySupplier<SoundEvent> FLAMINGO_AMBIENT = create("flamingo_ambient");
-    public static final RegistrySupplier<SoundEvent> FLAMINGO_HURT = create("flamingo_hurt");
-    public static final RegistrySupplier<SoundEvent> FLAMINGO_DEATH = create("flamingo_death");
     public static final RegistrySupplier<SoundEvent> HEDGEHOG_AMBIENT = create("hedgehog_ambient");
     public static final RegistrySupplier<SoundEvent> HEDGEHOG_HURT = create("hedgehog_hurt");
     public static final RegistrySupplier<SoundEvent> HEDGEHOG_DEATH = create("hedgehog_death");
-    public static final RegistrySupplier<SoundEvent> PENGUIN_AMBIENT = create("penguin_ambient");
-    public static final RegistrySupplier<SoundEvent> PENGUIN_HURT = create("penguin_hurt");
-    public static final RegistrySupplier<SoundEvent> PENGUIN_DEATH = create("penguin_death");
     public static final RegistrySupplier<SoundEvent> CASSOWARY_AMBIENT = create("cassowary_ambient");
     public static final RegistrySupplier<SoundEvent> CASSOWARY_HURT = create("cassowary_hurt");
     public static final RegistrySupplier<SoundEvent> CASSOWARY_DEATH = create("cassowary_death");

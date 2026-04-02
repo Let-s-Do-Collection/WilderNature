@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.satisfy.wildernature.client.model.entity.SquirrelModel;
+import net.satisfy.wildernature.client.model.entity.model.SquirrelModel;
 import net.satisfy.wildernature.core.entity.animal.SquirrelEntity;
 
 @Environment(EnvType.CLIENT)
