@@ -50,7 +50,11 @@ import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
 import net.satisfy.wildernature.core.entity.CacheEatingMob;
 import net.satisfy.wildernature.core.entity.CacheStoringMob;
 import net.satisfy.wildernature.core.entity.ShelteringMob;
-import net.satisfy.wildernature.core.entity.ai.*;
+import net.satisfy.wildernature.core.entity.ai.BetterWallClimberNavigation;
+import net.satisfy.wildernature.core.entity.ai.CacheEatGoal;
+import net.satisfy.wildernature.core.entity.ai.CacheStoreGoal;
+import net.satisfy.wildernature.core.entity.ai.RaccoonGoals;
+import net.satisfy.wildernature.core.entity.ai.SeekShelterGoal;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
@@ -150,13 +154,14 @@ public class RaccoonEntity extends Animal implements CacheStoringMob, Sheltering
         this.goalSelector.addGoal(10, new CacheEatGoal<>(this, 1.15D));
         this.goalSelector.addGoal(11, new RaccoonGoals.RaccoonOpenContainerGoal(this, 1.2D));
         this.goalSelector.addGoal(12, new RaccoonGoals.RaccoonNibbleCropGoal(this, 1.15D));
-        this.goalSelector.addGoal(13, new RaccoonGoals.RaccoonVillageStrollGoal(this, 1.1D));
-        this.goalSelector.addGoal(14, new RaccoonGoals.RaccoonCuriosityGoal(this));
-        this.goalSelector.addGoal(15, new BreedGoal(this, 1.1D));
-        this.goalSelector.addGoal(16, new TemptGoal(this, 1.1D, FOOD_ITEMS, false));
-        this.goalSelector.addGoal(17, new FollowParentGoal(this, 1.2D));
-        this.goalSelector.addGoal(18, new WaterAvoidingRandomStrollGoal(this, 1.05D));
-        this.goalSelector.addGoal(19, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(13, new RaccoonGoals.RaccoonStealEggGoal(this, 1.15D));
+        this.goalSelector.addGoal(14, new RaccoonGoals.RaccoonVillageStrollGoal(this, 1.1D));
+        this.goalSelector.addGoal(15, new RaccoonGoals.RaccoonCuriosityGoal(this));
+        this.goalSelector.addGoal(16, new BreedGoal(this, 1.1D));
+        this.goalSelector.addGoal(17, new TemptGoal(this, 1.1D, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(18, new FollowParentGoal(this, 1.2D));
+        this.goalSelector.addGoal(19, new WaterAvoidingRandomStrollGoal(this, 1.05D));
+        this.goalSelector.addGoal(20, new RandomLookAroundGoal(this));
     }
 
     public void tick() {
@@ -408,7 +413,7 @@ public class RaccoonEntity extends Animal implements CacheStoringMob, Sheltering
                 && !this.level().isDay()
                 && serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)
                 && this.containerLootCooldownTicks <= 0
-                && cacheToChestCooldownTicks <= 0
+                && this.cacheToChestCooldownTicks <= 0
                 && !this.isSleeping()
                 && !this.isPanicking()
                 && !this.isWashing()
@@ -598,6 +603,7 @@ public class RaccoonEntity extends Animal implements CacheStoringMob, Sheltering
                 && !this.isPanicking()
                 && !this.isSleeping();
     }
+
     @Override
     public int getShelterLocalWanderRadius() {
         return SHELTER_LOCAL_WANDER_RADIUS;

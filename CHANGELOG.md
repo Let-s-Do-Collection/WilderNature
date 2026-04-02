@@ -1,5 +1,7 @@
 [1.1.5]
 
+This update focuses on making the WilderNature entities more soulful and adding features and general behaviours. They now have unique behaviours, daily plans and sleep schedules, and they can eat from certain blocks or help the ecosystem in your world.
+
 **Fixed**
 * Idle animations for most entities are now much smoother and more natural
 * Hazelnut Bushes no longer turn into Sweetberry Bushes when bone mealed
@@ -42,6 +44,7 @@
 * Rooting now uses a loot table system, making drops fully configurable
 * Added cooldowns so they don’t root excessively anymore
 * Added eating behavior from caches when injured
+* Rooting is now also allowed for Dirt and Coarse Dirt - but with a much lower percentage for loot. 
 * Rooting now properly respects the mobGriefing gamerule
 
 **Raccoon Rework**
@@ -71,8 +74,26 @@
 * Highly trusted squirrels can now give you gifts by delivery
 * Better overall AI priority handling between foraging, sheltering, storing, and gifting
 
+**Hedgehog Rework**
+* Added defensive curl behavior when threats are nearby, greatly reducing incoming damage
+* Curled hedgehogs now damage nearby entities on contact, similar to thorns
+* Players taking aggressive actions or holding weapons will trigger defensive reactions
+* Added fall interaction, jumping onto a hedgehog can damage the player but kill the hedgehog
+* Introduced dynamic sleeping behavior during the day with proper wake up conditions
+* Hedgehogs now occasionally rest to regenerate health when injured
+* Added sniffing behavior for more life like idle activity
+* Added food interaction with mushrooms and sweet berries directly from the world
+* Hedgehogs can now convert mushrooms into Mushroom Colonies under the right conditions
+* Improved animation flow with sniffing, sleeping, defensive, and idle states working together
+* Overall behavior is more reactive, with better threat awareness and smoother transitions
+
 **Added**
 * Hollow Cache, a Tree Stump spawning in Forest and Plains Biomes
+* Mushroom Colonies - a renewable source for brown and red mushrooms
+
+**Farm And Charm Compat**
+* If installed, Boars can transform Dirt & Coarse Dirt into Fertilized Soil 
+* If installed, Raccoons will steal Eggs out of ChickenCoops and ChickenNests
 
 ***
 

@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.PenguinModel;
-import net.satisfy.wildernature.core.entity.animal.PenguinEntity;
+import net.satisfy.wildernature.core.entity.animal.RIP.PenguinEntity;
 import org.jetbrains.annotations.NotNull;
 
 

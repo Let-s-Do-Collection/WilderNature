@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
@@ -158,6 +159,32 @@ public class HollowCacheBlockEntity extends RandomizableContainerBlockEntity {
     @Override
     protected void setItems(NonNullList<ItemStack> list) {
         this.inventory = list;
+    }
+
+    public boolean hasItem(Item item) {
+        for (ItemStack itemStack : this.inventory) {
+            if (!itemStack.isEmpty() && itemStack.is(item)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public ItemStack extractItem(Item item, int count) {
+        for (int slotIndex = 0; slotIndex < this.inventory.size(); slotIndex++) {
+            ItemStack itemStack = this.inventory.get(slotIndex);
+            if (!itemStack.isEmpty() && itemStack.is(item)) {
+                int extractedCount = Math.min(count, itemStack.getCount());
+                ItemStack extractedStack = itemStack.copyWithCount(extractedCount);
+                itemStack.shrink(extractedCount);
+                if (itemStack.isEmpty()) {
+                    this.inventory.set(slotIndex, ItemStack.EMPTY);
+                }
+                this.setChanged();
+                return extractedStack;
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override

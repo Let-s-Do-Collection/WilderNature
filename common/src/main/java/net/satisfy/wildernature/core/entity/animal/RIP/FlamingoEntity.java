@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.entity.animal;
+package net.satisfy.wildernature.core.entity.animal.RIP;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.EntityDataAccessor;

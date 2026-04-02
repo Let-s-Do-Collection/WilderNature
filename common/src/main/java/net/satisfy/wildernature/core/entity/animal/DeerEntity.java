@@ -6,6 +6,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -37,8 +38,10 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.entity.ai.DeerGoals;
+import net.satisfy.wildernature.core.entity.ai.EatFromBlockGoal;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundRegistry;
@@ -119,17 +122,18 @@ public class DeerEntity extends Animal {
 
     @Override
     protected void registerGoals() {
-        int goalPriority = 0;
-        this.goalSelector.addGoal(++goalPriority, new DeerGoals.DeerAvoidEntityGoal<>(this, Villager.class));
-        this.goalSelector.addGoal(++goalPriority, new DeerGoals.DeerAvoidEntityGoal<>(this, Pillager.class));
-        this.goalSelector.addGoal(++goalPriority, new DeerGoals.DeerAvoidEntityGoal<>(this, Player.class));
-        this.goalSelector.addGoal(++goalPriority, new DeerGoals.DeerSeekShelterGoal(this));
-        this.goalSelector.addGoal(++goalPriority, new FloatGoal(this));
-        this.goalSelector.addGoal(++goalPriority, new BreedGoal(this, 1.15D));
-        this.goalSelector.addGoal(++goalPriority, new TemptGoal(this, 1.2D, Ingredient.of(Items.SHORT_GRASS), false));
-        this.goalSelector.addGoal(++goalPriority, new FollowParentGoal(this, 1.1D));
-        this.goalSelector.addGoal(++goalPriority, new DeerGoals.DeerFollowLeaderGoal(this));
-        this.goalSelector.addGoal(++goalPriority, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
+        this.goalSelector.addGoal(1, new DeerGoals.DeerAvoidEntityGoal<>(this, Player.class));
+        this.goalSelector.addGoal(2, new DeerGoals.DeerAvoidEntityGoal<>(this, Pillager.class));
+        this.goalSelector.addGoal(3, new DeerGoals.DeerAvoidEntityGoal<>(this, Villager.class));
+        this.goalSelector.addGoal(4, new DeerGoals.DeerSeekShelterGoal(this));
+        this.goalSelector.addGoal(5, new FloatGoal(this));
+        this.goalSelector.addGoal(6, new BreedGoal(this, 1.15D));
+        this.goalSelector.addGoal(7, new FollowParentGoal(this, 1.1D));
+        this.goalSelector.addGoal(8, new DeerGoals.DeerFollowLeaderGoal(this));
+        this.goalSelector.addGoal(9, new TemptGoal(this, 1.2D, Ingredient.of(Items.SHORT_GRASS), false));
+        this.goalSelector.addGoal(10, new DeerGoals.DeerEatingGoal(this));
+        this.goalSelector.addGoal(11, new EatFromBlockGoal(this, 1.0D, 8, state -> state.getBlock() == Blocks.SWEET_BERRY_BUSH && state.getValue(SweetBerryBushBlock.AGE) > 1, (level, pos, state, mob) -> { int age = state.getValue(SweetBerryBushBlock.AGE); level.setBlock(pos, state.setValue(SweetBerryBushBlock.AGE, age - 1), 2); }, 2.0F, 24000, SoundEvents.FOX_EAT, this::startEating, this::stopEating));
+        this.goalSelector.addGoal(12, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
             @Override
             public boolean canUse() {
                 return super.canUse() && !DeerEntity.this.isSleeping() && !DeerEntity.this.isDeerRunning();
@@ -140,7 +144,7 @@ public class DeerEntity extends Animal {
                 return super.canContinueToUse() && !DeerEntity.this.isSleeping() && !DeerEntity.this.isDeerRunning();
             }
         });
-        this.goalSelector.addGoal(++goalPriority, new LookAtPlayerGoal(this, Player.class, 3.0F) {
+        this.goalSelector.addGoal(13, new LookAtPlayerGoal(this, Player.class, 3.0F) {
             @Override
             public boolean canUse() {
                 return super.canUse() && !DeerEntity.this.isSleeping();
@@ -151,8 +155,7 @@ public class DeerEntity extends Animal {
                 return super.canContinueToUse() && !DeerEntity.this.isSleeping();
             }
         });
-        this.goalSelector.addGoal(++goalPriority, new DeerGoals.DeerEatingGoal(this));
-        this.goalSelector.addGoal(++goalPriority, new DeerGoals.DeerLookAroundGoal(this));
+        this.goalSelector.addGoal(14, new DeerGoals.DeerLookAroundGoal(this));
     }
 
     @Override

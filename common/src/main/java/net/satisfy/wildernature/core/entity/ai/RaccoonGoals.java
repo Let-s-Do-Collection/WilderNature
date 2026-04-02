@@ -1,18 +1,27 @@
 package net.satisfy.wildernature.core.entity.ai;
 
+import dev.architectury.platform.Platform;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.DoorInteractGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -384,7 +393,9 @@ public class RaccoonGoals {
                     for (int offsetZ = -RaccoonEntity.CONTAINER_SEARCH_RANGE; offsetZ <= RaccoonEntity.CONTAINER_SEARCH_RANGE; offsetZ++) {
                         mutableBlockPos.set(originPos.getX() + offsetX, originPos.getY() + offsetY, originPos.getZ() + offsetZ);
 
-                        if (!this.isValidContainer(mutableBlockPos)) continue;
+                        if (!this.isValidContainer(mutableBlockPos)) {
+                            continue;
+                        }
 
                         double checkedDistance = mutableBlockPos.distSqr(originPos);
                         if (checkedDistance < closestDistance) {
@@ -399,8 +410,12 @@ public class RaccoonGoals {
 
         private boolean isValidContainer(BlockPos blockPos) {
             BlockEntity blockEntity = this.raccoon.level().getBlockEntity(blockPos);
-            if (!(blockEntity instanceof Container container)) return false;
-            if (blockEntity instanceof HollowCacheBlockEntity) return false;
+            if (!(blockEntity instanceof Container container)) {
+                return false;
+            }
+            if (blockEntity instanceof HollowCacheBlockEntity) {
+                return false;
+            }
 
             for (int slotIndex = 0; slotIndex < container.getContainerSize(); slotIndex++) {
                 ItemStack itemStack = container.getItem(slotIndex);
@@ -412,13 +427,252 @@ public class RaccoonGoals {
         }
 
         private void openContainer() {
-            if (this.targetContainerPos == null) return;
+            if (this.targetContainerPos == null) {
+                return;
+            }
             BlockState blockState = this.raccoon.level().getBlockState(this.targetContainerPos);
             this.raccoon.level().blockEvent(this.targetContainerPos, blockState.getBlock(), 1, 1);
         }
 
         private void closeContainer() {
-            if (this.targetContainerPos == null || !this.containerOpened) return;
+            if (this.targetContainerPos == null || !this.containerOpened) {
+                return;
+            }
+            BlockState blockState = this.raccoon.level().getBlockState(this.targetContainerPos);
+            this.raccoon.level().blockEvent(this.targetContainerPos, blockState.getBlock(), 1, 0);
+            this.containerOpened = false;
+        }
+    }
+
+    public static class RaccoonStealEggGoal extends Goal {
+        private static final int SEARCH_COOLDOWN_MIN = 60;
+        private static final int SEARCH_COOLDOWN_MAX = 140;
+        private static final int STEAL_DURATION = 18;
+        private static final ResourceLocation CHICKEN_COOP_ID = ResourceLocation.parse("farm_and_charm:chicken_coop");
+        private static final ResourceLocation CHICKEN_NEST_ID = ResourceLocation.parse("farm_and_charm:chicken_nest");
+
+        private final RaccoonEntity raccoon;
+        private final double speedModifier;
+        private BlockPos targetContainerPos;
+        private int searchCooldownTicks;
+        private int stealingTicks;
+        private boolean containerOpened;
+
+        public RaccoonStealEggGoal(RaccoonEntity raccoon, double speedModifier) {
+            this.raccoon = raccoon;
+            this.speedModifier = speedModifier;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            if (!Platform.isModLoaded("farm_and_charm")) {
+                return false;
+            }
+            if (this.raccoon.level().isDay()) {
+                return false;
+            }
+            if (!(this.raccoon.level() instanceof ServerLevel serverLevel) || !serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+                return false;
+            }
+            if (this.raccoon.isSleeping() || this.raccoon.isPanicking() || this.raccoon.isOpeningDoor() || this.raccoon.isContainerLooting() || this.raccoon.isStoringLoot() || this.raccoon.isWashing() || this.raccoon.isSheltering() || this.raccoon.isBaby()) {
+                return false;
+            }
+            if (!this.raccoon.getMainHandItem().isEmpty() && !this.raccoon.hasFreeInventorySlot()) {
+                return false;
+            }
+            if (this.raccoon.getStoreCooldownTicks() > 0) {
+                return false;
+            }
+            if (this.searchCooldownTicks > 0) {
+                this.searchCooldownTicks--;
+                return false;
+            }
+
+            this.targetContainerPos = this.findNearestEggContainer();
+            this.searchCooldownTicks = this.getNextSearchCooldown();
+            return this.targetContainerPos != null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return Platform.isModLoaded("farm_and_charm")
+                    && !this.raccoon.level().isDay()
+                    && !this.raccoon.isSleeping()
+                    && !this.raccoon.isPanicking()
+                    && !this.raccoon.isOpeningDoor()
+                    && !this.raccoon.isStoringLoot()
+                    && !this.raccoon.isWashing()
+                    && this.targetContainerPos != null
+                    && this.isValidEggContainer(this.targetContainerPos);
+        }
+
+        @Override
+        public void start() {
+            this.raccoon.wakeUp();
+            this.raccoon.setContainerLooting(true);
+            this.containerOpened = false;
+            this.stealingTicks = 0;
+        }
+
+        @Override
+        public void stop() {
+            this.closeContainer();
+            this.raccoon.setContainerLooting(false);
+            this.raccoon.getNavigation().stop();
+            this.targetContainerPos = null;
+            this.stealingTicks = 0;
+        }
+
+        @Override
+        public void tick() {
+            if (this.targetContainerPos == null) {
+                return;
+            }
+
+            if (!this.isValidEggContainer(this.targetContainerPos)) {
+                this.closeContainer();
+                this.targetContainerPos = null;
+                this.stealingTicks = 0;
+                this.searchCooldownTicks = this.getNextSearchCooldown() * 2;
+                return;
+            }
+
+            if (!this.targetContainerPos.closerToCenterThan(this.raccoon.position(), 2.25D)) {
+                this.closeContainer();
+                this.raccoon.getNavigation().moveTo(this.targetContainerPos.getX() + 0.5D, this.targetContainerPos.getY(), this.targetContainerPos.getZ() + 0.5D, this.speedModifier);
+                this.stealingTicks = 0;
+                return;
+            }
+
+            this.raccoon.getNavigation().stop();
+            this.raccoon.getLookControl().setLookAt(this.targetContainerPos.getX() + 0.5D, this.targetContainerPos.getY() + 0.5D, this.targetContainerPos.getZ() + 0.5D);
+
+            if (!this.containerOpened) {
+                this.openContainer();
+                this.containerOpened = true;
+            }
+
+            if (this.stealingTicks < STEAL_DURATION) {
+                this.stealingTicks++;
+                return;
+            }
+
+            BlockEntity blockEntity = this.raccoon.level().getBlockEntity(this.targetContainerPos);
+            if (blockEntity instanceof Container container && this.tryTakeEgg(container)) {
+                this.closeContainer();
+                this.raccoon.startContainerLootCooldown();
+                this.raccoon.startStoreLootCooldown();
+                this.targetContainerPos = null;
+                this.stealingTicks = 0;
+                return;
+            }
+
+            this.closeContainer();
+            this.targetContainerPos = null;
+            this.stealingTicks = 0;
+            this.searchCooldownTicks = this.getNextSearchCooldown() * 2;
+        }
+
+        private int getNextSearchCooldown() {
+            return SEARCH_COOLDOWN_MIN + this.raccoon.getRandom().nextInt(SEARCH_COOLDOWN_MAX - SEARCH_COOLDOWN_MIN + 1);
+        }
+
+        @Nullable
+        private BlockPos findNearestEggContainer() {
+            BlockPos originPos = this.raccoon.blockPosition();
+            BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+            BlockPos closestContainerPos = null;
+            double closestDistance = Double.MAX_VALUE;
+
+            for (int offsetX = -RaccoonEntity.CONTAINER_SEARCH_RANGE; offsetX <= RaccoonEntity.CONTAINER_SEARCH_RANGE; offsetX++) {
+                for (int offsetY = -4; offsetY <= 4; offsetY++) {
+                    for (int offsetZ = -RaccoonEntity.CONTAINER_SEARCH_RANGE; offsetZ <= RaccoonEntity.CONTAINER_SEARCH_RANGE; offsetZ++) {
+                        mutableBlockPos.set(originPos.getX() + offsetX, originPos.getY() + offsetY, originPos.getZ() + offsetZ);
+
+                        if (!this.isValidEggContainer(mutableBlockPos)) {
+                            continue;
+                        }
+
+                        double checkedDistance = mutableBlockPos.distSqr(originPos);
+                        if (checkedDistance < closestDistance) {
+                            closestDistance = checkedDistance;
+                            closestContainerPos = mutableBlockPos.immutable();
+                        }
+                    }
+                }
+            }
+
+            return closestContainerPos;
+        }
+
+        private boolean isValidEggContainer(BlockPos blockPos) {
+            BlockState blockState = this.raccoon.level().getBlockState(blockPos);
+            ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(blockState.getBlock());
+            if (!CHICKEN_COOP_ID.equals(blockId) && !CHICKEN_NEST_ID.equals(blockId)) {
+                return false;
+            }
+
+            BlockEntity blockEntity = this.raccoon.level().getBlockEntity(blockPos);
+            if (!(blockEntity instanceof Container container)) {
+                return false;
+            }
+
+            for (int slotIndex = 0; slotIndex < container.getContainerSize(); slotIndex++) {
+                if (container.getItem(slotIndex).is(Items.EGG)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private boolean tryTakeEgg(Container container) {
+            for (int slotIndex = 0; slotIndex < container.getContainerSize(); slotIndex++) {
+                ItemStack slotStack = container.getItem(slotIndex);
+                if (!slotStack.is(Items.EGG)) {
+                    continue;
+                }
+
+                ItemStack extractedStack = container.removeItem(slotIndex, 1);
+                if (extractedStack.isEmpty()) {
+                    return false;
+                }
+
+                if (this.raccoon.getMainHandItem().isEmpty()) {
+                    this.raccoon.setItemSlot(EquipmentSlot.MAINHAND, extractedStack);
+                    container.setChanged();
+                    return true;
+                }
+
+                if (this.raccoon.hasFreeInventorySlot()) {
+                    for (int inventorySlotIndex = 0; inventorySlotIndex < RaccoonEntity.INVENTORY_SIZE; inventorySlotIndex++) {
+                        ItemStack inventoryStack = this.raccoon.getItemBySlot(EquipmentSlot.MAINHAND);
+                        if (inventoryStack.isEmpty()) {
+                            break;
+                        }
+                    }
+                }
+
+                container.setItem(slotIndex, extractedStack);
+                return false;
+            }
+
+            return false;
+        }
+
+        private void openContainer() {
+            if (this.targetContainerPos == null) {
+                return;
+            }
+            BlockState blockState = this.raccoon.level().getBlockState(this.targetContainerPos);
+            this.raccoon.level().blockEvent(this.targetContainerPos, blockState.getBlock(), 1, 1);
+        }
+
+        private void closeContainer() {
+            if (this.targetContainerPos == null || !this.containerOpened) {
+                return;
+            }
             BlockState blockState = this.raccoon.level().getBlockState(this.targetContainerPos);
             this.raccoon.level().blockEvent(this.targetContainerPos, blockState.getBlock(), 1, 0);
             this.containerOpened = false;
@@ -677,8 +931,7 @@ public class RaccoonGoals {
                     this.raccoon.markCropNibbled();
 
                     if (this.raccoon.level() instanceof ServerLevel serverLevel) {
-                        serverLevel.sendParticles(
-                                new BlockParticleOption(ParticleTypes.BLOCK, blockState), this.targetCropPos.getX() + 0.5D, this.targetCropPos.getY() + 0.5D, this.targetCropPos.getZ() + 0.5D, 8, 0.2D, 0.2D, 0.2D, 0.02D);
+                        serverLevel.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, blockState), this.targetCropPos.getX() + 0.5D, this.targetCropPos.getY() + 0.5D, this.targetCropPos.getZ() + 0.5D, 8, 0.2D, 0.2D, 0.2D, 0.02D);
                     }
                 }
             }

@@ -14,6 +14,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -41,16 +42,19 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.core.block.MushroomColonyBlock;
 import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
 import net.satisfy.wildernature.core.entity.CacheEatingMob;
-import net.satisfy.wildernature.core.entity.ai.BoarGoals;
+import net.satisfy.wildernature.core.entity.ai.BoarRootingGoal;
 import net.satisfy.wildernature.core.entity.ai.CacheEatGoal;
+import net.satisfy.wildernature.core.entity.ai.EatFromBlockGoal;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
@@ -112,11 +116,10 @@ public class BoarEntity extends Animal implements CacheEatingMob {
 
     @Override
     protected void registerGoals() {
-        int goalPriority = 0;
-        this.goalSelector.addGoal(++goalPriority, new FloatGoal(this));
-        this.goalSelector.addGoal(++goalPriority, new PanicGoal(this, 1.25D));
+        this.goalSelector.addGoal(1, new FloatGoal(this));
+        this.goalSelector.addGoal(2, new PanicGoal(this, 1.25D));
 
-        this.goalSelector.addGoal(++goalPriority, new BreedGoal(this, 1.0D) {
+        this.goalSelector.addGoal(3, new BreedGoal(this, 1.0D) {
             @Override
             public boolean canUse() {
                 return super.canUse() && !BoarEntity.this.isSleeping();
@@ -128,7 +131,7 @@ public class BoarEntity extends Animal implements CacheEatingMob {
             }
         });
 
-        this.goalSelector.addGoal(++goalPriority, new TemptGoal(this, 1.2D, Ingredient.of(Items.CARROT_ON_A_STICK), false) {
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.2D, Ingredient.of(Items.CARROT_ON_A_STICK), false) {
             @Override
             public boolean canUse() {
                 return super.canUse() && !BoarEntity.this.isSleeping();
@@ -140,7 +143,7 @@ public class BoarEntity extends Animal implements CacheEatingMob {
             }
         });
 
-        this.goalSelector.addGoal(++goalPriority, new TemptGoal(this, 1.2D, FOOD_ITEMS, false) {
+        this.goalSelector.addGoal(5, new TemptGoal(this, 1.2D, FOOD_ITEMS, false) {
             @Override
             public boolean canUse() {
                 return super.canUse() && !BoarEntity.this.isSleeping();
@@ -152,7 +155,7 @@ public class BoarEntity extends Animal implements CacheEatingMob {
             }
         });
 
-        this.goalSelector.addGoal(++goalPriority, new FollowParentGoal(this, 1.1D) {
+        this.goalSelector.addGoal(6, new FollowParentGoal(this, 1.1D) {
             @Override
             public boolean canUse() {
                 return super.canUse() && !BoarEntity.this.isSleeping();
@@ -164,10 +167,10 @@ public class BoarEntity extends Animal implements CacheEatingMob {
             }
         });
 
-        this.goalSelector.addGoal(++goalPriority, new CacheEatGoal<>(this, 1.1D));
-        this.goalSelector.addGoal(++goalPriority, new BoarGoals.BoarRootingGoal(this));
-
-        this.goalSelector.addGoal(++goalPriority, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
+        this.goalSelector.addGoal(7, new CacheEatGoal<>(this, 1.1D));
+        this.goalSelector.addGoal(8, new BoarRootingGoal(this));
+        this.goalSelector.addGoal(9, new EatFromBlockGoal(this, 1.0D, 8, state -> (state.getBlock() == ObjectRegistry.BROWN_MUSHROOM_COLONY.get() || state.getBlock() == ObjectRegistry.RED_MUSHROOM_COLONY.get()) && state.getValue(MushroomColonyBlock.COLONY_AGE) > 0, (level, pos, state, mob) -> { int age = state.getValue(MushroomColonyBlock.COLONY_AGE); level.setBlock(pos, state.setValue(MushroomColonyBlock.COLONY_AGE, age - 1), 2); }, 2.5F, 24000, SoundEvents.CAMEL_EAT, this::startEatDigAnimation, null));
+        this.goalSelector.addGoal(10, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
             @Override
             public boolean canUse() {
                 return super.canUse() && !BoarEntity.this.isDigging() && !BoarEntity.this.isSleeping();
@@ -179,7 +182,7 @@ public class BoarEntity extends Animal implements CacheEatingMob {
             }
         });
 
-        this.goalSelector.addGoal(++goalPriority, new LookAtPlayerGoal(this, Player.class, 6.0F) {
+        this.goalSelector.addGoal(11, new LookAtPlayerGoal(this, Player.class, 6.0F) {
             @Override
             public boolean canUse() {
                 return super.canUse() && !BoarEntity.this.isDigging() && !BoarEntity.this.isSleeping();
@@ -191,7 +194,7 @@ public class BoarEntity extends Animal implements CacheEatingMob {
             }
         });
 
-        this.goalSelector.addGoal(++goalPriority, new RandomLookAroundGoal(this) {
+        this.goalSelector.addGoal(12, new RandomLookAroundGoal(this) {
             @Override
             public boolean canUse() {
                 return super.canUse() && !BoarEntity.this.isDigging() && !BoarEntity.this.isSleeping();
@@ -231,13 +234,20 @@ public class BoarEntity extends Animal implements CacheEatingMob {
             this.sleepCooldownTicks--;
         }
 
+        if (this.isDigging() || this.getRequestedRootingTarget() != null) {
+            if (this.isSleeping()) {
+                this.wakeUp();
+            }
+            return;
+        }
+
         boolean isNight = !this.level().isDay();
         boolean isStill = this.getDeltaMovement().horizontalDistanceSqr() < 0.01D;
         boolean isOnValidGround = this.level().getBlockState(this.blockPosition().below()).is(Blocks.GRASS_BLOCK)
                 || this.level().getBlockState(this.blockPosition().below()).is(Blocks.DIRT)
                 || this.level().getBlockState(this.blockPosition().below()).is(Blocks.COARSE_DIRT);
 
-        if (isNight && !this.isDigging() && isStill && this.sleepCooldownTicks <= 0 && isOnValidGround) {
+        if (isNight && isStill && this.sleepCooldownTicks <= 0 && isOnValidGround) {
             this.sleepPreparationTicks++;
             if (this.sleepPreparationTicks > this.requiredSleepPreparationTicks && !this.isSleeping()) {
                 this.startSleeping();
@@ -256,7 +266,11 @@ public class BoarEntity extends Animal implements CacheEatingMob {
             }
 
             if (this.level() instanceof ServerLevel serverLevel && this.tickCount % SLEEPING_PARTICLE_INTERVAL_TICKS == 0) {
-                serverLevel.sendParticles(ParticleTypeRegistry.SLEEPING.get(), this.getX() + (this.random.nextDouble() - 0.5D) * 0.4D, this.getY() + this.getBbHeight() * 0.75D, this.getZ() + (this.random.nextDouble() - 0.5D) * 0.4D, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+                serverLevel.sendParticles(ParticleTypeRegistry.SLEEPING.get(),
+                        this.getX() + (this.random.nextDouble() - 0.5D) * 0.4D,
+                        this.getY() + this.getBbHeight() * 0.75D,
+                        this.getZ() + (this.random.nextDouble() - 0.5D) * 0.4D,
+                        1, 0.0D, 0.0D, 0.0D, 0.0D);
             }
 
             this.getNavigation().stop();
@@ -281,6 +295,13 @@ public class BoarEntity extends Animal implements CacheEatingMob {
         }
 
         this.sleepAnimationState.animateWhen(this.isSleeping(), this.tickCount);
+    }
+
+    public void startEatDigAnimation() {
+        this.wakeUp();
+        this.digAnimationTick = 20;
+        this.getNavigation().stop();
+        this.setDeltaMovement(Vec3.ZERO);
     }
 
     @Override
@@ -374,7 +395,8 @@ public class BoarEntity extends Animal implements CacheEatingMob {
         for (int xOffset = -PLAYER_ROOTING_SEARCH_RADIUS; xOffset <= PLAYER_ROOTING_SEARCH_RADIUS; xOffset++) {
             for (int zOffset = -PLAYER_ROOTING_SEARCH_RADIUS; zOffset <= PLAYER_ROOTING_SEARCH_RADIUS; zOffset++) {
                 BlockPos blockPosition = origin.offset(xOffset, 0, zOffset);
-                if (!this.level().getBlockState(blockPosition).is(Blocks.GRASS_BLOCK)) {
+                BlockState blockState = this.level().getBlockState(blockPosition);
+                if (!blockState.is(Blocks.GRASS_BLOCK) && !blockState.is(Blocks.DIRT) && !blockState.is(Blocks.COARSE_DIRT)) {
                     continue;
                 }
 
@@ -455,27 +477,7 @@ public class BoarEntity extends Animal implements CacheEatingMob {
         this.level().broadcastEntityEvent(this, (byte) 10);
     }
 
-    public void finishRooting(BlockPos blockPos) {
-        if (!(this.level() instanceof ServerLevel serverLevel)) {
-            return;
-        }
-
-        if (!this.level().getBlockState(blockPos).is(Blocks.GRASS_BLOCK)) {
-            return;
-        }
-
-        this.level().levelEvent(2001, blockPos, Block.getId(Blocks.GRASS_BLOCK.defaultBlockState()));
-        serverLevel.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.GRASS_BLOCK.defaultBlockState()), blockPos.getX() + 0.5D, blockPos.getY() + 1.0D, blockPos.getZ() + 0.5D, 10, 0.25D, 0.25D, 0.25D, 0.5D);
-
-        if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-            this.level().setBlock(blockPos, Blocks.COARSE_DIRT.defaultBlockState(), 2);
-            this.spawnRootingLoot(serverLevel, blockPos);
-        }
-
-        this.ate();
-    }
-
-    private void spawnRootingLoot(ServerLevel serverLevel, BlockPos blockPos) {
+    public void spawnRootingLoot(ServerLevel serverLevel, BlockPos blockPos) {
         LootTable lootTable = serverLevel.getServer().reloadableRegistries().getLootTable(ROOTING_LOOT_TABLE);
         LootParams lootParams = new LootParams.Builder(serverLevel)
                 .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(blockPos))
