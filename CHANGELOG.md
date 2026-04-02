@@ -1,6 +1,6 @@
 [1.1.5]
 
-This update focuses on making the WilderNature entities more soulful and adding features and general behaviours. They now have unique behaviours, daily plans and sleep schedules, and they can eat from certain blocks or help the ecosystem in your world.
+This update makes WilderNature entities feel more alive, adding distinct behaviors, daily routines, sleep cycles, and interactions with the world around them.
 
 **Fixed**
 * Idle animations for most entities are now much smoother and more natural
@@ -14,105 +14,88 @@ This update focuses on making the WilderNature entities more soulful and adding 
 **Owl Rework**
 * Completely overhauled owl behavior and AI
 * Owls now look for natural perches before going to sleep
-* Added realistic sleep preparation with randomized timing
-* Improved wake up logic, including better threat detection and visual feedback
-* Refined flying and landing so they properly align with perches
+* Added sleep preparation with randomized timing
+* Improved wake up logic with better threat detection
+* Refined flying and landing to properly align with perches
 * Owls now hunt at night with randomized hunting windows
-* They will actively target undead mobs during hunts
-* Added interaction with dropped rotten flesh, owls can now find and eat it
-* Overall AI flow feels much smoother with better state transitions
-* Reduced repetitive behavior using cooldowns and more randomness
-* Improved animations for sleeping, flying, movement, and idle actions
+* They actively target undead mobs during hunts
+* Owls can now find and eat dropped rotten flesh
 
 **Deer Rework**
-* Deer now have an awareness system that reacts to player movement, sprinting, and held items
-* They gradually calm down over time if no threat is nearby
-* Added a proper panic system with herd wide reactions and more natural fleeing behavior
-* Improved herd logic, they now follow a leader and the group persists better after reloading the world
-* Added dynamic sleeping behavior with a preparation phase and proper wake up triggers
+* Added awareness system reacting to player movement, sprinting and held items
+* Added panic system with herd wide reactions
+* Improved herd behavior with leader following and persistence
+* Added sleeping behavior with preparation and wake up triggers
 * Deer prefer sleeping on grass blocks
-* They now seek shelter during the night
-* Deer react correctly to players in Creative and Spectator mode
-* Panic pathfinding has been improved to prevent deer from bunching up or blocking each other
-* Added particle effects for awareness and alert states
+* Deer seek shelter during the night
+* Deer correctly ignore Creative and Spectator players
 
 **Boar Rework**
-* Completely reworked rooting behavior with better pathfinding and smarter target selection
-* Boars now properly search for valid grass blocks before digging
-* Added a visible preparation phase before they start rooting
-* You can now use Truffles to encourage boars to root - only with a slight  chance though
-* Rooting now uses a loot table system, making drops fully configurable
-* Added cooldowns so they don’t root excessively anymore
-* Added eating behavior from caches when injured
-* Rooting is now also allowed for Dirt and Coarse Dirt - but with a much lower percentage for loot. 
-* Rooting now properly respects the mobGriefing gamerule
+* Reworked rooting behavior with smarter targeting
+* Boars search for valid grass blocks before digging
+* Added preparation phase before rooting
+* Truffles can encourage rooting with a small chance
+* Rooting now uses a loot table system
+* Added cooldowns to prevent excessive rooting
+* Boars can eat from caches when injured
+* Rooting works on Dirt and Coarse Dirt with reduced loot chance
+* Respects mobGriefing gamerule
 
 **Raccoon Rework**
-* Fully reworked raccoon behavior and AI
-* Raccoons can now loot containers, carry items, and store them in nearby hollow caches
-* Added proper inventory handling with more consistent item behavior
-* Raccoons will deposit collected items into caches with a short interaction phase
-* Added chance to generate additional loot bags when storing items in caches
-* Improved interaction priorities between looting, storing, sheltering, and washing
-* Added crop nibbling behavior during the night
-* Crops are no longer destroyed, instead their growth stage is reduced
-* Crop interaction now respects the mobGriefing gamerule
-* Added eating behavior from caches when injured
-* Improved overall AI flow with better state transitions and reduced conflicts
+* Raccoons can loot containers and store items in caches
+* Added consistent inventory handling
+* Raccoons deposit items into caches
+* Chance to generate additional loot bags when storing
+* Added crop nibbling at night without destroying crops
+* Respects mobGriefing gamerule
+* Raccoons can eat from caches when injured
 
 **Squirrel Rework**
-* Fully reworked squirrel behavior and AI
-* Added a trust system based on item interactions
-* Squirrels inspect offered items before deciding to accept or reject them
-* Accepted items raise trust, while rejected ones are dropped with visual feedback
-* You can now see the item they’re holding while they evaluate or carry it
-* Squirrels now forage from Hazelnut Bushes and pick up dropped Hazelnuts
-* They can harvest Hazelnut Bushes and store the nuts in their own inventory
-* Harvesting now respects the mobGriefing gamerule
-* Added interaction with hollow caches, squirrels can deposit stored items into nearby ones
-* Added eating behavior from caches when injured
-* Highly trusted squirrels can now give you gifts by delivery
-* Better overall AI priority handling between foraging, sheltering, storing, and gifting
+* Added trust system based on item interactions
+* Squirrels inspect and accept or reject items
+* Accepted items increase trust
+* Squirrels can forage from Hazelnut Bushes
+* They store collected nuts in their inventory
+* Respects mobGriefing gamerule
+* Squirrels can use hollow caches
+* Trusted squirrels can deliver gifts
 
 **Dog Rework**
-* Added a fully reworked dog with active utility and personality driven behavior
-* Dogs will now hunt skeletons and interact with their drops
-* After killing a skeleton, dogs may deliver bones either to their owner or to their burrow depending on context
-* Introduced a small inventory system, allowing dogs to carry and manage collected items
-* Dogs can pick up bones from the ground and store them for later use
-* Added burrow system, dogs can dig their own burrow in grass blocks
-* Digging includes a visible digging phase with particles and sound feedback
-* Dogs will deposit collected items into their burrow with a short interaction phase
-* Burrows act as shared storage and can be used by other entities
-* Added carrying behavior, dogs visibly hold and transport items in their mouth
-* Added proud delivery behavior when bringing items back to the player
-* Dogs will bark and react to nearby raccoons, helping to protect the area
-* Added creeper alert behavior with cooldown, dogs will howl when danger is nearby
-* Dogs now seek shelter when it is raining instead of standing in the open
-* Added digging, carrying, and interaction animations for better visual feedback
-* Overall behavior feels more intentional, reactive, and useful as a companion
+* Dogs hunt skeletons and interact with drops
+* Dogs can carry and store items
+* Added burrow system for storage
+* Dogs deposit items into burrows
+* Added carrying and delivery behavior
+* Dogs react to raccoons and creepers
+* Dogs seek shelter during rain
 
 **Hedgehog Rework**
-* Added defensive curl behavior when threats are nearby, greatly reducing incoming damage
-* Curled hedgehogs now damage nearby entities on contact, similar to thorns
-* Players taking aggressive actions or holding weapons will trigger defensive reactions
-* Added fall interaction, jumping onto a hedgehog can damage the player but kill the hedgehog
-* Introduced dynamic sleeping behavior during the day with proper wake up conditions
-* Hedgehogs now occasionally rest to regenerate health when injured
-* Added sniffing behavior for more life like idle activity
-* Added food interaction with mushrooms and sweet berries directly from the world
-* Hedgehogs can now convert mushrooms into Mushroom Colonies under the right conditions
-* Improved animation flow with sniffing, sleeping, defensive, and idle states working together
-* Overall behavior is more reactive, with better threat awareness and smoother transitions
+* Added defensive curl behavior reducing damage
+* Curled hedgehogs damage nearby entities
+* Aggressive players trigger defensive reactions
+* Added daytime sleeping behavior
+* Hedgehogs can regenerate health while resting
+* Added sniffing behavior
+* Hedgehogs interact with mushrooms and berries
+
+**MiniSheep Rework**
+* MiniSheeps now form herds and follow a leader
+* MiniSheeps sleep at night
+* They wake up when players or threats are nearby
+* When attacked, nearby MiniSheeps defend each other
+* MiniSheeps only attack defensively
+* They return to their meadow home after chasing enemies
+* Added running behavior and animation
+* Spawns have been reduced to Meadow only
 
 **Added**
 * Hollow Cache, a Tree Stump spawning in Forest and Plains Biomes
-* Mushroom Colonies - a renewable source for brown and red mushrooms
-* Burrow, a hole digged by Dogs - used by multiple entities to store and hide loot
+* Mushroom Colonies, a renewable source for mushrooms
+* Burrow, created by Dogs for shared storage
 
 **Farm And Charm Compat**
-* If installed, Boars can transform Dirt & Coarse Dirt into Fertilized Soil 
-* If installed, Raccoons will steal Eggs out of ChickenCoops and ChickenNests
+* Boars can transform Dirt and Coarse Dirt into Fertilized Soil
+* Raccoons steal eggs from ChickenCoops and ChickenNests
 
 ***
 
@@ -123,31 +106,31 @@ This update focuses on making the WilderNature entities more soulful and adding 
 * Added proper breeding food items for bison, cassowary, minisheep, penguin and red wolf
 
 **Changed**
-* `TermiteSpawnEgg` Texture
-  
+* TermiteSpawnEgg texture
+
 ***
 
 [1.1.3]
 
 **Added**
-* White deer now apply **Bad Omen** (60 min) and **Slowness II** (5 min) to the player who kills them (directly or with projectiles).
+* White deer now apply Bad Omen and Slowness to the player who kills them
 
 **Changed**
-* Normal deer deaths no longer trigger any player debuffs.
+* Normal deer deaths no longer trigger debuffs
 
 ***
 
 [1.1.2]
 
-**Fixed:**
-* Fixed a crash when breaking the **Bounty Board**. Dropped items no longer contain invalid/empty BlockEntityTag data.
+**Fixed**
+* Fixed crash when breaking the Bounty Board
 
 ***
 
 [1.1.1]
 
-**Fixed:**
-* Fixed dedicated server crash caused by `ContractItem` using client*only `Minecraft` reference.
+**Fixed**
+* Fixed dedicated server crash caused by ContractItem
 
 ***
 
@@ -155,6 +138,4 @@ This update focuses on making the WilderNature entities more soulful and adding 
 
 **Ported to 1.21.1**
 
-_Note: This version is not feature complete yet._
-
-***
+Note: This version is not feature complete yet.
