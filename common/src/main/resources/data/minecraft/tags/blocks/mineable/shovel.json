@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "wildernature:termite_mound"
+    "wildernature:termite_mound",
+    "wildernature:burrow"
   ]
 }

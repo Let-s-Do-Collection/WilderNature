@@ -18,6 +18,7 @@ public class TabRegistry {
             .displayItems((parameters, out) -> {
                 out.accept(ObjectRegistry.TRUFFLE_BAG.get());
                 out.accept(ObjectRegistry.HOLLOW_CACHE.get());
+                out.accept(ObjectRegistry.BURROW.get());
                 out.accept(ObjectRegistry.HAZELNUT.get());
                 out.accept(ObjectRegistry.BISON_MEAT.get());
                 out.accept(ObjectRegistry.COOKED_BISON_MEAT.get());
@@ -37,6 +38,7 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.TRUFFLE.get());
                 out.accept(ObjectRegistry.LOOT_BAG.get());
                 out.accept(ObjectRegistry.FUR_CLOAK.get());
+                out.accept(ObjectRegistry.STYLIN_PURPLE_HAT.get());
                 out.accept(ObjectRegistry.BOUNTY_BOARD.get());
                 out.accept(ObjectRegistry.RED_WOLF_TROPHY.get());
                 out.accept(ObjectRegistry.DEER_TROPHY.get());
@@ -59,7 +61,6 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.DOG_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.HEDGEHOG_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.CASSOWARY_SPAWN_EGG.get());
-                out.accept(ObjectRegistry.STYLIN_PURPLE_HAT.get());
             })
             .build());
 

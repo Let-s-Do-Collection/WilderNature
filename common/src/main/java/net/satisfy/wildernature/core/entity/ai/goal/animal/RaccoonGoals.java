@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.entity.ai;
+package net.satisfy.wildernature.core.entity.ai.goal.animal;
 
 import dev.architectury.platform.Platform;
 import net.minecraft.core.BlockPos;

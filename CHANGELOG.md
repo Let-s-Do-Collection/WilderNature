@@ -61,13 +61,16 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Trusted squirrels can deliver gifts
 
 **Dog Rework**
-* Dogs hunt skeletons and interact with drops
-* Dogs can carry and store items
-* Added burrow system for storage
-* Dogs deposit items into burrows
-* Added carrying and delivery behavior
-* Dogs react to raccoons and creepers
-* Dogs seek shelter during rain
+* Dogs now hunt skeletons and react to their drops
+* Dogs can pick up, carry and store items
+* Added a burrow storage system for dogs
+* Dogs can deposit stored items into burrows
+* Added fetch and delivery behavior
+* Dogs can bring items back to their owner
+* Dogs react to nearby raccoons and creepers
+* Dogs now seek shelter during rain
+* Dogs can rest, lie down and sleep near their owner
+* Dogs are now tamed and fed with cooked meat instead of bones
 
 **Hedgehog Rework**
 * Added defensive curl behavior reducing damage
@@ -92,6 +95,7 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Hollow Cache, a Tree Stump spawning in Forest and Plains Biomes
 * Mushroom Colonies, a renewable source for mushrooms
 * Burrow, created by Dogs for shared storage
+* Bones can now be thrown by using Shift-Right-Click
 
 **Farm And Charm Compat**
 * Boars can transform Dirt and Coarse Dirt into Fertilized Soil

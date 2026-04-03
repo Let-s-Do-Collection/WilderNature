@@ -15,8 +15,8 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.core.entity.animal.MiniSheepEntity;
 import net.satisfy.wildernature.client.model.entity.animation.MiniSheepAnimation;
+import net.satisfy.wildernature.core.entity.animal.MiniSheepEntity;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(EnvType.CLIENT)
@@ -67,18 +67,29 @@ public class MiniSheepModel<T extends MiniSheepEntity> extends HierarchicalModel
     @Override
     public void setupAnim(MiniSheepEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.root().getAllParts().forEach(ModelPart::resetPose);
-        this.applyHeadRotation(netHeadYaw, headPitch);
 
-        if (entity.isMiniSheepRunning()) {
-            this.animateWalk(MiniSheepAnimation.run, limbSwing, limbSwingAmount, 2.6F, 2.8F);
-        } else {
-            this.animateWalk(MiniSheepAnimation.walk, limbSwing, limbSwingAmount, 2.0F, 2.5F);
+        if (entity.isMaehAnimating()) {
+            this.animate(entity.maehAnimationState, MiniSheepAnimation.maeh, ageInTicks, 1.0F);
+            return;
         }
 
+        if (!entity.isMiniSheepSleeping() && !entity.isMiniSheepRunning()) {
+            this.applyHeadRotation(netHeadYaw, headPitch);
+        }
+
+        if (entity.isMiniSheepSleeping()) {
+            this.animate(entity.sleepAnimationState, MiniSheepAnimation.sleep, ageInTicks, 1.0F);
+            return;
+        }
+
+        if (entity.isMiniSheepRunning()) {
+            this.animate(entity.runAnimationState, MiniSheepAnimation.run, ageInTicks, 1.0F);
+            return;
+        }
+
+        this.animateWalk(MiniSheepAnimation.walk, limbSwing, limbSwingAmount, 2.0F, 2.5F);
         this.animate(entity.idleAnimationState, MiniSheepAnimation.idle, ageInTicks, 1.0F);
         this.animate(entity.eatAnimationState, MiniSheepAnimation.eat, ageInTicks, 1.0F);
-        this.animate(entity.sleepAnimationState, MiniSheepAnimation.sleep, ageInTicks, 1.0F);
-        this.animate(entity.runAnimationState, MiniSheepAnimation.run, ageInTicks, 1.0F);
     }
 
     private void applyHeadRotation(float netHeadYaw, float headPitch) {

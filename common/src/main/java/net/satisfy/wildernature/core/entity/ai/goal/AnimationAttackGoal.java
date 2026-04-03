@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.entity.ai;
+package net.satisfy.wildernature.core.entity.ai.goal;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;

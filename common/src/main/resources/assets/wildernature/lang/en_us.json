@@ -11,6 +11,7 @@
   "block.wildernature.wolf_trapper_banner": "§6Wolf-Trapper Banner",
   "block.wildernature.wolf_trapper_wall_banner": "Wolf-Trapper Banner",
   "block.wildernature.hollow_cache": "Hollow Cache",
+  "block.wildernature.burrow": "Burrow",
   "creative_tab.wildernature": "[Let's Do] WilderNature",
   "entity.wildernature.bison": "Bison",
   "entity.wildernature.boar": "Boar",
@@ -152,6 +153,7 @@
   "tooltip.wildernature.canbeplaced": "Can be Placed",
   "tooltip.wildernature.bountyboard": "The Bounty Board seems empty...",
   "entity.wildernature.turkey_egg": "Turkey Egg",
+  "entity.wildernature.bone": "Bone",
   "item.wildernature.turkey_egg": "Turkey Egg",
   "block.wildernature.truffle_bag": "Truffle Bag"
 }

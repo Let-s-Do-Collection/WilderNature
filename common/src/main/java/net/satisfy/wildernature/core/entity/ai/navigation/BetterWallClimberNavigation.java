@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.entity.ai;
+package net.satisfy.wildernature.core.entity.ai.navigation;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;

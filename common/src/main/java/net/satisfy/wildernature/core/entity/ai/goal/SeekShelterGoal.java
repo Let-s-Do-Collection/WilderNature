@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.entity.ai;
+package net.satisfy.wildernature.core.entity.ai.goal;
 
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
@@ -10,7 +10,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.satisfy.wildernature.core.entity.ShelteringMob;
+import net.satisfy.wildernature.core.entity.ai.behavior.ShelteringMob;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.Nullable;
 

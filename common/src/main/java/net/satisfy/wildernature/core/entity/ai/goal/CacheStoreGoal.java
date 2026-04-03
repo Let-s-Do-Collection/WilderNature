@@ -1,29 +1,28 @@
-package net.satisfy.wildernature.core.entity.ai;
+package net.satisfy.wildernature.core.entity.ai.goal;
 
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.item.ItemStack;
 import net.satisfy.wildernature.core.block.HollowCacheBlock;
 import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
-import net.satisfy.wildernature.core.entity.CacheEatingMob;
+import net.satisfy.wildernature.core.entity.ai.behavior.CacheStoringMob;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.Nullable;
 
-public class CacheEatGoal<T extends PathfinderMob & CacheEatingMob> extends Goal {
-    private static final int SEARCH_COOLDOWN_MIN = 80;
-    private static final int SEARCH_COOLDOWN_MAX = 160;
+public class CacheStoreGoal<T extends PathfinderMob & CacheStoringMob> extends Goal {
+    private static final int SEARCH_COOLDOWN_MIN = 100;
+    private static final int SEARCH_COOLDOWN_MAX = 180;
+    private static final float BONUS_LOOT_BAG_CHANCE = 0.125F;
 
     private final T mob;
     private final double speedModifier;
     private BlockPos cachePos;
-    private int eatTicks;
+    private int storeWiggleTicks;
     private int searchCooldownTicks;
-    private ItemStack cachedFoodStack = ItemStack.EMPTY;
 
-    public CacheEatGoal(T mob, double speedModifier) {
+    public CacheStoreGoal(T mob, double speedModifier) {
         this.mob = mob;
         this.speedModifier = speedModifier;
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
@@ -31,12 +30,11 @@ public class CacheEatGoal<T extends PathfinderMob & CacheEatingMob> extends Goal
 
     @Override
     public boolean canUse() {
-        if (!this.mob.canUseCacheEatGoal()) {
+        if (!this.mob.hasItemsToStore()) {
             return false;
         }
 
-        if (this.searchCooldownTicks > 0) {
-            this.searchCooldownTicks--;
+        if (this.mob.getStoreCooldownTicks() > 0 || !this.mob.canUseStoreGoal()) {
             return false;
         }
 
@@ -44,21 +42,25 @@ public class CacheEatGoal<T extends PathfinderMob & CacheEatingMob> extends Goal
             return true;
         }
 
-        this.cachePos = this.findNearestFoodCache();
+        if (this.searchCooldownTicks > 0) {
+            this.searchCooldownTicks--;
+            return false;
+        }
+
+        this.cachePos = this.findNearestAvailableCache();
         this.searchCooldownTicks = this.getNextSearchCooldown();
         return this.cachePos != null;
     }
 
     @Override
     public boolean canContinueToUse() {
-        return this.cachePos != null && this.mob.canContinueCacheEatGoal() && this.isValidCache(this.cachePos);
+        return this.cachePos != null && this.mob.hasItemsToStore() && this.mob.canContinueStoreGoal() && this.isValidCache(this.cachePos);
     }
 
     @Override
     public void start() {
-        this.eatTicks = 0;
-        this.cachedFoodStack = ItemStack.EMPTY;
-        this.mob.onCacheEatGoalStarted();
+        this.mob.onStoreGoalStarted();
+        this.storeWiggleTicks = 0;
         this.moveToCache();
     }
 
@@ -69,12 +71,11 @@ public class CacheEatGoal<T extends PathfinderMob & CacheEatingMob> extends Goal
             hollowCacheBlockEntity.scheduleCloseParticles();
         }
 
-        this.mob.onCacheEatGoalStopped();
+        this.mob.onStoreGoalStopped();
         this.mob.getNavigation().stop();
         this.cachePos = null;
-        this.eatTicks = 0;
+        this.storeWiggleTicks = 0;
         this.searchCooldownTicks = 0;
-        this.cachedFoodStack = ItemStack.EMPTY;
     }
 
     @Override
@@ -89,6 +90,12 @@ public class CacheEatGoal<T extends PathfinderMob & CacheEatingMob> extends Goal
             return;
         }
 
+        if (!hollowCacheBlockEntity.hasFreeSlot()) {
+            this.cachePos = null;
+            this.searchCooldownTicks = this.getNextSearchCooldown() * 2;
+            return;
+        }
+
         if (!this.cachePos.closerToCenterThan(this.mob.position(), 1.75D)) {
             this.moveToCache();
             return;
@@ -98,38 +105,29 @@ public class CacheEatGoal<T extends PathfinderMob & CacheEatingMob> extends Goal
         this.mob.getLookControl().setLookAt(this.cachePos.getX() + 0.5D, this.cachePos.getY() + 0.5D, this.cachePos.getZ() + 0.5D);
         HollowCacheBlock.setOpen(this.mob.level().getBlockState(this.cachePos), this.mob.level(), this.cachePos, true);
 
-        if (this.eatTicks <= 0) {
-            ItemStack extractedFoodStack = this.mob.takeFoodFromCache(hollowCacheBlockEntity);
-            if (extractedFoodStack.isEmpty()) {
-                HollowCacheBlock.setOpen(this.mob.level().getBlockState(this.cachePos), this.mob.level(), this.cachePos, false);
-                hollowCacheBlockEntity.scheduleCloseParticles();
-                this.cachePos = null;
-                this.searchCooldownTicks = this.getNextSearchCooldown() * 2;
-                return;
-            }
-
-            this.cachedFoodStack = extractedFoodStack.copy();
-            this.eatTicks = this.mob.getCacheEatDurationTicks();
-            this.mob.onCacheEatStarted(this.cachedFoodStack);
+        if (this.storeWiggleTicks <= 0) {
+            this.storeWiggleTicks = this.mob.getCacheStoreWiggleDuration();
+            this.mob.onStoreWiggleStarted(this.mob.getCacheStoreWiggleDuration());
             return;
         }
 
-        this.eatTicks--;
-        if (this.eatTicks > 0) {
+        this.storeWiggleTicks--;
+        if (this.storeWiggleTicks > 0) {
             return;
         }
 
-        if (!this.cachedFoodStack.isEmpty()) {
-            if (this.mob.level() instanceof ServerLevel serverLevel) {
-                this.mob.spawnCacheEatParticles(serverLevel, this.cachedFoodStack);
-            }
-            this.mob.healFromCacheFood(this.cachedFoodStack);
+        boolean depositedAnyItem = this.mob.depositItemsIntoCache(hollowCacheBlockEntity);
+        if (depositedAnyItem && this.mob.getRandom().nextFloat() < BONUS_LOOT_BAG_CHANCE) {
+            hollowCacheBlockEntity.tryAddItem(new ItemStack(ObjectRegistry.LOOT_BAG.get()));
         }
 
         HollowCacheBlock.setOpen(this.mob.level().getBlockState(this.cachePos), this.mob.level(), this.cachePos, false);
         hollowCacheBlockEntity.scheduleCloseParticles();
-        this.mob.onCacheEatFinished(this.cachedFoodStack);
-        this.cachedFoodStack = ItemStack.EMPTY;
+
+        if (depositedAnyItem) {
+            this.mob.startStoreCooldown();
+        }
+
         this.cachePos = null;
         this.searchCooldownTicks = this.getNextSearchCooldown();
     }
@@ -151,16 +149,16 @@ public class CacheEatGoal<T extends PathfinderMob & CacheEatingMob> extends Goal
             return false;
         }
 
-        return this.mob.hasEdibleItemInCache(hollowCacheBlockEntity);
+        return hollowCacheBlockEntity.hasFreeSlot();
     }
 
     @Nullable
-    private BlockPos findNearestFoodCache() {
+    private BlockPos findNearestAvailableCache() {
         BlockPos originPos = this.mob.blockPosition();
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
         BlockPos closestCachePos = null;
         double closestDistance = Double.MAX_VALUE;
-        int horizontalRange = this.mob.getCacheEatSearchRange();
+        int horizontalRange = this.mob.getCacheSearchRange();
 
         for (int offsetX = -horizontalRange; offsetX <= horizontalRange; offsetX++) {
             for (int offsetY = -5; offsetY <= 5; offsetY++) {
@@ -175,7 +173,7 @@ public class CacheEatGoal<T extends PathfinderMob & CacheEatingMob> extends Goal
                         continue;
                     }
 
-                    if (!this.mob.hasEdibleItemInCache(hollowCacheBlockEntity)) {
+                    if (!hollowCacheBlockEntity.hasFreeSlot()) {
                         continue;
                     }
 

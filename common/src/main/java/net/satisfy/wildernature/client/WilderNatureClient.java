@@ -4,13 +4,16 @@ import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import dev.architectury.registry.client.particle.ParticleProviderRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
+import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
 import dev.architectury.registry.client.rendering.RenderTypeRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.GrassColor;
 import net.satisfy.wildernature.client.model.armor.StylinPurpleHatModel;
 import net.satisfy.wildernature.client.model.block.BountyBoardModel;
 import net.satisfy.wildernature.client.model.block.HollowCacheModel;
@@ -56,11 +59,20 @@ public class WilderNatureClient {
     public static final ModelLayerLocation WOLF_FUR_CHESTPLATE_LAYER = new ModelLayerLocation(ResourceLocation.parse("minecraft:player"), "wolf_fur_chestplate");
 
     public static void onInitializeClient() {
-        RenderTypeRegistry.register(RenderType.cutout(), DEER_TROPHY.get(), HAZELNUT_BUSH.get(), BOUNTY_BOARD.get());
+        RenderTypeRegistry.register(RenderType.cutout(), DEER_TROPHY.get(), HAZELNUT_BUSH.get(), BOUNTY_BOARD.get(), BURROW.get());
 
         BlockEntityRendererRegistry.register(COMPLETIONIST_BANNER_BLOCK_ENTITY.get(), CompletionistBannerRenderer::new);
         BlockEntityRendererRegistry.register(BOUNTY_BOARD_BLOCK_ENTITY.get(), BountyBoardRenderer::new);
         BlockEntityRendererRegistry.register(HOLLOW_CACHE_BLOCK_ENTITY.get(), HollowCacheRenderer::new);
+
+        ColorHandlerRegistry.registerBlockColors((blockState, blockAndTintGetter, blockPos, tintIndex) -> {
+            if (blockAndTintGetter != null && blockPos != null) {
+                return BiomeColors.getAverageGrassColor(blockAndTintGetter, blockPos);
+            }
+            return GrassColor.getDefaultColor();
+        }, BURROW.get());
+
+        ColorHandlerRegistry.registerItemColors((itemStack, tintIndex) -> GrassColor.getDefaultColor(), BURROW.get());
 
         ParticleProviderRegistry.register(ParticleTypeRegistry.SLEEPING.get(), SleepingParticle.Provider::new);
         ParticleProviderRegistry.register(ParticleTypeRegistry.ALERT.get(), AlertParticle.Provider::new);
@@ -71,6 +83,7 @@ public class WilderNatureClient {
         ParticleProviderRegistry.register(ParticleTypeRegistry.LOVE.get(), FloatingFeedbackParticle.LoveProvider::new);
         ParticleProviderRegistry.register(ParticleTypeRegistry.CACHE_OPEN.get(), CacheLeafParticle.OpenProvider::new);
         ParticleProviderRegistry.register(ParticleTypeRegistry.CACHE_CLOSE.get(), CacheLeafParticle.CloseProvider::new);
+        ParticleProviderRegistry.register(ParticleTypeRegistry.SHEARED_WOOL.get(), WoolFluffParticle.Provider::new);
 
         makeHorn(ObjectRegistry.BISON_HORN.get());
     }
@@ -96,6 +109,7 @@ public class WilderNatureClient {
         EntityRendererRegistry.register(TURKEY, TurkeyRenderer::new);
         EntityRendererRegistry.register(BULLET, ThrownItemRenderer::new);
         EntityRendererRegistry.register(TURKEY_EGG, ThrownItemRenderer::new);
+        EntityRendererRegistry.register(BONE, ThrownItemRenderer::new);
     }
 
     public static void registerEntityModelLayer() {

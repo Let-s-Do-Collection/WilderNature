@@ -2,9 +2,7 @@ package net.satisfy.wildernature.core.entity.animal;
 
 import java.util.List;
 import java.util.UUID;
-
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -13,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -21,7 +20,6 @@ import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.Pose;
@@ -48,8 +46,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.satisfy.wildernature.core.entity.ai.MiniSheepGoal;
+import net.satisfy.wildernature.core.entity.ai.goal.animal.MiniSheepGoal;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
+import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,12 +62,17 @@ public class MiniSheepEntity extends Animal implements Shearable {
     private static final int SLEEPING_PARTICLE_INTERVAL_TICKS = 14;
     private static final int HOME_RETURN_DISTANCE = 50;
     private static final int HOME_RADIUS = 32;
-    private static final int WAKE_UP_RADIUS = 8;
-    private static final int DEFEND_RADIUS = 18;
+    private static final int FLEE_PLAYER_RADIUS = 9;
+    private static final int FLEE_HERD_RADIUS = 18;
+    private static final int FLEE_DURATION_TICKS = 80;
+    private static final int MAEH_ANIMATION_TICKS = 20;
+    private static final int SHEAR_CALM_TICKS = 30;
     private static final double HERD_SEARCH_RADIUS = 12.0D;
-
+    private static final double FLEE_DISTANCE = 12.0D;
 
     private int eatAnimationTick;
+    private int maehAnimationTick;
+    private int shearCalmTicks;
     private EatBlockGoal eatBlockGoal;
     private boolean isLeader;
     @Nullable
@@ -83,11 +87,15 @@ public class MiniSheepEntity extends Animal implements Shearable {
     private int requiredSleepPreparationTicks;
     private int sleepCooldownTicks;
     public boolean returningHome;
+    @Nullable
+    private BlockPos fleeTargetPos;
+    private int fleeTicks;
 
     public final AnimationState idleAnimationState = new AnimationState();
     public final AnimationState eatAnimationState = new AnimationState();
     public final AnimationState runAnimationState = new AnimationState();
     public final AnimationState sleepAnimationState = new AnimationState();
+    public final AnimationState maehAnimationState = new AnimationState();
 
     public MiniSheepEntity(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
@@ -98,38 +106,38 @@ public class MiniSheepEntity extends Animal implements Shearable {
     protected void registerGoals() {
         this.eatBlockGoal = new EatBlockGoal(this);
         this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new MiniSheepGoal.MiniSheepMeleeAttackGoal(this));
+        this.goalSelector.addGoal(2, new MiniSheepGoal.MiniSheepFleePlayerGoal(this));
         this.goalSelector.addGoal(3, new BreedGoal(this, 1.0D) {
             @Override
             public boolean canUse() {
-                return !MiniSheepEntity.this.isMiniSheepSleeping() && super.canUse();
+                return !MiniSheepEntity.this.isMiniSheepSleeping() && !MiniSheepEntity.this.isFleeing() && !MiniSheepEntity.this.isMaehAnimating() && super.canUse();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return !MiniSheepEntity.this.isMiniSheepSleeping() && super.canContinueToUse();
+                return !MiniSheepEntity.this.isMiniSheepSleeping() && !MiniSheepEntity.this.isFleeing() && !MiniSheepEntity.this.isMaehAnimating() && super.canContinueToUse();
             }
         });
         this.goalSelector.addGoal(4, new TemptGoal(this, 1.1D, Ingredient.of(Items.WHEAT), false) {
             @Override
             public boolean canUse() {
-                return !MiniSheepEntity.this.isMiniSheepSleeping() && MiniSheepEntity.this.getTarget() == null && super.canUse();
+                return !MiniSheepEntity.this.isMiniSheepSleeping() && !MiniSheepEntity.this.isFleeing() && !MiniSheepEntity.this.isMaehAnimating() && super.canUse();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return !MiniSheepEntity.this.isMiniSheepSleeping() && MiniSheepEntity.this.getTarget() == null && super.canContinueToUse();
+                return !MiniSheepEntity.this.isMiniSheepSleeping() && !MiniSheepEntity.this.isFleeing() && !MiniSheepEntity.this.isMaehAnimating() && super.canContinueToUse();
             }
         });
         this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.1D) {
             @Override
             public boolean canUse() {
-                return !MiniSheepEntity.this.isMiniSheepSleeping() && super.canUse();
+                return !MiniSheepEntity.this.isMiniSheepSleeping() && !MiniSheepEntity.this.isFleeing() && !MiniSheepEntity.this.isMaehAnimating() && super.canUse();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return !MiniSheepEntity.this.isMiniSheepSleeping() && super.canContinueToUse();
+                return !MiniSheepEntity.this.isMiniSheepSleeping() && !MiniSheepEntity.this.isFleeing() && !MiniSheepEntity.this.isMaehAnimating() && super.canContinueToUse();
             }
         });
         this.goalSelector.addGoal(6, new MiniSheepGoal.MiniSheepFollowLeaderGoal(this));
@@ -138,34 +146,34 @@ public class MiniSheepEntity extends Animal implements Shearable {
         this.goalSelector.addGoal(9, new WaterAvoidingRandomStrollGoal(this, 0.9D) {
             @Override
             public boolean canUse() {
-                return !MiniSheepEntity.this.isMiniSheepSleeping() && MiniSheepEntity.this.getTarget() == null && MiniSheepEntity.this.canUseMeadowStrollGoal() && super.canUse();
+                return !MiniSheepEntity.this.isMiniSheepSleeping() && !MiniSheepEntity.this.isFleeing() && !MiniSheepEntity.this.isMaehAnimating() && MiniSheepEntity.this.canUseMeadowStrollGoal() && super.canUse();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return !MiniSheepEntity.this.isMiniSheepSleeping() && MiniSheepEntity.this.getTarget() == null && MiniSheepEntity.this.canUseMeadowStrollGoal() && super.canContinueToUse();
+                return !MiniSheepEntity.this.isMiniSheepSleeping() && !MiniSheepEntity.this.isFleeing() && !MiniSheepEntity.this.isMaehAnimating() && MiniSheepEntity.this.canUseMeadowStrollGoal() && super.canContinueToUse();
             }
         });
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 6.0F) {
             @Override
             public boolean canUse() {
-                return !MiniSheepEntity.this.isMiniSheepSleeping() && MiniSheepEntity.this.getTarget() == null && super.canUse();
+                return !MiniSheepEntity.this.isMiniSheepSleeping() && !MiniSheepEntity.this.isFleeing() && !MiniSheepEntity.this.isMaehAnimating() && super.canUse();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return !MiniSheepEntity.this.isMiniSheepSleeping() && MiniSheepEntity.this.getTarget() == null && super.canContinueToUse();
+                return !MiniSheepEntity.this.isMiniSheepSleeping() && !MiniSheepEntity.this.isFleeing() && !MiniSheepEntity.this.isMaehAnimating() && super.canContinueToUse();
             }
         });
         this.goalSelector.addGoal(11, new RandomLookAroundGoal(this) {
             @Override
             public boolean canUse() {
-                return !MiniSheepEntity.this.isMiniSheepSleeping() && MiniSheepEntity.this.getTarget() == null && super.canUse();
+                return !MiniSheepEntity.this.isMiniSheepSleeping() && !MiniSheepEntity.this.isFleeing() && !MiniSheepEntity.this.isMaehAnimating() && super.canUse();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return !MiniSheepEntity.this.isMiniSheepSleeping() && MiniSheepEntity.this.getTarget() == null && super.canContinueToUse();
+                return !MiniSheepEntity.this.isMiniSheepSleeping() && !MiniSheepEntity.this.isFleeing() && !MiniSheepEntity.this.isMaehAnimating() && super.canContinueToUse();
             }
         });
     }
@@ -175,7 +183,6 @@ public class MiniSheepEntity extends Animal implements Shearable {
         boolean eating = this.eatAnimationTick > 0;
         boolean sleeping = this.isMiniSheepSleeping();
         boolean running = this.isMiniSheepRunning();
-
         boolean idleAllowed = !moving && !eating && !sleeping && !running;
 
         if (idleAllowed) {
@@ -184,19 +191,34 @@ public class MiniSheepEntity extends Animal implements Shearable {
             this.idleAnimationState.stop();
         }
 
+        if (this.maehAnimationTick > 0) {
+            this.maehAnimationState.startIfStopped(this.tickCount);
+        } else {
+            this.maehAnimationState.stop();
+        }
+
         this.eatAnimationState.animateWhen(eating && !sleeping && !running, this.tickCount);
         this.runAnimationState.animateWhen(running, this.tickCount);
         this.sleepAnimationState.animateWhen(sleeping, this.tickCount);
+    }
+
+    public boolean isMaehAnimating() {
+        return this.maehAnimationTick > 0;
     }
 
     @Override
     public void tick() {
         super.tick();
 
+        if (this.shearCalmTicks > 0) {
+            this.shearCalmTicks--;
+        }
+
         if (!this.level().isClientSide()) {
             this.updateHerd();
             this.tryPromoteToLeader();
             this.updateSleep();
+            this.updateFleeState();
             this.updateRunningState();
         }
 
@@ -208,6 +230,13 @@ public class MiniSheepEntity extends Animal implements Shearable {
             this.eatAnimationTick--;
             if (this.eatAnimationTick == 0) {
                 this.eatAnimationState.stop();
+            }
+        }
+
+        if (this.maehAnimationTick > 0) {
+            this.maehAnimationTick--;
+            if (this.maehAnimationTick == 0) {
+                this.maehAnimationState.stop();
             }
         }
     }
@@ -242,11 +271,7 @@ public class MiniSheepEntity extends Animal implements Shearable {
             return;
         }
 
-        List<MiniSheepEntity> nearbySheep = this.level().getEntitiesOfClass(
-                MiniSheepEntity.class,
-                this.getBoundingBox().inflate(HERD_SEARCH_RADIUS)
-        );
-
+        List<MiniSheepEntity> nearbySheep = this.level().getEntitiesOfClass(MiniSheepEntity.class, this.getBoundingBox().inflate(HERD_SEARCH_RADIUS));
         MiniSheepEntity closestLeader = this.findBestLeader(nearbySheep);
 
         if (closestLeader != null) {
@@ -281,6 +306,7 @@ public class MiniSheepEntity extends Animal implements Shearable {
                 bestLeader = nearby;
             }
         }
+
         return bestLeader;
     }
 
@@ -293,6 +319,7 @@ public class MiniSheepEntity extends Animal implements Shearable {
                 count++;
             }
         }
+
         return count;
     }
 
@@ -325,7 +352,7 @@ public class MiniSheepEntity extends Animal implements Shearable {
             this.sleepCooldownTicks--;
         }
 
-        if (this.getTarget() != null) {
+        if (this.isFleeing()) {
             this.wakeUp();
             return;
         }
@@ -353,7 +380,7 @@ public class MiniSheepEntity extends Animal implements Shearable {
             }
 
             if (this.level() instanceof ServerLevel serverLevel && this.tickCount % SLEEPING_PARTICLE_INTERVAL_TICKS == 0) {
-                serverLevel.sendParticles(ParticleTypes.SPORE_BLOSSOM_AIR, this.getX(), this.getY() + this.getBbHeight() * 0.75D, this.getZ(), 1, 0.15D, 0.05D, 0.15D, 0.0D);
+                serverLevel.sendParticles(ParticleTypeRegistry.SLEEPING.get(), this.getX(), this.getY() + this.getBbHeight() * 0.75D, this.getZ(), 1, 0.15D, 0.3D, 0.15D, 0.0D);
             }
 
             this.getNavigation().stop();
@@ -361,25 +388,27 @@ public class MiniSheepEntity extends Animal implements Shearable {
         }
     }
 
+    private void updateFleeState() {
+        if (this.fleeTicks > 0) {
+            this.fleeTicks--;
+        }
+
+        if (this.fleeTargetPos == null) {
+            return;
+        }
+
+        if (this.fleeTicks <= 0 || this.fleeTargetPos.closerToCenterThan(this.position(), 2.0D)) {
+            this.clearFleeTarget();
+        }
+    }
+
     private void updateRunningState() {
-        boolean running = this.getTarget() != null || this.returningHome;
-        this.setMiniSheepRunning(running);
+        this.setMiniSheepRunning(this.returningHome || this.isFleeing());
     }
 
     private boolean hasWakeUpTriggerNearby() {
-        LivingEntity target = this.getTarget();
-        if (target != null && target.isAlive()) {
-            return true;
-        }
-
-        Player player = this.level().getNearestPlayer(this, WAKE_UP_RADIUS);
-        if (player == null) {
-            return false;
-        }
-        if (player.isCreative() || player.isSpectator()) {
-            return false;
-        }
-        return !player.isCrouching();
+        Player player = this.getNearestThreateningPlayer();
+        return player != null;
     }
 
     public boolean canUseMeadowStrollGoal() {
@@ -474,6 +503,92 @@ public class MiniSheepEntity extends Animal implements Shearable {
         return this.meadowHomePos;
     }
 
+    public boolean isFleeing() {
+        return this.fleeTicks > 0 && this.fleeTargetPos != null;
+    }
+
+    public boolean hasFleeTarget() {
+        return this.fleeTargetPos != null;
+    }
+
+    @Nullable
+    public BlockPos getFleeTargetPos() {
+        return this.fleeTargetPos;
+    }
+
+    public void clearFleeTarget() {
+        this.fleeTargetPos = null;
+        this.fleeTicks = 0;
+    }
+
+    @Nullable
+    public Player getNearestThreateningPlayer() {
+        if (this.shearCalmTicks > 0 || this.isMaehAnimating()) {
+            return null;
+        }
+
+        Player player = this.level().getNearestPlayer(this, FLEE_PLAYER_RADIUS);
+        if (player == null) {
+            return null;
+        }
+        if (player.isCreative() || player.isSpectator()) {
+            return null;
+        }
+        if (player.isCrouching()) {
+            return null;
+        }
+        return player;
+    }
+
+    public void startHerdFleeFrom(Player player) {
+        List<MiniSheepEntity> nearbySheep = this.level().getEntitiesOfClass(MiniSheepEntity.class, this.getBoundingBox().inflate(FLEE_HERD_RADIUS));
+        double herdCenterX = this.getX();
+        double herdCenterZ = this.getZ();
+        int herdCount = 1;
+
+        for (MiniSheepEntity nearbySheepEntity : nearbySheep) {
+            if (nearbySheepEntity == this) {
+                continue;
+            }
+            herdCenterX += nearbySheepEntity.getX();
+            herdCenterZ += nearbySheepEntity.getZ();
+            herdCount++;
+        }
+
+        herdCenterX /= herdCount;
+        herdCenterZ /= herdCount;
+
+        double fleeDirectionX = herdCenterX - player.getX();
+        double fleeDirectionZ = herdCenterZ - player.getZ();
+        double fleeLength = Math.sqrt(fleeDirectionX * fleeDirectionX + fleeDirectionZ * fleeDirectionZ);
+
+        if (fleeLength < 1.0E-4D) {
+            float randomAngle = this.random.nextFloat() * (float) (Math.PI * 2.0D);
+            fleeDirectionX = Mth.cos(randomAngle);
+            fleeDirectionZ = Mth.sin(randomAngle);
+            fleeLength = 1.0D;
+        }
+
+        fleeDirectionX /= fleeLength;
+        fleeDirectionZ /= fleeLength;
+
+        for (MiniSheepEntity nearbySheepEntity : nearbySheep) {
+            nearbySheepEntity.setSharedFleeDirection(fleeDirectionX, fleeDirectionZ);
+        }
+
+        this.setSharedFleeDirection(fleeDirectionX, fleeDirectionZ);
+    }
+
+    private void setSharedFleeDirection(double fleeDirectionX, double fleeDirectionZ) {
+        this.wakeUp();
+        this.stopReturningHome();
+        int targetX = Mth.floor(this.getX() + fleeDirectionX * FLEE_DISTANCE);
+        int targetY = this.blockPosition().getY();
+        int targetZ = Mth.floor(this.getZ() + fleeDirectionZ * FLEE_DISTANCE);
+        this.fleeTargetPos = new BlockPos(targetX, targetY, targetZ);
+        this.fleeTicks = FLEE_DURATION_TICKS;
+    }
+
     @Override
     protected void customServerAiStep() {
         super.customServerAiStep();
@@ -494,7 +609,7 @@ public class MiniSheepEntity extends Animal implements Shearable {
     @Override
     protected void updateWalkAnimation(float value) {
         float animationSpeed;
-        if (this.getPose() == Pose.STANDING && !this.isMiniSheepSleeping()) {
+        if (this.getPose() == Pose.STANDING && !this.isMiniSheepSleeping() && !this.isMaehAnimating()) {
             animationSpeed = Math.min(value * 6.0F, 1.0F);
         } else {
             animationSpeed = 0.0F;
@@ -514,6 +629,7 @@ public class MiniSheepEntity extends Animal implements Shearable {
     public void aiStep() {
         if (this.level().isClientSide) {
             this.eatAnimationTick = Math.max(0, this.eatAnimationTick - 1);
+            this.maehAnimationTick = Math.max(0, this.maehAnimationTick - 1);
         }
         super.aiStep();
     }
@@ -521,15 +637,16 @@ public class MiniSheepEntity extends Animal implements Shearable {
     public static AttributeSupplier.@NotNull Builder createMobAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 10.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.21D)
-                .add(Attributes.ATTACK_DAMAGE, 2.5D)
-                .add(Attributes.ATTACK_KNOCKBACK, 0.6D);
+                .add(Attributes.MOVEMENT_SPEED, 0.24D)
+                .add(Attributes.FOLLOW_RANGE, 24.0D);
     }
 
     @Override
     public void handleEntityEvent(byte event) {
         if (event == 10) {
             this.eatAnimationTick = 40;
+        } else if (event == 11) {
+            this.maehAnimationTick = MAEH_ANIMATION_TICKS;
         } else {
             super.handleEntityEvent(event);
         }
@@ -599,17 +716,17 @@ public class MiniSheepEntity extends Animal implements Shearable {
     public void shear(@NotNull SoundSource shearedSoundCategory) {
         this.level().playSound(null, this, SoundEvents.SHEEP_SHEAR, shearedSoundCategory, 1.0F, 1.0F);
         this.setSheared(true);
+        this.level().broadcastEntityEvent(this, (byte) 11);
+
+        if (this.level() instanceof ServerLevel serverLevel) {
+            for (int particleIndex = 0; particleIndex < 28; particleIndex++) serverLevel.sendParticles(ParticleTypeRegistry.SHEARED_WOOL.get(), this.getX() + (this.random.nextDouble() - 0.5D) * this.getBbWidth() * 1.4D, this.getY() + this.random.nextDouble() * this.getBbHeight() * 0.9D, this.getZ() + (this.random.nextDouble() - 0.5D) * this.getBbWidth() * 1.4D, 1, (this.random.nextDouble() - 0.5D) * 0.35D, this.random.nextDouble() * 0.18D, (this.random.nextDouble() - 0.5D) * 0.35D, 0.0D);
+        }
+
         int woolCount = 2 + this.random.nextInt(3);
         for (int woolIndex = 0; woolIndex < woolCount; ++woolIndex) {
             ItemEntity itemEntity = this.spawnAtLocation(Items.WHITE_WOOL, 1);
             if (itemEntity != null) {
-                itemEntity.setDeltaMovement(
-                        itemEntity.getDeltaMovement().add(
-                                (this.random.nextFloat() - this.random.nextFloat()) * 0.1F,
-                                this.random.nextFloat() * 0.05F,
-                                (this.random.nextFloat() - this.random.nextFloat()) * 0.1F
-                        )
-                );
+                itemEntity.setDeltaMovement(itemEntity.getDeltaMovement().add((this.random.nextFloat() - this.random.nextFloat()) * 0.1F, this.random.nextFloat() * 0.05F, (this.random.nextFloat() - this.random.nextFloat()) * 0.1F));
             }
         }
     }
@@ -621,7 +738,6 @@ public class MiniSheepEntity extends Animal implements Shearable {
 
     @Override
     public boolean hurt(DamageSource damageSource, float amount) {
-        Entity directEntity = damageSource.getEntity();
         boolean wasHurt = super.hurt(damageSource, amount);
 
         if (!wasHurt) {
@@ -629,37 +745,14 @@ public class MiniSheepEntity extends Animal implements Shearable {
         }
 
         this.wakeUp();
+        this.stopReturningHome();
 
-        if (directEntity instanceof LivingEntity livingEntity) {
-            this.setTarget(livingEntity);
-            this.startReturningHomeIfNeededAfterDefense();
-            this.alertHerd(livingEntity);
+        Entity attacker = damageSource.getEntity();
+        if (attacker instanceof Player player && !player.isCreative() && !player.isSpectator()) {
+            this.startHerdFleeFrom(player);
         }
 
         return true;
-    }
-
-    private void alertHerd(LivingEntity attacker) {
-        List<MiniSheepEntity> nearbySheep = this.level().getEntitiesOfClass(MiniSheepEntity.class, this.getBoundingBox().inflate(DEFEND_RADIUS));
-        for (MiniSheepEntity nearbySheepEntity : nearbySheep) {
-            if (nearbySheepEntity == this) {
-                continue;
-            }
-            if (nearbySheepEntity.isMiniSheepSleeping()) {
-                nearbySheepEntity.wakeUp();
-            }
-            nearbySheepEntity.setTarget(attacker);
-            nearbySheepEntity.stopReturningHome();
-        }
-    }
-
-    private void startReturningHomeIfNeededAfterDefense() {
-        if (this.shouldReturnHome()) {
-            this.startReturningHome();
-            this.setTarget(null);
-        } else {
-            this.stopReturningHome();
-        }
     }
 
     @Override
@@ -673,6 +766,8 @@ public class MiniSheepEntity extends Animal implements Shearable {
         compoundTag.putInt("RequiredSleepPreparationTicks", this.requiredSleepPreparationTicks);
         compoundTag.putInt("SleepCooldownTicks", this.sleepCooldownTicks);
         compoundTag.putBoolean("ReturningHome", this.returningHome);
+        compoundTag.putInt("FleeTicks", this.fleeTicks);
+        compoundTag.putInt("ShearCalmTicks", this.shearCalmTicks);
         if (this.herdLeaderUUID != null) {
             compoundTag.putUUID("HerdLeaderUUID", this.herdLeaderUUID);
         }
@@ -680,6 +775,11 @@ public class MiniSheepEntity extends Animal implements Shearable {
             compoundTag.putInt("MeadowHomePosX", this.meadowHomePos.getX());
             compoundTag.putInt("MeadowHomePosY", this.meadowHomePos.getY());
             compoundTag.putInt("MeadowHomePosZ", this.meadowHomePos.getZ());
+        }
+        if (this.fleeTargetPos != null) {
+            compoundTag.putInt("FleeTargetPosX", this.fleeTargetPos.getX());
+            compoundTag.putInt("FleeTargetPosY", this.fleeTargetPos.getY());
+            compoundTag.putInt("FleeTargetPosZ", this.fleeTargetPos.getZ());
         }
     }
 
@@ -694,6 +794,8 @@ public class MiniSheepEntity extends Animal implements Shearable {
         this.requiredSleepPreparationTicks = compoundTag.contains("RequiredSleepPreparationTicks") ? compoundTag.getInt("RequiredSleepPreparationTicks") : 100 + this.random.nextInt(120);
         this.sleepCooldownTicks = compoundTag.getInt("SleepCooldownTicks");
         this.returningHome = compoundTag.getBoolean("ReturningHome");
+        this.fleeTicks = compoundTag.getInt("FleeTicks");
+        this.shearCalmTicks = compoundTag.getInt("ShearCalmTicks");
         this.herdLeaderUUID = compoundTag.hasUUID("HerdLeaderUUID") ? compoundTag.getUUID("HerdLeaderUUID") : null;
         this.cachedLeader = null;
         this.leaderCacheCooldown = 0;
@@ -703,6 +805,12 @@ public class MiniSheepEntity extends Animal implements Shearable {
             this.meadowHomePos = new BlockPos(compoundTag.getInt("MeadowHomePosX"), compoundTag.getInt("MeadowHomePosY"), compoundTag.getInt("MeadowHomePosZ"));
         } else {
             this.meadowHomePos = null;
+        }
+
+        if (compoundTag.contains("FleeTargetPosX") && compoundTag.contains("FleeTargetPosY") && compoundTag.contains("FleeTargetPosZ")) {
+            this.fleeTargetPos = new BlockPos(compoundTag.getInt("FleeTargetPosX"), compoundTag.getInt("FleeTargetPosY"), compoundTag.getInt("FleeTargetPosZ"));
+        } else {
+            this.fleeTargetPos = null;
         }
     }
 

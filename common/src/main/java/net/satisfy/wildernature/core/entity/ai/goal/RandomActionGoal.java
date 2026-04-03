@@ -1,9 +1,10 @@
-package net.satisfy.wildernature.core.entity.ai;
+package net.satisfy.wildernature.core.entity.ai.goal;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.satisfy.wildernature.core.entity.ai.behavior.RandomAction;
 
 import java.util.EnumSet;
 import java.util.Objects;

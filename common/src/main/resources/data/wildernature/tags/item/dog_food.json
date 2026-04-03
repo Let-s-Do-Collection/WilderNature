@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "#c:cooked_beef",
+    "#c:cooked_chicken",
+    "#c:cooked_mutton",
+    "#c:cooked_pork",
+    "minecraft:cooked_rabbit",
+    {
+      "id": "farm_and_charm:dog_food",
+      "required": false
+    }
+  ]
+}

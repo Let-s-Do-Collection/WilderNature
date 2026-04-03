@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.model.DogModel;
+import net.satisfy.wildernature.client.render.entity.layer.DogHeldItemLayer;
 import net.satisfy.wildernature.core.entity.animal.DogEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,23 +17,27 @@ public class DogRenderer extends MobRenderer<DogEntity, DogModel<DogEntity>> {
     private static final ResourceLocation GRAY = WilderNature.identifier("textures/entity/dog_gray.png");
 
     public DogRenderer(EntityRendererProvider.Context context) {
-        super(context, new DogModel<>(context.bakeLayer(DogModel.LAYER_LOCATION)), 0.7f);
+        super(context, new DogModel<>(context.bakeLayer(DogModel.LAYER_LOCATION)), 0.7F);
+        this.addLayer(new DogHeldItemLayer(this, context.getItemInHandRenderer()));
     }
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(DogEntity entity) {
-        int variant = entity.getId() % 3;
+        int variant = entity.getVariant();
 
-        if (variant == 0) return BROWN;
-        if (variant == 1) return WHITE;
+        if (variant == 0) {
+            return BROWN;
+        }
+        if (variant == 1) {
+            return WHITE;
+        }
         return GRAY;
     }
 
     @Override
-    public void render(DogEntity entity, float entityYaw, float partialTicks, PoseStack poseStack,
-                       MultiBufferSource buffer, int packedLight) {
+    public void render(DogEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         if (entity.isBaby()) {
-            poseStack.scale(0.4f, 0.4f, 0.4f);
+            poseStack.scale(0.4F, 0.4F, 0.4F);
         }
 
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);

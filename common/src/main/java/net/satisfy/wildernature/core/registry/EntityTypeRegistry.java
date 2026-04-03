@@ -25,6 +25,7 @@ import net.satisfy.wildernature.core.entity.animal.OwlEntity;
 import net.satisfy.wildernature.core.entity.animal.RaccoonEntity;
 import net.satisfy.wildernature.core.entity.animal.RedWolfEntity;
 import net.satisfy.wildernature.core.entity.animal.SquirrelEntity;
+import net.satisfy.wildernature.core.entity.projectile.ThrownBoneEntity;
 import net.satisfy.wildernature.core.entity.projectile.ThrownTurkeyEgg;
 import net.satisfy.wildernature.core.entity.animal.TurkeyEntity;
 
@@ -51,6 +52,7 @@ public class EntityTypeRegistry {
     public static final RegistrySupplier<EntityType<TurkeyEntity>> TURKEY = createEntity("turkey", () -> EntityType.Builder.of(TurkeyEntity::new, MobCategory.CREATURE).sized(0.6F, 1.0F).build(WilderNature.identifier("turkey").toString()));
     public static final RegistrySupplier<EntityType<BulletEntity>> BULLET = createEntity("bullet", () -> EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC).sized(0.3125f, 0.3125f).clientTrackingRange(64).updateInterval(2).build(WilderNature.identifier("bullet").toString()));
     public static final RegistrySupplier<EntityType<ThrownTurkeyEgg>> TURKEY_EGG = createEntity("turkey_egg", () -> EntityType.Builder.<ThrownTurkeyEgg>of(ThrownTurkeyEgg::new, MobCategory.MISC).sized(0.25f, 0.25f).build(WilderNature.identifier("turkey_egg").toString()));
+    public static final RegistrySupplier<EntityType<ThrownBoneEntity>> BONE = createEntity("bone", () -> EntityType.Builder.<ThrownBoneEntity>of(ThrownBoneEntity::new, MobCategory.MISC).sized(0.25f, 0.25f).build(WilderNature.identifier("bone").toString()));
 
     public static <T extends EntityType<?>> RegistrySupplier<T> createEntity(final String path, final Supplier<T> type) {
         return ENTITY_TYPES.register(WilderNature.identifier(path), type);

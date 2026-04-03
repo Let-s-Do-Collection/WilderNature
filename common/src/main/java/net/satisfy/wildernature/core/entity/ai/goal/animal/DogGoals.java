@@ -1,8 +1,9 @@
-package net.satisfy.wildernature.core.entity.ai;
+package net.satisfy.wildernature.core.entity.ai.goal.animal;
 
 import java.util.EnumSet;
 import java.util.List;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -20,6 +21,7 @@ import net.satisfy.wildernature.core.block.entity.BurrowBlockEntity;
 import net.satisfy.wildernature.core.entity.animal.DogEntity;
 import net.satisfy.wildernature.core.entity.animal.RaccoonEntity;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
+import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundRegistry;
 import org.jetbrains.annotations.Nullable;
 
@@ -118,7 +120,7 @@ public class DogGoals {
     }
 
     public static class CreeperAlertGoal extends Goal {
-        private static final double ALERT_RANGE = 12.0D;
+        private static final double ALERT_RANGE = 20.0D;
         private static final int ALERT_DURATION = 40;
         private static final int COOLDOWN_TICKS = 2400;
 
@@ -140,10 +142,15 @@ public class DogGoals {
                 return false;
             }
 
-            if (this.dog.isAttacking() || this.dog.isFetching()) {
+            if (!this.dog.canGuard()) {
                 return false;
             }
 
+            if (!this.dog.canSearchForCreepers()) {
+                return false;
+            }
+
+            this.dog.resetCreeperSearchCooldown();
             this.targetCreeper = this.findNearestCreeper();
             return this.targetCreeper != null;
         }
@@ -175,7 +182,8 @@ public class DogGoals {
             return this.targetCreeper != null
                     && this.targetCreeper.isAlive()
                     && this.dog.distanceToSqr(this.targetCreeper) <= ALERT_RANGE * ALERT_RANGE
-                    && this.alertTicks > 0;
+                    && this.alertTicks > 0
+                    && this.dog.canGuard();
         }
 
         @Override
@@ -224,7 +232,7 @@ public class DogGoals {
 
         @Override
         public boolean canUse() {
-            if (this.dog.isOrderedToSit() || this.dog.isResting() || this.dog.isAttacking() || this.dog.isFetching() || this.dog.isPanicking() || this.dog.isDigging()) {
+            if (!this.dog.canAct()) {
                 return false;
             }
             if (!this.dog.level().isRaining()) {
@@ -239,7 +247,7 @@ public class DogGoals {
 
         @Override
         public boolean canContinueToUse() {
-            return this.shelterPos != null && this.dog.level().isRaining() && this.dog.level().canSeeSky(this.dog.blockPosition());
+            return this.shelterPos != null && this.dog.level().isRaining() && this.dog.level().canSeeSky(this.dog.blockPosition()) && this.dog.canAct();
         }
 
         @Override
@@ -457,7 +465,12 @@ public class DogGoals {
             if (!this.dog.canUseBoneCollectGoal()) {
                 return false;
             }
+            if (!this.dog.canSearchForBones()) {
+                return false;
+            }
+
             this.targetItemEntity = this.findNearestBone();
+            this.dog.resetBoneSearchCooldown();
             return this.targetItemEntity != null;
         }
 
@@ -490,7 +503,11 @@ public class DogGoals {
 
         @Override
         public boolean canContinueToUse() {
-            return this.targetItemEntity != null && this.targetItemEntity.isAlive() && this.targetItemEntity.getItem().is(Items.BONE) && this.dog.canUseBoneCollectGoal();
+            return this.targetItemEntity != null
+                    && this.targetItemEntity.isAlive()
+                    && this.targetItemEntity.getItem().is(Items.BONE)
+                    && this.dog.hasFreeInventorySlot()
+                    && this.dog.canAct();
         }
 
         @Override
@@ -551,9 +568,23 @@ public class DogGoals {
             if (!this.dog.hasBoneInInventory()) {
                 return false;
             }
-            if (this.dog.hasBurrow()) {
+
+            if (this.dog.hasBurrow() && this.dog.hasValidBurrow()) {
                 return false;
             }
+
+            if (!this.dog.canSearchForBurrow()) {
+                return false;
+            }
+
+            BlockPos existingBurrowPos = this.dog.findNearbyBurrow(SEARCH_RADIUS);
+            this.dog.resetBurrowSearchCooldown();
+
+            if (existingBurrowPos != null) {
+                this.dog.setBurrowPos(existingBurrowPos);
+                return false;
+            }
+
             this.targetPos = this.findTargetPos();
             return this.targetPos != null;
         }
@@ -599,7 +630,15 @@ public class DogGoals {
 
         @Override
         public boolean canContinueToUse() {
-            return this.targetPos != null && !this.dog.hasBurrow() && this.dog.hasBoneInInventory() && this.dog.canUseBurrowGoal();
+            return this.targetPos != null
+                    && !this.dog.hasBurrow()
+                    && this.dog.hasBoneInInventory()
+                    && !this.dog.isOrderedToSit()
+                    && !this.dog.isResting()
+                    && !this.dog.isAttacking()
+                    && !this.dog.isFetching()
+                    && !this.dog.isPanicking()
+                    && this.dog.getTarget() == null;
         }
 
         @Override
@@ -659,7 +698,7 @@ public class DogGoals {
             if (!this.dog.hasValidBurrow()) {
                 return false;
             }
-            if (this.dog.isOrderedToSit() || this.dog.isResting() || this.dog.isAttacking() || this.dog.isFetching() || this.dog.isPanicking() || this.dog.isDigging()) {
+            if (!this.dog.canAct()) {
                 return false;
             }
             return this.dog.getInventoryItemCount() > 0;
@@ -721,6 +760,7 @@ public class DogGoals {
                 ItemStack stackToInsert = stack.copyWithCount(1);
                 if (burrowBlockEntity.tryAddItem(stackToInsert)) {
                     stack.shrink(1);
+                    this.dog.setBurrowStoredBones(this.dog.getBurrowStoredBones() + 1);
                     if (stack.isEmpty()) {
                         this.dog.setInventoryItem(slotIndex, ItemStack.EMPTY);
                     } else {
@@ -731,12 +771,19 @@ public class DogGoals {
                 }
             }
 
+            if (this.dog.getOwner() != null) {
+                this.dog.triggerOwnerDelivery(this.dog.blockPosition());
+            }
+
             this.stop();
         }
 
         @Override
         public boolean canContinueToUse() {
-            return this.dog.hasValidBurrow() && this.dog.getInventoryItemCount() > 0 && this.storeTicks < STORE_TICKS;
+            return this.dog.hasValidBurrow()
+                    && this.dog.getInventoryItemCount() > 0
+                    && this.dog.canAct()
+                    && this.storeTicks < STORE_TICKS + 40;
         }
 
         @Override
@@ -845,6 +892,7 @@ public class DogGoals {
                 ItemStack stackToInsert = carriedStack.copyWithCount(1);
                 if (burrowBlockEntity.tryAddItem(stackToInsert)) {
                     carriedStack.shrink(1);
+                    this.dog.setBurrowStoredBones(this.dog.getBurrowStoredBones() + 1);
                     if (carriedStack.isEmpty()) {
                         this.dog.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
                     } else {
@@ -905,6 +953,212 @@ public class DogGoals {
                 ItemEntity droppedItem = new ItemEntity(this.dog.level(), dropPos.getX() + 0.5D, dropPos.getY() + 0.3D, dropPos.getZ() + 0.5D, carriedStack);
                 this.dog.level().addFreshEntity(droppedItem);
             }
+        }
+    }
+
+    public static class FetchThrownBoneGoal extends Goal {
+        private static final double SEARCH_RANGE = 16.0D;
+        private static final double DROP_RANGE = 2.25D;
+
+        private final DogEntity dog;
+        @Nullable
+        private ItemEntity targetBone;
+        private int lostTargetTicks;
+        private boolean returnToOwner;
+
+        public FetchThrownBoneGoal(DogEntity dog) {
+            this.dog = dog;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            if (!this.dog.isTame()) return false;
+            if (this.dog.isOrderedToSit() || this.dog.isResting() || this.dog.isAttacking() || this.dog.isFetching() || this.dog.isDigging() || this.dog.isPanicking()) return false;
+            if (this.dog.getOwner() == null) return false;
+            if (this.dog.distanceToSqr(this.dog.getOwner()) > 144.0D) return false;
+            if (!this.dog.getMainHandItem().isEmpty()) return false;
+            this.targetBone = this.findNearestThrownBone();
+            return this.targetBone != null;
+        }
+
+        @Override
+        public void start() {
+            this.dog.setFetching(true);
+            this.lostTargetTicks = 0;
+            this.returnToOwner = !this.dog.hasValidBurrow() || this.dog.getRandom().nextFloat() < 0.65F;
+            this.spawnAlertParticles();
+        }
+
+        @Override
+        public void tick() {
+            if (this.dog.getMainHandItem().isEmpty()) {
+                if (this.targetBone == null || !this.targetBone.isAlive()) {
+                    this.targetBone = this.findNearestThrownBone();
+                    this.lostTargetTicks++;
+
+                    if (this.targetBone == null) {
+                        if (this.lostTargetTicks % 20 == 0) {
+                            this.spawnQuestionParticles();
+                        }
+                        this.dog.getNavigation().stop();
+                        return;
+                    }
+
+                    this.lostTargetTicks = 0;
+                }
+
+                this.dog.getNavigation().moveTo(this.targetBone, 1.4D);
+                this.dog.getLookControl().setLookAt(this.targetBone, 30.0F, 30.0F);
+
+                if (this.dog.distanceToSqr(this.targetBone) <= 2.0D) {
+                    ItemStack targetStack = this.targetBone.getItem();
+                    if (!targetStack.isEmpty() && targetStack.is(Items.BONE)) {
+                        ItemStack takenStack = targetStack.split(1);
+                        this.dog.setItemSlot(EquipmentSlot.MAINHAND, takenStack);
+                        if (targetStack.isEmpty()) {
+                            this.targetBone.discard();
+                        } else {
+                            this.targetBone.setItem(targetStack);
+                        }
+                        this.returnToOwner = !this.dog.hasValidBurrow() || this.dog.getRandom().nextFloat() < 0.65F;
+                    }
+                }
+                return;
+            }
+
+            this.dog.spawnCarryParticles();
+
+            if (this.returnToOwner && this.dog.getOwner() != null) {
+                this.dog.getNavigation().moveTo(this.dog.getOwner(), 1.3D);
+                this.dog.getLookControl().setLookAt(this.dog.getOwner(), 30.0F, 30.0F);
+
+                if (this.dog.distanceToSqr(this.dog.getOwner()) <= DROP_RANGE * DROP_RANGE) {
+                    this.dropCarriedItem(this.dog.getOwner().blockPosition().above());
+                    this.targetBone = null;
+                }
+                return;
+            }
+
+            if (!this.dog.hasValidBurrow()) {
+                if (this.dog.getOwner() != null) {
+                    this.dog.getNavigation().moveTo(this.dog.getOwner(), 1.3D);
+                    this.dog.getLookControl().setLookAt(this.dog.getOwner(), 30.0F, 30.0F);
+
+                    if (this.dog.distanceToSqr(this.dog.getOwner()) <= DROP_RANGE * DROP_RANGE) {
+                        this.dropCarriedItem(this.dog.getOwner().blockPosition().above());
+                        this.targetBone = null;
+                    }
+                }
+                return;
+            }
+
+            BlockPos burrowPos = this.dog.getBurrowPos();
+            if (burrowPos == null) {
+                if (this.dog.getOwner() != null) {
+                    this.dog.getNavigation().moveTo(this.dog.getOwner(), 1.3D);
+                    this.dog.getLookControl().setLookAt(this.dog.getOwner(), 30.0F, 30.0F);
+
+                    if (this.dog.distanceToSqr(this.dog.getOwner()) <= DROP_RANGE * DROP_RANGE) {
+                        this.dropCarriedItem(this.dog.getOwner().blockPosition().above());
+                        this.targetBone = null;
+                    }
+                }
+                return;
+            }
+
+            BlockPos standPos = burrowPos.above();
+            this.dog.getNavigation().moveTo(standPos.getX() + 0.5D, standPos.getY(), standPos.getZ() + 0.5D, 1.25D);
+            this.dog.getLookControl().setLookAt(burrowPos.getX() + 0.5D, burrowPos.getY() + 0.5D, burrowPos.getZ() + 0.5D);
+
+            if (!standPos.closerToCenterThan(this.dog.position(), 1.5D)) return;
+
+            BlockEntity blockEntity = this.dog.level().getBlockEntity(burrowPos);
+            if (!(blockEntity instanceof BurrowBlockEntity burrowBlockEntity)) {
+                if (this.dog.getOwner() != null) {
+                    this.returnToOwner = true;
+                }
+                return;
+            }
+
+            ItemStack carriedStack = this.dog.getMainHandItem();
+            if (carriedStack.is(Items.BONE) && !carriedStack.isEmpty()) {
+                ItemStack insertStack = carriedStack.copyWithCount(1);
+                if (burrowBlockEntity.tryAddItem(insertStack)) {
+                    carriedStack.shrink(1);
+                    this.dog.setBurrowStoredBones(this.dog.getBurrowStoredBones() + 1);
+                    if (carriedStack.isEmpty()) {
+                        this.dog.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+                    } else {
+                        this.dog.setItemSlot(EquipmentSlot.MAINHAND, carriedStack);
+                    }
+                    this.targetBone = null;
+                    return;
+                }
+            }
+
+            this.dropCarriedItem(standPos);
+            this.targetBone = null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.dog.isFetching()
+                    && !this.dog.isOrderedToSit()
+                    && !this.dog.isResting()
+                    && !this.dog.isAttacking()
+                    && !this.dog.isDigging()
+                    && !this.dog.isPanicking()
+                    && (this.dog.getMainHandItem().is(Items.BONE) || this.targetBone != null && this.targetBone.isAlive() || this.lostTargetTicks < 40);
+        }
+
+        @Override
+        public void stop() {
+            this.targetBone = null;
+            this.lostTargetTicks = 0;
+            this.returnToOwner = false;
+            this.dog.getNavigation().stop();
+            this.dog.setFetching(false);
+        }
+
+        @Nullable
+        private ItemEntity findNearestThrownBone() {
+            List<ItemEntity> itemEntities = this.dog.level().getEntitiesOfClass(ItemEntity.class, this.dog.getBoundingBox().inflate(SEARCH_RANGE));
+            ItemEntity closestBoneEntity = null;
+            double closestDistance = Double.MAX_VALUE;
+
+            for (ItemEntity itemEntity : itemEntities) {
+                if (!itemEntity.isAlive()) continue;
+                if (!itemEntity.getItem().is(Items.BONE)) continue;
+                if (!itemEntity.onGround()) continue;
+
+                double checkedDistance = this.dog.distanceToSqr(itemEntity);
+                if (checkedDistance < closestDistance) {
+                    closestDistance = checkedDistance;
+                    closestBoneEntity = itemEntity;
+                }
+            }
+
+            return closestBoneEntity;
+        }
+
+        private void dropCarriedItem(BlockPos pos) {
+            ItemStack carriedStack = this.dog.getMainHandItem().copy();
+            this.dog.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+            if (!carriedStack.isEmpty()) {
+                ItemEntity itemEntity = new ItemEntity(this.dog.level(), pos.getX() + 0.5D, pos.getY() + 0.3D, pos.getZ() + 0.5D, carriedStack);
+                this.dog.level().addFreshEntity(itemEntity);
+            }
+        }
+
+        private void spawnAlertParticles() {
+            if (!(this.dog.level() instanceof ServerLevel serverLevel)) return;
+            serverLevel.sendParticles(ParticleTypeRegistry.ALERT.get(), this.dog.getX(), this.dog.getY() + 1.0D, this.dog.getZ(), 4, 0.2D, 0.2D, 0.2D, 0.0D);
+        }
+
+        private void spawnQuestionParticles() {
+            if (!(this.dog.level() instanceof ServerLevel serverLevel)) return;
+            serverLevel.sendParticles(ParticleTypeRegistry.QUESTION.get(), this.dog.getX(), this.dog.getY() + 1.0D, this.dog.getZ(), 2, 0.15D, 0.15D, 0.15D, 0.0D);
         }
     }
 }
