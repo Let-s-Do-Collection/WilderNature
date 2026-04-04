@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.Vec3;
-import net.satisfy.wildernature.core.entity.animal.OwlEntity;
+import net.satisfy.wildernature.core.entity.animal.tameable.OwlEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;

@@ -14,8 +14,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.satisfy.wildernature.core.entity.animal.HedgehogEntity;
-import net.satisfy.wildernature.core.entity.animal.SwiftFoxEntity;
+import net.satisfy.wildernature.core.entity.animal.passive.HedgehogEntity;
+import net.satisfy.wildernature.core.entity.animal.neutral.SwiftFoxEntity;
 import net.satisfy.wildernature.core.registry.TagsRegistry;
 import org.jetbrains.annotations.Nullable;
 

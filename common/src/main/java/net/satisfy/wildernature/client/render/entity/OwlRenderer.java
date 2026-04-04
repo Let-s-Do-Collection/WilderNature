@@ -10,11 +10,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.model.OwlModel;
-import net.satisfy.wildernature.core.entity.animal.OwlEntity;
+import net.satisfy.wildernature.core.entity.animal.tameable.OwlEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class OwlRenderer extends MobRenderer<OwlEntity, OwlModel> {
-    private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/entity/owl.png");
+    private static final ResourceLocation DEFAULT_TEXTURE = WilderNature.identifier("textures/entity/owl.png");
+    private static final ResourceLocation SLEEPING_TEXTURE = WilderNature.identifier("textures/entity/owl_sleep.png");
 
     public OwlRenderer(EntityRendererProvider.Context context) {
         super(context, new OwlModel(context.bakeLayer(OwlModel.LAYER_LOCATION)), 0.5F);
@@ -22,7 +23,7 @@ public class OwlRenderer extends MobRenderer<OwlEntity, OwlModel> {
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(OwlEntity entity) {
-        return TEXTURE;
+        return entity.isSleeping() ? SLEEPING_TEXTURE : DEFAULT_TEXTURE;
     }
 
     @Override

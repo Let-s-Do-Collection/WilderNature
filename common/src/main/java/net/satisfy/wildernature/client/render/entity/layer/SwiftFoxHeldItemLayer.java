@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.satisfy.wildernature.client.model.entity.model.SwiftFoxModel;
-import net.satisfy.wildernature.core.entity.animal.SwiftFoxEntity;
+import net.satisfy.wildernature.core.entity.animal.neutral.SwiftFoxEntity;
 
 @Environment(EnvType.CLIENT)
 public class SwiftFoxHeldItemLayer extends RenderLayer<SwiftFoxEntity, SwiftFoxModel<SwiftFoxEntity>> {

@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.entity.animal;
+package net.satisfy.wildernature.core.entity.animal.passive;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -54,8 +54,9 @@ import net.satisfy.wildernature.core.entity.ai.behavior.CacheEatingMob;
 import net.satisfy.wildernature.core.entity.ai.goal.EatFromBlockGoal;
 import net.satisfy.wildernature.core.entity.ai.behavior.RandomAction;
 import net.satisfy.wildernature.core.entity.ai.goal.RandomActionGoal;
-import net.satisfy.wildernature.client.model.entity.animation.ServerAnimationDurations;
-import net.satisfy.wildernature.core.entity.monster.CassowaryEntity;
+import net.satisfy.wildernature.core.entity.animal.neutral.SwiftFoxEntity;
+import net.satisfy.wildernature.core.entity.animal.defensive.BisonEntity;
+import net.satisfy.wildernature.core.entity.animal.defensive.CassowaryEntity;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
@@ -109,7 +110,7 @@ public class HedgehogEntity extends Animal implements CacheEatingMob {
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 5.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(8, new HedgehogConvertMushroomGoal(this, 1.0D));
-        this.goalSelector.addGoal(9, new EatFromBlockGoal(this, 1.0D, 8, state -> state.is(Blocks.RED_MUSHROOM) || state.is(Blocks.BROWN_MUSHROOM), (level, pos, state, mob) -> level.removeBlock(pos, false), 1.5F, 1200, SoundEvents.FOX_EAT, () -> HedgehogEntity.this.setSniffing(true), () -> HedgehogEntity.this.setSniffing(false)) {
+        this.goalSelector.addGoal(9, new EatFromBlockGoal(this, 1.0D, 8, state -> state.is(Blocks.RED_MUSHROOM) || state.is(Blocks.BROWN_MUSHROOM), (level, pos, state, mob) -> HedgehogEntity.this.consumeWildMushroom(level, pos, state), 1.5F, 1200, SoundEvents.FOX_EAT, () -> HedgehogEntity.this.setSniffing(true), () -> HedgehogEntity.this.setSniffing(false)) {
             @Override
             public boolean canUse() {
                 return HedgehogEntity.this.isAvailableForNormalBehavior() && super.canUse();
@@ -177,7 +178,7 @@ public class HedgehogEntity extends Animal implements CacheEatingMob {
 
             @Override
             public int duration() {
-                return (int) (ServerAnimationDurations.hedgehog_sniffing * 20);
+                return 75;
             }
 
             @Override
@@ -193,6 +194,17 @@ public class HedgehogEntity extends Animal implements CacheEatingMob {
                 return HedgehogEntity.this.getAttribute(Attributes.MOVEMENT_SPEED);
             }
         }));
+    }
+
+    private void consumeWildMushroom(Level level, BlockPos pos, BlockState state) {
+        if (state.is(Blocks.RED_MUSHROOM)) {
+            level.setBlock(pos, ObjectRegistry.RED_MUSHROOM_COLONY.get().defaultBlockState().setValue(MushroomColonyBlock.COLONY_AGE, 0), 2);
+            return;
+        }
+
+        if (state.is(Blocks.BROWN_MUSHROOM)) {
+            level.setBlock(pos, ObjectRegistry.BROWN_MUSHROOM_COLONY.get().defaultBlockState().setValue(MushroomColonyBlock.COLONY_AGE, 0), 2);
+        }
     }
 
     @Override

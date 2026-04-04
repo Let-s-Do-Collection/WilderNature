@@ -16,7 +16,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.animation.MiniSheepAnimation;
-import net.satisfy.wildernature.core.entity.animal.MiniSheepEntity;
+import net.satisfy.wildernature.core.entity.animal.neutral.MiniSheepEntity;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(EnvType.CLIENT)

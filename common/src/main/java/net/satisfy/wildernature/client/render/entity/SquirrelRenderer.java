@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.model.SquirrelModel;
 import net.satisfy.wildernature.client.render.entity.layer.SquirrelHeldItemLayer;
-import net.satisfy.wildernature.core.entity.animal.SquirrelEntity;
+import net.satisfy.wildernature.core.entity.animal.neutral.SquirrelEntity;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(EnvType.CLIENT)

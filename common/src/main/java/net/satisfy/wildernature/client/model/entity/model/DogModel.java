@@ -12,8 +12,8 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.core.entity.animal.DogEntity;
 import net.satisfy.wildernature.client.model.entity.animation.DogAnimation;
+import net.satisfy.wildernature.core.entity.animal.tameable.DogEntity;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
@@ -85,5 +85,6 @@ public class DogModel<T extends DogEntity> extends HierarchicalModel<T> {
         this.animate(entity.attackAnimationState, DogAnimation.bite, ageInTicks, 1.0F);
         this.animate(entity.lyingAnimationState, DogAnimation.sleep, ageInTicks, 1.0F);
         this.animate(entity.sleepAnimationState, DogAnimation.sleep, ageInTicks, 1.0F);
+        this.animate(entity.digAnimationState, DogAnimation.dig, ageInTicks, 1.0F);
     }
 }

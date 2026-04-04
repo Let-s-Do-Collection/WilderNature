@@ -9,13 +9,14 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.model.HedgehogModel;
-import net.satisfy.wildernature.core.entity.animal.HedgehogEntity;
+import net.satisfy.wildernature.core.entity.animal.passive.HedgehogEntity;
 import org.jetbrains.annotations.NotNull;
 
 
 @Environment(value = EnvType.CLIENT)
 public class HedgehogRenderer extends MobRenderer<HedgehogEntity, HedgehogModel<HedgehogEntity>> {
-    private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/entity/hedgehog.png");
+    private static final ResourceLocation DEFAULT_TEXTURE = WilderNature.identifier("textures/entity/hedgehog.png");
+    private static final ResourceLocation SLEEPING_TEXTURE = WilderNature.identifier("textures/entity/hedgehog_sleep.png");
 
     public HedgehogRenderer(EntityRendererProvider.Context context) {
         super(context, new HedgehogModel<>(context.bakeLayer(HedgehogModel.LAYER_LOCATION)), 0.7f);
@@ -24,7 +25,7 @@ public class HedgehogRenderer extends MobRenderer<HedgehogEntity, HedgehogModel<
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(HedgehogEntity entity) {
-        return TEXTURE;
+        return entity.isSleeping() ? SLEEPING_TEXTURE : DEFAULT_TEXTURE;
     }
 
     @Override

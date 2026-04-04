@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.satisfy.wildernature.client.model.entity.model.DogModel;
-import net.satisfy.wildernature.core.entity.animal.DogEntity;
+import net.satisfy.wildernature.core.entity.animal.tameable.DogEntity;
 
 public class DogHeldItemLayer extends RenderLayer<DogEntity, DogModel<DogEntity>> {
     private final ItemInHandRenderer itemInHandRenderer;

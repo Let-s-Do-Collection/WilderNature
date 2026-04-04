@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.entity.animal;
+package net.satisfy.wildernature.core.entity.animal.neutral;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -55,6 +55,7 @@ import net.satisfy.wildernature.core.entity.ai.goal.CacheEatGoal;
 import net.satisfy.wildernature.core.entity.ai.goal.CacheStoreGoal;
 import net.satisfy.wildernature.core.entity.ai.goal.animal.RaccoonGoals;
 import net.satisfy.wildernature.core.entity.ai.goal.SeekShelterGoal;
+import net.satisfy.wildernature.core.entity.animal.tameable.DogEntity;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;

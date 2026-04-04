@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.entity.animal;
+package net.satisfy.wildernature.core.entity.animal.neutral;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;

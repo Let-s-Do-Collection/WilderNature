@@ -1,5 +1,10 @@
-package net.satisfy.wildernature.core.entity.animal;
+package net.satisfy.wildernature.core.entity.animal.tameable;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ItemParticleOption;
@@ -21,6 +26,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.AnimationState;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -34,6 +40,7 @@ import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
@@ -58,11 +65,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.satisfy.wildernature.client.model.entity.animation.ServerAnimationDurations;
 import net.satisfy.wildernature.core.entity.ai.behavior.RandomAction;
-import net.satisfy.wildernature.core.entity.ai.goal.AnimationAttackGoal;
-import net.satisfy.wildernature.core.entity.ai.goal.animal.OwlGoals;
 import net.satisfy.wildernature.core.entity.ai.goal.RandomActionGoal;
+import net.satisfy.wildernature.core.entity.ai.goal.animal.OwlGoals;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundRegistry;
@@ -70,18 +75,13 @@ import net.satisfy.wildernature.core.registry.TagsRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.function.Predicate;
-
 public class OwlEntity extends ShoulderRidingEntity {
     private static final EntityDataAccessor<Integer> STANDING_STATE = SynchedEntityData.defineId(OwlEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(OwlEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> HOOTING = SynchedEntityData.defineId(OwlEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(OwlEntity.class, EntityDataSerializers.BOOLEAN);
     private static final Predicate<LivingEntity> IS_OWL_TARGET = entity -> entity.getType().is(TagsRegistry.OWL_TARGETS);
+    private static final int ATTACK_DURATION = 40;
 
     private float leaningPitch;
     private float lastLeaningPitch;
@@ -93,6 +93,7 @@ public class OwlEntity extends ShoulderRidingEntity {
     private int huntStartTime;
     private int huntEndTime;
     private int rottenFleshCooldownTicks;
+    private int attackAnimationTicks;
 
     public AnimationState flyingState = new AnimationState();
     public AnimationState hootState = new AnimationState();
@@ -160,8 +161,7 @@ public class OwlEntity extends ShoulderRidingEntity {
         });
 
         this.goalSelector.addGoal(++goalPriority, new SitWhenOrderedToGoal(this));
-
-        this.goalSelector.addGoal(++goalPriority, new AnimationAttackGoal<>(this, 1.0D, true, (int) (ServerAnimationDurations.owl_attack * 20), 15, this::setAttacking) {
+        this.goalSelector.addGoal(++goalPriority, new MeleeAttackGoal(this, 1.0D, true) {
             @Override
             public boolean canUse() {
                 return super.canUse() && canUseActiveBehavior() && canHuntNow();
@@ -272,7 +272,7 @@ public class OwlEntity extends ShoulderRidingEntity {
 
             @Override
             public int duration() {
-                return (int) (ServerAnimationDurations.owl_hoot * 20);
+                return 35;
             }
 
             @Override
@@ -305,6 +305,12 @@ public class OwlEntity extends ShoulderRidingEntity {
     @Override
     public void tick() {
         super.tick();
+
+        if (this.attackAnimationTicks > 0) {
+            this.attackAnimationTicks--;
+        }
+
+        this.setAttacking(this.attackAnimationTicks > 0);
 
         this.updateNightHuntSchedule();
 
@@ -465,6 +471,7 @@ public class OwlEntity extends ShoulderRidingEntity {
         tag.putInt("HuntStartTime", this.huntStartTime);
         tag.putInt("HuntEndTime", this.huntEndTime);
         tag.putInt("RottenFleshCooldownTicks", this.rottenFleshCooldownTicks);
+        tag.putInt("AttackAnimationTicks", this.attackAnimationTicks);
     }
 
     @Override
@@ -480,6 +487,8 @@ public class OwlEntity extends ShoulderRidingEntity {
         this.huntStartTime = tag.getInt("HuntStartTime");
         this.huntEndTime = tag.getInt("HuntEndTime");
         this.rottenFleshCooldownTicks = tag.getInt("RottenFleshCooldownTicks");
+        this.attackAnimationTicks = tag.getInt("AttackAnimationTicks");
+        this.setAttacking(this.attackAnimationTicks > 0);
     }
 
     @Override
@@ -548,6 +557,18 @@ public class OwlEntity extends ShoulderRidingEntity {
     protected @Nullable SoundEvent getHurtSound(DamageSource source) {
         this.wakeUp();
         return SoundRegistry.OWL_HURT.get();
+    }
+
+    @Override
+    public boolean doHurtTarget(Entity targetEntity) {
+        boolean success = super.doHurtTarget(targetEntity);
+
+        if (success) {
+            this.attackAnimationTicks = ATTACK_DURATION;
+            this.setAttacking(true);
+        }
+
+        return success;
     }
 
     public void setAttacking(boolean attacking) {
@@ -868,6 +889,7 @@ public class OwlEntity extends ShoulderRidingEntity {
         this.setSleeping(true);
         this.setHooting(false);
         this.setAttacking(false);
+        this.attackAnimationTicks = 0;
         this.setTarget(null);
         this.navigation.stop();
         this.setDeltaMovement(Vec3.ZERO);
@@ -884,8 +906,7 @@ public class OwlEntity extends ShoulderRidingEntity {
         this.resetSleepPreparation();
 
         if (this.level() instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.ANGRY_VILLAGER, this.getX(), this.getY() + this.getBbHeight() + 0.2D, this.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D
-            );
+            serverLevel.sendParticles(ParticleTypes.ANGRY_VILLAGER, this.getX(), this.getY() + this.getBbHeight() + 0.2D, this.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
         }
     }
 

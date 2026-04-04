@@ -6,7 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
-import net.satisfy.wildernature.core.entity.animal.MiniSheepEntity;
+import net.satisfy.wildernature.core.entity.animal.neutral.MiniSheepEntity;
 
 public class MiniSheepGoal {
     private static final double LEADER_FOLLOW_START_DISTANCE = 36.0D;

@@ -11,7 +11,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.satisfy.wildernature.core.entity.animal.TurkeyEntity;
+import net.satisfy.wildernature.core.entity.animal.neutral.TurkeyEntity;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;

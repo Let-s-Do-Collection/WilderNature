@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.entity.animal;
+package net.satisfy.wildernature.core.entity.animal.tameable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -18,7 +18,16 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.AnimationState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
@@ -26,6 +35,7 @@ import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.FollowParentGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
@@ -41,9 +51,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.satisfy.wildernature.core.entity.ai.goal.AnimationAttackGoal;
 import net.satisfy.wildernature.core.entity.ai.goal.animal.DogGoals;
-import net.satisfy.wildernature.core.registry.*;
+import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
+import net.satisfy.wildernature.core.registry.ObjectRegistry;
+import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
+import net.satisfy.wildernature.core.registry.SoundRegistry;
+import net.satisfy.wildernature.core.registry.TagsRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,6 +107,7 @@ public class DogEntity extends TamableAnimal {
 
     private final NonNullList<ItemStack> dogInventory = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
 
+    private int attackAnimationTicks;
     private int restTicks;
     private int restCooldownTicks;
     private int restAttemptTicks;
@@ -165,7 +179,7 @@ public class DogEntity extends TamableAnimal {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(0, new AnimationAttackGoal<>(this, 1.2D, true, BITE_DURATION, 7, this::setAttacking));
+        this.goalSelector.addGoal(0, new MeleeAttackGoal(this, 1.2D, true));
         this.goalSelector.addGoal(1, new DogGoals.RaccoonGuardGoal(this));
         this.goalSelector.addGoal(2, new DogGoals.ReturnToSitGoal(this));
         this.goalSelector.addGoal(3, new DogGoals.CreeperAlertGoal(this));
@@ -249,6 +263,12 @@ public class DogEntity extends TamableAnimal {
     public void tick() {
         super.tick();
         this.handleSittingState();
+
+        if (this.attackAnimationTicks > 0) {
+            this.attackAnimationTicks--;
+        }
+
+        this.setAttacking(this.attackAnimationTicks > 0);
 
         if (!this.level().isClientSide()) {
             this.updateRestState();
@@ -829,6 +849,10 @@ public class DogEntity extends TamableAnimal {
         compound.putBoolean("Sitting", this.isOrderedToSit());
         compound.putBoolean("Lying", this.isLying());
         compound.putBoolean("Sleeping", this.isSleeping());
+        compound.putBoolean("Howling", this.isHowling());
+        compound.putBoolean("Fetching", this.isFetching());
+        compound.putBoolean("Digging", this.isDigging());
+        compound.putInt("AttackAnimationTicks", this.attackAnimationTicks);
         compound.putInt("RestTicks", this.restTicks);
         compound.putInt("RestCooldownTicks", this.restCooldownTicks);
         compound.putInt("RestAttemptTicks", this.restAttemptTicks);
@@ -872,6 +896,10 @@ public class DogEntity extends TamableAnimal {
         this.entityData.set(SITTING, sitting);
         this.setLying(compound.getBoolean("Lying"));
         this.setSleeping(compound.getBoolean("Sleeping"));
+        this.setHowling(compound.getBoolean("Howling"));
+        this.setFetching(compound.getBoolean("Fetching"));
+        this.setDigging(compound.getBoolean("Digging"));
+        this.attackAnimationTicks = compound.getInt("AttackAnimationTicks");
         this.restTicks = compound.getInt("RestTicks");
         this.restCooldownTicks = compound.getInt("RestCooldownTicks");
         this.restAttemptTicks = compound.getInt("RestAttemptTicks");
@@ -906,6 +934,7 @@ public class DogEntity extends TamableAnimal {
             this.skeletonDeliveryOrigin = null;
         }
 
+        this.setAttacking(this.attackAnimationTicks > 0);
         this.updateDisplayedItem();
     }
 
@@ -963,12 +992,17 @@ public class DogEntity extends TamableAnimal {
     public boolean doHurtTarget(Entity entity) {
         boolean success = super.doHurtTarget(entity);
 
-        if (success && entity instanceof Skeleton skeleton && !skeleton.isAlive()) {
-            boolean killedWithOwner = false;
-            if (this.getOwner() instanceof Player player) {
-                killedWithOwner = player.distanceToSqr(skeleton) <= 64.0D;
+        if (success) {
+            this.attackAnimationTicks = BITE_DURATION;
+            this.setAttacking(true);
+
+            if (entity instanceof Skeleton skeleton && !skeleton.isAlive()) {
+                boolean killedWithOwner = false;
+                if (this.getOwner() instanceof Player player) {
+                    killedWithOwner = player.distanceToSqr(skeleton) <= 64.0D;
+                }
+                this.markSkeletonKill(killedWithOwner, skeleton.blockPosition());
             }
-            this.markSkeletonKill(killedWithOwner, skeleton.blockPosition());
         }
 
         return success;

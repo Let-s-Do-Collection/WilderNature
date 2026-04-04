@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.satisfy.wildernature.client.model.entity.model.RaccoonModel;
-import net.satisfy.wildernature.core.entity.animal.RaccoonEntity;
+import net.satisfy.wildernature.core.entity.animal.neutral.RaccoonEntity;
 
 @Environment(EnvType.CLIENT)
 public class RaccoonHeldItemLayer extends RenderLayer<RaccoonEntity, RaccoonModel<RaccoonEntity>> {

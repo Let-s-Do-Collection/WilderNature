@@ -6,22 +6,14 @@ import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.wildernature.core.block.HazelnutBushBlock;
-import net.satisfy.wildernature.core.block.HollowCacheBlock;
-import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
-import net.satisfy.wildernature.core.entity.animal.SquirrelEntity;
-import net.satisfy.wildernature.core.registry.ObjectRegistry;
+import net.satisfy.wildernature.core.entity.animal.neutral.SquirrelEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class SquirrelGoals {

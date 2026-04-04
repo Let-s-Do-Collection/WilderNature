@@ -1,6 +1,7 @@
-package net.satisfy.wildernature.core.entity.animal;
+package net.satisfy.wildernature.core.entity.animal.neutral;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -21,6 +22,7 @@ import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowParentGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
@@ -34,8 +36,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
-import net.satisfy.wildernature.core.entity.ai.goal.AnimationAttackGoal;
-import net.satisfy.wildernature.client.model.entity.animation.ServerAnimationDurations;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.SoundRegistry;
@@ -51,6 +51,7 @@ public class TurkeyEntity extends Chicken {
             Items.BREAD
     );
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(TurkeyEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final int TURKEY_ATTACK_TICKS = (int) (1.6F * 20) + 2;
 
     public AnimationState attackAnimationState = new AnimationState();
     public float flap;
@@ -60,6 +61,7 @@ public class TurkeyEntity extends Chicken {
     public float flapping = 1.0F;
     public boolean isPelicanJockey;
 
+    private int attackAnimationTicks;
     private int turkeyEggTime;
     private float nextFlap = 1.0F;
 
@@ -78,24 +80,56 @@ public class TurkeyEntity extends Chicken {
 
     @Override
     protected void registerGoals() {
-        int goalPriority = 0;
-        this.goalSelector.addGoal(++goalPriority, new AnimationAttackGoal<>(this, 1.0D, true, (int) (ServerAnimationDurations.turkey_attack * 20 + 2), 8, this::setAttacking));
-        this.goalSelector.addGoal(++goalPriority, new FloatGoal(this));
-        this.goalSelector.addGoal(++goalPriority, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(++goalPriority, new TemptGoal(this, 1.0D, FOOD_ITEMS, false));
-        this.goalSelector.addGoal(++goalPriority, new FollowParentGoal(this, 1.1D));
-        this.goalSelector.addGoal(++goalPriority, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(++goalPriority, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(++goalPriority, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(0, new HurtByTargetGoal(this).setAlertOthers());
+        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, true));
+        this.goalSelector.addGoal(2, new FloatGoal(this));
+        this.goalSelector.addGoal(3, new BreedGoal(this, 1.0D));
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.0D, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.1D));
+        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
     }
 
     @Override
     public void tick() {
         super.tick();
+
+        if (this.attackAnimationTicks > 0) {
+            this.attackAnimationTicks--;
+        }
+
+        this.setAttacking(this.attackAnimationTicks > 0);
+
         if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
+    }
+
+    @Override
+    public boolean hurt(DamageSource damageSource, float damageAmount) {
+        boolean wasHurt = super.hurt(damageSource, damageAmount);
+
+        if (wasHurt && !this.level().isClientSide()) {
+            Entity sourceEntity = damageSource.getEntity();
+            if (sourceEntity instanceof LivingEntity livingEntity) {
+                this.setTarget(livingEntity);
+            }
+        }
+
+        return wasHurt;
+    }
+
+    @Override
+    public boolean doHurtTarget(Entity targetEntity) {
+        boolean success = super.doHurtTarget(targetEntity);
+
+        if (success) {
+            this.attackAnimationTicks = TURKEY_ATTACK_TICKS;
+            this.setAttacking(true);
+        }
+
+        return success;
     }
 
     private void setupAnimationStates() {
@@ -114,6 +148,19 @@ public class TurkeyEntity extends Chicken {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(ATTACKING, false);
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putInt("AttackAnimationTicks", this.attackAnimationTicks);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.attackAnimationTicks = compound.getInt("AttackAnimationTicks");
+        this.setAttacking(this.attackAnimationTicks > 0);
     }
 
     @Override

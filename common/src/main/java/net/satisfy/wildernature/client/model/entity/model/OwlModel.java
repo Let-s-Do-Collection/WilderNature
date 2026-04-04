@@ -7,7 +7,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.core.entity.animal.OwlEntity;
+import net.satisfy.wildernature.core.entity.animal.tameable.OwlEntity;
 import net.satisfy.wildernature.client.model.entity.animation.OwlAnimation;
 import org.jetbrains.annotations.NotNull;
 

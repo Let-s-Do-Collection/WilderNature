@@ -9,12 +9,13 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.model.BoarModel;
-import net.satisfy.wildernature.core.entity.animal.BoarEntity;
+import net.satisfy.wildernature.core.entity.animal.passive.BoarEntity;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
 public class BoarRenderer extends MobRenderer<BoarEntity, BoarModel<BoarEntity>> {
-    private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/entity/boar.png");
+    private static final ResourceLocation DEFAULT_TEXTURE = WilderNature.identifier("textures/entity/boar.png");
+    private static final ResourceLocation SLEEPING_TEXTURE = WilderNature.identifier("textures/entity/boar_sleep.png");
 
     public BoarRenderer(EntityRendererProvider.Context context) {
         super(context, new BoarModel<>(context.bakeLayer(BoarModel.LAYER_LOCATION)), 0.7f);
@@ -22,12 +23,11 @@ public class BoarRenderer extends MobRenderer<BoarEntity, BoarModel<BoarEntity>>
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(BoarEntity entity) {
-        return TEXTURE;
+        return entity.isSleeping() ? SLEEPING_TEXTURE : DEFAULT_TEXTURE;
     }
 
     @Override
-    public void render(BoarEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack,
-                       MultiBufferSource pBuffer, int pPackedLight) {
+    public void render(BoarEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight) {
         if (pEntity.isBaby()) {
             pMatrixStack.scale(0.4f, 0.4f, 0.4f);
         }

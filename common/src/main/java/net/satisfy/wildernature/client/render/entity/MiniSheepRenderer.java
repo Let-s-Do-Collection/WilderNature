@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.model.MiniSheepModel;
-import net.satisfy.wildernature.core.entity.animal.MiniSheepEntity;
+import net.satisfy.wildernature.core.entity.animal.neutral.MiniSheepEntity;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
@@ -27,11 +27,18 @@ public class MiniSheepRenderer extends MobRenderer<MiniSheepEntity, MiniSheepMod
     }
 
     @Override
-    public void render(MiniSheepEntity entity, float entityYaw, float partialTicks, PoseStack matrixStack,
-                       MultiBufferSource buffer, int packedLight) {
-        if (entity.isBaby()) {
-            matrixStack.scale(0.4f, 0.4f, 0.4f);
+    public void render(MiniSheepEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        poseStack.pushPose();
+
+        if (entity.isMiniSheepSleeping()) {
+            poseStack.translate(0.0F, -0.15F, 0.0F);
         }
-        super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
+
+        if (entity.isBaby()) {
+            poseStack.scale(0.4f, 0.4f, 0.4f);
+        }
+
+        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
+        poseStack.popPose();
     }
 }

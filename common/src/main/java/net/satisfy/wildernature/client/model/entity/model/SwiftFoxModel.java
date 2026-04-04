@@ -14,7 +14,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.animation.SwiftFoxAnimation;
-import net.satisfy.wildernature.core.entity.animal.SwiftFoxEntity;
+import net.satisfy.wildernature.core.entity.animal.neutral.SwiftFoxEntity;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")

@@ -9,12 +9,13 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.model.DeerModel;
-import net.satisfy.wildernature.core.entity.animal.DeerEntity;
+import net.satisfy.wildernature.core.entity.animal.neutral.DeerEntity;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
 public class DeerRenderer extends MobRenderer<DeerEntity, DeerModel> {
     private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/entity/deer.png");
+    private static final ResourceLocation SLEEPING_TEXTURE = WilderNature.identifier("textures/entity/deer_sleep.png");
     private static final ResourceLocation WHITE_TEXTURE = WilderNature.identifier("textures/entity/deer_white.png");
 
     public DeerRenderer(EntityRendererProvider.Context context) {
@@ -23,7 +24,15 @@ public class DeerRenderer extends MobRenderer<DeerEntity, DeerModel> {
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(DeerEntity entity) {
-        return entity.isWhite() ? WHITE_TEXTURE : TEXTURE;
+        if (entity.isSleeping()) {
+            return SLEEPING_TEXTURE;
+        }
+
+        if (entity.isWhite()) {
+            return WHITE_TEXTURE;
+        }
+
+        return TEXTURE;
     }
 
     @Override

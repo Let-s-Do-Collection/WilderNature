@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.entity.animal;
+package net.satisfy.wildernature.core.entity.animal.passive;
 
 import java.util.List;
 import net.minecraft.core.BlockPos;

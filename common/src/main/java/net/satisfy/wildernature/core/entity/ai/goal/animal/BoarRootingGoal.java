@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
-import net.satisfy.wildernature.core.entity.animal.BoarEntity;
+import net.satisfy.wildernature.core.entity.animal.passive.BoarEntity;
 
 import java.util.EnumSet;
 

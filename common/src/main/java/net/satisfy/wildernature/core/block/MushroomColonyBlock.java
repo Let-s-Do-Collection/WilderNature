@@ -158,24 +158,6 @@ public class MushroomColonyBlock extends BushBlock implements BonemealableBlock 
         return 4;
     }
 
-    public static boolean isMature(BlockState state) {
-        return state.hasProperty(AGE) && state.getValue(AGE) >= 4;
-    }
-
-    public static boolean hasEdibleStage(BlockState state) {
-        return state.hasProperty(AGE) && state.getValue(AGE) > 0;
-    }
-
-    public static void eatFromColony(Level level, BlockPos pos, BlockState state, int reduction) {
-        if (!state.hasProperty(AGE)) {
-            return;
-        }
-
-        int currentAge = state.getValue(AGE);
-        int newAge = Math.max(0, currentAge - Math.max(1, reduction));
-        level.setBlock(pos, state.setValue(AGE, newAge), 2);
-    }
-
     private boolean canGrowNaturally(ServerLevel level, BlockPos pos) {
         return this.getLightLevel(level, pos) <= 7;
     }

@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.model.TurkeyModel;
-import net.satisfy.wildernature.core.entity.animal.TurkeyEntity;
+import net.satisfy.wildernature.core.entity.animal.neutral.TurkeyEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class TurkeyRenderer extends MobRenderer<TurkeyEntity, TurkeyModel<TurkeyEntity>> {

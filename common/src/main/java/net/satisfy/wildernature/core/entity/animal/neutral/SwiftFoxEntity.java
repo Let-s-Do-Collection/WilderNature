@@ -1,4 +1,4 @@
-package net.satisfy.wildernature.core.entity.animal;
+package net.satisfy.wildernature.core.entity.animal.neutral;
 
 import java.util.List;
 import java.util.UUID;

@@ -7,11 +7,12 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.model.BisonModel;
-import net.satisfy.wildernature.core.entity.animal.BisonEntity;
+import net.satisfy.wildernature.core.entity.animal.defensive.BisonEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class BisonRenderer extends MobRenderer<BisonEntity, BisonModel<BisonEntity>> {
-    private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/entity/bison.png");
+    private static final ResourceLocation DEFAULT_TEXTURE = WilderNature.identifier("textures/entity/bison.png");
+    private static final ResourceLocation SLEEPING_TEXTURE = WilderNature.identifier("textures/entity/bison_sleep.png");
 
     public BisonRenderer(EntityRendererProvider.Context context) {
         super(context, new BisonModel<>(context.bakeLayer(BisonModel.LAYER_LOCATION)), 0.9f);
@@ -19,7 +20,7 @@ public class BisonRenderer extends MobRenderer<BisonEntity, BisonModel<BisonEnti
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(BisonEntity entity) {
-        return TEXTURE;
+        return entity.isSleeping() ? SLEEPING_TEXTURE : DEFAULT_TEXTURE;
     }
 
     @Override

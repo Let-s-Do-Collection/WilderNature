@@ -28,8 +28,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
-import net.satisfy.wildernature.core.entity.animal.RaccoonEntity;
-import net.satisfy.wildernature.client.model.entity.animation.ServerAnimationDurations;
+import net.satisfy.wildernature.core.entity.animal.neutral.RaccoonEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -131,7 +130,7 @@ public class RaccoonGoals {
                 return false;
             }
 
-            return this.hasDoor && this.counter < ServerAnimationDurations.raccoon_opening_door_length;
+            return this.hasDoor && this.counter < 42.6;
         }
 
         @Override
@@ -151,7 +150,7 @@ public class RaccoonGoals {
 
             this.counter++;
 
-            if (this.counter == ServerAnimationDurations.raccoon_opening_door_tick) {
+            if (this.counter == 38) {
                 this.setOpen(true);
             }
         }

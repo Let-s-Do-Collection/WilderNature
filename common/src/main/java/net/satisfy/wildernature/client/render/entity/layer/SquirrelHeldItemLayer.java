@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.satisfy.wildernature.client.model.entity.model.SquirrelModel;
-import net.satisfy.wildernature.core.entity.animal.SquirrelEntity;
+import net.satisfy.wildernature.core.entity.animal.neutral.SquirrelEntity;
 
 @Environment(EnvType.CLIENT)
 public class SquirrelHeldItemLayer extends RenderLayer<SquirrelEntity, SquirrelModel> {

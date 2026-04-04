@@ -12,7 +12,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.core.entity.animal.HedgehogEntity;
+import net.satisfy.wildernature.core.entity.animal.passive.HedgehogEntity;
 import net.satisfy.wildernature.client.model.entity.animation.HedgehogAnimation;
 import org.jetbrains.annotations.NotNull;
 

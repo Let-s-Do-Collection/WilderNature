@@ -12,7 +12,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.core.entity.animal.DeerEntity;
+import net.satisfy.wildernature.core.entity.animal.neutral.DeerEntity;
 import net.satisfy.wildernature.client.model.entity.animation.DeerAnimation;
 import org.jetbrains.annotations.NotNull;
 

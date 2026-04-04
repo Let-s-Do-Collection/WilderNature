@@ -11,13 +11,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.model.SwiftFoxModel;
 import net.satisfy.wildernature.client.render.entity.layer.SwiftFoxHeldItemLayer;
-import net.satisfy.wildernature.core.entity.animal.SwiftFoxEntity;
+import net.satisfy.wildernature.core.entity.animal.neutral.SwiftFoxEntity;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(EnvType.CLIENT)
 public class SwiftFoxRenderer extends MobRenderer<SwiftFoxEntity, SwiftFoxModel<SwiftFoxEntity>> {
     private static final ResourceLocation DEFAULT_TEXTURE = WilderNature.identifier("textures/entity/swift_fox.png");
-    private static final ResourceLocation SLEEPING_TEXTURE = WilderNature.identifier("textures/entity/swift_fox_sleeping.png");
+    private static final ResourceLocation SLEEPING_TEXTURE = WilderNature.identifier("textures/entity/swift_fox_sleep.png");
 
     public SwiftFoxRenderer(EntityRendererProvider.Context context) {
         super(context, new SwiftFoxModel<>(context.bakeLayer(SwiftFoxModel.LAYER_LOCATION)), 0.7F);
