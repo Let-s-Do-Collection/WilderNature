@@ -71,14 +71,14 @@ public class CompletionistBannerBlock extends BaseEntityBlock {
         if (clickedFace == Direction.UP || clickedFace == Direction.DOWN) {
             return this.defaultBlockState().setValue(ROTATION, Mth.floor((double) ((180.0f + context.getRotation()) * 16.0f / 360.0f) + 0.5) & 0xF);
         } else {
-            if (this == ObjectRegistry.WOLF_TRAPPER_BANNER.get()) {
-                return ObjectRegistry.WOLF_TRAPPER_WALL_BANNER.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, clickedFace.getOpposite());
+            if (this == ObjectRegistry.FOX_TRAPPER_BANNER.get()) {
+                return ObjectRegistry.FOX_TRAPPER_WALL_BANNER.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, clickedFace.getOpposite());
             } else if (this == ObjectRegistry.BUNNY_STALKER_BANNER.get()) {
                 return ObjectRegistry.BUNNY_STALKER_WALL_BANNER.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, clickedFace.getOpposite());
             } else if (this == ObjectRegistry.COD_CATCHER_BANNER.get()) {
                 return ObjectRegistry.COD_CATCHER_WALL_BANNER.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, clickedFace.getOpposite());
             } else {
-                return ObjectRegistry.WOLF_TRAPPER_WALL_BANNER.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, clickedFace.getOpposite());
+                return ObjectRegistry.FOX_TRAPPER_WALL_BANNER.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, clickedFace.getOpposite());
             }
         }
     }
@@ -107,8 +107,8 @@ public class CompletionistBannerBlock extends BaseEntityBlock {
     }
 
     public ResourceLocation getRenderTexture() {
-        if (this == ObjectRegistry.WOLF_TRAPPER_BANNER.get()) {
-            return WilderNature.identifier("textures/banner/wolf_trapper.png");
+        if (this == ObjectRegistry.FOX_TRAPPER_BANNER.get()) {
+            return WilderNature.identifier("textures/banner/fox_trapper.png");
         } else if (this == ObjectRegistry.BUNNY_STALKER_BANNER.get()) {
             return WilderNature.identifier("textures/banner/rabbit_hunter.png");
         } else if (this == ObjectRegistry.BUNNY_STALKER_WALL_BANNER.get()) {
@@ -119,6 +119,6 @@ public class CompletionistBannerBlock extends BaseEntityBlock {
             return WilderNature.identifier("textures/banner/cod_catcher.png");
         }
 
-        return WilderNature.identifier("textures/banner/wolf_trapper.png");
+        return WilderNature.identifier("textures/banner/fox_trapper.png");
     }
 }

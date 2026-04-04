@@ -16,18 +16,17 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -35,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class MushroomColonyBlock extends BushBlock implements BonemealableBlock {
     public static final MapCodec<MushroomColonyBlock> CODEC = simpleCodec(MushroomColonyBlock::new);
-    public static final IntegerProperty AGE = BlockStateProperties.AGE_5;
+    public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 4);
     public static final IntegerProperty COLONY_AGE = AGE;
 
     private static final VoxelShape[] SHAPES = new VoxelShape[]{
@@ -43,8 +42,7 @@ public class MushroomColonyBlock extends BushBlock implements BonemealableBlock 
             Block.box(3.5D, 0.0D, 3.5D, 12.5D, 4.0D, 12.5D),
             Block.box(3.0D, 0.0D, 3.0D, 13.0D, 5.0D, 13.0D),
             Block.box(2.5D, 0.0D, 2.5D, 13.5D, 6.0D, 13.5D),
-            Block.box(2.0D, 0.0D, 2.0D, 14.0D, 7.0D, 14.0D),
-            Block.box(1.5D, 0.0D, 1.5D, 14.5D, 8.0D, 14.5D)
+            Block.box(2.0D, 0.0D, 2.0D, 14.0D, 7.0D, 14.0D)
     };
 
     public MushroomColonyBlock(BlockBehaviour.Properties properties) {
@@ -157,11 +155,11 @@ public class MushroomColonyBlock extends BushBlock implements BonemealableBlock 
     }
 
     public int getMaxAge() {
-        return 5;
+        return 4;
     }
 
     public static boolean isMature(BlockState state) {
-        return state.hasProperty(AGE) && state.getValue(AGE) >= 5;
+        return state.hasProperty(AGE) && state.getValue(AGE) >= 4;
     }
 
     public static boolean hasEdibleStage(BlockState state) {
@@ -252,7 +250,7 @@ public class MushroomColonyBlock extends BushBlock implements BonemealableBlock 
     }
 
     private void trySpread(ServerLevel level, BlockPos pos, RandomSource random) {
-        if (this.countNearbyColonies(level, pos, 3) >= 3) {
+        if (this.countNearbyColonies(level, pos) >= 3) {
             return;
         }
 
@@ -284,10 +282,10 @@ public class MushroomColonyBlock extends BushBlock implements BonemealableBlock 
         }
     }
 
-    private int countNearbyColonies(ServerLevel level, BlockPos centerPos, int radius) {
+    private int countNearbyColonies(ServerLevel level, BlockPos centerPos) {
         int colonyCount = 0;
 
-        for (BlockPos nearbyPos : BlockPos.betweenClosed(centerPos.offset(-radius, -1, -radius), centerPos.offset(radius, 1, radius))) {
+        for (BlockPos nearbyPos : BlockPos.betweenClosed(centerPos.offset(-3, -1, -3), centerPos.offset(3, 1, 3))) {
             if (level.getBlockState(nearbyPos).is(this)) {
                 colonyCount++;
             }

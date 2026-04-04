@@ -8,7 +8,7 @@ public interface RandomAction {
 
     void onStart();
 
-    default void onTick(int tick) {
+    default void onTick() {
     }
 
     void onStop();
@@ -18,10 +18,6 @@ public interface RandomAction {
     int duration();
 
     float chance();
-
-    default boolean canMove() {
-        return false;
-    }
 
     AttributeInstance getAttribute(Attribute movementSpeed);
 }

@@ -19,12 +19,13 @@ public class TagsRegistry {
     public static final TagKey<Biome> SPAWNS_BISON = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_bison"));
     public static final TagKey<Biome> SPAWNS_TURKEY = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_turkey"));
     public static final TagKey<Biome> SPAWNS_RACCOON = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_raccoon"));
-    public static final TagKey<Biome> SPAWNS_RED_WOLF = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_red_wolf"));
+    public static final TagKey<Biome> SPAWNS_SWIFT_FOX = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_swift_fox"));
     public static final TagKey<Biome> SPAWNS_SQUIRREL = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_squirrel"));
     public static final TagKey<Biome> SPAWNS_DOG = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_dog"));
     public static final TagKey<Biome> SPAWNS_MINISHEEP = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_minisheep"));
     public static final TagKey<Biome> SPAWNS_CASSOWARY = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_cassowary"));
     public static final TagKey<Biome> SPAWNS_HEDGEHOG = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_hedgehog"));
     public static final TagKey<EntityType<?>> OWL_TARGETS = TagKey.create(Registries.ENTITY_TYPE, WilderNature.identifier("owl_targets"));
+    public static final TagKey<EntityType<?>> SWIFT_FOX_TARGETS = TagKey.create(Registries.ENTITY_TYPE, WilderNature.identifier("swift_fox_targets"));
 }
 

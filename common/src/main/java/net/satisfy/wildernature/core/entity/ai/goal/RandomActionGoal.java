@@ -43,7 +43,7 @@ public class RandomActionGoal extends Goal {
     @Override
     public void tick() {
         counter++;
-        action.onTick(counter);
+        action.onTick();
     }
 
     public static final AttributeModifier modifier = new AttributeModifier(ResourceLocation.parse("random_action_do_not_move"), -1000, AttributeModifier.Operation.ADD_VALUE);

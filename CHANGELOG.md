@@ -10,6 +10,24 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Recolored Hazelnut Bushes
 * Recolored Fish Oil
 * Turkeys now lay Turkey Eggs instead of regular Eggs
+* RedWolf has been renamed to SwiftFox
+
+**SwiftFox**
+* Added player item stealing behavior with sneak and escape logic
+* SwiftFoxes can steal items directly from player hands
+* Added ground item stealing behavior
+* SwiftFoxes can hide stolen items in the world
+* Hidden items are remembered and can be retrieved later
+* Added return behavior for trusted players
+* SwiftFoxes can return stolen items when trust is gained
+* Added gift system for trusted players
+* SwiftFoxes can deliver items as gifts
+* Added trust system influencing behavior towards players
+* SwiftFoxes avoid untrusted players and react dynamically
+* Added sneak, attack, idle and sleep animation states
+* SwiftFoxes now sleep when idle for longer periods
+* Added sleeping particles above the head
+* Improved interaction flow between stealing, hiding and returning items
 
 **Owl Rework**
 * Completely overhauled owl behavior and AI

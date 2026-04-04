@@ -43,10 +43,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.satisfy.wildernature.core.entity.ai.goal.AnimationAttackGoal;
 import net.satisfy.wildernature.core.entity.ai.goal.animal.DogGoals;
-import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
-import net.satisfy.wildernature.core.registry.ObjectRegistry;
-import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
-import net.satisfy.wildernature.core.registry.SoundRegistry;
+import net.satisfy.wildernature.core.registry.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -979,7 +976,7 @@ public class DogEntity extends TamableAnimal {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(Items.COOKED_BEEF) || stack.is(Items.COOKED_CHICKEN) || stack.is(Items.COOKED_MUTTON) || stack.is(Items.COOKED_PORKCHOP) || stack.is(Items.COOKED_RABBIT);
+        return stack.is(TagsRegistry.DOG_FOOD);
     }
 
     @Override

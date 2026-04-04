@@ -12,11 +12,7 @@ public class ConfigFabric implements ConfigData {
     public boolean removeForestAnimals = true;
     public boolean addJungleAnimals = true;
     public boolean spawnHazelnutBush = true;
-    public boolean spawnTermiteMound = true;
 
-    public int PelicanSpawnWeight = 7;
-    public int PelicanMinGroupSize = 3;
-    public int PelicanMaxGroupSize = 5;
     public int DeerSpawnWeight = 13;
     public int DeerMinGroupSize = 2;
     public int DeerMaxGroupSize = 4;
@@ -26,9 +22,9 @@ public class ConfigFabric implements ConfigData {
     public int SquirrelSpawnWeight = 10;
     public int SquirrelMinGroupSize = 2;
     public int SquirrelMaxGroupSize = 2;
-    public int RedWolfSpawnWeight = 12;
-    public int RedWolfMinGroupSize = 2;
-    public int RedWolfMaxGroupSize = 4;
+    public int SwiftfoxSpawnWeight = 12;
+    public int SwiftfoxMinGroupSize = 2;
+    public int SwiftfoxMaxGroupSize = 4;
     public int OwlSpawnWeight = 12;
     public int OwlMinGroupSize = 2;
     public int OwlMaxGroupSize = 3;
@@ -47,15 +43,9 @@ public class ConfigFabric implements ConfigData {
     public int MiniSheepSpawnWeight = 13;
     public int MiniSheepMinGroupSize = 3;
     public int MiniSheepMaxGroupSize = 6;
-    public int PenguinSpawnWeight = 11;
-    public int PenguinMinGroupSize = 4;
-    public int PenguinMaxGroupSize = 6;
     public int CassowarySpawnWeight = 7;
     public int CassowaryMinGroupSize = 3;
     public int CassowaryMaxGroupSize = 5;
-    public int FlamingoSpawnWeight = 9;
-    public int FlamingoMinGroupSize = 3;
-    public int FlamingoMaxGroupSize = 6;
     public int HedgehogSpawnWeight = 13;
     public int HedgehogMinGroupSize = 1;
     public int HedgehogMaxGroupSize = 3;

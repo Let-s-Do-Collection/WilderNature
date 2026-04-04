@@ -36,7 +36,7 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
         registerEntity(EntityTypeRegistry.TURKEY.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.RACCOON.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.DEER.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        registerEntity(EntityTypeRegistry.RED_WOLF.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
+        registerEntity(EntityTypeRegistry.SWIFT_FOX.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.BOAR.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.BISON.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.DOG.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
@@ -52,7 +52,7 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_DEER, EntityTypeRegistry.DEER.get(), 12, 2, 4);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_RACCOON, EntityTypeRegistry.RACCOON.get(), 8, 2, 3);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_SQUIRREL, EntityTypeRegistry.SQUIRREL.get(), 8, 2, 2);
-            addMobSpawn(builder, biome, TagsRegistry.SPAWNS_RED_WOLF, EntityTypeRegistry.RED_WOLF.get(), 10, 3, 4);
+            addMobSpawn(builder, biome, TagsRegistry.SPAWNS_SWIFT_FOX, EntityTypeRegistry.SWIFT_FOX.get(), 10, 3, 4);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_OWL, EntityTypeRegistry.OWL.get(), 12, 3, 3);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_BOAR, EntityTypeRegistry.BOAR.get(), 14, 5, 5);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_BISON, EntityTypeRegistry.BISON.get(), 10, 3, 5);

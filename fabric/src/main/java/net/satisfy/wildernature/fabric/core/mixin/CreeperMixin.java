@@ -16,14 +16,5 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Creeper.class)
 public abstract class CreeperMixin {
-    @Shadow
-    private GoalSelector goalSelector;
 
-    @Inject(method = "registerGoals", at = @At("TAIL"))
-    private void wilderNature$addAvoidFurCloakGoal(CallbackInfo ci) {
-        Creeper creeper = (Creeper) (Object) this;
-        goalSelector.addGoal(3, new AvoidEntityGoal<>(creeper, Player.class, 6.0F, 1.0, 1.2, target ->
-                target != null && (FurCloakTrinket.isEquippedBy((Player) target) || TrinketsApi.getTrinketComponent((Player) target).map(component -> component.isEquipped(ObjectRegistry.FUR_CLOAK.get())).orElse(false))
-                        && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(target)));
-    }
 }

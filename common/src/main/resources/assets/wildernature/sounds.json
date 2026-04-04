@@ -187,33 +187,6 @@
       "wildernature:boar_ambient5"
     ]
   },
-  "red_wolf_hurt": {
-    "subtitle": "subtitles.wildernature.red_wolf_hurt",
-    "sounds": [
-      "wildernature:red_wolf_hurt1",
-      "wildernature:red_wolf_hurt2",
-      "wildernature:red_wolf_hurt3"
-    ]
-  },
-  "red_wolf_death": {
-    "subtitle": "subtitles.wildernature.red_wolf_death",
-    "sounds": [
-      "wildernature:red_wolf_death"
-    ]
-  },
-  "red_wolf_ambient": {
-    "subtitle": "subtitles.wildernature.red_wolf_ambient",
-    "sounds": [
-      "wildernature:red_wolf_ambient1",
-      "wildernature:red_wolf_ambient2"
-    ]
-  },
-  "red_wolf_aggro": {
-    "subtitle": "subtitles.wildernature.red_wolf_aggro",
-    "sounds": [
-      "wildernature:red_wolf_aggro"
-    ]
-  },
   "bison_horn": {
     "subtitle": "subtitles.wildernature.bison_horn",
     "sounds": [

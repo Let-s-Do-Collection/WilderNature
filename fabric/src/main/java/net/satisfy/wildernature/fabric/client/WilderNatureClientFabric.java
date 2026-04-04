@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.satisfy.wildernature.client.WilderNatureClient;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
+import net.satisfy.wildernature.core.util.WilderNatureUtil;
 import net.satisfy.wildernature.fabric.client.renderer.StylinPurpleHatRenderer;
 import net.satisfy.wildernature.fabric.core.player.layer.WolfFurChestplateLayer;
 import net.satisfy.wildernature.fabric.core.player.model.WolfFurChestplateModel;
@@ -38,6 +39,6 @@ public class WilderNatureClientFabric implements ClientModInitializer {
     }
 
     private void onItemTooltip(ItemStack itemStack, Item.TooltipContext var2,  TooltipFlag context, List<Component> tooltip) {
-        Truffling.addTruffledTooltip(itemStack, tooltip);
+        WilderNatureUtil.Truffling.addTruffledTooltip(itemStack, tooltip);
     }
 }

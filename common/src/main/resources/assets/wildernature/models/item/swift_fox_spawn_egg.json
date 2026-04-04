@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "wildernature:item/wolf_trapper_banner"
+    "layer0": "wildernature:item/swift_fox_spawn_egg"
   }
 }

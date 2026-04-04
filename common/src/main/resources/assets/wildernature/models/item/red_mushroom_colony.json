@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "wildernature:block/red_mushroom_colony_stage_4"
+  }
+}

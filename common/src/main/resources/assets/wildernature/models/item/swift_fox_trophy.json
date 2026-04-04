@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "wildernature:item/red_wolf_trophy"
+    "layer0": "wildernature:item/swift_fox_trophy"
   }
 }

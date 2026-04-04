@@ -12,11 +12,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class SleepingParticle extends TextureSheetParticle {
     private static final int FADE_DURATION = 30;
+    private static final float MAXIMUM_ROTATION_OFFSET = 0.22F;
 
     private final float horizontalPhase;
     private final float verticalSpeed;
     private final float horizontalAmplitude;
-    private final float rotationSpeed;
+    private final float baseRoll;
     private final float targetAlpha;
     private final float maximumScale;
     private float previousQuadSize;
@@ -31,13 +32,13 @@ public class SleepingParticle extends TextureSheetParticle {
         this.horizontalPhase = this.random.nextFloat() * Mth.TWO_PI;
         this.verticalSpeed = 0.0065F + this.random.nextFloat() * 0.0035F;
         this.horizontalAmplitude = 0.0025F + this.random.nextFloat() * 0.0025F;
-        this.rotationSpeed = (0.004F + this.random.nextFloat() * 0.01F) * (this.random.nextBoolean() ? 1.0F : -1.0F);
         this.targetAlpha = 0.75F + this.random.nextFloat() * 0.15F;
         this.maximumScale = 0.09F + this.random.nextFloat() * 0.04F;
         this.quadSize = 0.02F + this.random.nextFloat() * 0.01F;
         this.previousQuadSize = this.quadSize;
         this.currentGrowthSpeed = 0.0018F + this.random.nextFloat() * 0.0008F;
-        this.roll = this.random.nextFloat() * Mth.TWO_PI;
+        this.baseRoll = (this.random.nextFloat() - 0.5F) * 0.14F;
+        this.roll = this.baseRoll;
         this.oRoll = this.roll;
         this.alpha = 0.0F;
         this.rCol = 0.62F;
@@ -68,7 +69,8 @@ public class SleepingParticle extends TextureSheetParticle {
 
         this.move(this.xd, this.yd, this.zd);
 
-        this.roll += this.rotationSpeed;
+        float rotationOffset = Mth.sin(lifetimeProgress * Mth.TWO_PI * 0.9F) * MAXIMUM_ROTATION_OFFSET;
+        this.roll = this.baseRoll + rotationOffset;
 
         if (this.quadSize < this.maximumScale) {
             this.quadSize = Math.min(this.maximumScale, this.quadSize + this.currentGrowthSpeed);

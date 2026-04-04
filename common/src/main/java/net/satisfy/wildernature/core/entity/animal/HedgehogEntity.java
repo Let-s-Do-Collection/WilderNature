@@ -375,7 +375,7 @@ public class HedgehogEntity extends Animal implements CacheEatingMob {
                     this.cachedNearbyThreat = true;
                     return true;
                 }
-            } else if (livingEntity instanceof CassowaryEntity || livingEntity instanceof BoarEntity || livingEntity instanceof RedWolfEntity) {
+            } else if (livingEntity instanceof CassowaryEntity || livingEntity instanceof BoarEntity || livingEntity instanceof SwiftFoxEntity) {
                 this.cachedNearbyThreat = true;
                 return true;
             } else if (livingEntity instanceof BisonEntity bison) {

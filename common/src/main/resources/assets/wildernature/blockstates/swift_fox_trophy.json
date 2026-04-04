@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "wildernature:block/swift_fox_trophy",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "wildernature:block/swift_fox_trophy"
+    },
+    "facing=south": {
+      "model": "wildernature:block/swift_fox_trophy",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "wildernature:block/swift_fox_trophy",
+      "y": 270
+    }
+  }
+}

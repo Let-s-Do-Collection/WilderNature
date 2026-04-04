@@ -68,7 +68,6 @@ public class WilderNatureFabric implements ModInitializer {
         ConfigFabric config = AutoConfig.getConfigHolder(ConfigFabric.class).getConfig();
         BiomeModification world = BiomeModifications.create(WilderNature.identifier("world_features"));
         Predicate<BiomeSelectionContext> spawns_patch_hazelnut_bush = getWilderNatureSelector();
-        Predicate<BiomeSelectionContext> spawnTermiteMound = getWilderNatureSelector();
 
         if (config.spawnHazelnutBush) {
             world.add(ModificationPhase.ADDITIONS, spawns_patch_hazelnut_bush, ctx -> ctx.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.PATCH_HAZELNUT_BUSH));
@@ -86,7 +85,7 @@ public class WilderNatureFabric implements ModInitializer {
         addMobSpawn(TagsRegistry.SPAWNS_DEER, EntityTypeRegistry.DEER.get(), config.DeerSpawnWeight, config.DeerMinGroupSize, config.DeerMaxGroupSize);
         addMobSpawn(TagsRegistry.SPAWNS_RACCOON, EntityTypeRegistry.RACCOON.get(), config.RaccoonSpawnWeight, config.RaccoonMinGroupSize, config.RaccoonMaxGroupSize);
         addMobSpawn(TagsRegistry.SPAWNS_SQUIRREL, EntityTypeRegistry.SQUIRREL.get(), config.SquirrelSpawnWeight, config.SquirrelMinGroupSize, config.SquirrelMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_RED_WOLF, EntityTypeRegistry.RED_WOLF.get(), config.RedWolfSpawnWeight, config.RedWolfMinGroupSize, config.RedWolfMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_SWIFT_FOX, EntityTypeRegistry.SWIFT_FOX.get(), config.SwiftfoxSpawnWeight, config.SwiftfoxMinGroupSize, config.SwiftfoxMaxGroupSize);
         addMobSpawn(TagsRegistry.SPAWNS_OWL, EntityTypeRegistry.OWL.get(), config.OwlSpawnWeight, config.OwlMinGroupSize, config.OwlMaxGroupSize);
         addMobSpawn(TagsRegistry.SPAWNS_BOAR, EntityTypeRegistry.BOAR.get(), config.BoarSpawnWeight, config.BoarMinGroupSize, config.BoarMaxGroupSize);
         addMobSpawn(TagsRegistry.SPAWNS_BISON, EntityTypeRegistry.BISON.get(), config.BisonSpawnWeight, config.BisonMinGroupSize, config.BisonMaxGroupSize);
@@ -122,7 +121,7 @@ public class WilderNatureFabric implements ModInitializer {
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         SpawnPlacements.register(EntityTypeRegistry.DEER.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        SpawnPlacements.register(EntityTypeRegistry.RED_WOLF.get(), SpawnPlacementTypes.ON_GROUND,
+        SpawnPlacements.register(EntityTypeRegistry.SWIFT_FOX.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         SpawnPlacements.register(EntityTypeRegistry.BOAR.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);

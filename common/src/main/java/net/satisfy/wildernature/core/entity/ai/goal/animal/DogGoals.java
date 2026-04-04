@@ -160,6 +160,7 @@ public class DogGoals {
             this.alertTicks = ALERT_DURATION;
             this.dog.clearRestState();
             this.dog.setHowling(true);
+            this.dog.level().playSound(null, this.dog, SoundRegistry.DOG_AMBIENT.get(), SoundSource.NEUTRAL, 1.0F, 1.0F);
         }
 
         @Override
@@ -169,11 +170,6 @@ public class DogGoals {
             }
 
             this.dog.getLookControl().setLookAt(this.targetCreeper, 30.0F, 30.0F);
-
-            if (this.alertTicks % 20 == 0) {
-                this.dog.level().playSound(null, this.dog, SoundRegistry.DOG_AMBIENT.get(), SoundSource.NEUTRAL, 1.0F, 1.0F);
-            }
-
             this.alertTicks--;
         }
 

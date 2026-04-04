@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cross",
+  "render_type": "cutout",
+  "textures": {
+    "cross": "wildernature:block/red_mushroom_colony_stage_0"
+  }
+}
