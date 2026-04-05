@@ -1,14 +1,18 @@
 package net.satisfy.wildernature.core.block;
 
 import com.mojang.serialization.MapCodec;
+import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -28,16 +32,23 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.wildernature.core.block.entity.BountyBoardBlockEntity;
+import net.satisfy.wildernature.core.bounty.BountyBoardSavedData;
+import net.satisfy.wildernature.core.bounty.BountyDefinition;
+import net.satisfy.wildernature.core.bounty.BountyManager;
+import net.satisfy.wildernature.core.bounty.PlayerBountyData;
+import net.satisfy.wildernature.core.gui.handler.BountyBoardMenu;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.util.WilderNatureUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,13 +60,22 @@ public class BountyBoardBlock extends BaseEntityBlock {
     private static final VoxelShape SHAPE_BOTTOM_RIGHT = makeBottomRightShape();
     private static final VoxelShape SHAPE_TOP_LEFT = makeTopLeftShape();
     private static final VoxelShape SHAPE_TOP_RIGHT = makeTopRightShape();
+    public static final MapCodec<BountyBoardBlock> CODEC = simpleCodec(BountyBoardBlock::new);
+    public static final Map<Direction, Map<Part, VoxelShape>> SHAPE = Util.make(new HashMap<>(), map -> {
+        for (Direction direction : Direction.Plane.HORIZONTAL.stream().toList()) {
+            Map<Part, VoxelShape> partShapeMap = new HashMap<>();
+            partShapeMap.put(Part.BOTTOM_LEFT, WilderNatureUtil.rotateShape(Direction.NORTH, direction, SHAPE_BOTTOM_LEFT));
+            partShapeMap.put(Part.BOTTOM_RIGHT, WilderNatureUtil.rotateShape(Direction.NORTH, direction, SHAPE_BOTTOM_RIGHT));
+            partShapeMap.put(Part.TOP_LEFT, WilderNatureUtil.rotateShape(Direction.NORTH, direction, SHAPE_TOP_LEFT));
+            partShapeMap.put(Part.TOP_RIGHT, WilderNatureUtil.rotateShape(Direction.NORTH, direction, SHAPE_TOP_RIGHT));
+            map.put(direction, partShapeMap);
+        }
+    });
 
     public BountyBoardBlock(BlockBehaviour.Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(PART, Part.BOTTOM_LEFT).setValue(FACING, Direction.NORTH));
     }
-
-    public static final MapCodec<BountyBoardBlock> CODEC = simpleCodec(BountyBoardBlock::new);
 
     @Override
     protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
@@ -87,17 +107,6 @@ public class BountyBoardBlock extends BaseEntityBlock {
         shape = Shapes.join(shape, Shapes.box(0, 0, 0.4375, 1, 0.875, 0.5625), BooleanOp.OR);
         return shape;
     }
-
-    public static final Map<Direction, Map<Part, VoxelShape>> SHAPE = Util.make(new HashMap<>(), map -> {
-        for (Direction direction : Direction.Plane.HORIZONTAL.stream().toList()) {
-            Map<Part, VoxelShape> partShapeMap = new HashMap<>();
-            partShapeMap.put(Part.BOTTOM_LEFT, WilderNatureUtil.rotateShape(Direction.NORTH, direction, SHAPE_BOTTOM_LEFT));
-            partShapeMap.put(Part.BOTTOM_RIGHT, WilderNatureUtil.rotateShape(Direction.NORTH, direction, SHAPE_BOTTOM_RIGHT));
-            partShapeMap.put(Part.TOP_LEFT, WilderNatureUtil.rotateShape(Direction.NORTH, direction, SHAPE_TOP_LEFT));
-            partShapeMap.put(Part.TOP_RIGHT, WilderNatureUtil.rotateShape(Direction.NORTH, direction, SHAPE_TOP_RIGHT));
-            map.put(direction, partShapeMap);
-        }
-    });
 
     @Override
     public @NotNull RenderShape getRenderShape(BlockState blockState) {
@@ -139,10 +148,10 @@ public class BountyBoardBlock extends BaseEntityBlock {
     }
 
     private boolean canPlaceAt(Level world, BlockPos pos, Direction direction) {
-        return world.getBlockState(pos).canBeReplaced() &&
-                world.getBlockState(pos.above()).canBeReplaced() &&
-                world.getBlockState(pos.relative(direction.getClockWise())).canBeReplaced() &&
-                world.getBlockState(pos.relative(direction.getClockWise()).above()).canBeReplaced();
+        return world.getBlockState(pos).canBeReplaced()
+                && world.getBlockState(pos.above()).canBeReplaced()
+                && world.getBlockState(pos.relative(direction.getClockWise())).canBeReplaced()
+                && world.getBlockState(pos.relative(direction.getClockWise()).above()).canBeReplaced();
     }
 
     @Override
@@ -164,13 +173,13 @@ public class BountyBoardBlock extends BaseEntityBlock {
     }
 
     private void destroyAdjacentBlocks(Level world, BlockPos basePos) {
-        var blockstate = world.getBlockState(basePos);
-        var facing = blockstate.getValue(FACING);
+        BlockState blockState = world.getBlockState(basePos);
+        Direction facing = blockState.getValue(FACING);
 
         world.removeBlock(basePos, false);
         world.removeBlock(basePos.above(), false);
-        world.removeBlock(basePos.relative(facing.getClockWise(), 1), false);
-        world.removeBlock(basePos.relative(facing.getClockWise(), 1).above(), false);
+        world.removeBlock(basePos.relative(facing.getClockWise()), false);
+        world.removeBlock(basePos.relative(facing.getClockWise()).above(), false);
     }
 
     @Override
@@ -184,21 +193,53 @@ public class BountyBoardBlock extends BaseEntityBlock {
     public @NotNull BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide()) {
             BlockPos basePos = getBasePos(level.getBlockState(pos), pos);
-
             ItemStack stack = new ItemStack(ObjectRegistry.BOUNTY_BOARD.get());
             level.addFreshEntity(new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), stack));
-
             destroyAdjacentBlocks(level, basePos);
         }
         return super.playerWillDestroy(level, pos, state, player);
     }
 
+    @Override
+    protected @NotNull InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+        if (world.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return InteractionResult.CONSUME;
+        }
+
+        BlockPos basePos = getBasePos(state, pos);
+        BlockEntity blockEntity = world.getBlockEntity(basePos);
+
+        if (!(blockEntity instanceof MenuProvider menuProvider)) {
+            return InteractionResult.PASS;
+        }
+
+        MenuRegistry.openExtendedMenu(serverPlayer, menuProvider, buffer -> {
+            BountyBoardSavedData savedData = BountyBoardSavedData.get(serverPlayer.serverLevel());
+            PlayerBountyData playerBountyData = savedData.getPlayerBountyData(serverPlayer.getUUID());
+
+            BountyBoardMenu.writeBounties(
+                    buffer,
+                    savedData.getDailyBounties(),
+                    new ArrayList<>(playerBountyData.getAbandonedBounties())
+            );
+
+            buffer.writeBlockPos(basePos);
+        });
+
+        return InteractionResult.CONSUME;
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        if (blockPos != getBasePos(blockState, blockPos)) {
+        if (!blockPos.equals(getBasePos(blockState, blockPos))) {
             return null;
         }
+
         return new BountyBoardBlockEntity(blockPos, blockState);
     }
 
@@ -228,7 +269,5 @@ public class BountyBoardBlock extends BaseEntityBlock {
     @Override
     public void appendHoverText(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Component> list, TooltipFlag tooltipFlag) {
         list.add(Component.translatable("tooltip.wildernature.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
-        list.add(Component.empty());
-        list.add(Component.translatable("tooltip.wildernature.bountyboard").withStyle(ChatFormatting.GRAY));
     }
 }

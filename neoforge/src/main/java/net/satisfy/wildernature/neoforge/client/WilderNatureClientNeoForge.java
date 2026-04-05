@@ -10,12 +10,15 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.WilderNatureClient;
+import net.satisfy.wildernature.client.gui.screen.BountyBoardScreen;
 import net.satisfy.wildernature.client.particle.*;
+import net.satisfy.wildernature.core.registry.MenuTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import net.satisfy.wildernature.neoforge.client.extensions.WilderNatureHatExtensions;
@@ -35,6 +38,11 @@ public class WilderNatureClientNeoForge {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         WilderNatureClient.onInitializeClient();
+    }
+
+    @SubscribeEvent
+    public static void clientSetup(RegisterMenuScreensEvent event) {
+        event.register(MenuTypeRegistry.BOUNTY_BOARD_MENU.get(), BountyBoardScreen::new);
     }
 
     @SubscribeEvent

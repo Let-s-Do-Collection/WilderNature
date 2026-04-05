@@ -157,6 +157,19 @@
   "item.wildernature.turkey_egg": "Turkey Egg",
   "block.wildernature.truffle_bag": "Truffle Bag",
   "block.wildernature.red_mushroom_colony": "Red Mushroom Colony",
-  "block.wildernature.brown_mushroom_colony": "Brown Mushroom Colony"
-
+  "block.wildernature.brown_mushroom_colony": "Brown Mushroom Colony",
+  "gui.wildernature.bounty_board.title": "Bounty Board",
+  "gui.wildernature.bounty_board.hunt": "Hunt %s",
+  "gui.wildernature.bounty_board.objective": "Hunt %s %s",
+  "gui.wildernature.bounty_board.progress": "Progress:",
+  "gui.wildernature.bounty_board.reward": "Reward:",
+  "gui.wildernature.bounty_board.accept": "Accept",
+  "gui.wildernature.bounty_board.abandon": "Abandon",
+  "gui.wildernature.bounty_board.claim": "Claim",
+  "gui.wildernature.bounty_board.title.hunt": "Hunt %s",
+  "gui.wildernature.bounty_board.title.hunter": "%s Hunter",
+  "gui.wildernature.bounty_board.title.trapper": "%s Trapper",
+  "gui.wildernature.bounty_board.title.cull": "Cull %s",
+  "gui.wildernature.bounty_board.title.slash": "Track %s",
+  "gui.wildernature.bounty_board.experience": "Experience"
 }

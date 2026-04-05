@@ -6,6 +6,7 @@ import dev.architectury.registry.client.particle.ParticleProviderRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
 import dev.architectury.registry.client.rendering.RenderTypeRegistry;
+import dev.architectury.registry.menu.MenuRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -14,6 +15,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.GrassColor;
+import net.satisfy.wildernature.client.gui.screen.BountyBoardScreen;
 import net.satisfy.wildernature.client.model.armor.StylinPurpleHatModel;
 import net.satisfy.wildernature.client.model.block.BountyBoardModel;
 import net.satisfy.wildernature.client.model.block.HollowCacheModel;
@@ -46,6 +48,7 @@ import net.satisfy.wildernature.client.render.entity.SwiftFoxRenderer;
 import net.satisfy.wildernature.client.render.entity.SquirrelRenderer;
 import net.satisfy.wildernature.client.render.entity.TurkeyRenderer;
 import net.satisfy.wildernature.client.util.WilderNatureClientUtil;
+import net.satisfy.wildernature.core.registry.MenuTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 
@@ -84,6 +87,8 @@ public class WilderNatureClient {
         ParticleProviderRegistry.register(ParticleTypeRegistry.CACHE_OPEN.get(), CacheLeafParticle.OpenProvider::new);
         ParticleProviderRegistry.register(ParticleTypeRegistry.CACHE_CLOSE.get(), CacheLeafParticle.CloseProvider::new);
         ParticleProviderRegistry.register(ParticleTypeRegistry.SHEARED_WOOL.get(), WoolFluffParticle.Provider::new);
+
+        MenuRegistry.registerScreenFactory(MenuTypeRegistry.BOUNTY_BOARD_MENU.get(), BountyBoardScreen::new);
 
         makeHorn(ObjectRegistry.BISON_HORN.get());
     }

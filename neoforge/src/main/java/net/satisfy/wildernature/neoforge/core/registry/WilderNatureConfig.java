@@ -25,9 +25,9 @@ public class WilderNatureConfig {
     public static final ModConfigSpec.IntValue SQUIRREL_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue SQUIRREL_MAX_GROUP_SIZE;
 
-    public static final ModConfigSpec.IntValue RED_WOLF_SPAWN_WEIGHT;
-    public static final ModConfigSpec.IntValue RED_WOLF_MIN_GROUP_SIZE;
-    public static final ModConfigSpec.IntValue RED_WOLF_MAX_GROUP_SIZE;
+    public static final ModConfigSpec.IntValue SWIFT_FOX_SPAWN_WEIGHT;
+    public static final ModConfigSpec.IntValue SWIFT_FOX_MIN_GROUP_SIZE;
+    public static final ModConfigSpec.IntValue SWIFT_FOX_MAX_GROUP_SIZE;
 
     public static final ModConfigSpec.IntValue OWL_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue OWL_MIN_GROUP_SIZE;
@@ -138,9 +138,9 @@ public class WilderNatureConfig {
         SQUIRREL_MIN_GROUP_SIZE = builder.defineInRange("squirrelMinGroupSize", 2, 1, 10);
         SQUIRREL_MAX_GROUP_SIZE = builder.defineInRange("squirrelMaxGroupSize", 2, 1, 10);
 
-        RED_WOLF_SPAWN_WEIGHT = builder.defineInRange("redWolfSpawnWeight", 10, 0, 1000);
-        RED_WOLF_MIN_GROUP_SIZE = builder.defineInRange("redWolfMinGroupSize", 2, 1, 10);
-        RED_WOLF_MAX_GROUP_SIZE = builder.defineInRange("redWolfMaxGroupSize", 4, 1, 10);
+        SWIFT_FOX_SPAWN_WEIGHT = builder.defineInRange("redWolfSpawnWeight", 10, 0, 1000);
+        SWIFT_FOX_MIN_GROUP_SIZE = builder.defineInRange("redWolfMinGroupSize", 2, 1, 10);
+        SWIFT_FOX_MAX_GROUP_SIZE = builder.defineInRange("redWolfMaxGroupSize", 4, 1, 10);
 
         OWL_SPAWN_WEIGHT = builder.defineInRange("owlSpawnWeight", 12, 0, 1000);
         OWL_MIN_GROUP_SIZE = builder.defineInRange("owlMinGroupSize", 3, 1, 10);
@@ -207,9 +207,9 @@ public class WilderNatureConfig {
         squirrelMinGroupSize = SQUIRREL_MIN_GROUP_SIZE.get();
         squirrelMaxGroupSize = SQUIRREL_MAX_GROUP_SIZE.get();
 
-        redWolfSpawnWeight = RED_WOLF_SPAWN_WEIGHT.get();
-        redWolfMinGroupSize = RED_WOLF_MIN_GROUP_SIZE.get();
-        redWolfMaxGroupSize = RED_WOLF_MAX_GROUP_SIZE.get();
+        redWolfSpawnWeight = SWIFT_FOX_SPAWN_WEIGHT.get();
+        redWolfMinGroupSize = SWIFT_FOX_MIN_GROUP_SIZE.get();
+        redWolfMaxGroupSize = SWIFT_FOX_MAX_GROUP_SIZE.get();
 
         owlSpawnWeight = OWL_SPAWN_WEIGHT.get();
         owlMinGroupSize = OWL_MIN_GROUP_SIZE.get();

@@ -29,6 +29,30 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Added sleeping particles above the head
 * Improved interaction flow between stealing, hiding and returning items
 
+**Cassowary Rework**
+* Added territorial behavior with alert, threatening and attack phases
+* Cassowaries now react more aggressively when babies are nearby
+* Added warning phase before attacking players
+* Improved targeting and chase behavior
+* Added alert particles and threatening sounds
+* Cassowaries now maintain visual focus on threats during escalation
+* Added attack effect slowing players briefly on hit
+* Improved overall threat logic and state transitions
+* Cassowaries are now classified as neutral mobs
+* They only attack when provoked or when defending their territory
+* Improved escalation flow to make warning behavior more readable
+
+**Bison Rework**
+* Improved herd behavior and group reactions
+* Added coordinated panic behavior across nearby Bisons
+* Panic can now spread naturally through the herd
+* Added rolling behavior
+* Rolling Bisons can damage nearby entities
+* Rolling can affect the terrain around them
+* Grass can be trampled into Dirt and Coarse Dirt during rolls
+* Added block and dust particles while rolling
+* Improved threat response and movement during panic states
+
 **Owl Rework**
 * Completely overhauled owl behavior and AI
 * Owls now look for natural perches before going to sleep

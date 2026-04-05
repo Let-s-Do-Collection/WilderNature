@@ -1,0 +1,19 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:pig",
+    "minecraft:sheep",
+    "minecraft:cow",
+    "minecraft:chicken",
+    "minecraft:rabbit",
+    "minecraft:mooshroom",
+    "wildernature:boar",
+    "wildernature:deer",
+    "wildernature:hedgehog",
+    "wildernature:minisheep",
+    "wildernature:raccoon",
+    "wildernature:swift_fox",
+    "wildernature:squirrel",
+    "wildernature:turkey"
+  ]
+}
