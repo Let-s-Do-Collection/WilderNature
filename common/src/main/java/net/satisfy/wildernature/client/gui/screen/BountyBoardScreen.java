@@ -66,10 +66,23 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
     private static final int ABANDON_BUTTON_HOVERED_V = 74;
     private static final int CONTRACT_SLOT_X = 232;
     private static final int CONTRACT_SLOT_Y = 50;
+    private static final int LOCK_ICON_U = 277;
+    private static final int LOCK_ICON_V = 88;
+    private static final int LOCK_ICON_WIDTH = 10;
+    private static final int LOCK_ICON_HEIGHT = 14;
+    private static final int UNLOCK_ICON_U = 287;
+    private static final int UNLOCK_ICON_V = 88;
+    private static final int UNLOCK_ICON_SIZE = 14;
+    private static final int UNLOCK_ANIMATION_DURATION = 18;
 
     private int startIndex;
     private double scrollOff;
     private boolean isDragging;
+    private int animationTickCounter;
+    private int unlockAnimationTicks;
+    private boolean hadTurnInContractLastTick;
+    private boolean hadActiveBountyLastTick;
+    private boolean hadCompletedActiveBountyLastTick;
 
     public BountyBoardScreen(BountyBoardMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -86,7 +99,9 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
     @Override
     public void containerTick() {
         super.containerTick();
+        this.animationTickCounter++;
         this.clampScrollState();
+        this.updateUnlockAnimationState();
     }
 
     @Override
@@ -114,11 +129,18 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         int contractSlotX = this.leftPos + CONTRACT_SLOT_X;
         int contractSlotY = this.topPos + CONTRACT_SLOT_Y;
 
-        if (mouseX >= contractSlotX && mouseX < contractSlotX + 16 && mouseY >= contractSlotY && mouseY < contractSlotY + 16 && this.menu.hasContractPreviewItem()) {
-            Optional<BountyDefinition> targetBounty = this.menu.hasActiveBounty() ? this.menu.getActiveBounty() : this.menu.getSelectedBounty();
-            if (targetBounty.isPresent() && !this.menu.isBountyAbandoned(targetBounty.get().id())) {
+        if (mouseX >= contractSlotX && mouseX < contractSlotX + 16 && mouseY >= contractSlotY && mouseY < contractSlotY + 16) {
+            if (this.menu.hasRestoreContractAvailable()) {
                 BountyBoardNetworking.sendAccept();
                 return true;
+            }
+
+            if (this.menu.hasContractPreviewItem()) {
+                Optional<BountyDefinition> targetBounty = this.menu.hasActiveBounty() ? this.menu.getActiveBounty() : this.menu.getSelectedBounty();
+                if (targetBounty.isPresent() && !this.menu.isBountyAbandoned(targetBounty.get().id())) {
+                    BountyBoardNetworking.sendAccept();
+                    return true;
+                }
             }
         }
 
@@ -222,6 +244,7 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         this.renderScroller(guiGraphics);
         this.renderTargetEntity(guiGraphics, mouseX, mouseY);
         this.renderDetailRewardIcons(guiGraphics);
+        this.renderRestoreContractEffect(guiGraphics);
         this.renderAbandonButton(guiGraphics, mouseX, mouseY);
     }
 
@@ -300,7 +323,7 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             return;
         }
 
-        boolean locked = this.menu.hasActiveBounty() && !this.menu.hasCompletedActiveBounty();
+        boolean locked = this.menu.hasActiveBounty();
         Component activeBountyName = this.getActiveBountyDisplayName();
 
         int detailRewardX = this.leftPos + REWARD_ITEM_X;
@@ -356,8 +379,7 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
     private boolean isHoveringRestoreContractSlot(int mouseX, int mouseY) {
         int contractSlotX = this.leftPos + CONTRACT_SLOT_X;
         int contractSlotY = this.topPos + CONTRACT_SLOT_Y;
-        return this.menu.hasActiveBounty()
-                && this.menu.hasContractPreviewItem()
+        return this.menu.hasRestoreContractAvailable()
                 && mouseX >= contractSlotX && mouseX < contractSlotX + 16
                 && mouseY >= contractSlotY && mouseY < contractSlotY + 16;
     }
@@ -512,8 +534,6 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             return;
         }
 
-        boolean locked = this.menu.hasActiveBounty() && !this.menu.hasCompletedActiveBounty();
-
         ItemStack rewardPreviewStack = this.getRewardPreviewIcon(detailBounty.get());
         int rewardPreviewCount = detailBounty.get().reward().previewCount();
 
@@ -532,13 +552,116 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             guiGraphics.renderItemDecorations(this.font, experienceStack, this.leftPos + REWARD_XP_ICON_X, this.topPos + REWARD_XP_ICON_Y);
         }
 
-        if (locked) {
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(0.0F, 0.0F, 300.0F);
-            guiGraphics.blit(TEXTURE, this.leftPos + REWARD_ITEM_X + 3, this.topPos + REWARD_ITEM_Y + 1, 277, 88, 10, 14, TEXTURE_WIDTH, TEXTURE_HEIGHT);
-            guiGraphics.blit(TEXTURE, this.leftPos + REWARD_XP_ICON_X + 3, this.topPos + REWARD_XP_ICON_Y + 1, 277, 88, 10, 14, TEXTURE_WIDTH, TEXTURE_HEIGHT);
-            guiGraphics.pose().popPose();
+        if (this.menu.hasActiveBounty()) {
+            this.renderLockOverlay(guiGraphics, this.leftPos + REWARD_ITEM_X, this.topPos + REWARD_ITEM_Y);
+            this.renderLockOverlay(guiGraphics, this.leftPos + REWARD_XP_ICON_X, this.topPos + REWARD_XP_ICON_Y);
+            return;
         }
+
+        if (this.unlockAnimationTicks > 0) {
+            this.renderUnlockEffect(guiGraphics, this.leftPos + REWARD_ITEM_X, this.topPos + REWARD_ITEM_Y);
+            this.renderUnlockEffect(guiGraphics, this.leftPos + REWARD_XP_ICON_X, this.topPos + REWARD_XP_ICON_Y);
+        }
+    }
+
+    private void renderRestoreContractEffect(GuiGraphics guiGraphics) {
+        if (!this.menu.hasRestoreContractAvailable()) {
+            return;
+        }
+
+        int slotX = this.leftPos + CONTRACT_SLOT_X;
+        int slotY = this.topPos + CONTRACT_SLOT_Y;
+        float alpha = 0.75F + 0.25F * (0.5F + 0.5F * Mth.sin(this.animationTickCounter * 0.22F));
+        float progress = 0.5F + 0.5F * Mth.sin(this.animationTickCounter * 0.14F);
+
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0.0F, 0.0F, 420.0F);
+        this.renderRestoreSpark(guiGraphics, slotX + 8, slotY - 2, alpha, progress);
+        this.renderRestoreSpark(guiGraphics, slotX + 18, slotY + 7, alpha, progress);
+        this.renderRestoreSpark(guiGraphics, slotX + 8, slotY + 18, alpha, progress);
+        this.renderRestoreSpark(guiGraphics, slotX - 2, slotY + 8, alpha, progress);
+        guiGraphics.pose().popPose();
+    }
+
+    private void renderRestoreSpark(GuiGraphics guiGraphics, int centerX, int centerY, float alpha, float progress) {
+        int primaryColor = ((int) (alpha * 255.0F) << 24) | 0xE6D38A;
+        int secondaryColor = ((int) (alpha * 220.0F) << 24) | 0xFFF7CC;
+        int arm = 1 + (int) (progress * 2.0F);
+
+        guiGraphics.fill(centerX, centerY - arm, centerX + 1, centerY + arm + 1, primaryColor);
+        guiGraphics.fill(centerX - arm, centerY, centerX + arm + 1, centerY + 1, primaryColor);
+        guiGraphics.fill(centerX, centerY, centerX + 1, centerY + 1, secondaryColor);
+    }
+
+    private void renderLockOverlay(GuiGraphics guiGraphics, int slotX, int slotY) {
+        float scale = 0.94F + 0.12F * (0.5F + 0.5F * Mth.sin(this.animationTickCounter * 0.18F));
+        float alpha = 0.78F + 0.22F * (0.5F + 0.5F * Mth.sin(this.animationTickCounter * 0.18F));
+        float iconCenterX = slotX + 8.0F;
+        float iconCenterY = slotY + 8.0F;
+
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(iconCenterX, iconCenterY, 300.0F);
+        guiGraphics.pose().scale(scale, scale, 1.0F);
+        guiGraphics.pose().translate(-5.0F, -7.0F, 0.0F);
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, alpha);
+        guiGraphics.blit(TEXTURE, 0, 0, LOCK_ICON_U, LOCK_ICON_V, LOCK_ICON_WIDTH, LOCK_ICON_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        guiGraphics.pose().popPose();
+    }
+
+    private void renderUnlockEffect(GuiGraphics guiGraphics, int slotX, int slotY) {
+        float progress = 1.0F - (float) this.unlockAnimationTicks / (float) UNLOCK_ANIMATION_DURATION;
+        float alpha = 1.0F - progress;
+        int iconX = slotX + 1;
+        int iconY = slotY + 1;
+
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0.0F, 0.0F, 400.0F);
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, alpha);
+        guiGraphics.blit(TEXTURE, iconX, iconY, UNLOCK_ICON_U, UNLOCK_ICON_V, UNLOCK_ICON_SIZE, UNLOCK_ICON_SIZE, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        this.renderSpark(guiGraphics, slotX + 8, slotY + 8, progress, alpha);
+        guiGraphics.pose().popPose();
+    }
+
+    private void renderSpark(GuiGraphics guiGraphics, int centerX, int centerY, float progress, float alpha) {
+        int primaryColor = ((int) (alpha * 255.0F) << 24) | 0xF4E6A1;
+        int secondaryColor = ((int) (alpha * 220.0F) << 24) | 0xFFFDF0;
+        int distance = 2 + (int) (progress * 7.0F);
+
+        this.renderSparkleShape(guiGraphics, centerX, centerY - distance, primaryColor, secondaryColor);
+        this.renderSparkleShape(guiGraphics, centerX + distance, centerY, primaryColor, secondaryColor);
+        this.renderSparkleShape(guiGraphics, centerX, centerY + distance, primaryColor, secondaryColor);
+        this.renderSparkleShape(guiGraphics, centerX - distance, centerY, primaryColor, secondaryColor);
+
+        int diagonalDistance = 1 + (int) (progress * 5.0F);
+        this.renderSparkleShape(guiGraphics, centerX + diagonalDistance, centerY - diagonalDistance, primaryColor, secondaryColor);
+        this.renderSparkleShape(guiGraphics, centerX + diagonalDistance, centerY + diagonalDistance, primaryColor, secondaryColor);
+        this.renderSparkleShape(guiGraphics, centerX - diagonalDistance, centerY + diagonalDistance, primaryColor, secondaryColor);
+        this.renderSparkleShape(guiGraphics, centerX - diagonalDistance, centerY - diagonalDistance, primaryColor, secondaryColor);
+    }
+
+    private void renderSparkleShape(GuiGraphics guiGraphics, int centerX, int centerY, int primaryColor, int secondaryColor) {
+        guiGraphics.fill(centerX, centerY - 1, centerX + 1, centerY + 2, primaryColor);
+        guiGraphics.fill(centerX - 1, centerY, centerX + 2, centerY + 1, primaryColor);
+        guiGraphics.fill(centerX, centerY, centerX + 1, centerY + 1, secondaryColor);
+    }
+
+    private void updateUnlockAnimationState() {
+        boolean hasTurnInContract = this.menu.hasActiveBounty() && this.menu.hasCompletedActiveBounty() && this.menu.getSlot(0).hasItem();
+        boolean justFinishedTurnIn = !this.menu.hasActiveBounty() && this.hadActiveBountyLastTick && this.hadCompletedActiveBountyLastTick;
+
+        if ((hasTurnInContract && !this.hadTurnInContractLastTick) || justFinishedTurnIn) {
+            this.unlockAnimationTicks = UNLOCK_ANIMATION_DURATION;
+        }
+
+        if (this.unlockAnimationTicks > 0) {
+            this.unlockAnimationTicks--;
+        }
+
+        this.hadTurnInContractLastTick = hasTurnInContract;
+        this.hadActiveBountyLastTick = this.menu.hasActiveBounty();
+        this.hadCompletedActiveBountyLastTick = this.menu.hasCompletedActiveBounty();
     }
 
     private ItemStack getContractIcon(BountyDefinition bountyDefinition) {

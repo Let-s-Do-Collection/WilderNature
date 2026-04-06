@@ -45,6 +45,9 @@ public class SoundRegistry {
     public static final RegistrySupplier<SoundEvent> DOG_DEATH = create("dog_death");
     public static final RegistrySupplier<SoundEvent> BLUNDERBUSS_SHOOT = create("blunderbuss_shoot");
     public static final RegistrySupplier<SoundEvent> BLUNDERBUSS_LOAD = create("blunderbuss_load");
+    public static final RegistrySupplier<SoundEvent> BOUNTY_ACCEPTED = create("bounty_accepted");
+    public static final RegistrySupplier<SoundEvent> BOUNTY_CANCELED = create("bounty_canceled");
+    public static final RegistrySupplier<SoundEvent> BOUNTY_COMPLETED = create("bounty_completed");
 
     private static RegistrySupplier<SoundEvent> create(String name) {
         final ResourceLocation id = WilderNature.identifier(name);

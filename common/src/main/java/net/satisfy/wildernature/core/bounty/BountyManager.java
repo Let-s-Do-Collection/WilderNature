@@ -143,6 +143,7 @@ public final class BountyManager {
         }
 
         removeContractItem(serverPlayer, activeBounty.id());
+        playerBountyData.getAbandonedBounties().add(activeBounty.id());
         playerBountyData.clearActiveBounty();
         savePlayerBountyData(serverPlayer, playerBountyData);
         return true;

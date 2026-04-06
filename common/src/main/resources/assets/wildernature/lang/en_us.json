@@ -161,8 +161,8 @@
   "gui.wildernature.bounty_board.title": "Bounty Board",
   "gui.wildernature.bounty_board.hunt": "Hunt %s",
   "gui.wildernature.bounty_board.objective": "Hunt %s %s",
-  "gui.wildernature.bounty_board.progress": "Progress:",
-  "gui.wildernature.bounty_board.reward": "Reward:",
+  "gui.wildernature.bounty_board.progress": "Progress",
+  "gui.wildernature.bounty_board.reward": "Reward",
   "gui.wildernature.bounty_board.accept": "Accept",
   "gui.wildernature.bounty_board.abandon": "Abandon",
   "gui.wildernature.bounty_board.claim": "Claim",
@@ -174,8 +174,11 @@
   "gui.wildernature.bounty_board.experience": "Experience",
   "gui.wildernature.bounty_board.contract_restore": "Restore contract.",
   "gui.wildernature.bounty_board.contract_restore_desc": "Removes and replaces the current contract.",
-  "gui.wildernature.bounty_board.reward_locked": "This reward is still locked.",
+  "gui.wildernature.bounty_board.reward_locked": "This reward is locked.",
   "gui.wildernature.bounty_board.reward_locked_desc": "Complete the bounty for %s to claim it.",
   "item.wildernature.contract.completed": "Completed",
-  "item.wildernature.contract.turn_in": "Return this contract to a Bounty Board to claim the reward."
+  "item.wildernature.contract.turn_in": "Return this contract to a Bounty Board to claim the reward.",
+  "subtitles.wildernature.bounty_accepted": "Bounty accepted",
+  "subtitles.wildernature.bounty_canceled": "Bounty canceled",
+  "subtitles.wildernature.bounty_completed": "Bounty completed"
 }

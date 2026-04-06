@@ -308,5 +308,24 @@
     "sounds": [
       "wildernature:dog_ambient"
     ]
+  },
+  "bounty_accepted": {
+    "subtitle": "subtitles.wildernature.bounty_accepted",
+    "sounds": [
+      "wildernature:bounty_accepted"
+
+    ]
+  },
+  "bounty_canceled": {
+    "subtitle": "subtitles.wildernature.bounty_canceled",
+    "sounds": [
+      "wildernature:bounty_canceled"
+    ]
+  },
+  "bounty_completed": {
+    "subtitle": "subtitles.wildernature.bounty_completed",
+    "sounds": [
+      "wildernature:bounty_completed"
+    ]
   }
 }
