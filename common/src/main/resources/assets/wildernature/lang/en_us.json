@@ -173,5 +173,9 @@
   "gui.wildernature.bounty_board.title.slash": "Track %s",
   "gui.wildernature.bounty_board.experience": "Experience",
   "gui.wildernature.bounty_board.contract_restore": "Restore contract.",
-  "gui.wildernature.bounty_board.contract_restore_desc": "Removes and replaces the current contract."
+  "gui.wildernature.bounty_board.contract_restore_desc": "Removes and replaces the current contract.",
+  "gui.wildernature.bounty_board.reward_locked": "This reward is still locked.",
+  "gui.wildernature.bounty_board.reward_locked_desc": "Complete the bounty for %s to claim it.",
+  "item.wildernature.contract.completed": "Completed",
+  "item.wildernature.contract.turn_in": "Return this contract to a Bounty Board to claim the reward."
 }

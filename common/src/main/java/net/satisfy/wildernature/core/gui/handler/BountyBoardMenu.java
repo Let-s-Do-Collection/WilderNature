@@ -42,9 +42,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         super(MenuTypeRegistry.BOUNTY_BOARD_MENU.get(), containerId);
         this.playerInventory = playerInventory;
         this.bounties = this.resolveBounties();
-        if (!this.bounties.isEmpty()) {
-            this.selectedBountyIndex = 0;
-        }
+        this.selectedBountyIndex = this.findFirstSelectableBountyIndex();
         this.addContractPreviewSlot();
         this.addPlayerInventorySlots(playerInventory);
         this.addDataSlot(this.hasActiveBounty);
@@ -60,9 +58,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         super(MenuTypeRegistry.BOUNTY_BOARD_MENU.get(), containerId);
         this.playerInventory = playerInventory;
         this.bounties = this.readBounties(buffer);
-        if (!this.bounties.isEmpty()) {
-            this.selectedBountyIndex = 0;
-        }
+        this.selectedBountyIndex = this.findFirstSelectableBountyIndex();
         this.addContractPreviewSlot();
         this.addPlayerInventorySlots(playerInventory);
         this.addDataSlot(this.hasActiveBounty);
@@ -72,6 +68,16 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         this.addDataSlot(this.activeCompleted);
         this.updateActiveData();
         this.updateContractPreviewSlot();
+    }
+
+    private int findFirstSelectableBountyIndex() {
+        for (int index = 0; index < this.bounties.size(); index++) {
+            if (!this.isBountyAbandoned(this.bounties.get(index).id())) {
+                return index;
+            }
+        }
+
+        return this.bounties.isEmpty() ? -1 : 0;
     }
 
     private void addPlayerInventorySlots(Inventory playerInventory) {
@@ -99,14 +105,70 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         this.addSlot(new Slot(this.contractPreviewContainer, 0, 232, 50) {
             @Override
             public boolean mayPlace(@NotNull ItemStack itemStack) {
-                return false;
+                return BountyBoardMenu.this.canTurnInActiveContract(itemStack);
             }
 
             @Override
             public boolean mayPickup(Player player) {
                 return false;
             }
+
+            @Override
+            public void setChanged() {
+                super.setChanged();
+
+                if (!(BountyBoardMenu.this.playerInventory.player instanceof ServerPlayer serverPlayer)) {
+                    return;
+                }
+
+                ItemStack contractStack = this.getItem();
+                if (!BountyBoardMenu.this.canTurnInActiveContract(contractStack)) {
+                    return;
+                }
+
+                boolean claimed = BountyManager.claimActiveBounty(serverPlayer);
+                if (!claimed) {
+                    return;
+                }
+
+                this.container.setItem(0, ItemStack.EMPTY);
+                BountyBoardMenu.this.updateActiveData();
+                BountyBoardMenu.this.updateContractPreviewSlot();
+                BountyBoardNetworking.sendSync(
+                        serverPlayer,
+                        BountyBoardMenu.this.selectedBountyIndex,
+                        BountyBoardMenu.this.hasActiveBounty(),
+                        BountyBoardMenu.this.getActiveBounty().map(activeBounty -> BountyBoardMenu.this.bounties.indexOf(activeBounty)).orElse(-1),
+                        BountyBoardMenu.this.getActiveProgress(),
+                        BountyBoardMenu.this.getActiveRequiredKills(),
+                        BountyBoardMenu.this.hasCompletedActiveBounty(),
+                        new ArrayList<>(BountyBoardMenu.this.abandonedBountyIds)
+                );
+            }
         });
+    }
+
+    private boolean canTurnInActiveContract(ItemStack itemStack) {
+        if (!this.hasCompletedActiveBounty()) {
+            return false;
+        }
+
+        Optional<BountyDefinition> activeBounty = this.getActiveBounty();
+        if (activeBounty.isEmpty()) {
+            return false;
+        }
+
+        CustomData customData = itemStack.get(DataComponents.CUSTOM_DATA);
+        if (customData == null) {
+            return false;
+        }
+
+        CompoundTag customDataTag = customData.copyTag();
+        if (!customDataTag.hasUUID("BountyId")) {
+            return false;
+        }
+
+        return customDataTag.getUUID("BountyId").equals(activeBounty.get().id());
     }
 
     private List<BountyDefinition> resolveBounties() {
@@ -285,6 +347,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         BountyManager.savePlayerBountyData(serverPlayer, playerBountyData);
 
         this.syncAbandonedBountyIds();
+        this.selectedBountyIndex = this.findFirstSelectableBountyIndex();
         this.updateActiveData();
         this.updateContractPreviewSlot();
     }
@@ -296,6 +359,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
 
         boolean claimed = BountyManager.claimActiveBounty(serverPlayer);
         if (claimed) {
+            this.selectedBountyIndex = this.findFirstSelectableBountyIndex();
             this.updateActiveData();
             this.updateContractPreviewSlot();
             BountyBoardNetworking.sendSync(
@@ -322,35 +386,35 @@ public class BountyBoardMenu extends AbstractContainerMenu {
     private void updateActiveData() {
         if (this.playerInventory.player instanceof ServerPlayer) {
             this.syncAbandonedBountyIds();
-        }
+            PlayerBountyData playerBountyData = this.getPlayerBountyData();
 
-        PlayerBountyData playerBountyData = this.getPlayerBountyData();
-
-        if (!playerBountyData.hasActiveBounty() || playerBountyData.getActiveBounty() == null) {
-            this.hasActiveBounty.set(0);
-            this.activeBountyIndex.set(-1);
-            this.activeProgress.set(0);
-            this.activeRequiredKills.set(0);
-            this.activeCompleted.set(0);
-            this.updateContractPreviewSlot();
-            return;
-        }
-
-        BountyDefinition activeBounty = playerBountyData.getActiveBounty();
-        int resolvedActiveBountyIndex = -1;
-
-        for (int index = 0; index < this.bounties.size(); index++) {
-            if (this.bounties.get(index).id().equals(activeBounty.id())) {
-                resolvedActiveBountyIndex = index;
-                break;
+            if (!playerBountyData.hasActiveBounty() || playerBountyData.getActiveBounty() == null) {
+                this.hasActiveBounty.set(0);
+                this.activeBountyIndex.set(-1);
+                this.activeProgress.set(0);
+                this.activeRequiredKills.set(0);
+                this.activeCompleted.set(0);
+                this.updateContractPreviewSlot();
+                return;
             }
+
+            BountyDefinition activeBounty = playerBountyData.getActiveBounty();
+            int resolvedActiveBountyIndex = -1;
+
+            for (int index = 0; index < this.bounties.size(); index++) {
+                if (this.bounties.get(index).id().equals(activeBounty.id())) {
+                    resolvedActiveBountyIndex = index;
+                    break;
+                }
+            }
+
+            this.hasActiveBounty.set(1);
+            this.activeBountyIndex.set(resolvedActiveBountyIndex);
+            this.activeProgress.set(playerBountyData.getCurrentProgress());
+            this.activeRequiredKills.set(activeBounty.requiredKills());
+            this.activeCompleted.set(playerBountyData.isCompleted() ? 1 : 0);
         }
 
-        this.hasActiveBounty.set(1);
-        this.activeBountyIndex.set(resolvedActiveBountyIndex);
-        this.activeProgress.set(playerBountyData.getCurrentProgress());
-        this.activeRequiredKills.set(activeBounty.requiredKills());
-        this.activeCompleted.set(playerBountyData.isCompleted() ? 1 : 0);
         this.updateContractPreviewSlot();
     }
 

@@ -19,6 +19,7 @@ import net.minecraft.world.level.Level;
 import net.satisfy.wildernature.core.bounty.BountyDefinition;
 import net.satisfy.wildernature.core.bounty.BountyManager;
 import net.satisfy.wildernature.core.bounty.PlayerBountyData;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -69,6 +70,14 @@ public class ContractItem extends Item {
         Component entityName = this.getEntityName(customDataTag);
         int requiredKills = customDataTag.contains("RequiredKills") ? customDataTag.getInt("RequiredKills") : 0;
         int currentProgress = customDataTag.contains("Progress") ? customDataTag.getInt("Progress") : 0;
+        boolean isCompleted = currentProgress >= requiredKills && requiredKills > 0;
+
+        if (isCompleted) {
+            tooltipComponents.add(Component.translatable("item.wildernature.contract.completed").withStyle(ChatFormatting.GRAY));
+            tooltipComponents.add(Component.translatable("item.wildernature.contract.turn_in").withStyle(ChatFormatting.GREEN));
+            return;
+        }
+
         int previewCount = customDataTag.contains("PreviewCount") ? customDataTag.getInt("PreviewCount") : 1;
         int experienceReward = customDataTag.contains("ExperienceReward") ? customDataTag.getInt("ExperienceReward") : 0;
 
@@ -87,50 +96,11 @@ public class ContractItem extends Item {
         if (experienceReward > 0) {
             tooltipComponents.add(Component.translatable("gui.wildernature.bounty_board.experience").append(": ").append(Component.literal(String.valueOf(experienceReward))).withStyle(ChatFormatting.GRAY));
         }
-
-        if (currentProgress >= requiredKills && requiredKills > 0) {
-            tooltipComponents.add(Component.translatable("item.wildernature.contract.claim").withStyle(ChatFormatting.GREEN));
-        } else {
-            tooltipComponents.add(Component.translatable("item.wildernature.contract.incomplete").withStyle(ChatFormatting.DARK_GRAY));
-        }
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack itemStack = player.getItemInHand(hand);
-
-        if (!(player instanceof ServerPlayer serverPlayer)) {
-            return InteractionResultHolder.success(itemStack);
-        }
-
-        CustomData customData = itemStack.get(DataComponents.CUSTOM_DATA);
-        if (customData == null) {
-            return InteractionResultHolder.pass(itemStack);
-        }
-
-        CompoundTag customDataTag = customData.copyTag();
-        if (!customDataTag.contains("BountyId")) {
-            return InteractionResultHolder.pass(itemStack);
-        }
-
-        UUID bountyId = customDataTag.getUUID("BountyId");
-        PlayerBountyData playerBountyData = BountyManager.getPlayerBountyData(serverPlayer);
-        BountyDefinition activeBounty = playerBountyData.getActiveBounty();
-
-        if (activeBounty == null || !activeBounty.id().equals(bountyId)) {
-            return InteractionResultHolder.fail(itemStack);
-        }
-
-        if (!playerBountyData.isCompleted()) {
-            return InteractionResultHolder.pass(itemStack);
-        }
-
-        boolean claimed = BountyManager.claimActiveBounty(serverPlayer);
-        if (!claimed) {
-            return InteractionResultHolder.fail(itemStack);
-        }
-
-        return InteractionResultHolder.success(ItemStack.EMPTY);
+    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        return InteractionResultHolder.pass(player.getItemInHand(hand));
     }
 
     private Component getEntityName(CompoundTag customDataTag) {

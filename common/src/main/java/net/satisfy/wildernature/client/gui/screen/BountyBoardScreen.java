@@ -134,10 +134,13 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             int entryY = listStartY + entryIndex * LIST_ENTRY_HEIGHT;
             int absoluteIndex = this.startIndex + entryIndex;
             BountyDefinition bountyDefinition = this.menu.getVisibleBounties().get(absoluteIndex);
+            boolean isUnavailable = this.menu.isBountyAbandoned(bountyDefinition.id());
 
             if (mouseX >= listStartX && mouseX <= listStartX + LIST_ENTRY_WIDTH && mouseY >= entryY && mouseY <= entryY + 18) {
-                this.menu.setSelectedBountyIndex(absoluteIndex);
-                BountyBoardNetworking.sendSelect(absoluteIndex);
+                if (!isUnavailable) {
+                    this.menu.setSelectedBountyIndex(absoluteIndex);
+                    BountyBoardNetworking.sendSelect(absoluteIndex);
+                }
                 return true;
             }
 
@@ -145,7 +148,7 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             int contractY = entryY + CONTRACT_ICON_OFFSET_Y;
 
             if (mouseX >= contractX && mouseX < contractX + 16 && mouseY >= contractY && mouseY < contractY + 16) {
-                if (!this.menu.isBountyAbandoned(bountyDefinition.id())) {
+                if (!isUnavailable) {
                     this.menu.setSelectedBountyIndex(absoluteIndex);
                     BountyBoardNetworking.sendSelect(absoluteIndex);
                     BountyBoardNetworking.sendAccept();
@@ -292,14 +295,13 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             }
         }
 
-        if (this.menu.hasActiveBounty()) {
-            return;
-        }
-
         Optional<BountyDefinition> detailBounty = this.getDisplayedDetailBounty();
         if (detailBounty.isEmpty()) {
             return;
         }
+
+        boolean locked = this.menu.hasActiveBounty() && !this.menu.hasCompletedActiveBounty();
+        Component activeBountyName = this.getActiveBountyDisplayName();
 
         int detailRewardX = this.leftPos + REWARD_ITEM_X;
         int detailRewardY = this.topPos + REWARD_ITEM_Y;
@@ -310,6 +312,21 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             ItemStack rewardPreviewStack = this.getRewardPreviewIcon(detailBounty.get());
             int count = detailBounty.get().reward().previewCount();
             rewardPreviewStack.setCount(count);
+
+            if (locked) {
+                guiGraphics.renderTooltip(
+                        this.font,
+                        List.of(
+                                Component.translatable("gui.wildernature.bounty_board.reward_locked"),
+                                Component.translatable("gui.wildernature.bounty_board.reward_locked_desc", activeBountyName)
+                        ),
+                        Optional.empty(),
+                        mouseX,
+                        mouseY
+                );
+                return;
+            }
+
             guiGraphics.renderTooltip(this.font, rewardPreviewStack, mouseX, mouseY);
             return;
         }
@@ -317,6 +334,21 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         if (mouseX >= detailXpX && mouseX < detailXpX + 16 && mouseY >= detailXpY && mouseY < detailXpY + 16) {
             ItemStack experienceStack = new ItemStack(Items.EXPERIENCE_BOTTLE);
             experienceStack.setCount(detailBounty.get().reward().experienceReward());
+
+            if (locked) {
+                guiGraphics.renderTooltip(
+                        this.font,
+                        List.of(
+                                Component.translatable("gui.wildernature.bounty_board.reward_locked"),
+                                Component.translatable("gui.wildernature.bounty_board.reward_locked_desc", activeBountyName)
+                        ),
+                        Optional.empty(),
+                        mouseX,
+                        mouseY
+                );
+                return;
+            }
+
             guiGraphics.renderTooltip(this.font, experienceStack, mouseX, mouseY);
         }
     }
@@ -480,6 +512,8 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             return;
         }
 
+        boolean locked = this.menu.hasActiveBounty() && !this.menu.hasCompletedActiveBounty();
+
         ItemStack rewardPreviewStack = this.getRewardPreviewIcon(detailBounty.get());
         int rewardPreviewCount = detailBounty.get().reward().previewCount();
 
@@ -496,6 +530,14 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         if (experienceReward > 1) {
             experienceStack.setCount(experienceReward);
             guiGraphics.renderItemDecorations(this.font, experienceStack, this.leftPos + REWARD_XP_ICON_X, this.topPos + REWARD_XP_ICON_Y);
+        }
+
+        if (locked) {
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0.0F, 0.0F, 300.0F);
+            guiGraphics.blit(TEXTURE, this.leftPos + REWARD_ITEM_X + 3, this.topPos + REWARD_ITEM_Y + 1, 277, 88, 10, 14, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+            guiGraphics.blit(TEXTURE, this.leftPos + REWARD_XP_ICON_X + 3, this.topPos + REWARD_XP_ICON_Y + 1, 277, 88, 10, 14, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+            guiGraphics.pose().popPose();
         }
     }
 
@@ -569,6 +611,30 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
 
         BountyDefinition bountyDefinition = detailBounty.get();
         Component entityName = this.getEntityDisplayName(bountyDefinition);
+        Component titleComponent = this.getBountyTitleComponent(bountyDefinition);
+
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().scale(1.1F, 1.1F, 1.0F);
+        guiGraphics.drawString(this.font, titleComponent, (int) (TITLE_X / 1.1F), (int) (TITLE_Y / 1.1F), 4210752, false);
+        guiGraphics.pose().popPose();
+
+        guiGraphics.drawString(this.font, Component.translatable("gui.wildernature.bounty_board.objective", bountyDefinition.requiredKills(), entityName), OBJECTIVE_X, OBJECTIVE_Y, 4210752, false);
+        guiGraphics.drawString(this.font, Component.translatable("gui.wildernature.bounty_board.reward"), REWARD_LABEL_X, REWARD_LABEL_Y, 4210752, false);
+    }
+
+    private Component getActiveBountyDisplayName() {
+        Optional<BountyDefinition> activeBounty = this.menu.getActiveBounty();
+        return activeBounty.map(bountyDefinition -> {
+            Component title = this.getBountyTitleComponent(bountyDefinition).copy().withStyle(style -> style.withColor(0xE6D38A));
+            return Component.literal("")
+                    .append(Component.literal("[").withStyle(style -> style.withColor(0xE6D38A)))
+                    .append(title)
+                    .append(Component.literal("]").withStyle(style -> style.withColor(0xE6D38A)));
+        }).orElseGet(Component::empty);
+    }
+
+    private Component getBountyTitleComponent(BountyDefinition bountyDefinition) {
+        Component entityName = this.getEntityDisplayName(bountyDefinition);
 
         String[] translationKeys = new String[]{
                 "gui.wildernature.bounty_board.title.hunt",
@@ -579,13 +645,6 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         };
 
         int titleIndex = Math.abs(bountyDefinition.id().hashCode()) % translationKeys.length;
-
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().scale(1.1F, 1.1F, 1.0F);
-        guiGraphics.drawString(this.font, Component.translatable(translationKeys[titleIndex], entityName), (int) (TITLE_X / 1.1F), (int) (TITLE_Y / 1.1F), 4210752, false);
-        guiGraphics.pose().popPose();
-
-        guiGraphics.drawString(this.font, Component.translatable("gui.wildernature.bounty_board.objective", bountyDefinition.requiredKills(), entityName), OBJECTIVE_X, OBJECTIVE_Y, 4210752, false);
-        guiGraphics.drawString(this.font, Component.translatable("gui.wildernature.bounty_board.reward"), REWARD_LABEL_X, REWARD_LABEL_Y, 4210752, false);
+        return Component.translatable(translationKeys[titleIndex], entityName);
     }
 }
