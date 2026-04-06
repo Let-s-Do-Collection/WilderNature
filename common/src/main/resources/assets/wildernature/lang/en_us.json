@@ -171,5 +171,7 @@
   "gui.wildernature.bounty_board.title.trapper": "%s Trapper",
   "gui.wildernature.bounty_board.title.cull": "Cull %s",
   "gui.wildernature.bounty_board.title.slash": "Track %s",
-  "gui.wildernature.bounty_board.experience": "Experience"
+  "gui.wildernature.bounty_board.experience": "Experience",
+  "gui.wildernature.bounty_board.contract_restore": "Restore contract.",
+  "gui.wildernature.bounty_board.contract_restore_desc": "Removes and replaces the current contract."
 }

@@ -1,9 +1,11 @@
 package net.satisfy.wildernature.core.bounty;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -11,17 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.registries.Registries;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 public final class BountyManager {
     private BountyManager() {
@@ -45,22 +37,15 @@ public final class BountyManager {
         savedData.setPlayerBountyData(serverPlayer.getUUID(), playerBountyData);
     }
 
-    public static Optional<BountyDefinition> getBountyByIndex(ServerPlayer serverPlayer, int bountyIndex) {
-        List<BountyDefinition> dailyBounties = getDailyBounties(serverPlayer.serverLevel());
-        if (bountyIndex < 0 || bountyIndex >= dailyBounties.size()) {
-            return Optional.empty();
+    public static boolean acceptBounty(ServerPlayer serverPlayer, UUID bountyId) {
+        PlayerBountyData playerBountyData = getPlayerBountyData(serverPlayer);
+
+        if (playerBountyData.hasActiveBounty()) {
+            BountyDefinition activeBounty = playerBountyData.getActiveBounty();
+            return activeBounty != null && activeBounty.id().equals(bountyId);
         }
 
-        return Optional.of(dailyBounties.get(bountyIndex));
-    }
-
-    public static boolean canPlayerSeeBounty(ServerPlayer serverPlayer, BountyDefinition bountyDefinition) {
-        PlayerBountyData playerBountyData = getPlayerBountyData(serverPlayer);
-        return !playerBountyData.hasAbandoned(bountyDefinition.id());
-    }
-
-    public static boolean acceptBounty(ServerPlayer serverPlayer, UUID bountyId) {
-        if (!canAcceptBounty(serverPlayer, bountyId)) {
+        if (playerBountyData.hasAbandoned(bountyId)) {
             return false;
         }
 
@@ -70,58 +55,30 @@ public final class BountyManager {
             return false;
         }
 
-        BountyDefinition bountyDefinition = optionalBountyDefinition.get();
-        ItemStack contractStack = createContractStack(bountyDefinition);
-
-        if (!serverPlayer.addItem(contractStack)) {
-            serverPlayer.drop(contractStack, false);
-        }
-
-        PlayerBountyData playerBountyData = getPlayerBountyData(serverPlayer);
-        playerBountyData.setActiveBounty(bountyDefinition);
+        playerBountyData.setActiveBounty(optionalBountyDefinition.get());
         savePlayerBountyData(serverPlayer, playerBountyData);
         return true;
     }
 
-    public static boolean canAcceptBounty(ServerPlayer serverPlayer, UUID bountyId) {
-        PlayerBountyData playerBountyData = getPlayerBountyData(serverPlayer);
-        if (playerBountyData.hasActiveBounty()) {
-            return false;
-        }
-        if (playerBountyData.hasAbandoned(bountyId)) {
-            return false;
-        }
+    public static boolean hasContractItem(ServerPlayer serverPlayer, UUID bountyId) {
+        for (int slotIndex = 0; slotIndex < serverPlayer.getInventory().getContainerSize(); slotIndex++) {
+            ItemStack itemStack = serverPlayer.getInventory().getItem(slotIndex);
+            if (itemStack.isEmpty()) {
+                continue;
+            }
 
-        BountyBoardSavedData savedData = BountyBoardSavedData.get(serverPlayer.serverLevel());
-        savedData.ensureCurrentBounties(serverPlayer.serverLevel());
-        return savedData.getBounty(bountyId).isPresent();
-    }
+            CustomData customData = itemStack.get(DataComponents.CUSTOM_DATA);
+            if (customData == null) {
+                continue;
+            }
 
-
-
-    public static boolean acceptBountyByIndex(ServerPlayer serverPlayer, int bountyIndex) {
-        Optional<BountyDefinition> optionalBountyDefinition = getBountyByIndex(serverPlayer, bountyIndex);
-        if (optionalBountyDefinition.isEmpty()) {
-            return false;
+            CompoundTag customDataTag = customData.copyTag();
+            if (customDataTag.hasUUID("BountyId") && customDataTag.getUUID("BountyId").equals(bountyId)) {
+                return true;
+            }
         }
 
-        return acceptBounty(serverPlayer, optionalBountyDefinition.get().id());
-    }
-
-    public static boolean abandonActiveBounty(ServerPlayer serverPlayer) {
-        PlayerBountyData playerBountyData = getPlayerBountyData(serverPlayer);
-        if (!playerBountyData.hasActiveBounty()) {
-            return false;
-        }
-
-        BountyDefinition activeBounty = playerBountyData.getActiveBounty();
-        if (activeBounty != null) {
-            removeContractItem(serverPlayer, activeBounty.id());
-        }
-
-        playerBountyData.abandonActiveBounty();
-        savePlayerBountyData(serverPlayer, playerBountyData);
-        return true;
+        return false;
     }
 
     public static ItemStack createContractStack(BountyDefinition bountyDefinition) {
@@ -191,28 +148,7 @@ public final class BountyManager {
         return true;
     }
 
-    public static int getCurrentProgress(ServerPlayer serverPlayer) {
-        return getPlayerBountyData(serverPlayer).getCurrentProgress();
-    }
-
-    public static int getRequiredProgress(ServerPlayer serverPlayer) {
-        PlayerBountyData playerBountyData = getPlayerBountyData(serverPlayer);
-        if (playerBountyData.getActiveBounty() == null) {
-            return 0;
-        }
-
-        return playerBountyData.getActiveBounty().requiredKills();
-    }
-
-    public static float getProgressRatio(ServerPlayer serverPlayer) {
-        int requiredProgress = getRequiredProgress(serverPlayer);
-        if (requiredProgress <= 0) {
-            return 0.0F;
-        }
-
-        return Math.min(1.0F, (float) getCurrentProgress(serverPlayer) / (float) requiredProgress);
-    }
-
+    @SuppressWarnings("deprecation")
     public static void handleEntityKilled(Level level, Entity killedEntity, List<UUID> assistingPlayers) {
         if (level.isClientSide() || !(level instanceof ServerLevel serverLevel)) {
             return;
@@ -259,6 +195,23 @@ public final class BountyManager {
             customDataTag.putInt("Progress", progress);
             itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(customDataTag));
             return;
+        }
+    }
+
+    public static void giveOrRestoreContract(ServerPlayer serverPlayer, BountyDefinition bountyDefinition, int progress) {
+        removeContractItem(serverPlayer, bountyDefinition.id());
+
+        ItemStack contractStack = createContractStack(bountyDefinition);
+        CustomData customData = contractStack.get(DataComponents.CUSTOM_DATA);
+
+        if (customData != null) {
+            CompoundTag customDataTag = customData.copyTag();
+            customDataTag.putInt("Progress", progress);
+            contractStack.set(DataComponents.CUSTOM_DATA, CustomData.of(customDataTag));
+        }
+
+        if (!serverPlayer.addItem(contractStack)) {
+            serverPlayer.drop(contractStack, false);
         }
     }
 }

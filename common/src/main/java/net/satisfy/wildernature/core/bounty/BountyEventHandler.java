@@ -27,10 +27,4 @@ public final class BountyEventHandler {
 
         BountyManager.handleEntityKilled(serverLevel, livingEntity, assistingPlayers);
     }
-
-    public static void onLivingRemoved(LivingEntity livingEntity) {
-        if (!livingEntity.isDeadOrDying()) {
-            BountyAssistTracker.clear(livingEntity);
-        }
-    }
 }

@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.satisfy.wildernature.WilderNature;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class BountyBoardSavedData extends SavedData {
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
+    public @NotNull CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
         tag.putString("current_day", this.currentDay.toString());
         tag.putInt("daily_bounty_size", this.dailyBounties.size());
 

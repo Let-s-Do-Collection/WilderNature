@@ -1,6 +1,8 @@
 package net.satisfy.wildernature.client.gui.screen;
 
 import com.mojang.math.Axis;
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -20,9 +22,6 @@ import net.satisfy.wildernature.core.network.BountyBoardNetworking;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-
-import java.util.List;
-import java.util.Optional;
 
 public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> {
     private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/gui/bounty_board/bounty_board.png");
@@ -49,10 +48,10 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
     private static final int OBJECTIVE_Y = 25;
     private static final int REWARD_LABEL_X = 165;
     private static final int REWARD_LABEL_Y = 40;
-    private static final int REWARD_ITEM_X = 165;
-    private static final int REWARD_ITEM_Y = 49;
-    private static final int REWARD_XP_ICON_X = 185;
-    private static final int REWARD_XP_ICON_Y = 49;
+    private static final int REWARD_ITEM_X = 166;
+    private static final int REWARD_ITEM_Y = 50;
+    private static final int REWARD_XP_ICON_X = 184;
+    private static final int REWARD_XP_ICON_Y = 50;
     private static final int CONTRACT_ICON_OFFSET_X = 6;
     private static final int CONTRACT_ICON_OFFSET_Y = 2;
     private static final int REWARD_ICON_OFFSET_X = 68;
@@ -65,6 +64,8 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
     private static final int ABANDON_BUTTON_V = 74;
     private static final int ABANDON_BUTTON_HOVERED_U = 291;
     private static final int ABANDON_BUTTON_HOVERED_V = 74;
+    private static final int CONTRACT_SLOT_X = 232;
+    private static final int CONTRACT_SLOT_Y = 50;
 
     private int startIndex;
     private double scrollOff;
@@ -110,15 +111,19 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             return true;
         }
 
-        int contractSlotX = this.leftPos + 232;
-        int contractSlotY = this.topPos + 50;
+        int contractSlotX = this.leftPos + CONTRACT_SLOT_X;
+        int contractSlotY = this.topPos + CONTRACT_SLOT_Y;
 
-        if (mouseX >= contractSlotX && mouseX < contractSlotX + 16 && mouseY >= contractSlotY && mouseY < contractSlotY + 16) {
-            Optional<BountyDefinition> selectedBounty = this.menu.getSelectedBounty();
-            if (!this.menu.hasActiveBounty() && selectedBounty.isPresent() && !this.menu.isBountyAbandoned(selectedBounty.get().id())) {
+        if (mouseX >= contractSlotX && mouseX < contractSlotX + 16 && mouseY >= contractSlotY && mouseY < contractSlotY + 16 && this.menu.hasContractPreviewItem()) {
+            Optional<BountyDefinition> targetBounty = this.menu.hasActiveBounty() ? this.menu.getActiveBounty() : this.menu.getSelectedBounty();
+            if (targetBounty.isPresent() && !this.menu.isBountyAbandoned(targetBounty.get().id())) {
                 BountyBoardNetworking.sendAccept();
                 return true;
             }
+        }
+
+        if (this.menu.hasActiveBounty()) {
+            return super.mouseClicked(mouseX, mouseY, button);
         }
 
         int listStartX = this.leftPos + LIST_START_X;
@@ -140,7 +145,7 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             int contractY = entryY + CONTRACT_ICON_OFFSET_Y;
 
             if (mouseX >= contractX && mouseX < contractX + 16 && mouseY >= contractY && mouseY < contractY + 16) {
-                if (!this.menu.hasActiveBounty() && !this.menu.isBountyAbandoned(bountyDefinition.id())) {
+                if (!this.menu.isBountyAbandoned(bountyDefinition.id())) {
                     this.menu.setSelectedBountyIndex(absoluteIndex);
                     BountyBoardNetworking.sendSelect(absoluteIndex);
                     BountyBoardNetworking.sendAccept();
@@ -201,9 +206,11 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderHoveredItemTooltips(guiGraphics, mouseX, mouseY);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
-    }
 
+        if (!this.isHoveringRestoreContractSlot(mouseX, mouseY)) {
+            this.renderTooltip(guiGraphics, mouseX, mouseY);
+        }
+    }
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
@@ -242,6 +249,20 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             return;
         }
 
+        if (this.isHoveringRestoreContractSlot(mouseX, mouseY)) {
+            guiGraphics.renderTooltip(
+                    this.font,
+                    List.of(
+                            Component.translatable("gui.wildernature.bounty_board.contract_restore"),
+                            Component.translatable("gui.wildernature.bounty_board.contract_restore_desc")
+                    ),
+                    Optional.empty(),
+                    mouseX,
+                    mouseY
+            );
+            return;
+        }
+
         List<BountyDefinition> visibleBounties = this.menu.getVisibleBounties();
         int listStartX = this.leftPos + LIST_START_X - 2;
         int listStartY = this.topPos + LIST_START_Y;
@@ -266,14 +287,13 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
                 ItemStack rewardPreviewStack = this.getRewardPreviewIcon(bountyDefinition);
                 int count = bountyDefinition.reward().previewCount();
                 rewardPreviewStack.setCount(count);
-
-                if (count > 1) {
-                    guiGraphics.renderTooltip(this.font, Component.literal(count + "x ").append(rewardPreviewStack.getHoverName()), mouseX, mouseY);
-                } else {
-                    guiGraphics.renderTooltip(this.font, rewardPreviewStack, mouseX, mouseY);
-                }
+                guiGraphics.renderTooltip(this.font, rewardPreviewStack, mouseX, mouseY);
                 return;
             }
+        }
+
+        if (this.menu.hasActiveBounty()) {
+            return;
         }
 
         Optional<BountyDefinition> detailBounty = this.getDisplayedDetailBounty();
@@ -290,19 +310,24 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             ItemStack rewardPreviewStack = this.getRewardPreviewIcon(detailBounty.get());
             int count = detailBounty.get().reward().previewCount();
             rewardPreviewStack.setCount(count);
-
-            if (count > 1) {
-                guiGraphics.renderTooltip(this.font, Component.literal(count + "x ").append(rewardPreviewStack.getHoverName()), mouseX, mouseY);
-            } else {
-                guiGraphics.renderTooltip(this.font, rewardPreviewStack, mouseX, mouseY);
-            }
+            guiGraphics.renderTooltip(this.font, rewardPreviewStack, mouseX, mouseY);
             return;
         }
 
         if (mouseX >= detailXpX && mouseX < detailXpX + 16 && mouseY >= detailXpY && mouseY < detailXpY + 16) {
-            int experienceReward = detailBounty.get().reward().experienceReward();
-            guiGraphics.renderTooltip(this.font, Component.literal(experienceReward + " ").append(Component.translatable("gui.wildernature.bounty_board.experience")), mouseX, mouseY);
+            ItemStack experienceStack = new ItemStack(Items.EXPERIENCE_BOTTLE);
+            experienceStack.setCount(detailBounty.get().reward().experienceReward());
+            guiGraphics.renderTooltip(this.font, experienceStack, mouseX, mouseY);
         }
+    }
+
+    private boolean isHoveringRestoreContractSlot(int mouseX, int mouseY) {
+        int contractSlotX = this.leftPos + CONTRACT_SLOT_X;
+        int contractSlotY = this.topPos + CONTRACT_SLOT_Y;
+        return this.menu.hasActiveBounty()
+                && this.menu.hasContractPreviewItem()
+                && mouseX >= contractSlotX && mouseX < contractSlotX + 16
+                && mouseY >= contractSlotY && mouseY < contractSlotY + 16;
     }
 
     private void renderBountyList(GuiGraphics guiGraphics) {
@@ -311,20 +336,25 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         int listStartY = this.topPos + LIST_START_Y;
         int visibleEntries = Math.min(visibleBounties.size() - this.startIndex, LIST_VISIBLE_ENTRIES);
         Optional<BountyDefinition> activeBounty = this.menu.getActiveBounty();
+        int selectedIndex = this.menu.getSelectedBountyIndex();
 
         for (int entryIndex = 0; entryIndex < visibleEntries; entryIndex++) {
             int entryY = listStartY + entryIndex * LIST_ENTRY_HEIGHT;
             int absoluteIndex = this.startIndex + entryIndex;
             BountyDefinition bountyDefinition = visibleBounties.get(absoluteIndex);
-            boolean isSelected = absoluteIndex == this.menu.getSelectedBountyIndex();
+
             boolean isActive = activeBounty.isPresent() && activeBounty.get().id().equals(bountyDefinition.id());
+            boolean isSelected = absoluteIndex == selectedIndex;
             boolean isAbandoned = this.menu.isBountyAbandoned(bountyDefinition.id());
             boolean isLocked = this.menu.hasActiveBounty() && !isActive;
 
             int textureU;
             int textureV;
 
-            if (isActive || (!this.menu.hasActiveBounty() && isSelected && !isAbandoned)) {
+            if (isActive) {
+                textureU = 277;
+                textureV = 25;
+            } else if (isSelected) {
                 textureU = 277;
                 textureV = 25;
             } else if (isAbandoned) {
@@ -345,18 +375,19 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
 
             guiGraphics.pose().pushPose();
             if (isLocked || isAbandoned) {
-                guiGraphics.setColor(0.45F, 0.45F, 0.45F, 1.0F);
+                guiGraphics.setColor(1.0F, 1.0F, 1.0F, 0.5F);
             }
             guiGraphics.pose().translate(contractX, contractY, 0.0F);
             guiGraphics.renderItem(this.getContractIcon(bountyDefinition), 0, 0);
             guiGraphics.pose().popPose();
+            guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 
             int arrowX = listStartX + (LIST_ENTRY_WIDTH / 2) - 5;
             int arrowY = entryY + (LIST_ENTRY_HEIGHT / 2) - 5;
             int arrowU = isAbandoned ? 288 : 277;
 
             if (isLocked || isAbandoned) {
-                guiGraphics.setColor(0.45F, 0.45F, 0.45F, 1.0F);
+                guiGraphics.setColor(1.0F, 1.0F, 1.0F, 0.5F);
             }
             guiGraphics.blit(TEXTURE, arrowX, arrowY, arrowU, 65, 10, 9, TEXTURE_WIDTH, TEXTURE_HEIGHT);
             guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -368,7 +399,7 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
 
             guiGraphics.pose().pushPose();
             if (isLocked || isAbandoned) {
-                guiGraphics.setColor(0.45F, 0.45F, 0.45F, 1.0F);
+                guiGraphics.setColor(1.0F, 1.0F, 1.0F, 0.5F);
             }
             guiGraphics.pose().translate(rewardX, rewardY, 0.0F);
             guiGraphics.renderItem(rewardPreviewStack, 0, 0);
@@ -526,7 +557,6 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         return entityType.getDescription();
     }
 
-
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         guiGraphics.drawString(this.font, this.title, 8, 6, 4210752, false);
@@ -552,7 +582,7 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(1.1F, 1.1F, 1.0F);
-        guiGraphics.drawString(this.font, Component.translatable(translationKeys[titleIndex], entityName), (int)(TITLE_X / 1.1F), (int)(TITLE_Y / 1.1F), 4210752, false);
+        guiGraphics.drawString(this.font, Component.translatable(translationKeys[titleIndex], entityName), (int) (TITLE_X / 1.1F), (int) (TITLE_Y / 1.1F), 4210752, false);
         guiGraphics.pose().popPose();
 
         guiGraphics.drawString(this.font, Component.translatable("gui.wildernature.bounty_board.objective", bountyDefinition.requiredKills(), entityName), OBJECTIVE_X, OBJECTIVE_Y, 4210752, false);

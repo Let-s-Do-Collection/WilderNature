@@ -11,7 +11,6 @@ import net.satisfy.wildernature.core.gui.handler.BountyBoardMenu;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @SuppressWarnings("removal")
@@ -135,7 +134,14 @@ public final class BountyBoardNetworking {
     }
 
     private static RegistryFriendlyByteBuf createClientBuffer() {
-        return new RegistryFriendlyByteBuf(Unpooled.buffer(), Objects.requireNonNull(Minecraft.getInstance().getConnection()).registryAccess());
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.getConnection() != null) {
+            return new RegistryFriendlyByteBuf(Unpooled.buffer(), minecraft.getConnection().registryAccess());
+        }
+        if (minecraft.level != null) {
+            return new RegistryFriendlyByteBuf(Unpooled.buffer(), minecraft.level.registryAccess());
+        }
+        throw new IllegalStateException("Missing client registry access");
     }
 
     private BountyBoardNetworking() {

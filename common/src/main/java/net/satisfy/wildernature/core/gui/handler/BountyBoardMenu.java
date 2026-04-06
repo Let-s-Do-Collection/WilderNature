@@ -1,5 +1,9 @@
 package net.satisfy.wildernature.core.gui.handler;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -21,11 +25,6 @@ import net.satisfy.wildernature.core.bounty.PlayerBountyData;
 import net.satisfy.wildernature.core.network.BountyBoardNetworking;
 import net.satisfy.wildernature.core.registry.MenuTypeRegistry;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 public class BountyBoardMenu extends AbstractContainerMenu {
     private final SimpleContainer contractPreviewContainer = new SimpleContainer(1);
@@ -96,6 +95,20 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         }
     }
 
+    private void addContractPreviewSlot() {
+        this.addSlot(new Slot(this.contractPreviewContainer, 0, 232, 50) {
+            @Override
+            public boolean mayPlace(@NotNull ItemStack itemStack) {
+                return false;
+            }
+
+            @Override
+            public boolean mayPickup(Player player) {
+                return false;
+            }
+        });
+    }
+
     private List<BountyDefinition> resolveBounties() {
         if (this.playerInventory.player instanceof ServerPlayer serverPlayer) {
             return BountyManager.getDailyBounties(serverPlayer.serverLevel());
@@ -122,6 +135,43 @@ public class BountyBoardMenu extends AbstractContainerMenu {
             buffer.writeUtf(bountyDefinition.reward().previewItemId().toString());
             buffer.writeVarInt(bountyDefinition.reward().previewCount());
         }
+    }
+
+    private List<BountyDefinition> readBounties(FriendlyByteBuf buffer) {
+        int bountyCount = buffer.readVarInt();
+        List<BountyDefinition> syncedBounties = new ArrayList<>(bountyCount);
+
+        this.abandonedBountyIds.clear();
+        int abandonedCount = buffer.readVarInt();
+        for (int index = 0; index < abandonedCount; index++) {
+            this.abandonedBountyIds.add(buffer.readUUID());
+        }
+
+        for (int index = 0; index < bountyCount; index++) {
+            UUID bountyId = buffer.readUUID();
+            String categoryName = buffer.readUtf();
+            String entityId = buffer.readUtf();
+            int requiredKills = buffer.readVarInt();
+            String lootTableId = buffer.readUtf();
+            int experienceReward = buffer.readVarInt();
+            String previewItemId = buffer.readUtf();
+            int previewCount = buffer.readVarInt();
+
+            syncedBounties.add(new BountyDefinition(
+                    bountyId,
+                    BountyCategory.byName(categoryName),
+                    ResourceLocation.parse(entityId),
+                    requiredKills,
+                    new BountyReward(
+                            ResourceLocation.parse(lootTableId),
+                            experienceReward,
+                            ResourceLocation.parse(previewItemId),
+                            previewCount
+                    )
+            ));
+        }
+
+        return syncedBounties;
     }
 
     public boolean isBountyAbandoned(UUID bountyId) {
@@ -184,51 +234,46 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         return this.activeRequiredKills.get();
     }
 
-    public boolean isActiveCompleted() {
-        return this.activeCompleted.get() == 1;
+    public boolean hasContractPreviewItem() {
+        return !this.contractPreviewContainer.getItem(0).isEmpty();
     }
 
-    public boolean acceptSelectedBounty() {
+    public void acceptSelectedBounty() {
         if (!(this.playerInventory.player instanceof ServerPlayer serverPlayer)) {
-            return false;
+            return;
         }
 
-        Optional<BountyDefinition> selectedBounty = this.getSelectedBounty();
-        if (selectedBounty.isEmpty()) {
-            return false;
+        Optional<BountyDefinition> targetBounty = this.hasActiveBounty() ? this.getActiveBounty() : this.getSelectedBounty();
+        if (targetBounty.isEmpty()) {
+            return;
         }
 
-        boolean accepted = BountyManager.acceptBounty(serverPlayer, selectedBounty.get().id());
-        if (accepted) {
-            this.updateActiveData();
-            this.updateContractPreviewSlot();
-            BountyBoardNetworking.sendSync(
-                    serverPlayer,
-                    this.selectedBountyIndex,
-                    this.hasActiveBounty(),
-                    this.getActiveBounty().map(activeBounty -> this.bounties.indexOf(activeBounty)).orElse(-1),
-                    this.getActiveProgress(),
-                    this.getActiveRequiredKills(),
-                    this.hasCompletedActiveBounty(),
-                    new ArrayList<>(this.abandonedBountyIds)
-            );
+        boolean accepted = BountyManager.acceptBounty(serverPlayer, targetBounty.get().id());
+        if (!accepted) {
+            return;
         }
 
-        return accepted;
+        PlayerBountyData playerBountyData = BountyManager.getPlayerBountyData(serverPlayer);
+        BountyManager.giveOrRestoreContract(serverPlayer, targetBounty.get(), playerBountyData.getCurrentProgress());
+
+        this.updateActiveData();
+        this.updateContractPreviewSlot();
+        BountyBoardNetworking.sendSync(
+                serverPlayer,
+                this.selectedBountyIndex,
+                this.hasActiveBounty(),
+                this.getActiveBounty().map(activeBounty -> this.bounties.indexOf(activeBounty)).orElse(-1),
+                this.getActiveProgress(),
+                this.getActiveRequiredKills(),
+                this.hasCompletedActiveBounty(),
+                new ArrayList<>(this.abandonedBountyIds)
+        );
     }
 
-    private void syncAbandonedBountyIds() {
-        if (this.playerInventory.player instanceof ServerPlayer serverPlayer) {
-            PlayerBountyData playerBountyData = BountyManager.getPlayerBountyData(serverPlayer);
-            this.abandonedBountyIds.clear();
-            this.abandonedBountyIds.addAll(playerBountyData.getAbandonedBounties());
-        }
-    }
-
-    public boolean abandonActiveBounty(ServerPlayer serverPlayer) {
+    public void abandonActiveBounty(ServerPlayer serverPlayer) {
         PlayerBountyData playerBountyData = BountyManager.getPlayerBountyData(serverPlayer);
         if (!playerBountyData.hasActiveBounty()) {
-            return false;
+            return;
         }
 
         BountyDefinition activeBounty = playerBountyData.getActiveBounty();
@@ -242,13 +287,11 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         this.syncAbandonedBountyIds();
         this.updateActiveData();
         this.updateContractPreviewSlot();
-
-        return true;
     }
 
-    public boolean claimActiveBounty() {
+    public void claimActiveBounty() {
         if (!(this.playerInventory.player instanceof ServerPlayer serverPlayer)) {
-            return false;
+            return;
         }
 
         boolean claimed = BountyManager.claimActiveBounty(serverPlayer);
@@ -266,8 +309,14 @@ public class BountyBoardMenu extends AbstractContainerMenu {
                     new ArrayList<>(this.abandonedBountyIds)
             );
         }
+    }
 
-        return claimed;
+    private void syncAbandonedBountyIds() {
+        if (this.playerInventory.player instanceof ServerPlayer serverPlayer) {
+            PlayerBountyData playerBountyData = BountyManager.getPlayerBountyData(serverPlayer);
+            this.abandonedBountyIds.clear();
+            this.abandonedBountyIds.addAll(playerBountyData.getAbandonedBounties());
+        }
     }
 
     private void updateActiveData() {
@@ -305,6 +354,37 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         this.updateContractPreviewSlot();
     }
 
+    private void updateContractPreviewSlot() {
+        if (this.hasActiveBounty()) {
+            this.contractPreviewContainer.setItem(0, ItemStack.EMPTY);
+            return;
+        }
+
+        Optional<BountyDefinition> selectedBounty = this.getSelectedBounty();
+        if (selectedBounty.isPresent()) {
+            this.contractPreviewContainer.setItem(0, BountyManager.createContractStack(selectedBounty.get()));
+            return;
+        }
+
+        this.contractPreviewContainer.setItem(0, ItemStack.EMPTY);
+    }
+
+    public void applySyncFromServer(int selectedBountyIndex, boolean hasActiveBounty, int activeBountyIndex, int activeProgress, int activeRequiredKills, boolean activeCompleted, List<UUID> abandonedBountyIds) {
+        this.selectedBountyIndex = selectedBountyIndex;
+        this.hasActiveBounty.set(hasActiveBounty ? 1 : 0);
+        this.activeBountyIndex.set(activeBountyIndex);
+        this.activeProgress.set(activeProgress);
+        this.activeRequiredKills.set(activeRequiredKills);
+        this.activeCompleted.set(activeCompleted ? 1 : 0);
+        this.abandonedBountyIds.clear();
+        this.abandonedBountyIds.addAll(abandonedBountyIds);
+        this.updateContractPreviewSlot();
+    }
+
+    public List<UUID> getAbandonedBountyIds() {
+        return this.abandonedBountyIds;
+    }
+
     @Override
     public void broadcastChanges() {
         if (this.playerInventory.player instanceof ServerPlayer) {
@@ -325,98 +405,5 @@ public class BountyBoardMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return true;
-    }
-
-    private void addContractPreviewSlot() {
-        this.addSlot(new Slot(this.contractPreviewContainer, 0, 232, 50) {
-            @Override
-            public boolean mayPlace(@NotNull ItemStack itemStack) {
-                return false;
-            }
-
-            @Override
-            public boolean mayPickup(Player player) {
-                return false;
-            }
-        });
-    }
-
-    private void updateContractPreviewSlot() {
-        Optional<BountyDefinition> activeBounty = this.getActiveBounty();
-        if (activeBounty.isPresent()) {
-            ItemStack contractStack = BountyManager.createContractStack(activeBounty.get());
-            PlayerBountyData playerBountyData = this.getPlayerBountyData();
-            CustomData customData = contractStack.get(DataComponents.CUSTOM_DATA);
-
-            if (customData != null) {
-                CompoundTag customDataTag = customData.copyTag();
-                customDataTag.putInt("Progress", playerBountyData.getCurrentProgress());
-                contractStack.set(DataComponents.CUSTOM_DATA, CustomData.of(customDataTag));
-            }
-
-            this.contractPreviewContainer.setItem(0, contractStack);
-            return;
-        }
-
-        Optional<BountyDefinition> selectedBounty = this.getSelectedBounty();
-        if (selectedBounty.isPresent()) {
-            this.contractPreviewContainer.setItem(0, BountyManager.createContractStack(selectedBounty.get()));
-            return;
-        }
-
-        this.contractPreviewContainer.setItem(0, ItemStack.EMPTY);
-    }
-
-    private List<BountyDefinition> readBounties(FriendlyByteBuf buffer) {
-        int bountyCount = buffer.readVarInt();
-        List<BountyDefinition> syncedBounties = new ArrayList<>(bountyCount);
-
-        this.abandonedBountyIds.clear();
-        int abandonedCount = buffer.readVarInt();
-        for (int index = 0; index < abandonedCount; index++) {
-            this.abandonedBountyIds.add(buffer.readUUID());
-        }
-
-        for (int index = 0; index < bountyCount; index++) {
-            UUID bountyId = buffer.readUUID();
-            String categoryName = buffer.readUtf();
-            String entityId = buffer.readUtf();
-            int requiredKills = buffer.readVarInt();
-            String lootTableId = buffer.readUtf();
-            int experienceReward = buffer.readVarInt();
-            String previewItemId = buffer.readUtf();
-            int previewCount = buffer.readVarInt();
-
-            syncedBounties.add(new BountyDefinition(
-                    bountyId,
-                    BountyCategory.byName(categoryName),
-                    ResourceLocation.parse(entityId),
-                    requiredKills,
-                    new BountyReward(
-                            ResourceLocation.parse(lootTableId),
-                            experienceReward,
-                            ResourceLocation.parse(previewItemId),
-                            previewCount
-                    )
-            ));
-        }
-
-        return syncedBounties;
-    }
-
-    public void applySyncFromServer(int selectedBountyIndex, boolean hasActiveBounty, int activeBountyIndex, int activeProgress, int activeRequiredKills, boolean activeCompleted, List<UUID> abandonedBountyIds) {
-        this.selectedBountyIndex = selectedBountyIndex;
-        this.hasActiveBounty.set(hasActiveBounty ? 1 : 0);
-        this.activeBountyIndex.set(activeBountyIndex);
-        this.activeProgress.set(activeProgress);
-        this.activeRequiredKills.set(activeRequiredKills);
-        this.activeCompleted.set(activeCompleted ? 1 : 0);
-        this.abandonedBountyIds.clear();
-        this.abandonedBountyIds.addAll(abandonedBountyIds);
-        this.updateContractPreviewSlot();
-    }
-
-    public List<UUID> getAbandonedBountyIds() {
-        return this.abandonedBountyIds;
     }
 }
