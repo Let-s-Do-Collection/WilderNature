@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "wildernature:item/uncommon_contract"
+    "layer0": "wildernature:item/provision_request"
   }
 }

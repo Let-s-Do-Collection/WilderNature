@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "wildernature:item/leveling_contract"
+    "layer0": "wildernature:item/elite_bounty"
   }
 }

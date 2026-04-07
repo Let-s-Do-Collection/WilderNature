@@ -398,55 +398,61 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         return List.of();
     }
 
-    public static void writeBounties(FriendlyByteBuf buffer, List<BountyDefinition> bounties, List<UUID> abandonedBountyIds) {
-        buffer.writeVarInt(bounties.size());
-        buffer.writeVarInt(abandonedBountyIds.size());
+    public static void writeBounties(FriendlyByteBuf friendlyByteBuf, List<BountyDefinition> bounties, List<UUID> abandonedBountyIds) {
+        friendlyByteBuf.writeVarInt(bounties.size());
+        friendlyByteBuf.writeVarInt(abandonedBountyIds.size());
 
         for (UUID abandonedBountyId : abandonedBountyIds) {
-            buffer.writeUUID(abandonedBountyId);
+            friendlyByteBuf.writeUUID(abandonedBountyId);
         }
 
         for (BountyDefinition bountyDefinition : bounties) {
-            buffer.writeUUID(bountyDefinition.id());
-            buffer.writeUtf(bountyDefinition.category().getName());
-            buffer.writeUtf(bountyDefinition.entityId().toString());
-            buffer.writeVarInt(bountyDefinition.requiredKills());
-            buffer.writeUtf(bountyDefinition.reward().lootTableId().toString());
-            buffer.writeVarInt(bountyDefinition.reward().experienceReward());
-            buffer.writeUtf(bountyDefinition.reward().previewItemId().toString());
-            buffer.writeVarInt(bountyDefinition.reward().previewCount());
+            friendlyByteBuf.writeUUID(bountyDefinition.id());
+            friendlyByteBuf.writeUtf(bountyDefinition.type().getSerializedName());
+            friendlyByteBuf.writeUtf(bountyDefinition.targetType().getSerializedName());
+            friendlyByteBuf.writeUtf(bountyDefinition.category().getName());
+            friendlyByteBuf.writeUtf(bountyDefinition.targetId().toString());
+            friendlyByteBuf.writeVarInt(bountyDefinition.requiredAmount());
+            friendlyByteBuf.writeUtf(bountyDefinition.reward().lootTableId().toString());
+            friendlyByteBuf.writeVarInt(bountyDefinition.reward().experienceReward());
+            friendlyByteBuf.writeUtf(bountyDefinition.reward().previewItemId().toString());
+            friendlyByteBuf.writeVarInt(bountyDefinition.reward().previewCount());
         }
     }
 
-    private List<BountyDefinition> readBounties(FriendlyByteBuf buffer) {
-        int bountyCount = buffer.readVarInt();
+    private List<BountyDefinition> readBounties(FriendlyByteBuf friendlyByteBuf) {
+        int bountyCount = friendlyByteBuf.readVarInt();
         List<BountyDefinition> syncedBounties = new ArrayList<>(bountyCount);
 
         this.abandonedBountyIds.clear();
-        int abandonedCount = buffer.readVarInt();
+        int abandonedCount = friendlyByteBuf.readVarInt();
         for (int index = 0; index < abandonedCount; index++) {
-            this.abandonedBountyIds.add(buffer.readUUID());
+            this.abandonedBountyIds.add(friendlyByteBuf.readUUID());
         }
 
         for (int index = 0; index < bountyCount; index++) {
-            UUID bountyId = buffer.readUUID();
-            String categoryName = buffer.readUtf();
-            String entityId = buffer.readUtf();
-            int requiredKills = buffer.readVarInt();
-            String lootTableId = buffer.readUtf();
-            int experienceReward = buffer.readVarInt();
-            String previewItemId = buffer.readUtf();
-            int previewCount = buffer.readVarInt();
+            UUID bountyId = friendlyByteBuf.readUUID();
+            String typeName = friendlyByteBuf.readUtf();
+            String targetTypeName = friendlyByteBuf.readUtf();
+            String categoryName = friendlyByteBuf.readUtf();
+            String targetIdString = friendlyByteBuf.readUtf();
+            int requiredAmount = friendlyByteBuf.readVarInt();
+            String lootTableIdString = friendlyByteBuf.readUtf();
+            int experienceReward = friendlyByteBuf.readVarInt();
+            String previewItemIdString = friendlyByteBuf.readUtf();
+            int previewCount = friendlyByteBuf.readVarInt();
 
             syncedBounties.add(new BountyDefinition(
                     bountyId,
+                    BountyDefinition.BountyType.byName(typeName),
+                    BountyDefinition.BountyTargetType.byName(targetTypeName),
                     BountyCategory.byName(categoryName),
-                    ResourceLocation.parse(entityId),
-                    requiredKills,
+                    ResourceLocation.parse(targetIdString),
+                    requiredAmount,
                     new BountyReward(
-                            ResourceLocation.parse(lootTableId),
+                            ResourceLocation.parse(lootTableIdString),
                             experienceReward,
-                            ResourceLocation.parse(previewItemId),
+                            ResourceLocation.parse(previewItemIdString),
                             previewCount
                     )
             ));
@@ -646,7 +652,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
             this.hasActiveBounty.set(1);
             this.activeBountyIndex.set(resolvedActiveBountyIndex);
             this.activeProgress.set(playerBountyData.getCurrentProgress());
-            this.activeRequiredKills.set(activeBounty.requiredKills());
+            this.activeRequiredKills.set(activeBounty.requiredAmount());
             this.activeCompleted.set(playerBountyData.isCompleted() ? 1 : 0);
             this.rewardsUnlocked.set(rewardsAreUnlocked ? 1 : 0);
             this.restoreContractAvailable.set(!playerBountyData.isCompleted() && !rewardsAreUnlocked && !this.hasPlayerContractItem(activeBounty.id()) ? 1 : 0);

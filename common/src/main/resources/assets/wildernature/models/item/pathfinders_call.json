@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "wildernature:item/common_contract"
+    "layer0": "wildernature:item/pathfinders_call"
   }
 }

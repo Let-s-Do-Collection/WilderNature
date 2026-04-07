@@ -1,14 +1,15 @@
 package net.satisfy.wildernature.core.bounty;
 
-import net.minecraft.nbt.CompoundTag;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import net.minecraft.nbt.CompoundTag;
 
 public class PlayerBountyData {
     private BountyDefinition activeBounty;
     private int currentProgress;
+    private int trackedStartAmount;
+    private int trackedHighestAmount;
     private final Set<UUID> abandonedBounties = new HashSet<>();
 
     public BountyDefinition getActiveBounty() {
@@ -17,6 +18,14 @@ public class PlayerBountyData {
 
     public int getCurrentProgress() {
         return this.currentProgress;
+    }
+
+    public int getTrackedStartAmount() {
+        return this.trackedStartAmount;
+    }
+
+    public int getTrackedHighestAmount() {
+        return this.trackedHighestAmount;
     }
 
     public boolean hasActiveBounty() {
@@ -34,11 +43,15 @@ public class PlayerBountyData {
     public void setActiveBounty(BountyDefinition activeBounty) {
         this.activeBounty = activeBounty;
         this.currentProgress = 0;
+        this.trackedStartAmount = 0;
+        this.trackedHighestAmount = 0;
     }
 
     public void clearActiveBounty() {
         this.activeBounty = null;
         this.currentProgress = 0;
+        this.trackedStartAmount = 0;
+        this.trackedHighestAmount = 0;
     }
 
     public void abandonActiveBounty() {
@@ -48,45 +61,65 @@ public class PlayerBountyData {
         this.clearActiveBounty();
     }
 
-    public void incrementProgress() {
-        if (this.activeBounty != null && this.currentProgress < this.activeBounty.requiredKills()) {
-            this.currentProgress++;
+    public void incrementProgress(int amount) {
+        if (this.activeBounty != null && amount > 0 && this.currentProgress < this.activeBounty.requiredAmount()) {
+            this.currentProgress = Math.min(this.activeBounty.requiredAmount(), this.currentProgress + amount);
         }
     }
 
+    public void setProgress(int progress) {
+        if (this.activeBounty != null) {
+            this.currentProgress = Math.max(0, Math.min(this.activeBounty.requiredAmount(), progress));
+        }
+    }
+
+    public void setTrackedStartAmount(int trackedStartAmount) {
+        this.trackedStartAmount = Math.max(0, trackedStartAmount);
+    }
+
+    public void setTrackedHighestAmount(int trackedHighestAmount) {
+        this.trackedHighestAmount = Math.max(0, trackedHighestAmount);
+    }
+
     public boolean isCompleted() {
-        return this.activeBounty != null && this.currentProgress >= this.activeBounty.requiredKills();
+        return this.activeBounty != null && this.currentProgress >= this.activeBounty.requiredAmount();
     }
 
     public CompoundTag save() {
-        CompoundTag tag = new CompoundTag();
+        CompoundTag compoundTag = new CompoundTag();
+
         if (this.activeBounty != null) {
-            tag.put("active_bounty", this.activeBounty.save());
-            tag.putInt("current_progress", this.currentProgress);
+            compoundTag.put("active_bounty", this.activeBounty.save());
+            compoundTag.putInt("current_progress", this.currentProgress);
+            compoundTag.putInt("tracked_start_amount", this.trackedStartAmount);
+            compoundTag.putInt("tracked_highest_amount", this.trackedHighestAmount);
         }
 
         int abandonedIndex = 0;
         for (UUID bountyId : this.abandonedBounties) {
-            tag.putUUID("abandoned_" + abandonedIndex, bountyId);
+            compoundTag.putUUID("abandoned_" + abandonedIndex, bountyId);
             abandonedIndex++;
         }
-        tag.putInt("abandoned_size", abandonedIndex);
-        return tag;
+
+        compoundTag.putInt("abandoned_size", abandonedIndex);
+        return compoundTag;
     }
 
-    public static PlayerBountyData load(CompoundTag tag) {
-        PlayerBountyData data = new PlayerBountyData();
+    public static PlayerBountyData load(CompoundTag compoundTag) {
+        PlayerBountyData playerBountyData = new PlayerBountyData();
 
-        if (tag.contains("active_bounty")) {
-            data.activeBounty = BountyDefinition.load(tag.getCompound("active_bounty"));
-            data.currentProgress = tag.getInt("current_progress");
+        if (compoundTag.contains("active_bounty")) {
+            playerBountyData.activeBounty = BountyDefinition.load(compoundTag.getCompound("active_bounty"));
+            playerBountyData.currentProgress = compoundTag.getInt("current_progress");
+            playerBountyData.trackedStartAmount = compoundTag.getInt("tracked_start_amount");
+            playerBountyData.trackedHighestAmount = compoundTag.getInt("tracked_highest_amount");
         }
 
-        int abandonedSize = tag.getInt("abandoned_size");
+        int abandonedSize = compoundTag.getInt("abandoned_size");
         for (int index = 0; index < abandonedSize; index++) {
-            data.abandonedBounties.add(tag.getUUID("abandoned_" + index));
+            playerBountyData.abandonedBounties.add(compoundTag.getUUID("abandoned_" + index));
         }
 
-        return data;
+        return playerBountyData;
     }
 }

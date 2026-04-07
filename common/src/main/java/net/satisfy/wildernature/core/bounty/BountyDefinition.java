@@ -1,29 +1,84 @@
 package net.satisfy.wildernature.core.bounty;
 
+import java.util.UUID;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.UUID;
-
-public record BountyDefinition(UUID id, BountyCategory category, ResourceLocation entityId, int requiredKills, BountyReward reward) {
-
+public record BountyDefinition(UUID id, BountyType type, BountyTargetType targetType, BountyCategory category, ResourceLocation targetId, int requiredAmount, BountyReward reward) {
     public CompoundTag save() {
-        CompoundTag tag = new CompoundTag();
-        tag.putUUID("id", this.id);
-        tag.putString("category", this.category.getName());
-        tag.putString("entity_id", this.entityId.toString());
-        tag.putInt("required_kills", this.requiredKills);
-        tag.put("reward", this.reward.save());
-        return tag;
+        CompoundTag compoundTag = new CompoundTag();
+        compoundTag.putUUID("id", this.id);
+        compoundTag.putString("type", this.type.getSerializedName());
+        compoundTag.putString("target_type", this.targetType.getSerializedName());
+        compoundTag.putString("category", this.category.getName());
+        compoundTag.putString("target_id", this.targetId.toString());
+        compoundTag.putInt("required_amount", this.requiredAmount);
+        compoundTag.put("reward", this.reward.save());
+        return compoundTag;
     }
 
-    public static BountyDefinition load(CompoundTag tag) {
+    public static BountyDefinition load(CompoundTag compoundTag) {
         return new BountyDefinition(
-                tag.getUUID("id"),
-                BountyCategory.byName(tag.getString("category")),
-                ResourceLocation.parse(tag.getString("entity_id")),
-                tag.getInt("required_kills"),
-                BountyReward.load(tag.getCompound("reward"))
+                compoundTag.getUUID("id"),
+                BountyType.byName(compoundTag.getString("type")),
+                BountyTargetType.byName(compoundTag.getString("target_type")),
+                BountyCategory.byName(compoundTag.getString("category")),
+                ResourceLocation.parse(compoundTag.getString("target_id")),
+                compoundTag.getInt("required_amount"),
+                BountyReward.load(compoundTag.getCompound("reward"))
         );
+    }
+
+    public enum BountyType {
+        HUNT("hunt"),
+        GATHER("gather"),
+        OBSERVE("observe"),
+        EXPLORE("explore");
+
+        private final String serializedName;
+
+        BountyType(String serializedName) {
+            this.serializedName = serializedName;
+        }
+
+        public String getSerializedName() {
+            return this.serializedName;
+        }
+
+        public static BountyType byName(String serializedName) {
+            for (BountyType bountyType : values()) {
+                if (bountyType.serializedName.equals(serializedName)) {
+                    return bountyType;
+                }
+            }
+
+            return HUNT;
+        }
+    }
+
+    public enum BountyTargetType {
+        ENTITY("entity"),
+        ITEM("item"),
+        BIOME("biome");
+
+        private final String serializedName;
+
+        BountyTargetType(String serializedName) {
+            this.serializedName = serializedName;
+        }
+
+        public String getSerializedName() {
+            return this.serializedName;
+        }
+
+        public static BountyTargetType byName(String serializedName) {
+            for (BountyTargetType bountyTargetType : values()) {
+                if (bountyTargetType.serializedName.equals(serializedName)) {
+                    return bountyTargetType;
+                }
+            }
+
+            return ENTITY;
+        }
     }
 }

@@ -30,10 +30,12 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.COOKED_CASSOWARY_MEAT.get());
                 out.accept(ObjectRegistry.TURKEY_MEAT.get());
                 out.accept(ObjectRegistry.COOKED_TURKEY_MEAT.get());
-                out.accept(ObjectRegistry.UNCOMMON_CONTRACT.get());
-                out.accept(ObjectRegistry.LEVELING_CONTRACT.get());
-                out.accept(ObjectRegistry.COMMON_CONTRACT.get());
-                out.accept(ObjectRegistry.RARE_CONTRACT.get());
+                out.accept(ObjectRegistry.FIELD_NOTES.get());
+                out.accept(ObjectRegistry.PATHFINDERS_CALL.get());
+                out.accept(ObjectRegistry.TRACKING_ORDER.get());
+                out.accept(ObjectRegistry.PROVISION_REQUEST.get());
+                out.accept(ObjectRegistry.ELITE_BOUNTY.get());
+                out.accept(ObjectRegistry.GUILD_COMMISSION.get());
                 out.accept(ObjectRegistry.BISON_HORN.get());
                 out.accept(ObjectRegistry.TURKEY_EGG.get());
                 out.accept(ObjectRegistry.FISH_OIL.get());

@@ -16,6 +16,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.core.bounty.BountyCategory;
 import net.satisfy.wildernature.core.bounty.BountyDefinition;
 import net.satisfy.wildernature.core.bounty.BountyManager;
 import net.satisfy.wildernature.core.gui.handler.BountyBoardMenu;
@@ -28,7 +29,6 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
     private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/gui/bounty_board/bounty_board.png");
     private static final ResourceLocation SCROLLER_TEXTURE = WilderNature.identifier("textures/gui/widgets/scroller.png");
     private static final ResourceLocation SCROLLER_DISABLED_TEXTURE = WilderNature.identifier("textures/gui/widgets/scroller_disabled.png");
-
     private static final int RENDER_WIDTH = 276;
     private static final int RENDER_HEIGHT = 166;
     private static final int TEXTURE_WIDTH = 512;
@@ -75,7 +75,6 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
     private static final int UNLOCK_ICON_V = 88;
     private static final int UNLOCK_ICON_SIZE = 14;
     private static final int UNLOCK_ANIMATION_DURATION = 18;
-
     private int startIndex;
     private double scrollOff;
     private boolean isDragging;
@@ -375,7 +374,7 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
     }
 
     private void renderRestoreContractTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        ItemStack contractStack = this.menu.getActiveBounty().map(this::getContractIcon).orElseGet(() -> new ItemStack(ObjectRegistry.COMMON_CONTRACT.get()));
+        ItemStack contractStack = this.menu.getActiveBounty().map(this::getContractIcon).orElseGet(() -> new ItemStack(ObjectRegistry.TRACKING_ORDER.get()));
         ItemStack emeraldStack = new ItemStack(Items.EMERALD);
 
         Component finishedTitle = Component.translatable("gui.wildernature.bounty_board.turn_in_title");
@@ -446,6 +445,8 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
 
         guiGraphics.pose().popPose();
     }
+
+
 
     private boolean isHoveringRestoreContractSlot(int mouseX, int mouseY) {
         int contractSlotX = this.leftPos + CONTRACT_SLOT_X;
@@ -544,45 +545,61 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             return;
         }
 
-        EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(detailBounty.get().entityId());
-        var entity = entityType.create(this.minecraft.level);
-        if (!(entity instanceof LivingEntity livingEntity)) {
+        BountyDefinition bountyDefinition = detailBounty.get();
+
+        if (bountyDefinition.targetType() == BountyDefinition.BountyTargetType.ENTITY) {
+            EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(bountyDefinition.targetId());
+            var entity = entityType.create(this.minecraft.level);
+            if (!(entity instanceof LivingEntity livingEntity)) {
+                return;
+            }
+
+            int entityX = this.leftPos + 130;
+            int entityY = this.topPos + 43;
+            float entityScale = 16.0F;
+
+            float yawOffset = (float) Math.atan((entityX - mouseX) / 40.0F);
+            float pitchOffset = (float) Math.atan((entityY - mouseY) / 40.0F);
+
+            Quaternionf bodyRotation = Axis.ZP.rotationDegrees(180.0F);
+            Quaternionf pitchRotation = Axis.XP.rotationDegrees(pitchOffset * 20.0F);
+            bodyRotation.mul(pitchRotation);
+
+            float previousBodyRot = livingEntity.yBodyRot;
+            float previousYRot = livingEntity.getYRot();
+            float previousXRot = livingEntity.getXRot();
+            float previousYHeadRotO = livingEntity.yHeadRotO;
+            float previousYHeadRot = livingEntity.yHeadRot;
+
+            livingEntity.yBodyRot = 180.0F + yawOffset * 20.0F;
+            livingEntity.setYRot(180.0F + yawOffset * 40.0F);
+            livingEntity.setXRot(-pitchOffset * 20.0F);
+            livingEntity.yHeadRot = livingEntity.getYRot();
+            livingEntity.yHeadRotO = livingEntity.getYRot();
+
+            Vector3f translation = new Vector3f(0.0F, livingEntity.getBbHeight() * 0.5F, 0.0F);
+            Quaternionf cameraRotation = pitchRotation.conjugate(new Quaternionf());
+
+            InventoryScreen.renderEntityInInventory(guiGraphics, entityX, entityY, entityScale, translation, bodyRotation, cameraRotation, livingEntity);
+
+            livingEntity.yBodyRot = previousBodyRot;
+            livingEntity.setYRot(previousYRot);
+            livingEntity.setXRot(previousXRot);
+            livingEntity.yHeadRotO = previousYHeadRotO;
+            livingEntity.yHeadRot = previousYHeadRot;
             return;
         }
 
-        int entityX = this.leftPos + 130;
-        int entityY = this.topPos + 43;
-        float entityScale = 16.0F;
+        ItemStack previewStack = BountyManager.createPreviewStack(bountyDefinition);
 
-        float yawOffset = (float) Math.atan((entityX - mouseX) / 40.0F);
-        float pitchOffset = (float) Math.atan((entityY - mouseY) / 40.0F);
+        int itemX = this.leftPos + 122;
+        int itemY = this.topPos + 35;
 
-        Quaternionf bodyRotation = Axis.ZP.rotationDegrees(180.0F);
-        Quaternionf pitchRotation = Axis.XP.rotationDegrees(pitchOffset * 20.0F);
-        bodyRotation.mul(pitchRotation);
-
-        float previousBodyRot = livingEntity.yBodyRot;
-        float previousYRot = livingEntity.getYRot();
-        float previousXRot = livingEntity.getXRot();
-        float previousYHeadRotO = livingEntity.yHeadRotO;
-        float previousYHeadRot = livingEntity.yHeadRot;
-
-        livingEntity.yBodyRot = 180.0F + yawOffset * 20.0F;
-        livingEntity.setYRot(180.0F + yawOffset * 40.0F);
-        livingEntity.setXRot(-pitchOffset * 20.0F);
-        livingEntity.yHeadRot = livingEntity.getYRot();
-        livingEntity.yHeadRotO = livingEntity.getYRot();
-
-        Vector3f translation = new Vector3f(0.0F, livingEntity.getBbHeight() * 0.5F, 0.0F);
-        Quaternionf cameraRotation = pitchRotation.conjugate(new Quaternionf());
-
-        InventoryScreen.renderEntityInInventory(guiGraphics, entityX, entityY, entityScale, translation, bodyRotation, cameraRotation, livingEntity);
-
-        livingEntity.yBodyRot = previousBodyRot;
-        livingEntity.setYRot(previousYRot);
-        livingEntity.setXRot(previousXRot);
-        livingEntity.yHeadRotO = previousYHeadRotO;
-        livingEntity.yHeadRot = previousYHeadRot;
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(itemX, itemY, 0.0F);
+        guiGraphics.pose().scale(1.0F, 1.0F, 1.0F);
+        guiGraphics.renderItem(previewStack, 0, 0);
+        guiGraphics.pose().popPose();
     }
 
     private void renderScroller(GuiGraphics guiGraphics) {
@@ -700,11 +717,13 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
     }
 
     private ItemStack getContractIcon(BountyDefinition bountyDefinition) {
-        return switch (bountyDefinition.category()) {
-            case NEUTRAL -> new ItemStack(ObjectRegistry.COMMON_CONTRACT.get());
-            case DEFENSIVE -> new ItemStack(ObjectRegistry.UNCOMMON_CONTRACT.get());
-            case AGGRESSIVE -> new ItemStack(ObjectRegistry.RARE_CONTRACT.get());
-            case BOSS -> new ItemStack(ObjectRegistry.LEVELING_CONTRACT.get());
+        return switch (bountyDefinition.type()) {
+            case HUNT -> bountyDefinition.category() == BountyCategory.BOSS
+                    ? new ItemStack(ObjectRegistry.ELITE_BOUNTY.get())
+                    : new ItemStack(ObjectRegistry.TRACKING_ORDER.get());
+            case GATHER -> new ItemStack(ObjectRegistry.PROVISION_REQUEST.get());
+            case OBSERVE -> new ItemStack(ObjectRegistry.FIELD_NOTES.get());
+            case EXPLORE -> new ItemStack(ObjectRegistry.PATHFINDERS_CALL.get());
         };
     }
 
@@ -748,13 +767,18 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         return this.menu.getSelectedBounty();
     }
 
-    private Component getEntityDisplayName(BountyDefinition bountyDefinition) {
-        EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(bountyDefinition.entityId());
-        if (entityType == EntityType.PIG && !BuiltInRegistries.ENTITY_TYPE.containsKey(bountyDefinition.entityId())) {
-            return Component.literal(bountyDefinition.entityId().getPath());
-        }
-
-        return entityType.getDescription();
+    private Component getTargetDisplayName(BountyDefinition bountyDefinition) {
+        return switch (bountyDefinition.targetType()) {
+            case ENTITY -> {
+                EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(bountyDefinition.targetId());
+                if (BuiltInRegistries.ENTITY_TYPE.containsKey(bountyDefinition.targetId())) {
+                    yield entityType.getDescription();
+                }
+                yield Component.literal(bountyDefinition.targetId().getPath());
+            }
+            case ITEM -> new ItemStack(BuiltInRegistries.ITEM.get(bountyDefinition.targetId())).getHoverName();
+            case BIOME -> Component.translatable("biome." + bountyDefinition.targetId().getNamespace() + "." + bountyDefinition.targetId().getPath());
+        };
     }
 
     @Override
@@ -768,7 +792,6 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         }
 
         BountyDefinition bountyDefinition = detailBounty.get();
-        Component entityName = this.getEntityDisplayName(bountyDefinition);
         Component titleComponent = this.getBountyTitleComponent(bountyDefinition);
 
         guiGraphics.pose().pushPose();
@@ -776,7 +799,7 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         guiGraphics.drawString(this.font, titleComponent, (int) (TITLE_X / 1.1F), (int) (TITLE_Y / 1.1F), 4210752, false);
         guiGraphics.pose().popPose();
 
-        guiGraphics.drawString(this.font, Component.translatable("gui.wildernature.bounty_board.objective", bountyDefinition.requiredKills(), entityName), OBJECTIVE_X, OBJECTIVE_Y, 4210752, false);
+        guiGraphics.drawString(this.font, this.getObjectiveComponent(bountyDefinition), OBJECTIVE_X, OBJECTIVE_Y, 4210752, false);
         guiGraphics.drawString(this.font, Component.translatable("gui.wildernature.bounty_board.reward"), REWARD_LABEL_X, REWARD_LABEL_Y, 4210752, false);
     }
 
@@ -792,17 +815,25 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
     }
 
     private Component getBountyTitleComponent(BountyDefinition bountyDefinition) {
-        Component entityName = this.getEntityDisplayName(bountyDefinition);
-
-        String[] translationKeys = new String[]{
-                "gui.wildernature.bounty_board.title.hunt",
-                "gui.wildernature.bounty_board.title.hunter",
-                "gui.wildernature.bounty_board.title.trapper",
-                "gui.wildernature.bounty_board.title.cull",
-                "gui.wildernature.bounty_board.title.slash"
+        return switch (bountyDefinition.type()) {
+            case HUNT -> Component.translatable("gui.wildernature.bounty_board.title.hunt");
+            case GATHER -> Component.translatable("gui.wildernature.bounty_board.title.gather");
+            case OBSERVE -> Component.translatable("gui.wildernature.bounty_board.title.observe");
+            case EXPLORE -> Component.translatable("gui.wildernature.bounty_board.title.explore");
         };
+    }
 
-        int titleIndex = Math.abs(bountyDefinition.id().hashCode()) % translationKeys.length;
-        return Component.translatable(translationKeys[titleIndex], entityName);
+    private Component getObjectiveComponent(BountyDefinition bountyDefinition) {
+        Component targetDisplayName = this.getTargetDisplayName(bountyDefinition);
+        int amount = bountyDefinition.requiredAmount();
+
+        return switch (bountyDefinition.type()) {
+            case HUNT -> amount == 1
+                    ? Component.translatable("gui.wildernature.bounty_board.objective.hunt.single", targetDisplayName)
+                    : Component.translatable("gui.wildernature.bounty_board.objective.hunt.plural", amount, targetDisplayName);
+            case GATHER -> Component.translatable("gui.wildernature.bounty_board.objective.gather", targetDisplayName);
+            case OBSERVE -> Component.translatable("gui.wildernature.bounty_board.objective.observe", targetDisplayName);
+            case EXPLORE -> Component.translatable("gui.wildernature.bounty_board.objective.explore", targetDisplayName);
+        };
     }
 }
