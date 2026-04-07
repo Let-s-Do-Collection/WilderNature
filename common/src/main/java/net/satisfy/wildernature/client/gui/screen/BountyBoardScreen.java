@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.core.bounty.BountyDefinition;
+import net.satisfy.wildernature.core.bounty.BountyManager;
 import net.satisfy.wildernature.core.gui.handler.BountyBoardMenu;
 import net.satisfy.wildernature.core.network.BountyBoardNetworking;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
@@ -80,9 +81,7 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
     private boolean isDragging;
     private int animationTickCounter;
     private int unlockAnimationTicks;
-    private boolean hadTurnInContractLastTick;
-    private boolean hadActiveBountyLastTick;
-    private boolean hadCompletedActiveBountyLastTick;
+    private boolean hadRewardSlotsUnlockedLastTick;
 
     public BountyBoardScreen(BountyBoardMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -130,12 +129,15 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         int contractSlotY = this.topPos + CONTRACT_SLOT_Y;
 
         if (mouseX >= contractSlotX && mouseX < contractSlotX + 16 && mouseY >= contractSlotY && mouseY < contractSlotY + 16) {
-            if (this.menu.hasRestoreContractAvailable()) {
-                if (this.menu.getCarried().isEmpty()) {
-                    return true;
-                }
+            if (this.menu.hasTurnInContractInserted()) {
+                return true;
+            }
 
-                return super.mouseClicked(mouseX, mouseY, button);
+            if (this.menu.hasRestoreContractAvailable()) {
+                if (!this.menu.getCarried().isEmpty()) {
+                    return super.mouseClicked(mouseX, mouseY, button);
+                }
+                return true;
             }
 
             if (this.menu.hasContractPreviewItem()) {
@@ -311,6 +313,10 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             }
         }
 
+        if (this.menu.areRewardSlotsUnlocked()) {
+            return;
+        }
+
         Optional<BountyDefinition> detailBounty = this.getDisplayedDetailBounty();
         if (detailBounty.isEmpty()) {
             return;
@@ -348,8 +354,7 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         }
 
         if (mouseX >= detailXpX && mouseX < detailXpX + 16 && mouseY >= detailXpY && mouseY < detailXpY + 16) {
-            ItemStack experienceStack = new ItemStack(Items.EXPERIENCE_BOTTLE);
-            experienceStack.setCount(detailBounty.get().reward().experienceReward());
+            ItemStack experienceStack = BountyManager.createExperienceBurstStack(detailBounty.get().reward().experienceReward());
 
             if (locked) {
                 guiGraphics.renderTooltip(
@@ -595,6 +600,14 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
     }
 
     private void renderDetailRewardIcons(GuiGraphics guiGraphics) {
+        if (this.menu.areRewardSlotsUnlocked()) {
+            if (this.unlockAnimationTicks > 0) {
+                this.renderUnlockEffect(guiGraphics, this.leftPos + REWARD_ITEM_X, this.topPos + REWARD_ITEM_Y);
+                this.renderUnlockEffect(guiGraphics, this.leftPos + REWARD_XP_ICON_X, this.topPos + REWARD_XP_ICON_Y);
+            }
+            return;
+        }
+
         Optional<BountyDefinition> detailBounty = this.getDisplayedDetailBounty();
         if (detailBounty.isEmpty()) {
             return;
@@ -609,24 +622,12 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             guiGraphics.renderItemDecorations(this.font, rewardPreviewStack, this.leftPos + REWARD_ITEM_X, this.topPos + REWARD_ITEM_Y);
         }
 
-        ItemStack experienceStack = new ItemStack(Items.EXPERIENCE_BOTTLE);
-        int experienceReward = detailBounty.get().reward().experienceReward();
-
+        ItemStack experienceStack = BountyManager.createExperienceBurstStack(detailBounty.get().reward().experienceReward());
         guiGraphics.renderItem(experienceStack, this.leftPos + REWARD_XP_ICON_X, this.topPos + REWARD_XP_ICON_Y);
-        if (experienceReward > 1) {
-            experienceStack.setCount(experienceReward);
-            guiGraphics.renderItemDecorations(this.font, experienceStack, this.leftPos + REWARD_XP_ICON_X, this.topPos + REWARD_XP_ICON_Y);
-        }
 
         if (this.menu.hasActiveBounty()) {
             this.renderLockOverlay(guiGraphics, this.leftPos + REWARD_ITEM_X, this.topPos + REWARD_ITEM_Y);
             this.renderLockOverlay(guiGraphics, this.leftPos + REWARD_XP_ICON_X, this.topPos + REWARD_XP_ICON_Y);
-            return;
-        }
-
-        if (this.unlockAnimationTicks > 0) {
-            this.renderUnlockEffect(guiGraphics, this.leftPos + REWARD_ITEM_X, this.topPos + REWARD_ITEM_Y);
-            this.renderUnlockEffect(guiGraphics, this.leftPos + REWARD_XP_ICON_X, this.topPos + REWARD_XP_ICON_Y);
         }
     }
 
@@ -685,10 +686,9 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
     }
 
     private void updateUnlockAnimationState() {
-        boolean hasTurnInContract = this.menu.hasActiveBounty() && this.menu.hasCompletedActiveBounty() && this.menu.getSlot(0).hasItem();
-        boolean justFinishedTurnIn = !this.menu.hasActiveBounty() && this.hadActiveBountyLastTick && this.hadCompletedActiveBountyLastTick;
+        boolean rewardSlotsUnlocked = this.menu.areRewardSlotsUnlocked();
 
-        if ((hasTurnInContract && !this.hadTurnInContractLastTick) || justFinishedTurnIn) {
+        if (rewardSlotsUnlocked && !this.hadRewardSlotsUnlockedLastTick) {
             this.unlockAnimationTicks = UNLOCK_ANIMATION_DURATION;
         }
 
@@ -696,9 +696,7 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             this.unlockAnimationTicks--;
         }
 
-        this.hadTurnInContractLastTick = hasTurnInContract;
-        this.hadActiveBountyLastTick = this.menu.hasActiveBounty();
-        this.hadCompletedActiveBountyLastTick = this.menu.hasCompletedActiveBounty();
+        this.hadRewardSlotsUnlockedLastTick = rewardSlotsUnlocked;
     }
 
     private ItemStack getContractIcon(BountyDefinition bountyDefinition) {

@@ -57,6 +57,7 @@ public class WilderNatureClientNeoForge {
         event.registerSpriteSet(ParticleTypeRegistry.CACHE_OPEN.get(), CacheLeafParticle.OpenProvider::new);
         event.registerSpriteSet(ParticleTypeRegistry.CACHE_CLOSE.get(), CacheLeafParticle.CloseProvider::new);
         event.registerSpriteSet(ParticleTypeRegistry.SHEARED_WOOL.get(), WoolFluffParticle.Provider::new);
+        event.registerSpriteSet(ParticleTypeRegistry.BURST_OF_EXPERIENCE.get(), BurstOfExperienceParticle.Provider::new);
     }
 
     @SubscribeEvent

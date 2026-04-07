@@ -81,7 +81,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> BURROW = registerWithItem("burrow", () -> new BurrowBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK)));
     public static final RegistrySupplier<Block> BROWN_MUSHROOM_COLONY = registerWithItem("brown_mushroom_colony", () -> new MushroomColonyBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).randomTicks().noCollission().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY)));
     public static final RegistrySupplier<Block> RED_MUSHROOM_COLONY = registerWithItem("red_mushroom_colony", () -> new MushroomColonyBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).randomTicks().noCollission().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY)));
-
+    public static final RegistrySupplier<Item> BURST_OF_EXPERIENCE = registerItem("burst_of_experience", () -> new ExperienceBurstItem(new Item.Properties().rarity(Rarity.COMMON)));
 
     /**
      * Ideas for Items:
@@ -90,16 +90,12 @@ public class ObjectRegistry {
      * Ram, rideable - just like a slow Horse with LOTS of health that pushes away all other entities
      * Koala
      * Chameleon
-     * Hippos
-     * Beaver
      * Kangaroos
      * Jaguars
      * Porcupines
      * --- unsure because of Naturalist ---
      * Bears
-     * Elephants
      * Crocodiles
-     * Lions
      */
 
 

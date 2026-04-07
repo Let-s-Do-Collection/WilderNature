@@ -182,5 +182,8 @@
   "gui.wildernature.bounty_board.turn_in_title": "Bounty complete:",
   "gui.wildernature.bounty_board.turn_in_desc": "Place the finished Contract in this slot to claim the Bounty.",
   "gui.wildernature.bounty_board.contract_restore": "Lost your contract?",
-  "gui.wildernature.bounty_board.contract_restore_cost": "Place an Emerald in this slot to restore the Contract."
+  "gui.wildernature.bounty_board.contract_restore_cost": "Place an Emerald in this slot to restore the Contract.",
+  "item.wildernature.burst_of_experience": "Burst of Experience",
+  "tooltip.wildernature.burst_of_experience.use": "Unleash to receive",
+  "tooltip.wildernature.burst_of_experience.experience": "Experience"
 }

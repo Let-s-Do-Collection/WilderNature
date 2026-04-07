@@ -60,27 +60,6 @@ public final class BountyManager {
         return true;
     }
 
-    public static boolean hasContractItem(ServerPlayer serverPlayer, UUID bountyId) {
-        for (int slotIndex = 0; slotIndex < serverPlayer.getInventory().getContainerSize(); slotIndex++) {
-            ItemStack itemStack = serverPlayer.getInventory().getItem(slotIndex);
-            if (itemStack.isEmpty()) {
-                continue;
-            }
-
-            CustomData customData = itemStack.get(DataComponents.CUSTOM_DATA);
-            if (customData == null) {
-                continue;
-            }
-
-            CompoundTag customDataTag = customData.copyTag();
-            if (customDataTag.hasUUID("BountyId") && customDataTag.getUUID("BountyId").equals(bountyId)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public static ItemStack createContractStack(BountyDefinition bountyDefinition) {
         ItemStack contractStack = new ItemStack(getContractItem(bountyDefinition));
         CompoundTag customDataTag = new CompoundTag();
@@ -124,6 +103,20 @@ public final class BountyManager {
         }
     }
 
+    public static boolean completeActiveBountyWithoutRewards(ServerPlayer serverPlayer) {
+        PlayerBountyData playerBountyData = getPlayerBountyData(serverPlayer);
+        if (!playerBountyData.isCompleted() || playerBountyData.getActiveBounty() == null) {
+            return false;
+        }
+
+        BountyDefinition activeBounty = playerBountyData.getActiveBounty();
+        removeContractItem(serverPlayer, activeBounty.id());
+        playerBountyData.getAbandonedBounties().add(activeBounty.id());
+        playerBountyData.clearActiveBounty();
+        savePlayerBountyData(serverPlayer, playerBountyData);
+        return true;
+    }
+
     public static boolean claimActiveBounty(ServerPlayer serverPlayer) {
         PlayerBountyData playerBountyData = getPlayerBountyData(serverPlayer);
         if (!playerBountyData.isCompleted() || playerBountyData.getActiveBounty() == null) {
@@ -147,6 +140,14 @@ public final class BountyManager {
         playerBountyData.clearActiveBounty();
         savePlayerBountyData(serverPlayer, playerBountyData);
         return true;
+    }
+
+    public static ItemStack createExperienceBurstStack(int experienceAmount) {
+        ItemStack burstStack = new ItemStack(ObjectRegistry.BURST_OF_EXPERIENCE.get());
+        CompoundTag customDataTag = new CompoundTag();
+        customDataTag.putInt("ExperienceAmount", experienceAmount);
+        burstStack.set(DataComponents.CUSTOM_DATA, CustomData.of(customDataTag));
+        return burstStack;
     }
 
     @SuppressWarnings("deprecation")

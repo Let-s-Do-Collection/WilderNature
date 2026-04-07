@@ -87,6 +87,7 @@ public class WilderNatureClient {
         ParticleProviderRegistry.register(ParticleTypeRegistry.CACHE_OPEN.get(), CacheLeafParticle.OpenProvider::new);
         ParticleProviderRegistry.register(ParticleTypeRegistry.CACHE_CLOSE.get(), CacheLeafParticle.CloseProvider::new);
         ParticleProviderRegistry.register(ParticleTypeRegistry.SHEARED_WOOL.get(), WoolFluffParticle.Provider::new);
+        ParticleProviderRegistry.register(ParticleTypeRegistry.BURST_OF_EXPERIENCE.get(), BurstOfExperienceParticle.Provider::new);
 
         MenuRegistry.registerScreenFactory(MenuTypeRegistry.BOUNTY_BOARD_MENU.get(), BountyBoardScreen::new);
 

@@ -20,6 +20,7 @@ public class ParticleTypeRegistry {
     public static final RegistrySupplier<SimpleParticleType> CACHE_OPEN = PARTICLE_TYPES.register("cache_open", () -> new SimpleParticleType(false) {});
     public static final RegistrySupplier<SimpleParticleType> CACHE_CLOSE = PARTICLE_TYPES.register("cache_close", () -> new SimpleParticleType(false) {});
     public static final RegistrySupplier<SimpleParticleType> SHEARED_WOOL = PARTICLE_TYPES.register("sheared_wool", () -> new SimpleParticleType(false) {});
+    public static final RegistrySupplier<SimpleParticleType> BURST_OF_EXPERIENCE = PARTICLE_TYPES.register("burst_of_experience", () -> new SimpleParticleType(false) {});
 
     public static void init() {
         PARTICLE_TYPES.register();
