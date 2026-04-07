@@ -2,16 +2,15 @@ package net.satisfy.wildernature.core.network;
 
 import dev.architectury.networking.NetworkManager;
 import io.netty.buffer.Unpooled;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.core.gui.handler.BountyBoardMenu;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @SuppressWarnings("removal")
 public final class BountyBoardNetworking {
@@ -48,11 +47,11 @@ public final class BountyBoardNetworking {
         }));
 
         NetworkManager.registerReceiver(NetworkManager.c2s(), SELECT, (buffer, context) -> {
-            int index = buffer.readInt();
+            int selectedIndex = buffer.readInt();
             context.queue(() -> {
                 ServerPlayer serverPlayer = (ServerPlayer) context.getPlayer();
                 if (serverPlayer.containerMenu instanceof BountyBoardMenu menu) {
-                    menu.setSelectedBountyIndex(index);
+                    menu.setSelectedBountyIndex(selectedIndex);
                     menu.broadcastChanges();
                     sendSync(serverPlayer, menu);
                 }
@@ -66,6 +65,7 @@ public final class BountyBoardNetworking {
             int activeProgress = buffer.readInt();
             int activeRequiredKills = buffer.readInt();
             boolean activeCompleted = buffer.readBoolean();
+            boolean restoreContractAvailable = buffer.readBoolean();
             int abandonedCount = buffer.readInt();
             List<UUID> abandonedBountyIds = new ArrayList<>(abandonedCount);
 
@@ -82,6 +82,7 @@ public final class BountyBoardNetworking {
                             activeProgress,
                             activeRequiredKills,
                             activeCompleted,
+                            restoreContractAvailable,
                             abandonedBountyIds
                     );
                 }
@@ -97,9 +98,9 @@ public final class BountyBoardNetworking {
         NetworkManager.sendToServer(ABANDON, createClientBuffer());
     }
 
-    public static void sendSelect(int index) {
+    public static void sendSelect(int selectedIndex) {
         RegistryFriendlyByteBuf buffer = createClientBuffer();
-        buffer.writeInt(index);
+        buffer.writeInt(selectedIndex);
         NetworkManager.sendToServer(SELECT, buffer);
     }
 
@@ -112,11 +113,12 @@ public final class BountyBoardNetworking {
                 menu.getActiveProgress(),
                 menu.getActiveRequiredKills(),
                 menu.hasCompletedActiveBounty(),
+                menu.hasRestoreContractAvailable(),
                 new ArrayList<>(menu.getAbandonedBountyIds())
         );
     }
 
-    public static void sendSync(ServerPlayer serverPlayer, int selectedBountyIndex, boolean hasActiveBounty, int activeBountyIndex, int activeProgress, int activeRequiredKills, boolean activeCompleted, List<UUID> abandonedBountyIds) {
+    public static void sendSync(ServerPlayer serverPlayer, int selectedBountyIndex, boolean hasActiveBounty, int activeBountyIndex, int activeProgress, int activeRequiredKills, boolean activeCompleted, boolean restoreContractAvailable, List<UUID> abandonedBountyIds) {
         RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), serverPlayer.registryAccess());
         buffer.writeInt(selectedBountyIndex);
         buffer.writeBoolean(hasActiveBounty);
@@ -124,6 +126,7 @@ public final class BountyBoardNetworking {
         buffer.writeInt(activeProgress);
         buffer.writeInt(activeRequiredKills);
         buffer.writeBoolean(activeCompleted);
+        buffer.writeBoolean(restoreContractAvailable);
         buffer.writeInt(abandonedBountyIds.size());
 
         for (UUID abandonedBountyId : abandonedBountyIds) {

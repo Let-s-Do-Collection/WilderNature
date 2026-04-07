@@ -131,8 +131,11 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
 
         if (mouseX >= contractSlotX && mouseX < contractSlotX + 16 && mouseY >= contractSlotY && mouseY < contractSlotY + 16) {
             if (this.menu.hasRestoreContractAvailable()) {
-                BountyBoardNetworking.sendAccept();
-                return true;
+                if (this.menu.getCarried().isEmpty()) {
+                    return true;
+                }
+
+                return super.mouseClicked(mouseX, mouseY, button);
             }
 
             if (this.menu.hasContractPreviewItem()) {
@@ -244,7 +247,6 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         this.renderScroller(guiGraphics);
         this.renderTargetEntity(guiGraphics, mouseX, mouseY);
         this.renderDetailRewardIcons(guiGraphics);
-        this.renderRestoreContractEffect(guiGraphics);
         this.renderAbandonButton(guiGraphics, mouseX, mouseY);
     }
 
@@ -276,16 +278,7 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         }
 
         if (this.isHoveringRestoreContractSlot(mouseX, mouseY)) {
-            guiGraphics.renderTooltip(
-                    this.font,
-                    List.of(
-                            Component.translatable("gui.wildernature.bounty_board.contract_restore"),
-                            Component.translatable("gui.wildernature.bounty_board.contract_restore_desc")
-                    ),
-                    Optional.empty(),
-                    mouseX,
-                    mouseY
-            );
+            this.renderRestoreContractTooltip(guiGraphics, mouseX, mouseY);
             return;
         }
 
@@ -374,6 +367,79 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
 
             guiGraphics.renderTooltip(this.font, experienceStack, mouseX, mouseY);
         }
+    }
+
+    private void renderRestoreContractTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        ItemStack contractStack = this.menu.getActiveBounty().map(this::getContractIcon).orElseGet(() -> new ItemStack(ObjectRegistry.COMMON_CONTRACT.get()));
+        ItemStack emeraldStack = new ItemStack(Items.EMERALD);
+
+        Component finishedTitle = Component.translatable("gui.wildernature.bounty_board.turn_in_title");
+        Component finishedDescription = Component.translatable("gui.wildernature.bounty_board.turn_in_desc");
+        Component restoreTitle = Component.translatable("gui.wildernature.bounty_board.contract_restore");
+        Component restoreDescription = Component.translatable("gui.wildernature.bounty_board.contract_restore_cost");
+
+        int padding = 8;
+        int iconSize = 16;
+        int iconGap = 6;
+        int lineHeight = 10;
+        int sectionGap = 6;
+
+        int textWidth = Math.max(
+                Math.max(this.font.width(finishedTitle), this.font.width(restoreTitle)),
+                Math.max(this.font.width(finishedDescription), this.font.width(restoreDescription)) + iconSize + iconGap
+        );
+
+        int tooltipWidth = padding * 2 + textWidth;
+        int tooltipHeight = padding * 2 + lineHeight + iconSize + sectionGap + lineHeight + iconSize;
+
+        int tooltipX = mouseX + 12;
+        int tooltipY = mouseY - 12;
+
+        if (tooltipX + tooltipWidth + 4 > this.width) {
+            tooltipX = mouseX - 12 - tooltipWidth;
+        }
+
+        if (tooltipY + tooltipHeight + 4 > this.height) {
+            tooltipY = this.height - tooltipHeight - 4;
+        }
+
+        if (tooltipX < 4) {
+            tooltipX = 4;
+        }
+
+        if (tooltipY < 4) {
+            tooltipY = 4;
+        }
+
+        int backgroundColor = 0xF0100010;
+        int borderColorStart = 0x505000FF;
+        int borderColorEnd = 0x5028007F;
+
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0.0F, 0.0F, 400.0F);
+
+        guiGraphics.fillGradient(tooltipX - 3, tooltipY - 4, tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 4, backgroundColor, backgroundColor);
+        guiGraphics.fillGradient(tooltipX - 4, tooltipY - 3, tooltipX - 3, tooltipY + tooltipHeight + 3, borderColorStart, borderColorEnd);
+        guiGraphics.fillGradient(tooltipX + tooltipWidth + 3, tooltipY - 3, tooltipX + tooltipWidth + 4, tooltipY + tooltipHeight + 3, borderColorStart, borderColorEnd);
+        guiGraphics.fillGradient(tooltipX - 3, tooltipY - 4, tooltipX + tooltipWidth + 3, tooltipY - 3, borderColorStart, borderColorStart);
+        guiGraphics.fillGradient(tooltipX - 3, tooltipY + tooltipHeight + 3, tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 4, borderColorEnd, borderColorEnd);
+
+        int currentY = tooltipY + padding;
+
+        guiGraphics.drawString(this.font, finishedTitle, tooltipX + padding, currentY, 0xFFEFEFEF, false);
+        currentY += lineHeight + 2;
+
+        guiGraphics.renderItem(contractStack, tooltipX + padding, currentY - 1);
+        guiGraphics.drawString(this.font, finishedDescription, tooltipX + padding + iconSize + iconGap, currentY + 4, 0xFFEFEFEF, false);
+        currentY += iconSize + sectionGap;
+
+        guiGraphics.drawString(this.font, restoreTitle, tooltipX + padding, currentY, 0xFFEFEFEF, false);
+        currentY += lineHeight + 2;
+
+        guiGraphics.renderItem(emeraldStack, tooltipX + padding, currentY - 1);
+        guiGraphics.drawString(this.font, restoreDescription, tooltipX + padding + iconSize + iconGap, currentY + 4, 0xFFEFEFEF, false);
+
+        guiGraphics.pose().popPose();
     }
 
     private boolean isHoveringRestoreContractSlot(int mouseX, int mouseY) {
@@ -562,35 +628,6 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             this.renderUnlockEffect(guiGraphics, this.leftPos + REWARD_ITEM_X, this.topPos + REWARD_ITEM_Y);
             this.renderUnlockEffect(guiGraphics, this.leftPos + REWARD_XP_ICON_X, this.topPos + REWARD_XP_ICON_Y);
         }
-    }
-
-    private void renderRestoreContractEffect(GuiGraphics guiGraphics) {
-        if (!this.menu.hasRestoreContractAvailable()) {
-            return;
-        }
-
-        int slotX = this.leftPos + CONTRACT_SLOT_X;
-        int slotY = this.topPos + CONTRACT_SLOT_Y;
-        float alpha = 0.75F + 0.25F * (0.5F + 0.5F * Mth.sin(this.animationTickCounter * 0.22F));
-        float progress = 0.5F + 0.5F * Mth.sin(this.animationTickCounter * 0.14F);
-
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0.0F, 0.0F, 420.0F);
-        this.renderRestoreSpark(guiGraphics, slotX + 8, slotY - 2, alpha, progress);
-        this.renderRestoreSpark(guiGraphics, slotX + 18, slotY + 7, alpha, progress);
-        this.renderRestoreSpark(guiGraphics, slotX + 8, slotY + 18, alpha, progress);
-        this.renderRestoreSpark(guiGraphics, slotX - 2, slotY + 8, alpha, progress);
-        guiGraphics.pose().popPose();
-    }
-
-    private void renderRestoreSpark(GuiGraphics guiGraphics, int centerX, int centerY, float alpha, float progress) {
-        int primaryColor = ((int) (alpha * 255.0F) << 24) | 0xE6D38A;
-        int secondaryColor = ((int) (alpha * 220.0F) << 24) | 0xFFF7CC;
-        int arm = 1 + (int) (progress * 2.0F);
-
-        guiGraphics.fill(centerX, centerY - arm, centerX + 1, centerY + arm + 1, primaryColor);
-        guiGraphics.fill(centerX - arm, centerY, centerX + arm + 1, centerY + 1, primaryColor);
-        guiGraphics.fill(centerX, centerY, centerX + 1, centerY + 1, secondaryColor);
     }
 
     private void renderLockOverlay(GuiGraphics guiGraphics, int slotX, int slotY) {

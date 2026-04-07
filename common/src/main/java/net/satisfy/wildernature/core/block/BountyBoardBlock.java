@@ -202,6 +202,7 @@ public class BountyBoardBlock extends BaseEntityBlock {
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+
         if (world.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
