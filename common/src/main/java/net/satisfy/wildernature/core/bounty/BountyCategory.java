@@ -2,14 +2,13 @@ package net.satisfy.wildernature.core.bounty;
 
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.resources.ResourceLocation;
-import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.core.registry.TagsRegistry;
 
 public enum BountyCategory {
-    NEUTRAL("neutral", 12, 30, TagsRegistry.NEUTRAL),
-    DEFENSIVE("defensive", 8, 18, TagsRegistry.DEFENSIVE),
-    AGGRESSIVE("aggressive", 6, 14, TagsRegistry.AGGRESSIVE),
+    NEUTRAL("neutral", 8, 18, TagsRegistry.NEUTRAL),
+    DEFENSIVE("defensive", 6, 14, TagsRegistry.DEFENSIVE),
+    AGGRESSIVE("aggressive", 4, 12, TagsRegistry.AGGRESSIVE),
+
     BOSS("boss", 1, 1, TagsRegistry.BOSS);
 
     private final String name;
@@ -38,10 +37,6 @@ public enum BountyCategory {
 
     public TagKey<EntityType<?>> getEntityTag() {
         return this.entityTag;
-    }
-
-    public ResourceLocation getLootTableId() {
-        return WilderNature.identifier("gameplay/bounty_rewards/" + this.name);
     }
 
     public static BountyCategory byName(String name) {

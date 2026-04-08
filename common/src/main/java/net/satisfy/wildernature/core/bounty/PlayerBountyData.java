@@ -20,14 +20,6 @@ public class PlayerBountyData {
         return this.currentProgress;
     }
 
-    public int getTrackedStartAmount() {
-        return this.trackedStartAmount;
-    }
-
-    public int getTrackedHighestAmount() {
-        return this.trackedHighestAmount;
-    }
-
     public boolean hasActiveBounty() {
         return this.activeBounty != null;
     }
@@ -71,14 +63,6 @@ public class PlayerBountyData {
         if (this.activeBounty != null) {
             this.currentProgress = Math.max(0, Math.min(this.activeBounty.requiredAmount(), progress));
         }
-    }
-
-    public void setTrackedStartAmount(int trackedStartAmount) {
-        this.trackedStartAmount = Math.max(0, trackedStartAmount);
-    }
-
-    public void setTrackedHighestAmount(int trackedHighestAmount) {
-        this.trackedHighestAmount = Math.max(0, trackedHighestAmount);
     }
 
     public boolean isCompleted() {

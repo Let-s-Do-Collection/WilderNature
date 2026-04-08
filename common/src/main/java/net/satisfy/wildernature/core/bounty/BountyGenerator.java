@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.Holder;
@@ -20,20 +21,24 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-
+import net.satisfy.wildernature.WilderNature;
 
 public final class BountyGenerator {
-    private static final int DAILY_BOUNTY_COUNT = 15;
+    private static final int MIN_DAILY_BOUNTY_COUNT = 12;
+    private static final int MAX_DAILY_BOUNTY_COUNT = 16;
+    private static final int SPECIAL_BOUNTY_COUNT = 4;
 
     private BountyGenerator() {
     }
 
     public static List<BountyDefinition> generateDailyBounties(ServerLevel serverLevel) {
         RandomSource randomSource = serverLevel.getRandom();
+        int dailyBountyCount = MIN_DAILY_BOUNTY_COUNT + randomSource.nextInt(MAX_DAILY_BOUNTY_COUNT - MIN_DAILY_BOUNTY_COUNT + 1);
         List<BountyDefinition.BountyType> typePool = createTypePool();
-        Collections.shuffle(typePool, new java.util.Random(randomSource.nextLong()));
+        Collections.shuffle(typePool, new Random(randomSource.nextLong()));
 
         EnumMap<BountyCategory, List<ResourceLocation>> huntEntityPoolByCategory = new EnumMap<>(BountyCategory.class);
         EnumMap<BountyCategory, List<ResourceLocation>> observeEntityPoolByCategory = new EnumMap<>(BountyCategory.class);
@@ -49,14 +54,22 @@ public final class BountyGenerator {
         Set<String> usedTargets = new HashSet<>();
         List<BountyDefinition> generatedBounties = new ArrayList<>();
 
-        for (int index = 0; index < DAILY_BOUNTY_COUNT; index++) {
+        for (int index = 0; index < dailyBountyCount; index++) {
             BountyDefinition.BountyType selectedType = typePool.get(index);
             BountyCategory selectedCategory = getCategoryForType(selectedType, randomSource);
             ResourceLocation selectedTargetId = getNextTargetId(selectedType, selectedCategory, huntEntityPoolByCategory, observeEntityPoolByCategory, gatherItemPool, exploreBiomePool, usedTargets, randomSource);
             BountyDefinition.BountyTargetType targetType = getTargetType(selectedType);
             int requiredAmount = getRequiredAmount(selectedType, selectedCategory, randomSource);
             int experienceReward = getRandomExperienceReward(selectedType, selectedCategory, randomSource);
-            ItemStack previewStack = resolveRewardPreviewStack(serverLevel, selectedCategory);
+            ResourceLocation lootTableId = switch (selectedType) {
+                case HUNT -> selectedCategory == BountyCategory.BOSS
+                        ? WilderNature.identifier("bounty/elite_bounty")
+                        : WilderNature.identifier("bounty/tracking_order");
+                case GATHER -> WilderNature.identifier("bounty/provision_request");
+                case OBSERVE -> WilderNature.identifier("bounty/field_notes");
+                case EXPLORE -> WilderNature.identifier("bounty/pathfinders_call");
+            };
+            ItemStack previewStack = resolveRewardPreviewStack(serverLevel, lootTableId);
 
             generatedBounties.add(new BountyDefinition(
                     UUID.randomUUID(),
@@ -66,7 +79,7 @@ public final class BountyGenerator {
                     selectedTargetId,
                     requiredAmount,
                     new BountyReward(
-                            selectedCategory.getLootTableId(),
+                            lootTableId,
                             experienceReward,
                             BuiltInRegistries.ITEM.getKey(previewStack.getItem()),
                             previewStack.getCount()
@@ -77,6 +90,39 @@ public final class BountyGenerator {
         }
 
         return generatedBounties;
+    }
+
+    private static ItemStack resolveRewardPreviewStack(ServerLevel serverLevel, ResourceLocation lootTableId) {
+        LootTable lootTable = serverLevel.getServer()
+                .reloadableRegistries()
+                .getLootTable(ResourceKey.create(Registries.LOOT_TABLE, lootTableId));
+
+        if (lootTable == LootTable.EMPTY) {
+            return new ItemStack(Items.PAPER);
+        }
+
+        ItemEntity previewEntity = new ItemEntity(
+                serverLevel,
+                serverLevel.getSharedSpawnPos().getX(),
+                serverLevel.getSharedSpawnPos().getY(),
+                serverLevel.getSharedSpawnPos().getZ(),
+                ItemStack.EMPTY
+        );
+
+        LootParams lootParams = new LootParams.Builder(serverLevel)
+                .withParameter(LootContextParams.ORIGIN, serverLevel.getSharedSpawnPos().getCenter())
+                .withParameter(LootContextParams.THIS_ENTITY, previewEntity)
+                .create(LootContextParamSets.GIFT);
+
+        List<ItemStack> rewardItems = lootTable.getRandomItems(lootParams);
+
+        for (ItemStack rewardItem : rewardItems) {
+            if (!rewardItem.isEmpty()) {
+                return rewardItem.copy();
+            }
+        }
+
+        return new ItemStack(Items.PAPER);
     }
 
     private static List<BountyDefinition.BountyType> createTypePool() {
@@ -96,6 +142,7 @@ public final class BountyGenerator {
         typePool.add(BountyDefinition.BountyType.EXPLORE);
         typePool.add(BountyDefinition.BountyType.EXPLORE);
         typePool.add(BountyDefinition.BountyType.GATHER);
+        typePool.add(BountyDefinition.BountyType.OBSERVE);
         return typePool;
     }
 
@@ -183,7 +230,7 @@ public final class BountyGenerator {
             entityIds.add(getFallbackEntity(bountyCategory));
         }
 
-        Collections.shuffle(entityIds, new java.util.Random(randomSource.nextLong()));
+        Collections.shuffle(entityIds, new Random(randomSource.nextLong()));
         return entityIds;
     }
 
@@ -201,7 +248,7 @@ public final class BountyGenerator {
         itemIds.add(BuiltInRegistries.ITEM.getKey(Items.POTATO));
         itemIds.add(BuiltInRegistries.ITEM.getKey(Items.WHEAT));
         itemIds.add(BuiltInRegistries.ITEM.getKey(Items.FEATHER));
-        Collections.shuffle(itemIds, new java.util.Random(randomSource.nextLong()));
+        Collections.shuffle(itemIds, new Random(randomSource.nextLong()));
         return itemIds;
     }
 
@@ -223,7 +270,7 @@ public final class BountyGenerator {
             biomeIds.add(ResourceLocation.withDefaultNamespace("plains"));
         }
 
-        Collections.shuffle(biomeIds, new java.util.Random(randomSource.nextLong()));
+        Collections.shuffle(biomeIds, new Random(randomSource.nextLong()));
         return biomeIds;
     }
 
@@ -251,8 +298,7 @@ public final class BountyGenerator {
                 yield minimumAmount + randomSource.nextInt(maximumAmount - minimumAmount + 1);
             }
             case GATHER -> 16 + randomSource.nextInt(49);
-            case OBSERVE -> 1;
-            case EXPLORE -> 1;
+            case OBSERVE, EXPLORE -> 1;
         };
     }
 
@@ -268,29 +314,5 @@ public final class BountyGenerator {
             case OBSERVE -> 6 + randomSource.nextInt(6);
             case EXPLORE -> 8 + randomSource.nextInt(8);
         };
-    }
-
-    private static ItemStack resolveRewardPreviewStack(ServerLevel serverLevel, BountyCategory bountyCategory) {
-        ResourceKey<net.minecraft.world.level.storage.loot.LootTable> lootTableKey = ResourceKey.create(Registries.LOOT_TABLE, bountyCategory.getLootTableId());
-
-        ItemEntity previewEntity = new ItemEntity(
-                serverLevel,
-                serverLevel.getSharedSpawnPos().getX(),
-                serverLevel.getSharedSpawnPos().getY(),
-                serverLevel.getSharedSpawnPos().getZ(),
-                ItemStack.EMPTY
-        );
-
-        LootParams lootParams = new LootParams.Builder(serverLevel)
-                .withParameter(LootContextParams.THIS_ENTITY, previewEntity)
-                .withParameter(LootContextParams.ORIGIN, serverLevel.getSharedSpawnPos().getCenter())
-                .create(LootContextParamSets.GIFT);
-
-        List<ItemStack> rewardItems = serverLevel.getServer().reloadableRegistries().getLootTable(lootTableKey).getRandomItems(lootParams);
-        if (!rewardItems.isEmpty() && !rewardItems.getFirst().isEmpty()) {
-            return rewardItems.getFirst().copy();
-        }
-
-        return new ItemStack(Items.PAPER);
     }
 }

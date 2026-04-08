@@ -50,7 +50,8 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> TRACKING_ORDER = registerItem("tracking_order", () -> new ContractItem(getSettings().rarity(Rarity.RARE)));
     public static final RegistrySupplier<Item> PROVISION_REQUEST = registerItem("provision_request", () -> new ContractItem(getSettings().rarity(Rarity.UNCOMMON)));
     public static final RegistrySupplier<Item> ELITE_BOUNTY = registerItem("elite_bounty", () -> new ContractItem(getSettings().rarity(Rarity.EPIC)));
-    public static final RegistrySupplier<Item> GUILD_COMMISSION = registerItem("guild_commission", () -> new ContractItem(getSettings().rarity(Rarity.RARE)));    public static final RegistrySupplier<Item> DEER_SPAWN_EGG = registerItem("deer_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.DEER, -1, -1, getSettings()));
+    public static final RegistrySupplier<Item> GUILD_COMMISSION = registerItem("guild_commission", () -> new ContractItem(getSettings().rarity(Rarity.RARE)));
+    public static final RegistrySupplier<Item> DEER_SPAWN_EGG = registerItem("deer_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.DEER, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> SWIFT_FOX_SPAWN_EGG = registerItem("swift_fox_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.SWIFT_FOX, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> RACCOON_SPAWN_EGG = registerItem("raccoon_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.RACCOON, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> SQUIRREL_SPAWN_EGG = registerItem("squirrel_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.SQUIRREL, -1, -1, getSettings()));

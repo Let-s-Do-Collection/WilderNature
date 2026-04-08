@@ -6,6 +6,7 @@ import java.util.UUID;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -19,9 +20,14 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 
 @SuppressWarnings("deprecation")
@@ -148,10 +154,30 @@ public final class BountyManager {
         }
 
         BountyDefinition activeBounty = playerBountyData.getActiveBounty();
+        ResourceLocation lootTableId = activeBounty.reward().lootTableId();
 
-        ItemStack rewardStack = new ItemStack(BuiltInRegistries.ITEM.get(activeBounty.reward().previewItemId()), activeBounty.reward().previewCount());
-        if (!serverPlayer.addItem(rewardStack)) {
-            serverPlayer.drop(rewardStack, false);
+        LootTable lootTable = serverPlayer.serverLevel()
+                .getServer()
+                .reloadableRegistries()
+                .getLootTable(ResourceKey.create(Registries.LOOT_TABLE, lootTableId));
+
+        if (lootTable != LootTable.EMPTY) {
+            LootParams lootParams = new LootParams.Builder(serverPlayer.serverLevel())
+                    .withParameter(LootContextParams.ORIGIN, serverPlayer.position())
+                    .withParameter(LootContextParams.THIS_ENTITY, serverPlayer)
+                    .create(LootContextParamSets.GIFT);
+
+            List<ItemStack> rewardStacks = lootTable.getRandomItems(lootParams);
+
+            for (ItemStack rewardStack : rewardStacks) {
+                if (rewardStack.isEmpty()) {
+                    continue;
+                }
+
+                if (!serverPlayer.addItem(rewardStack.copy())) {
+                    serverPlayer.drop(rewardStack.copy(), false);
+                }
+            }
         }
 
         int experienceReward = activeBounty.reward().experienceReward();

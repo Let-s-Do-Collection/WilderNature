@@ -39,11 +39,10 @@ public final class BountyAssistTracker {
         return new ArrayList<>(assistingPlayers);
     }
 
-    public static void clear(Entity targetEntity) {
-        ENTITY_ASSIST_PLAYERS.remove(targetEntity.getUUID());
-    }
-
     private static ServerPlayer getAttackingPlayer(Entity sourceEntity) {
+        
+        
+        
         if (sourceEntity instanceof ServerPlayer serverPlayer) {
             return serverPlayer;
         }
