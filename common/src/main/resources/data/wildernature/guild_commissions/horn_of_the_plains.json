@@ -1,0 +1,16 @@
+{
+  "id": "wildernature:horn_of_the_plains",
+  "enabled": true,
+  "title": "guild.wildernature.horn_of_the_plains.title",
+  "description": "guild.wildernature.horn_of_the_plains.desc",
+  "type": "hunt",
+  "target": "wildernature:bison",
+  "amount": 18,
+  "allow_peaceful": false,
+  "icon": "wildernature:guild_commission",
+  "reward": {
+    "item": "wildernature:bison_horn",
+    "count": 1,
+    "experience": 24
+  }
+}

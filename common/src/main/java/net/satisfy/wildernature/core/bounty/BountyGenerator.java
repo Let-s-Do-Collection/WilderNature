@@ -62,31 +62,30 @@ public final class BountyGenerator {
             int requiredAmount = getRequiredAmount(selectedType, selectedCategory, randomSource);
             int experienceReward = getRandomExperienceReward(selectedType, selectedCategory, randomSource);
             ResourceLocation lootTableId = switch (selectedType) {
-                case HUNT -> selectedCategory == BountyCategory.BOSS
-                        ? WilderNature.identifier("bounty/elite_bounty")
-                        : WilderNature.identifier("bounty/tracking_order");
+                case HUNT -> selectedCategory == BountyCategory.BOSS ? WilderNature.identifier("bounty/elite_bounty") : WilderNature.identifier("bounty/tracking_order");
                 case GATHER -> WilderNature.identifier("bounty/provision_request");
                 case OBSERVE -> WilderNature.identifier("bounty/field_notes");
                 case EXPLORE -> WilderNature.identifier("bounty/pathfinders_call");
             };
             ItemStack previewStack = resolveRewardPreviewStack(serverLevel, lootTableId);
 
-            generatedBounties.add(new BountyDefinition(
-                    UUID.randomUUID(),
-                    selectedType,
-                    targetType,
-                    selectedCategory,
-                    selectedTargetId,
-                    requiredAmount,
-                    new BountyReward(
-                            lootTableId,
-                            experienceReward,
-                            BuiltInRegistries.ITEM.getKey(previewStack.getItem()),
-                            previewStack.getCount()
-                    )
-            ));
-
+            generatedBounties.add(new BountyDefinition(UUID.randomUUID(), selectedType, targetType, selectedCategory, selectedTargetId, requiredAmount, new BountyReward(lootTableId, experienceReward, BuiltInRegistries.ITEM.getKey(previewStack.getItem()), previewStack.getCount()), false));
             usedTargets.add(selectedType.getSerializedName() + ":" + selectedTargetId);
+        }
+
+        List<GuildCommissionDefinition> guildCommissions = GuildCommissionLoader.load(serverLevel.getServer().getResourceManager());
+
+        if (!guildCommissions.isEmpty()) {
+            Collections.shuffle(guildCommissions, new Random(randomSource.nextLong()));
+            int count = Math.min(SPECIAL_BOUNTY_COUNT, guildCommissions.size());
+
+            for (int index = 0; index < count; index++) {
+                GuildCommissionDefinition commission = guildCommissions.get(index);
+                ResourceLocation lootTableId = WilderNature.identifier("bounty/guild_commission");
+                ItemStack previewStack = new ItemStack(BuiltInRegistries.ITEM.get(commission.rewardItem()), commission.rewardCount());
+
+                generatedBounties.add(new BountyDefinition(commission.id(), commission.type(), getTargetType(commission.type()), BountyCategory.NEUTRAL, commission.target(), commission.amount(), new BountyReward(lootTableId, commission.rewardXp(), BuiltInRegistries.ITEM.getKey(previewStack.getItem()), previewStack.getCount()), true));
+            }
         }
 
         return generatedBounties;

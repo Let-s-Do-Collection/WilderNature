@@ -1,0 +1,16 @@
+{
+  "id": "wildernature:bunny_stalker_trial",
+  "enabled": true,
+  "title": "guild.wildernature.bunny_stalker_trial.title",
+  "description": "guild.wildernature.bunny_stalker_trial.desc",
+  "type": "hunt",
+  "target": "minecraft:rabbit",
+  "amount": 50,
+  "allow_peaceful": false,
+  "icon": "wildernature:guild_commission",
+  "reward": {
+    "item": "wildernature:bunny_stalker_banner",
+    "count": 1,
+    "experience": 40
+  }
+}

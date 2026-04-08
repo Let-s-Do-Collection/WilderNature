@@ -4,7 +4,7 @@ import java.util.UUID;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
-public record BountyDefinition(UUID id, BountyType type, BountyTargetType targetType, BountyCategory category, ResourceLocation targetId, int requiredAmount, BountyReward reward) {
+public record BountyDefinition(UUID id, BountyType type, BountyTargetType targetType, BountyCategory category, ResourceLocation targetId, int requiredAmount, BountyReward reward, boolean guildCommission) {
     public CompoundTag save() {
         CompoundTag compoundTag = new CompoundTag();
         compoundTag.putUUID("id", this.id);
@@ -14,6 +14,7 @@ public record BountyDefinition(UUID id, BountyType type, BountyTargetType target
         compoundTag.putString("target_id", this.targetId.toString());
         compoundTag.putInt("required_amount", this.requiredAmount);
         compoundTag.put("reward", this.reward.save());
+        compoundTag.putBoolean("guild_commission", this.guildCommission);
         return compoundTag;
     }
 
@@ -25,8 +26,13 @@ public record BountyDefinition(UUID id, BountyType type, BountyTargetType target
                 BountyCategory.byName(compoundTag.getString("category")),
                 ResourceLocation.parse(compoundTag.getString("target_id")),
                 compoundTag.getInt("required_amount"),
-                BountyReward.load(compoundTag.getCompound("reward"))
+                BountyReward.load(compoundTag.getCompound("reward")),
+                compoundTag.getBoolean("guild_commission")
         );
+    }
+
+    public boolean isGuildCommission() {
+        return this.guildCommission;
     }
 
     public enum BountyType {

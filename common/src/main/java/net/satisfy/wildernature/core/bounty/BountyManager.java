@@ -27,7 +27,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 
 @SuppressWarnings("deprecation")
@@ -36,6 +35,10 @@ public final class BountyManager {
     }
 
     public static ItemStack createPreviewStack(BountyDefinition bountyDefinition) {
+        if (bountyDefinition.isGuildCommission()) {
+            return new ItemStack(ObjectRegistry.GUILD_COMMISSION.get());
+        }
+
         return switch (bountyDefinition.type()) {
             case GATHER -> new ItemStack(BuiltInRegistries.ITEM.get(bountyDefinition.targetId()));
             case EXPLORE -> new ItemStack(Items.COMPASS);
@@ -103,6 +106,10 @@ public final class BountyManager {
     }
 
     private static Item getContractItem(BountyDefinition bountyDefinition) {
+        if (bountyDefinition.guildCommission()) {
+            return ObjectRegistry.GUILD_COMMISSION.get();
+        }
+
         return switch (bountyDefinition.type()) {
             case HUNT -> bountyDefinition.category() == BountyCategory.BOSS
                     ? ObjectRegistry.ELITE_BOUNTY.get()

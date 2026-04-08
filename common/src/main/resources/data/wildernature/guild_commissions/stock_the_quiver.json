@@ -1,0 +1,16 @@
+{
+  "id": "wildernature:stock_the_quiver",
+  "enabled": true,
+  "title": "guild.wildernature.stock_the_quiver.title",
+  "description": "guild.wildernature.stock_the_quiver.desc",
+  "type": "gather",
+  "target": "minecraft:arrow",
+  "amount": 32,
+  "allow_peaceful": true,
+  "icon": "wildernature:guild_commission",
+  "reward": {
+    "item": "wildernature:flint_ammunition",
+    "count": 16,
+    "experience": 12
+  }
+}

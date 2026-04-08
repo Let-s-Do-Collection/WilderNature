@@ -1,0 +1,21 @@
+{
+  "id": "find_savanna",
+  "enabled": true,
+  "title": "guild.wildernature.find_savanna.title",
+  "description": "guild.wildernature.find_savanna.desc",
+  "type": "explore",
+  "target": "minecraft:savanna",
+  "amount": 1,
+  "allow_peaceful": true,
+  "icon": {
+    "type": "item",
+    "value": "minecraft:compass"
+  },
+  "reward": {
+    "item": "wildernature:stylin_purple_hat",
+    "count": 1,
+    "xp": 12
+  },
+  "weight": 10,
+  "repeatable": true
+}

@@ -1,9 +1,7 @@
 package net.satisfy.wildernature.core.gui.handler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -68,7 +66,23 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         super(MenuTypeRegistry.BOUNTY_BOARD_MENU.get(), containerId);
         this.playerInventory = playerInventory;
         this.bounties = this.readBounties(buffer);
-        this.selectedBountyIndex = this.findFirstSelectableBountyIndex();
+        this.selectedBountyIndex = buffer.readVarInt();
+        this.hasActiveBounty.set(buffer.readVarInt());
+        this.activeBountyIndex.set(buffer.readVarInt());
+        this.activeProgress.set(buffer.readVarInt());
+        this.activeRequiredKills.set(buffer.readVarInt());
+        this.activeCompleted.set(buffer.readVarInt());
+        this.restoreContractAvailable.set(buffer.readVarInt());
+        this.rewardsUnlocked.set(buffer.readVarInt());
+
+        if (this.hasActiveBounty()) {
+            this.selectedBountyIndex = this.activeBountyIndex.get();
+        }
+
+        if (this.selectedBountyIndex < 0 || this.selectedBountyIndex >= this.bounties.size()) {
+            this.selectedBountyIndex = this.findFirstSelectableBountyIndex();
+        }
+
         this.addContractPreviewSlot();
         this.addRewardSlots();
         this.addPlayerInventorySlots(playerInventory);
@@ -79,7 +93,6 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         this.addDataSlot(this.activeCompleted);
         this.addDataSlot(this.restoreContractAvailable);
         this.addDataSlot(this.rewardsUnlocked);
-        this.updateActiveData();
         this.updateContractPreviewSlot();
     }
 
@@ -398,15 +411,15 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         return List.of();
     }
 
-    public static void writeBounties(FriendlyByteBuf friendlyByteBuf, List<BountyDefinition> bounties, List<UUID> abandonedBountyIds) {
-        friendlyByteBuf.writeVarInt(bounties.size());
+    public static void writeBounties(FriendlyByteBuf friendlyByteBuf, List<BountyDefinition> bountyDefinitions, List<UUID> abandonedBountyIds) {
+        friendlyByteBuf.writeVarInt(bountyDefinitions.size());
         friendlyByteBuf.writeVarInt(abandonedBountyIds.size());
 
         for (UUID abandonedBountyId : abandonedBountyIds) {
             friendlyByteBuf.writeUUID(abandonedBountyId);
         }
 
-        for (BountyDefinition bountyDefinition : bounties) {
+        for (BountyDefinition bountyDefinition : bountyDefinitions) {
             friendlyByteBuf.writeUUID(bountyDefinition.id());
             friendlyByteBuf.writeUtf(bountyDefinition.type().getSerializedName());
             friendlyByteBuf.writeUtf(bountyDefinition.targetType().getSerializedName());
@@ -417,6 +430,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
             friendlyByteBuf.writeVarInt(bountyDefinition.reward().experienceReward());
             friendlyByteBuf.writeUtf(bountyDefinition.reward().previewItemId().toString());
             friendlyByteBuf.writeVarInt(bountyDefinition.reward().previewCount());
+            friendlyByteBuf.writeBoolean(bountyDefinition.guildCommission());
         }
     }
 
@@ -441,21 +455,9 @@ public class BountyBoardMenu extends AbstractContainerMenu {
             int experienceReward = friendlyByteBuf.readVarInt();
             String previewItemIdString = friendlyByteBuf.readUtf();
             int previewCount = friendlyByteBuf.readVarInt();
+            boolean guildCommission = friendlyByteBuf.readBoolean();
 
-            syncedBounties.add(new BountyDefinition(
-                    bountyId,
-                    BountyDefinition.BountyType.byName(typeName),
-                    BountyDefinition.BountyTargetType.byName(targetTypeName),
-                    BountyCategory.byName(categoryName),
-                    ResourceLocation.parse(targetIdString),
-                    requiredAmount,
-                    new BountyReward(
-                            ResourceLocation.parse(lootTableIdString),
-                            experienceReward,
-                            ResourceLocation.parse(previewItemIdString),
-                            previewCount
-                    )
-            ));
+            syncedBounties.add(new BountyDefinition(bountyId, BountyDefinition.BountyType.byName(typeName), BountyDefinition.BountyTargetType.byName(targetTypeName), BountyCategory.byName(categoryName), ResourceLocation.parse(targetIdString), requiredAmount, new BountyReward(ResourceLocation.parse(lootTableIdString), experienceReward, ResourceLocation.parse(previewItemIdString), previewCount), guildCommission));
         }
 
         return syncedBounties;
@@ -649,6 +651,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
                 rewardsAreUnlocked = true;
             }
 
+            this.selectedBountyIndex = resolvedActiveBountyIndex;
             this.hasActiveBounty.set(1);
             this.activeBountyIndex.set(resolvedActiveBountyIndex);
             this.activeProgress.set(playerBountyData.getCurrentProgress());
@@ -663,7 +666,25 @@ public class BountyBoardMenu extends AbstractContainerMenu {
 
     private void updateContractPreviewSlot() {
         if (this.hasActiveBounty()) {
-            return;
+            Optional<BountyDefinition> activeBounty = this.getActiveBounty();
+            if (activeBounty.isPresent()) {
+                if (this.hasTurnInContractInserted()) {
+                    return;
+                }
+
+                if (this.hasCompletedActiveBounty()) {
+                    this.contractPreviewContainer.setItem(0, ItemStack.EMPTY);
+                    return;
+                }
+
+                if (this.hasRestoreContractAvailable()) {
+                    this.contractPreviewContainer.setItem(0, new ItemStack(Items.EMERALD));
+                    return;
+                }
+
+                this.contractPreviewContainer.setItem(0, ItemStack.EMPTY);
+                return;
+            }
         }
 
         Optional<BountyDefinition> selectedBounty = this.getSelectedBounty();
@@ -704,8 +725,8 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         this.abandonedBountyIds.clear();
         this.abandonedBountyIds.addAll(abandonedBountyIds);
 
-        this.selectedBountyIndex = selectedBountyIndex;
-        if (this.selectedBountyIndex < 0 || this.selectedBountyIndex >= this.bounties.size() || this.isBountyAbandoned(this.bounties.get(this.selectedBountyIndex).id())) {
+        this.selectedBountyIndex = hasActiveBounty ? activeBountyIndex : selectedBountyIndex;
+        if (this.selectedBountyIndex < 0 || this.selectedBountyIndex >= this.bounties.size() || (!hasActiveBounty && this.isBountyAbandoned(this.bounties.get(this.selectedBountyIndex).id()))) {
             this.selectedBountyIndex = this.findFirstSelectableBountyIndex();
         }
 

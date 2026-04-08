@@ -1,0 +1,16 @@
+{
+  "id": "wildernature:boar_beneath_the_oaks",
+  "enabled": true,
+  "title": "guild.wildernature.boar_beneath_the_oaks.title",
+  "description": "guild.wildernature.boar_beneath_the_oaks.desc",
+  "type": "hunt",
+  "target": "wildernature:boar",
+  "amount": 30,
+  "allow_peaceful": false,
+  "icon": "wildernature:guild_commission",
+  "reward": {
+    "item": "wildernature:truffle_bag",
+    "count": 1,
+    "experience": 32
+  }
+}

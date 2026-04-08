@@ -1,0 +1,16 @@
+{
+  "id": "wildernature:fox_trappers_mark",
+  "enabled": true,
+  "title": "guild.wildernature.fox_trappers_mark.title",
+  "description": "guild.wildernature.fox_trappers_mark.desc",
+  "type": "hunt",
+  "target": "wildernature:swift_fox",
+  "amount": 30,
+  "allow_peaceful": false,
+  "icon": "wildernature:guild_commission",
+  "reward": {
+    "item": "wildernature:fox_trapper_banner",
+    "count": 1,
+    "experience": 34
+  }
+}

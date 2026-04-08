@@ -48,10 +48,7 @@ import net.satisfy.wildernature.core.util.WilderNatureUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BountyBoardBlock extends BaseEntityBlock {
     public static final EnumProperty<Part> PART = EnumProperty.create("part", Part.class);
@@ -202,7 +199,6 @@ public class BountyBoardBlock extends BaseEntityBlock {
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
-
         if (world.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
@@ -221,14 +217,43 @@ public class BountyBoardBlock extends BaseEntityBlock {
         MenuRegistry.openExtendedMenu(serverPlayer, menuProvider, buffer -> {
             BountyBoardSavedData savedData = BountyBoardSavedData.get(serverPlayer.serverLevel());
             PlayerBountyData playerBountyData = savedData.getPlayerBountyData(serverPlayer.getUUID());
+            List<BountyDefinition> dailyBounties = savedData.getDailyBounties();
 
-            BountyBoardMenu.writeBounties(
-                    buffer,
-                    savedData.getDailyBounties(),
-                    new ArrayList<>(playerBountyData.getAbandonedBounties())
-            );
+            BountyBoardMenu.writeBounties(buffer, dailyBounties, new ArrayList<>(playerBountyData.getAbandonedBounties()));
 
-            buffer.writeBlockPos(basePos);
+            int activeBountyIndex = -1;
+            if (playerBountyData.hasActiveBounty() && playerBountyData.getActiveBounty() != null) {
+                UUID activeBountyId = playerBountyData.getActiveBounty().id();
+                for (int index = 0; index < dailyBounties.size(); index++) {
+                    if (dailyBounties.get(index).id().equals(activeBountyId)) {
+                        activeBountyIndex = index;
+                        break;
+                    }
+                }
+            }
+
+            int selectedBountyIndex = activeBountyIndex;
+            if (selectedBountyIndex < 0) {
+                for (int index = 0; index < dailyBounties.size(); index++) {
+                    if (!playerBountyData.getAbandonedBounties().contains(dailyBounties.get(index).id())) {
+                        selectedBountyIndex = index;
+                        break;
+                    }
+                }
+            }
+
+            boolean hasActiveBounty = playerBountyData.hasActiveBounty() && playerBountyData.getActiveBounty() != null;
+            boolean activeCompleted = playerBountyData.isCompleted();
+            boolean restoreContractAvailable = hasActiveBounty && !activeCompleted && !serverPlayer.getInventory().contains(BountyManager.createContractStack(playerBountyData.getActiveBounty()));
+
+            buffer.writeVarInt(selectedBountyIndex);
+            buffer.writeVarInt(hasActiveBounty ? 1 : 0);
+            buffer.writeVarInt(activeBountyIndex);
+            buffer.writeVarInt(playerBountyData.getCurrentProgress());
+            buffer.writeVarInt(hasActiveBounty ? playerBountyData.getActiveBounty().requiredAmount() : 0);
+            buffer.writeVarInt(activeCompleted ? 1 : 0);
+            buffer.writeVarInt(restoreContractAvailable ? 1 : 0);
+            buffer.writeVarInt(0);
         });
 
         return InteractionResult.CONSUME;

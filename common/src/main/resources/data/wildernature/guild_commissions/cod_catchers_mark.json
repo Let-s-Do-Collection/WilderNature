@@ -1,0 +1,16 @@
+{
+  "id": "wildernature:cod_catchers_mark",
+  "enabled": true,
+  "title": "guild.wildernature.cod_catchers_mark.title",
+  "description": "guild.wildernature.cod_catchers_mark.desc",
+  "type": "gather",
+  "target": "minecraft:cod",
+  "amount": 40,
+  "allow_peaceful": true,
+  "icon": "wildernature:guild_commission",
+  "reward": {
+    "item": "wildernature:cod_catcher_banner",
+    "count": 1,
+    "experience": 22
+  }
+}

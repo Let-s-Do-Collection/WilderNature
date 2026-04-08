@@ -17,13 +17,13 @@ import java.util.UUID;
 
 public class BountyBoardSavedData extends SavedData {
     public static final String DATA_NAME = WilderNature.MOD_ID + "_bounty_board";
-    private static final int DAILY_BOUNTY_COUNT = 15;
 
     private LocalDate currentDay = LocalDate.MIN;
     private final List<BountyDefinition> dailyBounties = new ArrayList<>();
     private final Map<UUID, PlayerBountyData> playerBountyDataMap = new LinkedHashMap<>();
 
     public static BountyBoardSavedData get(ServerLevel serverLevel) {
+        
         return serverLevel.getServer().overworld().getDataStorage().computeIfAbsent(
                 new SavedData.Factory<>(BountyBoardSavedData::new, BountyBoardSavedData::load, null),
                 DATA_NAME
@@ -49,7 +49,7 @@ public class BountyBoardSavedData extends SavedData {
     public void ensureCurrentBounties(ServerLevel serverLevel) {
         LocalDate currentDate = LocalDate.now();
 
-        if (!currentDate.equals(this.currentDay) || this.dailyBounties.size() != DAILY_BOUNTY_COUNT) {
+        if (!currentDate.equals(this.currentDay) || this.dailyBounties.isEmpty()) {
             this.currentDay = currentDate;
             this.dailyBounties.clear();
             this.dailyBounties.addAll(BountyGenerator.generateDailyBounties(serverLevel));

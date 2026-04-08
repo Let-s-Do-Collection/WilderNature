@@ -1,0 +1,16 @@
+{
+  "id": "wildernature:winter_pelt",
+  "enabled": true,
+  "title": "guild.wildernature.winter_pelt.title",
+  "description": "guild.wildernature.winter_pelt.desc",
+  "type": "hunt",
+  "target": "wildernature:swift_fox",
+  "amount": 30,
+  "allow_peaceful": false,
+  "icon": "wildernature:guild_commission",
+  "reward": {
+    "item": "wildernature:fur_cloak",
+    "count": 1,
+    "experience": 28
+  }
+}

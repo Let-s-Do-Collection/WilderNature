@@ -236,7 +236,7 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderHoveredItemTooltips(guiGraphics, mouseX, mouseY);
 
-        if (!this.isHoveringRestoreContractSlot(mouseX, mouseY)) {
+        if (!this.isHoveringContractSlot(mouseX, mouseY)) {
             this.renderTooltip(guiGraphics, mouseX, mouseY);
         }
     }
@@ -278,8 +278,8 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             return;
         }
 
-        if (this.isHoveringRestoreContractSlot(mouseX, mouseY)) {
-            this.renderRestoreContractTooltip(guiGraphics, mouseX, mouseY);
+        if (this.isHoveringContractSlot(mouseX, mouseY)) {
+            this.renderContractSlotTooltip(guiGraphics, mouseX, mouseY);
             return;
         }
 
@@ -335,16 +335,7 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             rewardPreviewStack.setCount(count);
 
             if (locked) {
-                guiGraphics.renderTooltip(
-                        this.font,
-                        List.of(
-                                Component.translatable("gui.wildernature.bounty_board.reward_locked"),
-                                Component.translatable("gui.wildernature.bounty_board.reward_locked_desc", activeBountyName)
-                        ),
-                        Optional.empty(),
-                        mouseX,
-                        mouseY
-                );
+                guiGraphics.renderTooltip(this.font, List.of(Component.translatable("gui.wildernature.bounty_board.reward_locked"), Component.translatable("gui.wildernature.bounty_board.reward_locked_desc", activeBountyName)), Optional.empty(), mouseX, mouseY);
                 return;
             }
 
@@ -356,16 +347,7 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
             ItemStack experienceStack = BountyManager.createExperienceBurstStack(detailBounty.get().reward().experienceReward());
 
             if (locked) {
-                guiGraphics.renderTooltip(
-                        this.font,
-                        List.of(
-                                Component.translatable("gui.wildernature.bounty_board.reward_locked"),
-                                Component.translatable("gui.wildernature.bounty_board.reward_locked_desc", activeBountyName)
-                        ),
-                        Optional.empty(),
-                        mouseX,
-                        mouseY
-                );
+                guiGraphics.renderTooltip(this.font, List.of(Component.translatable("gui.wildernature.bounty_board.reward_locked"), Component.translatable("gui.wildernature.bounty_board.reward_locked_desc", activeBountyName)), Optional.empty(), mouseX, mouseY);
                 return;
             }
 
@@ -373,7 +355,7 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         }
     }
 
-    private void renderRestoreContractTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    private void renderContractSlotTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         ItemStack contractStack = this.menu.getActiveBounty().map(this::getContractIcon).orElseGet(() -> new ItemStack(ObjectRegistry.TRACKING_ORDER.get()));
         ItemStack emeraldStack = new ItemStack(Items.EMERALD);
 
@@ -446,12 +428,10 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         guiGraphics.pose().popPose();
     }
 
-
-
-    private boolean isHoveringRestoreContractSlot(int mouseX, int mouseY) {
+    private boolean isHoveringContractSlot(int mouseX, int mouseY) {
         int contractSlotX = this.leftPos + CONTRACT_SLOT_X;
         int contractSlotY = this.topPos + CONTRACT_SLOT_Y;
-        return this.menu.hasRestoreContractAvailable()
+        return this.menu.hasActiveBounty()
                 && mouseX >= contractSlotX && mouseX < contractSlotX + 16
                 && mouseY >= contractSlotY && mouseY < contractSlotY + 16;
     }
@@ -717,6 +697,10 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
     }
 
     private ItemStack getContractIcon(BountyDefinition bountyDefinition) {
+        if (bountyDefinition.guildCommission()) {
+            return new ItemStack(ObjectRegistry.GUILD_COMMISSION.get());
+        }
+
         return switch (bountyDefinition.type()) {
             case HUNT -> bountyDefinition.category() == BountyCategory.BOSS
                     ? new ItemStack(ObjectRegistry.ELITE_BOUNTY.get())
@@ -815,6 +799,10 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
     }
 
     private Component getBountyTitleComponent(BountyDefinition bountyDefinition) {
+        if (bountyDefinition.guildCommission()) {
+            return Component.translatable("item.wildernature.guild_commission");
+        }
+
         return switch (bountyDefinition.type()) {
             case HUNT -> Component.translatable("gui.wildernature.bounty_board.title.hunt");
             case GATHER -> Component.translatable("gui.wildernature.bounty_board.title.gather");
