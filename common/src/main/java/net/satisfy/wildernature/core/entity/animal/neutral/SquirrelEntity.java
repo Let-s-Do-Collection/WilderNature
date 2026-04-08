@@ -953,17 +953,17 @@ public class SquirrelEntity extends Animal implements CacheStoringMob, Shelterin
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundRegistry.SQUIRREL_AMBIENT.get();
+        return SoundEventRegistry.SQUIRREL_AMBIENT.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return SoundRegistry.SQUIRREL_HURT.get();
+        return SoundEventRegistry.SQUIRREL_HURT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundRegistry.SQUIRREL_DEATH.get();
+        return SoundEventRegistry.SQUIRREL_DEATH.get();
     }
 
     public boolean tryTriggerGift() {

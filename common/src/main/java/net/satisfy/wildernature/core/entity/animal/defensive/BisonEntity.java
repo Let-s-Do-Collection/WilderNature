@@ -43,7 +43,7 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.entity.ai.goal.animal.BisonGoals;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
-import net.satisfy.wildernature.core.registry.SoundRegistry;
+import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -558,17 +558,17 @@ public class BisonEntity extends Animal {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return this.isAngry() ? SoundRegistry.BISON_ANGRY.get() : SoundRegistry.BISON_AMBIENT.get();
+        return this.isAngry() ? SoundEventRegistry.BISON_ANGRY.get() : SoundEventRegistry.BISON_AMBIENT.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return SoundRegistry.BISON_HURT.get();
+        return SoundEventRegistry.BISON_HURT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundRegistry.BISON_DEATH.get();
+        return SoundEventRegistry.BISON_DEATH.get();
     }
 
     @Override

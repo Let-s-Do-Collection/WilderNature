@@ -22,6 +22,21 @@
         },
         {
           "type": "minecraft:item",
+          "weight": 10,
+          "name": "wildernature:thick_leather",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 2,
+                "max": 4
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
           "weight": 18,
           "name": "minecraft:spruce_log",
           "functions": [

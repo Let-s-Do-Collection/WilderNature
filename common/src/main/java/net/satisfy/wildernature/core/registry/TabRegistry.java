@@ -30,6 +30,8 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.COOKED_CASSOWARY_MEAT.get());
                 out.accept(ObjectRegistry.TURKEY_MEAT.get());
                 out.accept(ObjectRegistry.COOKED_TURKEY_MEAT.get());
+                out.accept(ObjectRegistry.THICK_LEATHER.get());
+                out.accept(ObjectRegistry.BOUNTY_BOARD.get());
                 out.accept(ObjectRegistry.FIELD_NOTES.get());
                 out.accept(ObjectRegistry.PATHFINDERS_CALL.get());
                 out.accept(ObjectRegistry.TRACKING_ORDER.get());
@@ -43,7 +45,6 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.LOOT_BAG.get());
                 out.accept(ObjectRegistry.FUR_CLOAK.get());
                 out.accept(ObjectRegistry.STYLIN_PURPLE_HAT.get());
-                out.accept(ObjectRegistry.BOUNTY_BOARD.get());
                 out.accept(ObjectRegistry.SWIFT_FOX_TROPHY.get());
                 out.accept(ObjectRegistry.DEER_TROPHY.get());
                 out.accept(ObjectRegistry.BISON_TROPHY.get());
@@ -61,6 +62,7 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.BOAR_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.OWL_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.BISON_SPAWN_EGG.get());
+                out.accept(ObjectRegistry.GIRAFFE_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.TURKEY_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.DOG_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.HEDGEHOG_SPAWN_EGG.get());

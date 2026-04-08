@@ -56,7 +56,7 @@ import net.satisfy.wildernature.core.entity.ai.goal.EatFromBlockGoal;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
-import net.satisfy.wildernature.core.registry.SoundRegistry;
+import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -621,18 +621,18 @@ public class BoarEntity extends Animal implements CacheEatingMob {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundRegistry.BOAR_AMBIENT.get();
+        return SoundEventRegistry.BOAR_AMBIENT.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
         this.wakeUp();
-        return SoundRegistry.BOAR_HURT.get();
+        return SoundEventRegistry.BOAR_HURT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundRegistry.BOAR_DEATH.get();
+        return SoundEventRegistry.BOAR_DEATH.get();
     }
 
     @Override

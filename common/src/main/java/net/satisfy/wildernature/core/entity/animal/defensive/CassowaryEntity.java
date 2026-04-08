@@ -38,7 +38,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
-import net.satisfy.wildernature.core.registry.SoundRegistry;
+import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -218,7 +218,7 @@ public class CassowaryEntity extends Animal {
     }
 
     private void playThreatWarningSound() {
-        this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundRegistry.CASSOWARY_AMBIENT.get(), SoundSource.HOSTILE, 1.1F, 0.7F + this.random.nextFloat() * 0.1F);
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEventRegistry.CASSOWARY_AMBIENT.get(), SoundSource.HOSTILE, 1.1F, 0.7F + this.random.nextFloat() * 0.1F);
         this.threatSoundCooldownTicks = THREAT_SOUND_COOLDOWN;
     }
 
@@ -412,17 +412,17 @@ public class CassowaryEntity extends Animal {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundRegistry.CASSOWARY_AMBIENT.get();
+        return SoundEventRegistry.CASSOWARY_AMBIENT.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return SoundRegistry.CASSOWARY_HURT.get();
+        return SoundEventRegistry.CASSOWARY_HURT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundRegistry.CASSOWARY_DEATH.get();
+        return SoundEventRegistry.CASSOWARY_DEATH.get();
     }
 
     @Override

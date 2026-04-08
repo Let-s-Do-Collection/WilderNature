@@ -55,7 +55,7 @@ import net.satisfy.wildernature.core.entity.ai.goal.animal.DogGoals;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
-import net.satisfy.wildernature.core.registry.SoundRegistry;
+import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import net.satisfy.wildernature.core.registry.TagsRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -960,12 +960,12 @@ public class DogEntity extends TamableAnimal {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return SoundRegistry.DOG_HURT.get();
+        return SoundEventRegistry.DOG_HURT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundRegistry.DOG_DEATH.get();
+        return SoundEventRegistry.DOG_DEATH.get();
     }
 
     @Override

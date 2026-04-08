@@ -60,7 +60,7 @@ public final class BountyGenerator {
             ResourceLocation selectedTargetId = getNextTargetId(selectedType, selectedCategory, huntEntityPoolByCategory, observeEntityPoolByCategory, gatherItemPool, exploreBiomePool, usedTargets, randomSource);
             BountyDefinition.BountyTargetType targetType = getTargetType(selectedType);
             int requiredAmount = getRequiredAmount(selectedType, selectedCategory, randomSource);
-            int experienceReward = getRandomExperienceReward(selectedType, selectedCategory, randomSource);
+            int experienceReward = getRandomExperienceReward(selectedType, selectedCategory, requiredAmount, randomSource);
             ResourceLocation lootTableId = switch (selectedType) {
                 case HUNT -> selectedCategory == BountyCategory.BOSS ? WilderNature.identifier("bounty/elite_bounty") : WilderNature.identifier("bounty/tracking_order");
                 case GATHER -> WilderNature.identifier("bounty/provision_request");
@@ -301,15 +301,28 @@ public final class BountyGenerator {
         };
     }
 
-    private static int getRandomExperienceReward(BountyDefinition.BountyType bountyType, BountyCategory bountyCategory, RandomSource randomSource) {
+    private static int getRandomExperienceReward(BountyDefinition.BountyType bountyType, BountyCategory bountyCategory, int requiredAmount, RandomSource randomSource) {
         return switch (bountyType) {
-            case HUNT -> switch (bountyCategory) {
-                case NEUTRAL -> 2 + randomSource.nextInt(5);
-                case DEFENSIVE -> 5 + randomSource.nextInt(8);
-                case AGGRESSIVE -> 10 + randomSource.nextInt(11);
-                case BOSS -> 35 + randomSource.nextInt(31);
-            };
-            case GATHER -> 4 + randomSource.nextInt(6);
+            case HUNT -> {
+                int baseReward = switch (bountyCategory) {
+                    case NEUTRAL -> 2 + randomSource.nextInt(5);
+                    case DEFENSIVE -> 5 + randomSource.nextInt(8);
+                    case AGGRESSIVE -> 10 + randomSource.nextInt(11);
+                    case BOSS -> 35 + randomSource.nextInt(31);
+                };
+                int amountBonus = switch (bountyCategory) {
+                    case NEUTRAL -> requiredAmount;
+                    case DEFENSIVE -> requiredAmount * 2;
+                    case AGGRESSIVE -> requiredAmount * 3;
+                    case BOSS -> requiredAmount * 8;
+                };
+                yield baseReward + amountBonus;
+            }
+            case GATHER -> {
+                int baseReward = 4 + randomSource.nextInt(6);
+                int amountBonus = Math.max(0, (requiredAmount - 16) / 4);
+                yield baseReward + amountBonus;
+            }
             case OBSERVE -> 6 + randomSource.nextInt(6);
             case EXPLORE -> 8 + randomSource.nextInt(8);
         };

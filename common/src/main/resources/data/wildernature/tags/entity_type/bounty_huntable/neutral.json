@@ -14,6 +14,27 @@
     "wildernature:raccoon",
     "wildernature:swift_fox",
     "wildernature:squirrel",
-    "wildernature:turkey"
+    "wildernature:turkey",
+    "wildernature:giraffe",
+    {
+      "id": "meadow:water_buffalo",
+      "required": false
+    },
+    {
+      "id": "meadow:cattle",
+      "required": false
+    },
+    {
+      "id": "meadow:wooly_cow",
+      "required": false
+    },
+    {
+      "id": "alpine_whispers:alpine_sheep",
+      "required": false
+    },
+    {
+      "id": "alpine_whispers:reindeer",
+      "required": false
+    }
   ]
 }

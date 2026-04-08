@@ -31,6 +31,7 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
     }
 
     public static void registerEntities() {
+        registerEntity(EntityTypeRegistry.GIRAFFE.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.SQUIRREL.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.OWL.get(), Heightmap.Types.MOTION_BLOCKING, AmbientCreature::checkMobSpawnRules);
         registerEntity(EntityTypeRegistry.TURKEY.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
@@ -49,6 +50,7 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
     public void modify(@NotNull Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.@NotNull Builder builder) {
         if (phase.equals(Phase.ADD)) {
             registerEntities();
+            addMobSpawn(builder, biome, BiomeTags.IS_SAVANNA, EntityTypeRegistry.GIRAFFE.get(), 10, 2, 4);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_DEER, EntityTypeRegistry.DEER.get(), 12, 2, 4);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_RACCOON, EntityTypeRegistry.RACCOON.get(), 8, 2, 3);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_SQUIRREL, EntityTypeRegistry.SQUIRREL.get(), 8, 2, 2);

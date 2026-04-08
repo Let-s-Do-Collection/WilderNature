@@ -23,7 +23,7 @@ public class WilderNature {
         ParticleTypeRegistry.init();
         RecipeRegistry.init();
         TabRegistry.init();
-        SoundRegistry.init();
+        SoundEventRegistry.init();
     }
 }
 

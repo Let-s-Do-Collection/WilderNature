@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.entity.animal.defensive.BisonEntity;
-import net.satisfy.wildernature.core.registry.SoundRegistry;
+import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -360,7 +360,7 @@ public class BisonGoals {
                     this.phase = 1;
                     this.phaseTicks = BisonEntity.SNORT_DURATION;
                     this.bison.startSnortPhase();
-                    this.bison.playSound(SoundRegistry.BISON_ANGRY.get(), 1.0F, 0.9F + this.bison.getRandom().nextFloat() * 0.1F);
+                    this.bison.playSound(SoundEventRegistry.BISON_ANGRY.get(), 1.0F, 0.9F + this.bison.getRandom().nextFloat() * 0.1F);
                 }
                 return;
             }

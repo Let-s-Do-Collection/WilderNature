@@ -70,7 +70,7 @@ import net.satisfy.wildernature.core.entity.ai.goal.RandomActionGoal;
 import net.satisfy.wildernature.core.entity.ai.goal.animal.OwlGoals;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
-import net.satisfy.wildernature.core.registry.SoundRegistry;
+import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import net.satisfy.wildernature.core.registry.TagsRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -261,7 +261,7 @@ public class OwlEntity extends ShoulderRidingEntity {
                 if (onGround()) {
                     setHooting(true);
                 }
-                SoundEvent owlAmbientSound = SoundRegistry.OWL_AMBIENT.get();
+                SoundEvent owlAmbientSound = SoundEventRegistry.OWL_AMBIENT.get();
                 level().playSound(null, OwlEntity.this, owlAmbientSound, SoundSource.NEUTRAL, 1.0F, 1.0F);
             }
 
@@ -545,7 +545,7 @@ public class OwlEntity extends ShoulderRidingEntity {
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundRegistry.OWL_DEATH.get();
+        return SoundEventRegistry.OWL_DEATH.get();
     }
 
     @Override
@@ -556,7 +556,7 @@ public class OwlEntity extends ShoulderRidingEntity {
     @Override
     protected @Nullable SoundEvent getHurtSound(DamageSource source) {
         this.wakeUp();
-        return SoundRegistry.OWL_HURT.get();
+        return SoundEventRegistry.OWL_HURT.get();
     }
 
     @Override

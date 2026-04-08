@@ -13,6 +13,10 @@ public class WilderNatureConfig {
     public static final ModConfigSpec.BooleanValue ADD_JUNGLE_ANIMALS;
     public static final ModConfigSpec.BooleanValue SPAWN_HAZELNUT_BUSH;
 
+    public static final ModConfigSpec.IntValue GIRAFFE_SPAWN_WEIGHT;
+    public static final ModConfigSpec.IntValue GIRAFFE_MIN_GROUP_SIZE;
+    public static final ModConfigSpec.IntValue GIRAFFE_MAX_GROUP_SIZE;
+    
     public static final ModConfigSpec.IntValue DEER_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue DEER_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue DEER_MAX_GROUP_SIZE;
@@ -68,6 +72,10 @@ public class WilderNatureConfig {
     public static boolean addJungleAnimals;
     public static boolean spawnHazelnutBush;
 
+    public static int giraffeSpawnWeight;
+    public static int giraffeMinGroupSize;
+    public static int giraffeMaxGroupSize;
+    
     public static int deerSpawnWeight;
     public static int deerMinGroupSize;
     public static int deerMaxGroupSize;
@@ -126,6 +134,10 @@ public class WilderNatureConfig {
         ADD_JUNGLE_ANIMALS = builder.define("addJungleAnimals", true);
         SPAWN_HAZELNUT_BUSH = builder.define("spawnHazelnutBush", true);
 
+        GIRAFFE_SPAWN_WEIGHT = builder.defineInRange("giraffeSpawnWeight", 12, 0, 1000);
+        GIRAFFE_MIN_GROUP_SIZE = builder.defineInRange("giraffeMinGroupSize", 2, 1, 10);
+        GIRAFFE_MAX_GROUP_SIZE = builder.defineInRange("giraffeMaxGroupSize", 4, 1, 10);
+        
         DEER_SPAWN_WEIGHT = builder.defineInRange("deerSpawnWeight", 12, 0, 1000);
         DEER_MIN_GROUP_SIZE = builder.defineInRange("deerMinGroupSize", 2, 1, 10);
         DEER_MAX_GROUP_SIZE = builder.defineInRange("deerMaxGroupSize", 4, 1, 10);
@@ -195,6 +207,10 @@ public class WilderNatureConfig {
         addJungleAnimals = ADD_JUNGLE_ANIMALS.get();
         spawnHazelnutBush = SPAWN_HAZELNUT_BUSH.get();
 
+        giraffeSpawnWeight = GIRAFFE_SPAWN_WEIGHT.get();
+        giraffeMinGroupSize = GIRAFFE_MIN_GROUP_SIZE.get();
+        giraffeMaxGroupSize = GIRAFFE_MAX_GROUP_SIZE.get();
+        
         deerSpawnWeight = DEER_SPAWN_WEIGHT.get();
         deerMinGroupSize = DEER_MIN_GROUP_SIZE.get();
         deerMaxGroupSize = DEER_MAX_GROUP_SIZE.get();

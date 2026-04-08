@@ -19,34 +19,12 @@ import net.satisfy.wildernature.client.gui.screen.BountyBoardScreen;
 import net.satisfy.wildernature.client.model.armor.StylinPurpleHatModel;
 import net.satisfy.wildernature.client.model.block.BountyBoardModel;
 import net.satisfy.wildernature.client.model.block.HollowCacheModel;
-import net.satisfy.wildernature.client.model.entity.model.BisonModel;
-import net.satisfy.wildernature.client.model.entity.model.BoarModel;
-import net.satisfy.wildernature.client.model.entity.model.CassowaryModel;
-import net.satisfy.wildernature.client.model.entity.model.DeerModel;
-import net.satisfy.wildernature.client.model.entity.model.DogModel;
-import net.satisfy.wildernature.client.model.entity.model.HedgehogModel;
-import net.satisfy.wildernature.client.model.entity.model.MiniSheepModel;
-import net.satisfy.wildernature.client.model.entity.model.OwlModel;
-import net.satisfy.wildernature.client.model.entity.model.RaccoonModel;
-import net.satisfy.wildernature.client.model.entity.model.SwiftFoxModel;
-import net.satisfy.wildernature.client.model.entity.model.SquirrelModel;
-import net.satisfy.wildernature.client.model.entity.model.TurkeyModel;
+import net.satisfy.wildernature.client.model.entity.model.*;
 import net.satisfy.wildernature.client.particle.*;
 import net.satisfy.wildernature.client.render.block.BountyBoardRenderer;
 import net.satisfy.wildernature.client.render.block.CompletionistBannerRenderer;
 import net.satisfy.wildernature.client.render.block.HollowCacheRenderer;
-import net.satisfy.wildernature.client.render.entity.BisonRenderer;
-import net.satisfy.wildernature.client.render.entity.BoarRenderer;
-import net.satisfy.wildernature.client.render.entity.CassowaryRenderer;
-import net.satisfy.wildernature.client.render.entity.DeerRenderer;
-import net.satisfy.wildernature.client.render.entity.DogRenderer;
-import net.satisfy.wildernature.client.render.entity.HedgehogRenderer;
-import net.satisfy.wildernature.client.render.entity.MiniSheepRenderer;
-import net.satisfy.wildernature.client.render.entity.OwlRenderer;
-import net.satisfy.wildernature.client.render.entity.RaccoonRenderer;
-import net.satisfy.wildernature.client.render.entity.SwiftFoxRenderer;
-import net.satisfy.wildernature.client.render.entity.SquirrelRenderer;
-import net.satisfy.wildernature.client.render.entity.TurkeyRenderer;
+import net.satisfy.wildernature.client.render.entity.*;
 import net.satisfy.wildernature.client.util.WilderNatureClientUtil;
 import net.satisfy.wildernature.core.registry.MenuTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
@@ -101,6 +79,7 @@ public class WilderNatureClient {
     }
 
     public static void registerEntityRenderers() {
+        EntityRendererRegistry.register(GIRAFFE, GiraffeRenderer::new);
         EntityRendererRegistry.register(BISON, BisonRenderer::new);
         EntityRendererRegistry.register(BOAR, BoarRenderer::new);
         EntityRendererRegistry.register(CASSOWARY, CassowaryRenderer::new);
@@ -120,6 +99,7 @@ public class WilderNatureClient {
 
     public static void registerEntityModelLayer() {
         EntityModelLayerRegistry.register(StylinPurpleHatModel.LAYER_LOCATION, StylinPurpleHatModel::getTexturedModelData);
+        EntityModelLayerRegistry.register(GiraffeModel.LAYER_LOCATION, GiraffeModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BisonModel.LAYER_LOCATION, BisonModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BoarModel.LAYER_LOCATION, BoarModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BountyBoardModel.LAYER_LOCATION, BountyBoardModel::getTexturedModelData);

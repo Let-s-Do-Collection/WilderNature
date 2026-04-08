@@ -60,7 +60,7 @@ import net.satisfy.wildernature.core.entity.animal.defensive.CassowaryEntity;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
-import net.satisfy.wildernature.core.registry.SoundRegistry;
+import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -707,17 +707,17 @@ public class HedgehogEntity extends Animal implements CacheEatingMob {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return SoundRegistry.HEDGEHOG_HURT.get();
+        return SoundEventRegistry.HEDGEHOG_HURT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundRegistry.HEDGEHOG_DEATH.get();
+        return SoundEventRegistry.HEDGEHOG_DEATH.get();
     }
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundRegistry.HEDGEHOG_AMBIENT.get();
+        return SoundEventRegistry.HEDGEHOG_AMBIENT.get();
     }
 
     @Override

@@ -25,7 +25,7 @@ import net.satisfy.wildernature.core.bounty.BountyReward;
 import net.satisfy.wildernature.core.bounty.PlayerBountyData;
 import net.satisfy.wildernature.core.network.BountyBoardNetworking;
 import net.satisfy.wildernature.core.registry.MenuTypeRegistry;
-import net.satisfy.wildernature.core.registry.SoundRegistry;
+import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 
 public class BountyBoardMenu extends AbstractContainerMenu {
@@ -283,7 +283,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
 
         slotStack.shrink(1);
         this.contractPreviewContainer.setItem(0, restoredContractStack);
-        serverPlayer.serverLevel().playSound(null, serverPlayer.blockPosition(), SoundRegistry.BOUNTY_ACCEPTED.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+        serverPlayer.serverLevel().playSound(null, serverPlayer.blockPosition(), SoundEventRegistry.BOUNTY_ACCEPTED.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 
         this.updateActiveData();
         this.syncMenuState(serverPlayer);
@@ -321,7 +321,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         sourceStack.shrink(1);
         sourceSlot.setChanged();
         this.contractPreviewContainer.setItem(0, restoredContractStack);
-        serverPlayer.serverLevel().playSound(null, serverPlayer.blockPosition(), SoundRegistry.BOUNTY_ACCEPTED.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+        serverPlayer.serverLevel().playSound(null, serverPlayer.blockPosition(), SoundEventRegistry.BOUNTY_ACCEPTED.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 
         this.updateActiveData();
         this.syncMenuState(serverPlayer);
@@ -556,7 +556,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
 
         PlayerBountyData playerBountyData = BountyManager.getPlayerBountyData(serverPlayer);
         BountyManager.giveOrRestoreContract(serverPlayer, targetBounty.get(), playerBountyData.getCurrentProgress());
-        serverPlayer.serverLevel().playSound(null, serverPlayer.blockPosition(), SoundRegistry.BOUNTY_ACCEPTED.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+        serverPlayer.serverLevel().playSound(null, serverPlayer.blockPosition(), SoundEventRegistry.BOUNTY_ACCEPTED.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 
         this.updateActiveData();
         this.syncMenuState(serverPlayer);
@@ -575,7 +575,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
 
         playerBountyData.abandonActiveBounty();
         BountyManager.savePlayerBountyData(serverPlayer, playerBountyData);
-        serverPlayer.serverLevel().playSound(null, serverPlayer.blockPosition(), SoundRegistry.BOUNTY_CANCELED.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+        serverPlayer.serverLevel().playSound(null, serverPlayer.blockPosition(), SoundEventRegistry.BOUNTY_CANCELED.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 
         this.contractPreviewContainer.setItem(0, ItemStack.EMPTY);
         this.rewardContainer.setItem(0, ItemStack.EMPTY);
@@ -593,7 +593,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
 
         boolean claimed = BountyManager.claimActiveBounty(serverPlayer);
         if (claimed) {
-            serverPlayer.serverLevel().playSound(null, serverPlayer.blockPosition(), SoundRegistry.BOUNTY_COMPLETED.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+            serverPlayer.serverLevel().playSound(null, serverPlayer.blockPosition(), SoundEventRegistry.BOUNTY_COMPLETED.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
             this.selectedBountyIndex = this.findFirstSelectableBountyIndex();
             this.updateActiveData();
             this.syncMenuState(serverPlayer);

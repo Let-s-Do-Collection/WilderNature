@@ -12,6 +12,16 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Turkeys now lay Turkey Eggs instead of regular Eggs
 * RedWolf has been renamed to SwiftFox
 
+**Bounty Board**
+* Added a daily bounty system with fresh objectives every day
+* Added Hunt, Gather, Observe, and Explore bounty types
+* Rewards now scale with difficulty and task size
+* Larger tasks grant better rewards
+* Added Guild Commissions as special high-value contracts
+* Added biome exploration bounties
+* Added observation bounties using the spyglass
+* Added reward previews for bounties
+
 **SwiftFox**
 * Added player item stealing behavior with sneak and escape logic
 * SwiftFoxes can steal items directly from player hands

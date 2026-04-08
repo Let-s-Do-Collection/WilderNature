@@ -22,7 +22,7 @@ import net.satisfy.wildernature.core.entity.animal.tameable.DogEntity;
 import net.satisfy.wildernature.core.entity.animal.neutral.RaccoonEntity;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
-import net.satisfy.wildernature.core.registry.SoundRegistry;
+import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.Nullable;
 
 public class DogGoals {
@@ -76,7 +76,7 @@ public class DogGoals {
             if (this.barkCooldownTicks > 0) {
                 this.barkCooldownTicks--;
             } else if (this.dog.getRandom().nextInt(45) == 0) {
-                this.dog.level().playSound(null, this.dog, SoundRegistry.DOG_AMBIENT.get(), SoundSource.NEUTRAL, 0.8F, 1.15F);
+                this.dog.level().playSound(null, this.dog, SoundEventRegistry.DOG_AMBIENT.get(), SoundSource.NEUTRAL, 0.8F, 1.15F);
                 this.barkCooldownTicks = 30;
             }
         }
@@ -160,7 +160,7 @@ public class DogGoals {
             this.alertTicks = ALERT_DURATION;
             this.dog.clearRestState();
             this.dog.setHowling(true);
-            this.dog.level().playSound(null, this.dog, SoundRegistry.DOG_AMBIENT.get(), SoundSource.NEUTRAL, 1.0F, 1.0F);
+            this.dog.level().playSound(null, this.dog, SoundEventRegistry.DOG_AMBIENT.get(), SoundSource.NEUTRAL, 1.0F, 1.0F);
         }
 
         @Override
@@ -363,7 +363,7 @@ public class DogGoals {
             if (this.barkCooldownTicks > 0) {
                 this.barkCooldownTicks--;
             } else {
-                this.dog.level().playSound(null, this.dog, SoundRegistry.DOG_AMBIENT.get(), SoundSource.NEUTRAL, 0.8F, 1.1F);
+                this.dog.level().playSound(null, this.dog, SoundEventRegistry.DOG_AMBIENT.get(), SoundSource.NEUTRAL, 0.8F, 1.1F);
                 this.barkCooldownTicks = 20;
             }
         }

@@ -19,7 +19,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.satisfy.wildernature.core.registry.SoundRegistry;
+import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import net.satisfy.wildernature.core.util.WilderNatureUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,7 +67,7 @@ public class BisonTrophyBlock extends WallDecorationBlock {
                 return InteractionResult.FAIL;
             }
             lastUseTime.put(player, currentTime);
-            world.playSound(null, pos, SoundRegistry.BISON_ANGRY.get(), SoundSource.BLOCKS, 0.25f, 1.0f);
+            world.playSound(null, pos, SoundEventRegistry.BISON_ANGRY.get(), SoundSource.BLOCKS, 0.25f, 1.0f);
 
             ServerLevel serverLevel = (ServerLevel) world;
 

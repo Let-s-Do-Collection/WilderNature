@@ -44,7 +44,7 @@ import net.satisfy.wildernature.core.entity.ai.goal.animal.DeerGoals;
 import net.satisfy.wildernature.core.entity.ai.goal.EatFromBlockGoal;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
-import net.satisfy.wildernature.core.registry.SoundRegistry;
+import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -572,17 +572,17 @@ public class DeerEntity extends Animal {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundRegistry.DEER_AMBIENT.get();
+        return SoundEventRegistry.DEER_AMBIENT.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return SoundRegistry.DEER_HURT.get();
+        return SoundEventRegistry.DEER_HURT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundRegistry.DEER_DEATH.get();
+        return SoundEventRegistry.DEER_DEATH.get();
     }
 
     @Override
@@ -639,6 +639,6 @@ public class DeerEntity extends Animal {
     }
 
     protected SoundEvent getCallSound() {
-        return SoundRegistry.DEER_HURT.get();
+        return SoundEventRegistry.DEER_HURT.get();
     }
 }

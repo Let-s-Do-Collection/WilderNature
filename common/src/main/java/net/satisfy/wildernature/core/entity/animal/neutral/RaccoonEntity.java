@@ -59,7 +59,7 @@ import net.satisfy.wildernature.core.entity.animal.tameable.DogEntity;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
-import net.satisfy.wildernature.core.registry.SoundRegistry;
+import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -388,17 +388,17 @@ public class RaccoonEntity extends Animal implements CacheStoringMob, Sheltering
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundRegistry.RACCOON_AMBIENT.get();
+        return SoundEventRegistry.RACCOON_AMBIENT.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return SoundRegistry.RACCOON_HURT.get();
+        return SoundEventRegistry.RACCOON_HURT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundRegistry.RACCOON_DEATH.get();
+        return SoundEventRegistry.RACCOON_DEATH.get();
     }
 
     public boolean canNibbleMoreCropsThisNight() {

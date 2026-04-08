@@ -44,7 +44,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> FUR_CLOAK = registerItem("fur_cloak", () -> new FurCloakItem(ArmorMaterials.LEATHER.value(), ArmorItem.Type.CHESTPLATE, new Item.Properties()));
     public static final RegistrySupplier<Item> FISH_OIL = registerItem("fish_oil", () -> new Item(getSettings().stacksTo(16)));
     public static final RegistrySupplier<Item> LOOT_BAG = registerItem("loot_bag", () -> new LootBagItem(getSettings().rarity(Rarity.COMMON)));
-    public static final RegistrySupplier<Item> BISON_HORN = registerItem("bison_horn", () -> new BisonHornItem(new Item.Properties().stacksTo(1), SoundRegistry.BISON_HORN.get()));
+    public static final RegistrySupplier<Item> BISON_HORN = registerItem("bison_horn", () -> new BisonHornItem(new Item.Properties().stacksTo(1), SoundEventRegistry.BISON_HORN.get()));
     public static final RegistrySupplier<Item> FIELD_NOTES = registerItem("field_notes", () -> new ContractItem(getSettings().rarity(Rarity.UNCOMMON)));
     public static final RegistrySupplier<Item> PATHFINDERS_CALL = registerItem("pathfinders_call", () -> new ContractItem(getSettings().rarity(Rarity.UNCOMMON)));
     public static final RegistrySupplier<Item> TRACKING_ORDER = registerItem("tracking_order", () -> new ContractItem(getSettings().rarity(Rarity.RARE)));
@@ -58,6 +58,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> OWL_SPAWN_EGG = registerItem("owl_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.OWL, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> BOAR_SPAWN_EGG = registerItem("boar_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.BOAR, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> BISON_SPAWN_EGG = registerItem("bison_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.BISON, -1, -1, getSettings()));
+    public static final RegistrySupplier<Item> GIRAFFE_SPAWN_EGG = registerItem("giraffe_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.GIRAFFE, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> DOG_SPAWN_EGG = registerItem("dog_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.DOG, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> MINISHEEP_SPAWN_EGG = registerItem("minisheep_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.MINISHEEP, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> TURKEY_SPAWN_EGG = registerItem("turkey_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.TURKEY, -1, -1, getSettings()));
@@ -84,6 +85,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> BROWN_MUSHROOM_COLONY = registerWithItem("brown_mushroom_colony", () -> new MushroomColonyBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).randomTicks().noCollission().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY)));
     public static final RegistrySupplier<Block> RED_MUSHROOM_COLONY = registerWithItem("red_mushroom_colony", () -> new MushroomColonyBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).randomTicks().noCollission().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY)));
     public static final RegistrySupplier<Item> BURST_OF_EXPERIENCE = registerItem("burst_of_experience", () -> new ExperienceBurstItem(new Item.Properties().rarity(Rarity.COMMON)));
+    public static final RegistrySupplier<Item> THICK_LEATHER = registerItem("thick_leather", () -> new Item(getSettings()));
 
     /**
      * Ideas for Items:

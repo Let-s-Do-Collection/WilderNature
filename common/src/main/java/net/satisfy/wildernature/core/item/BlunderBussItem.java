@@ -17,7 +17,7 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.satisfy.wildernature.core.entity.projectile.BulletEntity;
-import net.satisfy.wildernature.core.registry.SoundRegistry;
+import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,7 +71,7 @@ public class BlunderBussItem extends ProjectileWeaponItem {
                     if (!bulletFree) bulletItem.consume(ammo, player);
                 }
 
-                world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundRegistry.BLUNDERBUSS_SHOOT.get(), SoundSource.PLAYERS, 1.0F, world.getRandom().nextFloat() * 5F + 1.0F);
+                world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEventRegistry.BLUNDERBUSS_SHOOT.get(), SoundSource.PLAYERS, 1.0F, world.getRandom().nextFloat() * 5F + 1.0F);
 
                 player.awardStat(Stats.ITEM_USED.get(this));
 
@@ -84,7 +84,7 @@ public class BlunderBussItem extends ProjectileWeaponItem {
 
                     serverWorld.sendParticles(ParticleTypes.SMALL_FLAME, particleX, particleY, particleZ, 5, 0.1, 0.1, 0.1, 0.01);
                     serverWorld.sendParticles(ParticleTypes.SMOKE, particleX, particleY, particleZ, 10, 0.1, 0.1, 0.1, 0.01);
-                    serverWorld.getServer().tell(new TickTask(serverWorld.getServer().getTickCount() + 40, () -> world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundRegistry.BLUNDERBUSS_LOAD.get(), SoundSource.PLAYERS, 0.5F, 1.0F)));                }
+                    serverWorld.getServer().tell(new TickTask(serverWorld.getServer().getTickCount() + 40, () -> world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEventRegistry.BLUNDERBUSS_LOAD.get(), SoundSource.PLAYERS, 0.5F, 1.0F)));                }
 
                 return InteractionResultHolder.consume(gun);
             }

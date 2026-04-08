@@ -1,4 +1,22 @@
 {
+  "giraffe_hurt": {
+    "subtitle": "subtitles.wildernature.giraffe_hurt",
+    "sounds": [
+      "wildernature:giraffe_hurt"
+    ]
+  },
+  "giraffe_death": {
+    "subtitle": "subtitles.wildernature.giraffe_death",
+    "sounds": [
+      "wildernature:giraffe_death"
+    ]
+  },
+  "giraffe_ambient": {
+    "subtitle": "subtitles.wildernature.giraffe_ambient",
+    "sounds": [
+      "wildernature:giraffe_ambient"
+    ]
+  },
   "deer_hurt": {
     "subtitle": "subtitles.wildernature.deer_hurt",
     "sounds": [

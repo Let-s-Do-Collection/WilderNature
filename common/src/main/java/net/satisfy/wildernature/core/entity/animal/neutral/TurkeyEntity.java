@@ -38,7 +38,7 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
-import net.satisfy.wildernature.core.registry.SoundRegistry;
+import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -202,17 +202,17 @@ public class TurkeyEntity extends Chicken {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundRegistry.TURKEY_AMBIENT.get();
+        return SoundEventRegistry.TURKEY_AMBIENT.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return SoundRegistry.TURKEY_HURT.get();
+        return SoundEventRegistry.TURKEY_HURT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundRegistry.TURKEY_DEATH.get();
+        return SoundEventRegistry.TURKEY_DEATH.get();
     }
 
     @Override
