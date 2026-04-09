@@ -14,6 +14,7 @@ import net.satisfy.wildernature.core.block.entity.BurrowBlockEntity;
 import net.satisfy.wildernature.core.block.entity.CompletionistBannerEntity;
 import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
 import net.satisfy.wildernature.core.entity.animal.defensive.BisonEntity;
+import net.satisfy.wildernature.core.entity.animal.defensive.ElephantEntity;
 import net.satisfy.wildernature.core.entity.animal.defensive.HippoEntity;
 import net.satisfy.wildernature.core.entity.animal.neutral.*;
 import net.satisfy.wildernature.core.entity.animal.passive.BoarEntity;
@@ -48,6 +49,7 @@ public class EntityTypeRegistry {
     public static final RegistrySupplier<EntityType<SquirrelEntity>> SQUIRREL = createEntity("squirrel", () -> EntityType.Builder.of(SquirrelEntity::new, MobCategory.CREATURE).sized(0.4f, 0.9f).build(WilderNature.identifier("squirrel").toString()));
     public static final RegistrySupplier<EntityType<TurkeyEntity>> TURKEY = createEntity("turkey", () -> EntityType.Builder.of(TurkeyEntity::new, MobCategory.CREATURE).sized(0.6F, 1.0F).build(WilderNature.identifier("turkey").toString()));
     public static final RegistrySupplier<EntityType<GiraffeEntity>> GIRAFFE = createEntity("giraffe", () -> EntityType.Builder.of(GiraffeEntity::new, MobCategory.CREATURE).sized(1.5F, 3.5F).build(WilderNature.identifier("giraffe").toString()));
+    public static final RegistrySupplier<EntityType<ElephantEntity>> ELEPHANT = createEntity("elephant", () -> EntityType.Builder.of(ElephantEntity::new, MobCategory.CREATURE).sized(3F, 3F).build(WilderNature.identifier("elephant").toString()));
 
     public static final RegistrySupplier<EntityType<BulletEntity>> BULLET = createEntity("bullet", () -> EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC).sized(0.3125f, 0.3125f).clientTrackingRange(64).updateInterval(2).build(WilderNature.identifier("bullet").toString()));
     public static final RegistrySupplier<EntityType<ThrownTurkeyEgg>> TURKEY_EGG = createEntity("turkey_egg", () -> EntityType.Builder.<ThrownTurkeyEgg>of(ThrownTurkeyEgg::new, MobCategory.MISC).sized(0.25f, 0.25f).build(WilderNature.identifier("turkey_egg").toString()));

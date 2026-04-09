@@ -11,33 +11,28 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.util.Mth;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.animation.HippoAnimation;
 import net.satisfy.wildernature.core.entity.animal.defensive.HippoEntity;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public class HippoModel<T extends HippoEntity> extends HierarchicalModel<T> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(WilderNature.identifier("hippo"), "main");
 
     private final ModelPart hippo;
-    private final ModelPart tail;
     private final ModelPart hHead;
     private final ModelPart jaw;
-    private final ModelPart leftArm;
-    private final ModelPart leftLeg;
-    private final ModelPart rightLeg;
-    private final ModelPart rightArm;
 
     public HippoModel(ModelPart root) {
         this.hippo = root.getChild("hippo");
-        this.tail = this.hippo.getChild("tail");
+        ModelPart tail = this.hippo.getChild("tail");
         this.hHead = this.hippo.getChild("h_head");
         this.jaw = this.hHead.getChild("jaw");
-        this.leftArm = this.hippo.getChild("leftArm");
-        this.leftLeg = this.hippo.getChild("leftLeg");
-        this.rightLeg = this.hippo.getChild("rightLeg");
-        this.rightArm = this.hippo.getChild("rightArm");
+        ModelPart leftArm = this.hippo.getChild("leftArm");
+        ModelPart leftLeg = this.hippo.getChild("leftLeg");
+        ModelPart rightLeg = this.hippo.getChild("rightLeg");
+        ModelPart rightArm = this.hippo.getChild("rightArm");
     }
 
     public static LayerDefinition getTexturedModelData() {
@@ -75,13 +70,22 @@ public class HippoModel<T extends HippoEntity> extends HierarchicalModel<T> {
         this.hHead.yRot += netHeadYaw * ((float) Math.PI / 180F) * 0.35F;
         this.hHead.xRot += headPitch * ((float) Math.PI / 180F) * 0.45F;
 
-        if (entity.isInWaterOrBubble()) {
-            this.animateWalk(HippoAnimation.swim, limbSwing, limbSwingAmount, 1.2F, 2.0F);
-        } else {
-            this.animateWalk(HippoAnimation.walk, limbSwing, limbSwingAmount, 1.4F, 2.0F);
+        boolean isMoving = limbSwingAmount > 0F;
+
+        if (!isMoving && !entity.isInWaterOrBubble() && !entity.isBiting() && !entity.isSnapping() && !entity.isThreatening() && !entity.isEating()) {
+            this.animate(entity.idleState, HippoAnimation.idle, ageInTicks, 1.0F);
         }
 
-        this.animate(entity.idleState, HippoAnimation.idle, ageInTicks, 1.0F);
+        if (isMoving) {
+            if (entity.isInWaterOrBubble()) {
+                this.animateWalk(HippoAnimation.swim, limbSwing, limbSwingAmount, 2.0F, 2.5F);
+            } else {
+                this.animateWalk(HippoAnimation.walk, limbSwing, limbSwingAmount, 2.5F, 2.5F);
+            }
+        }
+
+        this.animate(entity.yawnState, HippoAnimation.threat, ageInTicks, 1.0F);
+        this.animate(entity.eatState, HippoAnimation.eat, ageInTicks, 1.0F);
         this.animate(entity.biteState, HippoAnimation.bite, ageInTicks, 1.0F);
         this.animate(entity.snapState, HippoAnimation.snap, ageInTicks, 1.0F);
         this.animate(entity.threatState, HippoAnimation.threat, ageInTicks, 1.0F);

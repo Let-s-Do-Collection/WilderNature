@@ -22,6 +22,24 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Added observation bounties using the spyglass
 * Added reward previews for bounties
 
+**Hippo**
+* Say hello to the new Hippos!
+* Hippos react to nearby players and build up threat over time
+* Hippos warn before attacking with a threatening display and yawn
+* Feeding a Hippo calms it down
+* Hippos defend their young aggressively
+* Hippos snap at fish and attack boats
+* Hippos graze on land and seek water during the day
+* Added animations for idle, walking, swimming, eating, threatening and attacking
+
+**Giraffe**
+* Added Giraffes
+* Giraffes live in small herds and prefer staying together
+* They are peaceful and will avoid players when possible
+* If threatened, they flee quickly over long distances
+* Giraffes can defend themselves with powerful kicks
+* Babies stay close to adults and follow the herd
+
 **SwiftFox**
 * Added player item stealing behavior with sneak and escape logic
 * SwiftFoxes can steal items directly from player hands
