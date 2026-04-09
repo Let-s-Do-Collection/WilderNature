@@ -6,6 +6,7 @@ import net.minecraft.client.animation.Keyframe;
 import net.minecraft.client.animation.KeyframeAnimations;
 
 public class GiraffeAnimation {
+
         public static final AnimationDefinition idle = AnimationDefinition.Builder.withLength(3.0F).looping()
                 .addAnimation("torso", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                         new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),

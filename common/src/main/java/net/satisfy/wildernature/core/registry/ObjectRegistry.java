@@ -61,6 +61,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> GIRAFFE_SPAWN_EGG = registerItem("giraffe_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.GIRAFFE, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> DOG_SPAWN_EGG = registerItem("dog_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.DOG, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> MINISHEEP_SPAWN_EGG = registerItem("minisheep_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.MINISHEEP, -1, -1, getSettings()));
+    public static final RegistrySupplier<Item> HIPPO_SPAWN_EGG = registerItem("hippo_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.HIPPO, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> TURKEY_SPAWN_EGG = registerItem("turkey_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.TURKEY, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> CASSOWARY_SPAWN_EGG = registerItem("cassowary_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.CASSOWARY, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> HEDGEHOG_SPAWN_EGG = registerItem("hedgehog_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.HEDGEHOG, -1, -1, getSettings()));

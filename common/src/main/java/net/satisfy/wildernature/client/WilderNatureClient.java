@@ -79,6 +79,7 @@ public class WilderNatureClient {
     }
 
     public static void registerEntityRenderers() {
+        EntityRendererRegistry.register(HIPPO, HippoRenderer::new);
         EntityRendererRegistry.register(GIRAFFE, GiraffeRenderer::new);
         EntityRendererRegistry.register(BISON, BisonRenderer::new);
         EntityRendererRegistry.register(BOAR, BoarRenderer::new);
@@ -99,6 +100,8 @@ public class WilderNatureClient {
 
     public static void registerEntityModelLayer() {
         EntityModelLayerRegistry.register(StylinPurpleHatModel.LAYER_LOCATION, StylinPurpleHatModel::getTexturedModelData);
+        EntityModelLayerRegistry.register(HippoModel.LAYER_LOCATION, HippoModel::getTexturedModelData);
+        EntityModelLayerRegistry.register(BabyHippoModel.LAYER_LOCATION, BabyHippoModel::getTexturedModelData);
         EntityModelLayerRegistry.register(GiraffeModel.LAYER_LOCATION, GiraffeModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BisonModel.LAYER_LOCATION, BisonModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BoarModel.LAYER_LOCATION, BoarModel::getTexturedModelData);

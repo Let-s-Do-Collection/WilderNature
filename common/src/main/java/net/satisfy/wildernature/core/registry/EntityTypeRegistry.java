@@ -14,6 +14,7 @@ import net.satisfy.wildernature.core.block.entity.BurrowBlockEntity;
 import net.satisfy.wildernature.core.block.entity.CompletionistBannerEntity;
 import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
 import net.satisfy.wildernature.core.entity.animal.defensive.BisonEntity;
+import net.satisfy.wildernature.core.entity.animal.defensive.HippoEntity;
 import net.satisfy.wildernature.core.entity.animal.neutral.*;
 import net.satisfy.wildernature.core.entity.animal.passive.BoarEntity;
 import net.satisfy.wildernature.core.entity.projectile.BulletEntity;
@@ -33,6 +34,7 @@ public class EntityTypeRegistry {
     public static final RegistrySupplier<BlockEntityType<HollowCacheBlockEntity>> HOLLOW_CACHE_BLOCK_ENTITY = createBlockEntity("hollow_cache", () -> BlockEntityType.Builder.of(HollowCacheBlockEntity::new, ObjectRegistry.HOLLOW_CACHE.get()).build(null));
     public static final RegistrySupplier<BlockEntityType<BurrowBlockEntity>> BURROW_BLOCK_ENTITY = createBlockEntity("burrow", () -> BlockEntityType.Builder.of(BurrowBlockEntity::new, ObjectRegistry.BURROW.get()).build(null));
 
+    public static final RegistrySupplier<EntityType<HippoEntity>> HIPPO = createEntity("hippo", () -> EntityType.Builder.of(HippoEntity::new, MobCategory.CREATURE).sized(2f, 2.4f).build(WilderNature.identifier("hippo").toString()));
     public static final RegistrySupplier<EntityType<BisonEntity>> BISON = createEntity("bison", () -> EntityType.Builder.of(BisonEntity::new, MobCategory.CREATURE).sized(1.8f, 2.2f).build(WilderNature.identifier("bison").toString()));
     public static final RegistrySupplier<EntityType<BoarEntity>> BOAR = createEntity("boar", () -> EntityType.Builder.of(BoarEntity::new, MobCategory.CREATURE).sized(1.1f, 1.1f).build(WilderNature.identifier("boar").toString()));
     public static final RegistrySupplier<EntityType<CassowaryEntity>> CASSOWARY = createEntity("cassowary", () -> EntityType.Builder.of(CassowaryEntity::new, MobCategory.CREATURE).sized(0.8f, 0.8f).clientTrackingRange(10).build(WilderNature.identifier("cassowary").toString()));
@@ -62,6 +64,7 @@ public class EntityTypeRegistry {
     public static void init() {
         ENTITY_TYPES.register();
         BLOCK_ENTITIES.register();
+        EntityAttributeRegistry.register(HIPPO, HippoEntity::createMobAttributes);
         EntityAttributeRegistry.register(BISON, BisonEntity::createMobAttributes);
         EntityAttributeRegistry.register(BOAR, BoarEntity::createMobAttributes);
         EntityAttributeRegistry.register(CASSOWARY, CassowaryEntity::createMobAttributes);

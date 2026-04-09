@@ -52,4 +52,7 @@ public class ConfigFabric implements ConfigData {
     public int HedgehogSpawnWeight = 13;
     public int HedgehogMinGroupSize = 1;
     public int HedgehogMaxGroupSize = 3;
+    public int HippoSpawnWeight = 14;
+    public int HippoMinGroupSize = 3;
+    public int HippoMaxGroupSize = 6;
 }

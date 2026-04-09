@@ -1,11 +1,17 @@
 package net.satisfy.wildernature.neoforge.core.world;
 
 import com.mojang.serialization.MapCodec;
+import java.util.HashSet;
+import java.util.Set;
 import net.minecraft.core.Holder;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ambient.AmbientCreature;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -16,34 +22,32 @@ import net.satisfy.wildernature.core.registry.TagsRegistry;
 import net.satisfy.wildernature.neoforge.core.registry.WilderNatureBiomeModifiers;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @SuppressWarnings("deprecation")
 public class AddAnimalsBiomeModifier implements BiomeModifier {
     private static final Set<EntityType<?>> registeredEntities = new HashSet<>();
 
-    private static <T extends Mob> void registerEntity(EntityType<T> type, Heightmap.Types heightmapType, SpawnPlacements.SpawnPredicate<T> predicate) {
+    private static <T extends Mob> void registerEntity(EntityType<T> type, SpawnPlacements.SpawnPredicate<T> predicate) {
         if (!registeredEntities.contains(type)) {
-            SpawnPlacements.register(type, SpawnPlacementTypes.ON_GROUND, heightmapType, predicate);
+            SpawnPlacements.register(type, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate);
             registeredEntities.add(type);
         }
     }
 
     public static void registerEntities() {
-        registerEntity(EntityTypeRegistry.GIRAFFE.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        registerEntity(EntityTypeRegistry.SQUIRREL.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        registerEntity(EntityTypeRegistry.OWL.get(), Heightmap.Types.MOTION_BLOCKING, AmbientCreature::checkMobSpawnRules);
-        registerEntity(EntityTypeRegistry.TURKEY.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        registerEntity(EntityTypeRegistry.RACCOON.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        registerEntity(EntityTypeRegistry.DEER.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        registerEntity(EntityTypeRegistry.SWIFT_FOX.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        registerEntity(EntityTypeRegistry.BOAR.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        registerEntity(EntityTypeRegistry.BISON.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        registerEntity(EntityTypeRegistry.DOG.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        registerEntity(EntityTypeRegistry.MINISHEEP.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        registerEntity(EntityTypeRegistry.CASSOWARY.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
-        registerEntity(EntityTypeRegistry.HEDGEHOG.get(), Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AmbientCreature::checkMobSpawnRules);
+        registerEntity(EntityTypeRegistry.GIRAFFE.get(), Animal::checkAnimalSpawnRules);
+        registerEntity(EntityTypeRegistry.SQUIRREL.get(), Animal::checkAnimalSpawnRules);
+        registerEntity(EntityTypeRegistry.OWL.get(), Animal::checkAnimalSpawnRules);
+        registerEntity(EntityTypeRegistry.TURKEY.get(), Animal::checkAnimalSpawnRules);
+        registerEntity(EntityTypeRegistry.RACCOON.get(), Animal::checkAnimalSpawnRules);
+        registerEntity(EntityTypeRegistry.DEER.get(), Animal::checkAnimalSpawnRules);
+        registerEntity(EntityTypeRegistry.SWIFT_FOX.get(), Animal::checkAnimalSpawnRules);
+        registerEntity(EntityTypeRegistry.BOAR.get(), Animal::checkAnimalSpawnRules);
+        registerEntity(EntityTypeRegistry.BISON.get(), Animal::checkAnimalSpawnRules);
+        registerEntity(EntityTypeRegistry.DOG.get(), Animal::checkAnimalSpawnRules);
+        registerEntity(EntityTypeRegistry.MINISHEEP.get(), Animal::checkAnimalSpawnRules);
+        registerEntity(EntityTypeRegistry.CASSOWARY.get(), Animal::checkAnimalSpawnRules);
+        registerEntity(EntityTypeRegistry.HEDGEHOG.get(), Animal::checkAnimalSpawnRules);
+        registerEntity(EntityTypeRegistry.HIPPO.get(), Animal::checkAnimalSpawnRules);
     }
 
     @Override
@@ -63,11 +67,10 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_MINISHEEP, EntityTypeRegistry.MINISHEEP.get(), 8, 2, 4);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_CASSOWARY, EntityTypeRegistry.CASSOWARY.get(), 12, 3, 4);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_HEDGEHOG, EntityTypeRegistry.HEDGEHOG.get(), 9, 2, 3);
+            addMobSpawn(builder, biome, BiomeTags.IS_RIVER, EntityTypeRegistry.HIPPO.get(), 8, 2, 3);
             addMobSpawn(builder, biome, BiomeTags.IS_JUNGLE, EntityType.FROG, 8, 3, 4);
-
         }
     }
-
 
     void addMobSpawn(ModifiableBiomeInfo.BiomeInfo.Builder builder, Holder<Biome> biome, TagKey<Biome> tag, EntityType<?> entityType, int weight, int minGroupSize, int maxGroupSize) {
         if (biome.is(tag)) {

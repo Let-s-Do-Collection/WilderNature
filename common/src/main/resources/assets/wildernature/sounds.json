@@ -1,4 +1,26 @@
 {
+  "hippo_hurt": {
+    "subtitle": "subtitles.wildernature.hippo_hurt",
+    "sounds": [
+      "wildernature:hippo_hurt1",
+      "wildernature:hippo_hurt2"
+    ]
+  },
+  "hippo_death": {
+    "subtitle": "subtitles.wildernature.hippo_death",
+    "sounds": [
+      "wildernature:hippo_death"
+    ]
+  },
+  "hippo_ambient": {
+    "subtitle": "subtitles.wildernature.hippo_ambient",
+    "sounds": [
+      "wildernature:hippo_ambient1",
+      "wildernature:hippo_ambient2",
+      "wildernature:hippo_ambient3"
+
+    ]
+  },
   "giraffe_hurt": {
     "subtitle": "subtitles.wildernature.giraffe_hurt",
     "sounds": [

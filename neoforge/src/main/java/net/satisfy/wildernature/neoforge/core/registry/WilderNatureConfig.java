@@ -13,6 +13,11 @@ public class WilderNatureConfig {
     public static final ModConfigSpec.BooleanValue ADD_JUNGLE_ANIMALS;
     public static final ModConfigSpec.BooleanValue SPAWN_HAZELNUT_BUSH;
 
+
+    public static final ModConfigSpec.IntValue HIPPO_SPAWN_WEIGHT;
+    public static final ModConfigSpec.IntValue HIPPO_MIN_GROUP_SIZE;
+    public static final ModConfigSpec.IntValue HIPPO_MAX_GROUP_SIZE;
+    
     public static final ModConfigSpec.IntValue GIRAFFE_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue GIRAFFE_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue GIRAFFE_MAX_GROUP_SIZE;
@@ -72,6 +77,10 @@ public class WilderNatureConfig {
     public static boolean addJungleAnimals;
     public static boolean spawnHazelnutBush;
 
+    public static int hippoSpawnWeight;
+    public static int hippoMinGroupSize;
+    public static int hippoMaxGroupSize;
+    
     public static int giraffeSpawnWeight;
     public static int giraffeMinGroupSize;
     public static int giraffeMaxGroupSize;
@@ -134,6 +143,10 @@ public class WilderNatureConfig {
         ADD_JUNGLE_ANIMALS = builder.define("addJungleAnimals", true);
         SPAWN_HAZELNUT_BUSH = builder.define("spawnHazelnutBush", true);
 
+        HIPPO_SPAWN_WEIGHT = builder.defineInRange("hippoSpawnWeight", 10, 0, 1000);
+        HIPPO_MIN_GROUP_SIZE = builder.defineInRange("hippoMinGroupSize", 3, 1, 10);
+        HIPPO_MAX_GROUP_SIZE = builder.defineInRange("hippoMaxGroupSize", 5, 1, 10);
+        
         GIRAFFE_SPAWN_WEIGHT = builder.defineInRange("giraffeSpawnWeight", 12, 0, 1000);
         GIRAFFE_MIN_GROUP_SIZE = builder.defineInRange("giraffeMinGroupSize", 2, 1, 10);
         GIRAFFE_MAX_GROUP_SIZE = builder.defineInRange("giraffeMaxGroupSize", 4, 1, 10);
@@ -206,6 +219,10 @@ public class WilderNatureConfig {
         removeForestAnimals = REMOVE_FOREST_ANIMALS.get();
         addJungleAnimals = ADD_JUNGLE_ANIMALS.get();
         spawnHazelnutBush = SPAWN_HAZELNUT_BUSH.get();
+
+        hippoSpawnWeight = HIPPO_SPAWN_WEIGHT.get();
+        hippoMinGroupSize = HIPPO_MIN_GROUP_SIZE.get();
+        hippoMaxGroupSize = HIPPO_MAX_GROUP_SIZE.get();
 
         giraffeSpawnWeight = GIRAFFE_SPAWN_WEIGHT.get();
         giraffeMinGroupSize = GIRAFFE_MIN_GROUP_SIZE.get();
