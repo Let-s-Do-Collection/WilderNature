@@ -18,15 +18,16 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.FollowParentGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -43,6 +44,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.satisfy.wildernature.core.entity.ai.goal.FollowParentAtDistanceGoal;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundEventRegistry;
@@ -56,6 +58,7 @@ public class GiraffeEntity extends Animal {
 
     private static final EntityDataAccessor<Integer> DATA_FLAGS_ID = SynchedEntityData.defineId(GiraffeEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_ALERT = SynchedEntityData.defineId(GiraffeEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_SLEEPING = SynchedEntityData.defineId(GiraffeEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final int AWARENESS_CHECK_INTERVAL = 5;
     private static final int EATING_DURATION_MIN = 50;
@@ -65,11 +68,14 @@ public class GiraffeEntity extends Animal {
     private static final int RIDE_COOLDOWN_MIN = 220;
     private static final int RIDE_COOLDOWN_RANDOM = 120;
     private static final int RIDE_DURATION_MIN = 300;
-    private static final int RIDE_DURATION_RANDOM = 0;
     private static final int FATIGUE_DURATION_MIN = 100;
     private static final int FATIGUE_DURATION_RANDOM = 61;
     private static final int ALERT_DURATION_TICKS = 100;
+    private static final int SLEEP_PARTICLE_INTERVAL_TICKS = 14;
+    private static final int SLEEP_COOLDOWN_MIN = 200;
+    private static final int SLEEP_COOLDOWN_RANDOM = 200;
     private static final double AWARENESS_RADIUS = 20.0D;
+    private static final double WAKE_UP_RADIUS = 9.0D;
 
     private int awarenessCheckCooldown;
     private int eatingTicks;
@@ -78,6 +84,9 @@ public class GiraffeEntity extends Animal {
     private int rideCooldownTicks;
     private int fatigueTicks;
     private int alertTicks;
+    private int sleepPreparationTicks;
+    private int requiredSleepPreparationTicks;
+    private int sleepCooldownTicks;
     private float awareness;
     @Nullable
     private BlockPos eatingTargetPos;
@@ -86,13 +95,15 @@ public class GiraffeEntity extends Animal {
     public final AnimationState alertState = new AnimationState();
     public final AnimationState eatingState = new AnimationState();
     public final AnimationState runState = new AnimationState();
+    public final AnimationState sleepState = new AnimationState();
 
     public GiraffeEntity(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
+        this.requiredSleepPreparationTicks = 100 + this.random.nextInt(120);
     }
 
     public static AttributeSupplier.@NotNull Builder createMobAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.28D).add(Attributes.MAX_HEALTH, 24.0D).add(Attributes.ATTACK_DAMAGE, 6.0D).add(Attributes.FOLLOW_RANGE, 28.0D).add(Attributes.KNOCKBACK_RESISTANCE, 0.35D).add(Attributes.STEP_HEIGHT, 1.2D);
+        return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.28D).add(Attributes.MAX_HEALTH, 24.0D).add(Attributes.ATTACK_DAMAGE, 6.0D).add(Attributes.FOLLOW_RANGE, 28.0D).add(Attributes.KNOCKBACK_RESISTANCE, 0.35D);
     }
 
     @Override
@@ -100,6 +111,7 @@ public class GiraffeEntity extends Animal {
         super.defineSynchedData(builder);
         builder.define(DATA_FLAGS_ID, 0);
         builder.define(DATA_ALERT, false);
+        builder.define(DATA_SLEEPING, false);
     }
 
     @Override
@@ -108,48 +120,78 @@ public class GiraffeEntity extends Animal {
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.45D) {
             @Override
             public boolean canUse() {
-                return !GiraffeEntity.this.isEating() && super.canUse();
+                return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isEating() && super.canUse();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return !GiraffeEntity.this.isEating() && super.canContinueToUse();
+                return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isEating() && super.canContinueToUse();
             }
         });
-        this.goalSelector.addGoal(2, new BreedGoal(this, 1.1D));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.1D, Ingredient.of(Items.SHORT_GRASS), false));
-        this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.15D));
+        this.goalSelector.addGoal(2, new BreedGoal(this, 1.1D) {
+            @Override
+            public boolean canUse() {
+                return !GiraffeEntity.this.isSleeping() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !GiraffeEntity.this.isSleeping() && super.canContinueToUse();
+            }
+        });
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.1D, Ingredient.of(Items.SHORT_GRASS), false) {
+            @Override
+            public boolean canUse() {
+                return !GiraffeEntity.this.isSleeping() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !GiraffeEntity.this.isSleeping() && super.canContinueToUse();
+            }
+        });
+        this.goalSelector.addGoal(4, new FollowParentAtDistanceGoal(this, 1.15D) {
+            @Override
+            public boolean canUse() {
+                return !GiraffeEntity.this.isSleeping() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !GiraffeEntity.this.isSleeping() && super.canContinueToUse();
+            }
+        });
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
             @Override
             public boolean canUse() {
-                return !GiraffeEntity.this.isRidingBurst() && !GiraffeEntity.this.isEating() && super.canUse();
+                return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isRidingBurst() && !GiraffeEntity.this.isEating() && super.canUse();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return !GiraffeEntity.this.isRidingBurst() && !GiraffeEntity.this.isEating() && super.canContinueToUse();
+                return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isRidingBurst() && !GiraffeEntity.this.isEating() && super.canContinueToUse();
             }
         });
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 10.0F) {
             @Override
             public boolean canUse() {
-                return !GiraffeEntity.this.isEating() && super.canUse();
+                return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isEating() && super.canUse();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return !GiraffeEntity.this.isEating() && super.canContinueToUse();
+                return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isEating() && super.canContinueToUse();
             }
         });
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this) {
             @Override
             public boolean canUse() {
-                return !GiraffeEntity.this.isEating() && super.canUse();
+                return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isEating() && super.canUse();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return !GiraffeEntity.this.isEating() && super.canContinueToUse();
+                return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isEating() && super.canContinueToUse();
             }
         });
     }
@@ -163,9 +205,13 @@ public class GiraffeEntity extends Animal {
         this.rideCooldownTicks = 0;
         this.fatigueTicks = 0;
         this.alertTicks = 0;
+        this.sleepPreparationTicks = 0;
+        this.requiredSleepPreparationTicks = 100 + this.random.nextInt(120);
+        this.sleepCooldownTicks = 0;
         this.awareness = 0.0F;
         this.eatingTargetPos = null;
         this.stopFatigue();
+        this.setSleeping(false);
         return out;
     }
 
@@ -174,6 +220,7 @@ public class GiraffeEntity extends Animal {
         super.addAdditionalSaveData(tag);
         tag.putInt("Flags", this.entityData.get(DATA_FLAGS_ID));
         tag.putBoolean("Alert", this.isAlert());
+        tag.putBoolean("Sleeping", this.isSleeping());
         tag.putBoolean("Eating", this.isEating());
         tag.putBoolean("RidingBurst", this.isRidingBurst());
         tag.putBoolean("Fatigued", this.isFatigued());
@@ -183,6 +230,9 @@ public class GiraffeEntity extends Animal {
         tag.putInt("RideCooldownTicks", this.rideCooldownTicks);
         tag.putInt("FatigueTicks", this.fatigueTicks);
         tag.putInt("AlertTicks", this.alertTicks);
+        tag.putInt("SleepPreparationTicks", this.sleepPreparationTicks);
+        tag.putInt("RequiredSleepPreparationTicks", this.requiredSleepPreparationTicks);
+        tag.putInt("SleepCooldownTicks", this.sleepCooldownTicks);
         tag.putFloat("Awareness", this.awareness);
         if (this.eatingTargetPos != null) {
             tag.putInt("EatingTargetX", this.eatingTargetPos.getX());
@@ -196,6 +246,7 @@ public class GiraffeEntity extends Animal {
         super.readAdditionalSaveData(tag);
         this.entityData.set(DATA_FLAGS_ID, tag.getInt("Flags"));
         if (tag.contains("Alert")) this.entityData.set(DATA_ALERT, tag.getBoolean("Alert"));
+        if (tag.contains("Sleeping")) this.entityData.set(DATA_SLEEPING, tag.getBoolean("Sleeping"));
         if (tag.contains("Eating")) this.setFlag(FLAG_EATING, tag.getBoolean("Eating"));
         if (tag.contains("RidingBurst")) this.setFlag(FLAG_RIDING_BURST, tag.getBoolean("RidingBurst"));
         if (tag.contains("Fatigued")) this.setFlag(FLAG_FATIGUED, tag.getBoolean("Fatigued"));
@@ -205,6 +256,9 @@ public class GiraffeEntity extends Animal {
         this.rideCooldownTicks = tag.getInt("RideCooldownTicks");
         this.fatigueTicks = tag.getInt("FatigueTicks");
         this.alertTicks = tag.getInt("AlertTicks");
+        this.sleepPreparationTicks = tag.getInt("SleepPreparationTicks");
+        this.requiredSleepPreparationTicks = tag.contains("RequiredSleepPreparationTicks") ? tag.getInt("RequiredSleepPreparationTicks") : 100 + this.random.nextInt(120);
+        this.sleepCooldownTicks = tag.getInt("SleepCooldownTicks");
         this.awareness = tag.getFloat("Awareness");
         if (tag.contains("EatingTargetX") && tag.contains("EatingTargetY") && tag.contains("EatingTargetZ")) this.eatingTargetPos = new BlockPos(tag.getInt("EatingTargetX"), tag.getInt("EatingTargetY"), tag.getInt("EatingTargetZ"));
         else this.eatingTargetPos = null;
@@ -215,6 +269,7 @@ public class GiraffeEntity extends Animal {
         super.tick();
 
         if (!this.level().isClientSide) {
+            this.updateSleep();
             this.updateAwareness();
             this.updateEating();
             this.updateRideState();
@@ -227,7 +282,69 @@ public class GiraffeEntity extends Animal {
         this.updateAnimations();
     }
 
+    private void updateSleep() {
+        if (this.sleepCooldownTicks > 0) this.sleepCooldownTicks--;
+
+        boolean isNight = !this.level().isDay();
+        boolean isStill = this.getDeltaMovement().horizontalDistanceSqr() < 0.002D;
+        boolean hasThreatsNearby = !this.level().getEntitiesOfClass(Monster.class, this.getBoundingBox().inflate(12.0D, 4.0D, 12.0D)).isEmpty();
+
+        if (this.isSleeping()) {
+            if (!isNight || this.isInWaterOrBubble() || this.isVehicle() || this.isAlert() || this.isEating() || this.isRidingBurst() || hasThreatsNearby || this.hasWakeUpTriggerNearby()) {
+                this.wakeUp();
+                if (this.hasWakeUpTriggerNearby()) {
+                    this.alertTicks = Math.max(this.alertTicks, ALERT_DURATION_TICKS);
+                    this.entityData.set(DATA_ALERT, true);
+                    this.spawnAlertParticle();
+                }
+            } else {
+                this.getNavigation().stop();
+                this.setDeltaMovement(Vec3.ZERO);
+                if (this.level() instanceof ServerLevel && this.tickCount % SLEEP_PARTICLE_INTERVAL_TICKS == 0) this.spawnSleepingParticle();
+            }
+            return;
+        }
+
+        if (isNight && !this.isInWaterOrBubble() && !this.isVehicle() && !this.isAlert() && !this.isEating() && !this.isRidingBurst() && !this.isFatigued() && !hasThreatsNearby && this.sleepCooldownTicks <= 0 && isStill) {
+            this.sleepPreparationTicks++;
+            if (this.sleepPreparationTicks > this.requiredSleepPreparationTicks) this.startSleeping();
+        } else if (this.sleepPreparationTicks > 0) {
+            this.sleepPreparationTicks = Math.max(0, this.sleepPreparationTicks - 25);
+        }
+    }
+
+    private boolean hasWakeUpTriggerNearby() {
+        Player nearestPlayer = this.level().getNearestPlayer(this, WAKE_UP_RADIUS);
+        if (nearestPlayer == null) return false;
+        if (nearestPlayer.isCreative() || nearestPlayer.isSpectator()) return false;
+        return !nearestPlayer.isCrouching();
+    }
+
+    private void startSleeping() {
+        this.stopEating();
+        this.stopRidingBurst();
+        this.setSleeping(true);
+        this.awareness = 0.0F;
+        this.sleepPreparationTicks = 0;
+        this.getNavigation().stop();
+        this.setDeltaMovement(Vec3.ZERO);
+    }
+
+    private void wakeUp() {
+        if (this.isSleeping()) {
+            this.setSleeping(false);
+            this.sleepCooldownTicks = SLEEP_COOLDOWN_MIN + this.random.nextInt(SLEEP_COOLDOWN_RANDOM);
+        }
+        this.sleepPreparationTicks = 0;
+        this.requiredSleepPreparationTicks = 100 + this.random.nextInt(120);
+    }
+
     private void updateAwareness() {
+        if (this.isSleeping()) {
+            this.awareness = 0.0F;
+            return;
+        }
+
         if (this.awarenessCheckCooldown > 0) {
             this.awarenessCheckCooldown--;
             return;
@@ -261,6 +378,7 @@ public class GiraffeEntity extends Animal {
             this.entityData.set(DATA_ALERT, true);
             this.spawnAlertParticle();
             this.stopEating();
+            this.wakeUp();
             this.awareness = 0.0F;
         }
     }
@@ -268,7 +386,7 @@ public class GiraffeEntity extends Animal {
     private void updateEating() {
         if (this.eatingCooldownTicks > 0) this.eatingCooldownTicks--;
 
-        if (this.isAlert() || this.isVehicle() || this.isRidingBurst() || this.isFatigued()) {
+        if (this.isSleeping() || this.isAlert() || this.isVehicle() || this.isRidingBurst() || this.isFatigued()) {
             this.stopEating();
             return;
         }
@@ -355,6 +473,8 @@ public class GiraffeEntity extends Animal {
             return;
         }
 
+        if (this.isSleeping()) this.wakeUp();
+
         if (this.rideTicks > 0) this.rideTicks--;
 
         if (this.rideTicks <= 0) {
@@ -391,6 +511,7 @@ public class GiraffeEntity extends Animal {
         this.eatingState.animateWhen(this.isEating(), this.tickCount);
         this.runState.animateWhen(this.isRidingBurst(), this.tickCount);
         this.alertState.animateWhen(this.isAlert(), this.tickCount);
+        this.sleepState.animateWhen(this.isSleeping(), this.tickCount);
 
         if (this.level().isClientSide) this.setupAnimationStates();
     }
@@ -413,8 +534,20 @@ public class GiraffeEntity extends Animal {
         if (this.level() instanceof ServerLevel serverLevel) serverLevel.sendParticles(ParticleTypeRegistry.QUESTION.get(), this.getX(), this.getY() + this.getBbHeight() + 0.25D, this.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
     }
 
+    private void spawnSleepingParticle() {
+        if (this.level() instanceof ServerLevel serverLevel) serverLevel.sendParticles(ParticleTypeRegistry.SLEEPING.get(), this.getX() + (this.random.nextDouble() - 0.5D) * 0.4D, this.getY() + this.getBbHeight() * 0.75D, this.getZ() + (this.random.nextDouble() - 0.5D) * 0.4D, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+    }
+
     public boolean isAlert() {
         return this.entityData.get(DATA_ALERT);
+    }
+
+    public boolean isSleeping() {
+        return this.entityData.get(DATA_SLEEPING);
+    }
+
+    private void setSleeping(boolean sleeping) {
+        this.entityData.set(DATA_SLEEPING, sleeping);
     }
 
     private void setFlag(int flag, boolean value) {
@@ -431,6 +564,7 @@ public class GiraffeEntity extends Animal {
     }
 
     public void startEating() {
+        this.wakeUp();
         this.setFlag(FLAG_EATING, true);
     }
 
@@ -445,6 +579,7 @@ public class GiraffeEntity extends Animal {
     }
 
     public void startRidingBurst() {
+        this.wakeUp();
         this.setFlag(FLAG_RIDING_BURST, true);
     }
 
@@ -468,7 +603,7 @@ public class GiraffeEntity extends Animal {
 
     public void setupAnimationStates() {
         boolean moving = this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-4D;
-        boolean idleAllowed = !moving && !this.isAlert() && !this.isEating() && !this.isRidingBurst() && !this.isFatigued();
+        boolean idleAllowed = !moving && !this.isSleeping() && !this.isAlert() && !this.isEating() && !this.isRidingBurst() && !this.isFatigued();
 
         if (idleAllowed) this.idleState.startIfStopped(this.tickCount);
         else this.idleState.stop();
@@ -483,16 +618,22 @@ public class GiraffeEntity extends Animal {
     public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
 
+        if (hand == InteractionHand.OFF_HAND) return InteractionResult.PASS;
         if (this.isFood(itemStack)) return super.mobInteract(player, hand);
+        if (this.isSleeping()) this.wakeUp();
+        if (this.isBaby() || this.isVehicle() || this.isAlert() || this.isEating() || this.rideCooldownTicks > 0) return super.mobInteract(player, hand);
 
-        if (!this.level().isClientSide && hand == InteractionHand.MAIN_HAND && !this.isBaby() && !this.isVehicle() && !this.isAlert() && !this.isEating() && this.rideCooldownTicks <= 0) {
+        if (!this.level().isClientSide) {
             this.startRidingBurst();
-            this.rideTicks = RIDE_DURATION_MIN + this.random.nextInt(RIDE_DURATION_RANDOM);
-            player.startRiding(this, true);
-            return InteractionResult.SUCCESS;
+            this.rideTicks = RIDE_DURATION_MIN;
+            if (!player.startRiding(this, true)) {
+                this.stopRidingBurst();
+                this.rideTicks = 0;
+                return InteractionResult.PASS;
+            }
         }
 
-        return super.mobInteract(player, hand);
+        return InteractionResult.sidedSuccess(this.level().isClientSide);
     }
 
     @Override
@@ -501,19 +642,28 @@ public class GiraffeEntity extends Animal {
     }
 
     @Override
+    protected @NotNull Vec3 getPassengerAttachmentPoint(Entity passenger, EntityDimensions dimensions, float partialTick) {
+        float rotation = -this.getYRot() * ((float) Math.PI / 180F);
+        Vec3 localOffset = new Vec3(0.0D, 2.25D, 0.45D);
+        return new Vec3(this.getX(), this.getY(), this.getZ()).add(localOffset.yRot(rotation));
+    }
+
+    @Override
     public void positionRider(Entity passenger, Entity.MoveFunction moveFunction) {
         if (!this.hasPassenger(passenger)) return;
 
-        float bodyRotationRadians = this.yBodyRot * ((float) Math.PI / 180F);
-        double riderForwardOffset = 0.55D;
-        double riderX = this.getX() + Mth.sin(bodyRotationRadians) * riderForwardOffset;
-        double riderY = this.getY() + this.getBbHeight() * 1.15D;
-        double riderZ = this.getZ() - Mth.cos(bodyRotationRadians) * riderForwardOffset;
-        moveFunction.accept(passenger, riderX, riderY, riderZ);
+        Vec3 passengerPosition = this.getPassengerAttachmentPoint(passenger, passenger.getDimensions(passenger.getPose()), 1.0F);
+        moveFunction.accept(passenger, passengerPosition.x, passengerPosition.y, passengerPosition.z);
     }
 
     @Override
     public void travel(Vec3 travelVector) {
+        if (this.isSleeping()) {
+            this.getNavigation().stop();
+            super.travel(Vec3.ZERO);
+            return;
+        }
+
         if (this.isAlive() && this.isVehicle() && this.getFirstPassenger() instanceof Player player) {
             this.setYRot(player.getYRot());
             this.yRotO = this.getYRot();
@@ -538,6 +688,7 @@ public class GiraffeEntity extends Animal {
 
     @Override
     public boolean hurt(DamageSource damageSource, float amount) {
+        this.wakeUp();
         boolean wasHurt = super.hurt(damageSource, amount);
         if (wasHurt) {
             this.alertTicks = ALERT_DURATION_TICKS;

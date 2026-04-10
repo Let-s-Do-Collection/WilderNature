@@ -55,4 +55,7 @@ public class ConfigFabric implements ConfigData {
     public int HippoSpawnWeight = 14;
     public int HippoMinGroupSize = 3;
     public int HippoMaxGroupSize = 6;
+    public int ElephantSpawnWeight = 10;
+    public int ElephantMinGroupSize = 3;
+    public int ElephantMaxGroupSize = 5;
 }

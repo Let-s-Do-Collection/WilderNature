@@ -1,4 +1,32 @@
 {
+  "elephant_hurt": {
+    "subtitle": "subtitles.wildernature.elephant_hurt",
+    "sounds": [
+      "wildernature:elephant_hurt"
+    ]
+  },
+  "elephant_death": {
+    "subtitle": "subtitles.wildernature.elephant_death",
+    "sounds": [
+      "wildernature:elephant_death"
+    ]
+  },
+  "elephant_ambient": {
+    "subtitle": "subtitles.wildernature.elephant_ambient",
+    "sounds": [
+      "wildernature:elephant_ambient1",
+      "wildernature:elephant_ambient2",
+      "wildernature:elephant_ambient3"
+
+    ]
+  },
+  "elephant_step": {
+    "subtitle": "subtitles.wildernature.elephant_step",
+    "sounds": [
+      "wildernature:elephant_step"
+
+    ]
+  },
   "hippo_hurt": {
     "subtitle": "subtitles.wildernature.hippo_hurt",
     "sounds": [

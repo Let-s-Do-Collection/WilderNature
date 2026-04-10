@@ -33,6 +33,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.satisfy.wildernature.core.entity.ai.goal.FollowParentAtDistanceGoal;
 import net.satisfy.wildernature.core.entity.ai.goal.animal.HippoGoals;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
@@ -143,7 +144,7 @@ public class HippoEntity extends Animal {
                         && super.canContinueToUse();
             }
         });
-        this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.1D));
+        this.goalSelector.addGoal(5, new FollowParentAtDistanceGoal(this, 1.1D));
         this.goalSelector.addGoal(6, new HippoGoals.SeekWaterGoal(this, 1.0D, 16));
         this.goalSelector.addGoal(7, new HippoGoals.GrazingGoal(this, 0.9D));
         this.goalSelector.addGoal(8, new RandomSwimmingGoal(this, 1.0D, 10) {

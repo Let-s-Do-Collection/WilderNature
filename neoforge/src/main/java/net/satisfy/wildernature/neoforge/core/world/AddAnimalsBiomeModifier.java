@@ -48,13 +48,15 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
         registerEntity(EntityTypeRegistry.CASSOWARY.get(), Animal::checkAnimalSpawnRules);
         registerEntity(EntityTypeRegistry.HEDGEHOG.get(), Animal::checkAnimalSpawnRules);
         registerEntity(EntityTypeRegistry.HIPPO.get(), Animal::checkAnimalSpawnRules);
+        registerEntity(EntityTypeRegistry.ELEPHANT.get(), Animal::checkAnimalSpawnRules);
     }
 
     @Override
     public void modify(@NotNull Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.@NotNull Builder builder) {
         if (phase.equals(Phase.ADD)) {
             registerEntities();
-            addMobSpawn(builder, biome, BiomeTags.IS_SAVANNA, EntityTypeRegistry.GIRAFFE.get(), 10, 2, 4);
+            addMobSpawn(builder, biome, BiomeTags.IS_SAVANNA, EntityTypeRegistry.ELEPHANT.get(), 12, 3, 5);
+            addMobSpawn(builder, biome, BiomeTags.IS_SAVANNA, EntityTypeRegistry.GIRAFFE.get(), 10, 3, 4);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_DEER, EntityTypeRegistry.DEER.get(), 12, 2, 4);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_RACCOON, EntityTypeRegistry.RACCOON.get(), 8, 2, 3);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_SQUIRREL, EntityTypeRegistry.SQUIRREL.get(), 8, 2, 2);

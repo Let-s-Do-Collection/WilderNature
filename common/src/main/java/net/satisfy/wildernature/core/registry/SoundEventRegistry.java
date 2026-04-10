@@ -11,6 +11,10 @@ import net.satisfy.wildernature.WilderNature;
 public class SoundEventRegistry {
     public static final Registrar<SoundEvent> SOUND_EVENTS = DeferredRegister.create(WilderNature.MOD_ID, Registries.SOUND_EVENT).getRegistrar();
 
+    public static final RegistrySupplier<SoundEvent> ELEPHANT_AMBIENT = create("elephant_ambient");
+    public static final RegistrySupplier<SoundEvent> ELEPHANT_HURT = create("elephant_hurt");
+    public static final RegistrySupplier<SoundEvent> ELEPHANT_DEATH = create("elephant_death");
+    public static final RegistrySupplier<SoundEvent> ELEPHANT_STEP = create("elephant_step");
     public static final RegistrySupplier<SoundEvent> HIPPO_AMBIENT = create("hippo_ambient");
     public static final RegistrySupplier<SoundEvent> HIPPO_HURT = create("hippo_hurt");
     public static final RegistrySupplier<SoundEvent> HIPPO_DEATH = create("hippo_death");

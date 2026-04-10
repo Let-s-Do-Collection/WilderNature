@@ -13,6 +13,9 @@ public class WilderNatureConfig {
     public static final ModConfigSpec.BooleanValue ADD_JUNGLE_ANIMALS;
     public static final ModConfigSpec.BooleanValue SPAWN_HAZELNUT_BUSH;
 
+    public static final ModConfigSpec.IntValue ELEPHANT_SPAWN_WEIGHT;
+    public static final ModConfigSpec.IntValue ELEPHANT_MIN_GROUP_SIZE;
+    public static final ModConfigSpec.IntValue ELEPHANT_MAX_GROUP_SIZE;
 
     public static final ModConfigSpec.IntValue HIPPO_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue HIPPO_MIN_GROUP_SIZE;
@@ -77,6 +80,10 @@ public class WilderNatureConfig {
     public static boolean addJungleAnimals;
     public static boolean spawnHazelnutBush;
 
+    public static int elephantSpawnWeight;
+    public static int elephantMinGroupSize;
+    public static int elephantMaxGroupSize;
+    
     public static int hippoSpawnWeight;
     public static int hippoMinGroupSize;
     public static int hippoMaxGroupSize;
@@ -142,7 +149,11 @@ public class WilderNatureConfig {
         REMOVE_FOREST_ANIMALS = builder.define("removeForestAnimals", true);
         ADD_JUNGLE_ANIMALS = builder.define("addJungleAnimals", true);
         SPAWN_HAZELNUT_BUSH = builder.define("spawnHazelnutBush", true);
-
+        
+        ELEPHANT_SPAWN_WEIGHT = builder.defineInRange("elephantSpawnWeight", 12, 0, 1000);
+        ELEPHANT_MIN_GROUP_SIZE = builder.defineInRange("elephantMinGroupSize", 3, 1, 10);
+        ELEPHANT_MAX_GROUP_SIZE = builder.defineInRange("elephantMaxGroupSize", 5, 1, 10);
+        
         HIPPO_SPAWN_WEIGHT = builder.defineInRange("hippoSpawnWeight", 10, 0, 1000);
         HIPPO_MIN_GROUP_SIZE = builder.defineInRange("hippoMinGroupSize", 3, 1, 10);
         HIPPO_MAX_GROUP_SIZE = builder.defineInRange("hippoMaxGroupSize", 5, 1, 10);
@@ -219,6 +230,10 @@ public class WilderNatureConfig {
         removeForestAnimals = REMOVE_FOREST_ANIMALS.get();
         addJungleAnimals = ADD_JUNGLE_ANIMALS.get();
         spawnHazelnutBush = SPAWN_HAZELNUT_BUSH.get();
+        
+        elephantSpawnWeight = ELEPHANT_SPAWN_WEIGHT.get();
+        elephantMinGroupSize = ELEPHANT_MIN_GROUP_SIZE.get();
+        elephantMaxGroupSize = ELEPHANT_MAX_GROUP_SIZE.get();
 
         hippoSpawnWeight = HIPPO_SPAWN_WEIGHT.get();
         hippoMinGroupSize = HIPPO_MIN_GROUP_SIZE.get();

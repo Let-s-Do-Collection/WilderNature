@@ -40,6 +40,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.phys.Vec3;
+import net.satisfy.wildernature.core.entity.ai.goal.FollowParentAtDistanceGoal;
 import net.satisfy.wildernature.core.entity.ai.goal.animal.DeerGoals;
 import net.satisfy.wildernature.core.entity.ai.goal.EatFromBlockGoal;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
@@ -128,7 +129,7 @@ public class DeerEntity extends Animal {
         this.goalSelector.addGoal(4, new DeerGoals.DeerSeekShelterGoal(this));
         this.goalSelector.addGoal(5, new FloatGoal(this));
         this.goalSelector.addGoal(6, new BreedGoal(this, 1.15D));
-        this.goalSelector.addGoal(7, new FollowParentGoal(this, 1.1D));
+        this.goalSelector.addGoal(7, new FollowParentAtDistanceGoal(this, 1.1D));
         this.goalSelector.addGoal(8, new DeerGoals.DeerFollowLeaderGoal(this));
         this.goalSelector.addGoal(9, new TemptGoal(this, 1.2D, Ingredient.of(Items.SHORT_GRASS), false));
         this.goalSelector.addGoal(10, new DeerGoals.DeerEatingGoal(this));
