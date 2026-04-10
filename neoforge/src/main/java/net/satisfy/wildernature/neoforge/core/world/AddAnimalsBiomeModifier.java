@@ -34,11 +34,10 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
     }
 
     public static void registerEntities() {
+        registerEntity(EntityTypeRegistry.LION.get(), Animal::checkAnimalSpawnRules);
         registerEntity(EntityTypeRegistry.BEAVER.get(), Animal::checkAnimalSpawnRules);
         registerEntity(EntityTypeRegistry.GIRAFFE.get(), Animal::checkAnimalSpawnRules);
-        registerEntity(EntityTypeRegistry.SQUIRREL.get(), Animal::checkAnimalSpawnRules);
-        registerEntity(EntityTypeRegistry.OWL.get(), Animal::checkAnimalSpawnRules);
-        registerEntity(EntityTypeRegistry.TURKEY.get(), Animal::checkAnimalSpawnRules);
+        registerEntity(EntityTypeRegistry.SQUIRREL.get(), Animal::checkAnimalSpawnRules);registerEntity(EntityTypeRegistry.TURKEY.get(), Animal::checkAnimalSpawnRules);
         registerEntity(EntityTypeRegistry.RACCOON.get(), Animal::checkAnimalSpawnRules);
         registerEntity(EntityTypeRegistry.DEER.get(), Animal::checkAnimalSpawnRules);
         registerEntity(EntityTypeRegistry.SWIFT_FOX.get(), Animal::checkAnimalSpawnRules);
@@ -56,13 +55,13 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
     public void modify(@NotNull Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.@NotNull Builder builder) {
         if (phase.equals(Phase.ADD)) {
             registerEntities();
+            addMobSpawn(builder, biome, BiomeTags.IS_SAVANNA, EntityTypeRegistry.LION.get(), 10, 3, 5);
             addMobSpawn(builder, biome, BiomeTags.IS_SAVANNA, EntityTypeRegistry.ELEPHANT.get(), 12, 3, 5);
             addMobSpawn(builder, biome, BiomeTags.IS_SAVANNA, EntityTypeRegistry.GIRAFFE.get(), 10, 3, 4);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_DEER, EntityTypeRegistry.DEER.get(), 12, 2, 4);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_RACCOON, EntityTypeRegistry.RACCOON.get(), 8, 2, 3);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_SQUIRREL, EntityTypeRegistry.SQUIRREL.get(), 8, 2, 2);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_SWIFT_FOX, EntityTypeRegistry.SWIFT_FOX.get(), 10, 3, 4);
-            addMobSpawn(builder, biome, TagsRegistry.SPAWNS_OWL, EntityTypeRegistry.OWL.get(), 12, 3, 3);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_BOAR, EntityTypeRegistry.BOAR.get(), 14, 5, 5);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_BISON, EntityTypeRegistry.BISON.get(), 10, 3, 5);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_TURKEY, EntityTypeRegistry.TURKEY.get(), 12, 3, 5);

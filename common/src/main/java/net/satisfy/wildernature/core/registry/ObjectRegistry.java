@@ -55,7 +55,6 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> SWIFT_FOX_SPAWN_EGG = registerItem("swift_fox_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.SWIFT_FOX, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> RACCOON_SPAWN_EGG = registerItem("raccoon_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.RACCOON, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> SQUIRREL_SPAWN_EGG = registerItem("squirrel_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.SQUIRREL, -1, -1, getSettings()));
-    public static final RegistrySupplier<Item> OWL_SPAWN_EGG = registerItem("owl_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.OWL, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> BOAR_SPAWN_EGG = registerItem("boar_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.BOAR, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> BISON_SPAWN_EGG = registerItem("bison_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.BISON, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> GIRAFFE_SPAWN_EGG = registerItem("giraffe_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.GIRAFFE, -1, -1, getSettings()));
@@ -90,6 +89,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> ELEPHANT_SPAWN_EGG = registerItem("elephant_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.ELEPHANT, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> BEAVER_SPAWN_EGG = registerItem("beaver_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.BEAVER, -1, -1, getSettings()));
     public static final RegistrySupplier<Block> BEAVER_DAM = registerWithItem("beaver_dam", () -> new BeaverDamBlock(BlockBehaviour.Properties.of().strength(0.3F).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY).instabreak()));
+    public static final RegistrySupplier<Item> LION_SPAWN_EGG = registerItem("lion_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.LION, -1, -1, getSettings()));
 
     /**
      * Ideas for Items:

@@ -28,9 +28,6 @@ public class ConfigFabric implements ConfigData {
     public int SwiftfoxSpawnWeight = 12;
     public int SwiftfoxMinGroupSize = 2;
     public int SwiftfoxMaxGroupSize = 4;
-    public int OwlSpawnWeight = 12;
-    public int OwlMinGroupSize = 2;
-    public int OwlMaxGroupSize = 3;
     public int BoarSpawnWeight = 14;
     public int BoarMinGroupSize = 4;
     public int BoarMaxGroupSize = 5;
@@ -61,4 +58,7 @@ public class ConfigFabric implements ConfigData {
     public int BeaverSpawnWeight = 11;
     public int BeaverMinGroupSize = 2;
     public int BeaverMaxGroupSize = 3;
+    public int LionSpawnWeight = 12;
+    public int LionMinGroupSize = 3;
+    public int LionMaxGroupSize = 5;
 }

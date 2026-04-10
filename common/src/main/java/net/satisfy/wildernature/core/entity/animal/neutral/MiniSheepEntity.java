@@ -44,6 +44,7 @@ import net.minecraft.world.item.ShearsItem;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.wildernature.core.entity.ai.goal.animal.MiniSheepGoal;
@@ -66,7 +67,6 @@ public class MiniSheepEntity extends Animal implements Shearable {
     private static final int FLEE_HERD_RADIUS = 18;
     private static final int FLEE_DURATION_TICKS = 80;
     private static final int MAEH_ANIMATION_TICKS = 20;
-    private static final int SHEAR_CALM_TICKS = 30;
     private static final double HERD_SEARCH_RADIUS = 12.0D;
     private static final double FLEE_DISTANCE = 12.0D;
 
@@ -684,6 +684,13 @@ public class MiniSheepEntity extends Animal implements Shearable {
         this.setSheared(false);
         if (this.isBaby()) {
             this.ageUp(60);
+        }
+        if (!this.level().isClientSide) {
+            BlockPos blockPos = this.blockPosition().below();
+            BlockState blockState = this.level().getBlockState(blockPos);
+            if (!blockState.isAir()) {
+                this.level().levelEvent(2001, blockPos, Block.getId(blockState));
+            }
         }
         this.level().broadcastEntityEvent(this, (byte) 10);
     }

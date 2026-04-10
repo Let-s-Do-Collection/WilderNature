@@ -67,7 +67,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.entity.ai.behavior.RandomAction;
 import net.satisfy.wildernature.core.entity.ai.goal.RandomActionGoal;
-import net.satisfy.wildernature.core.entity.ai.goal.animal.OwlGoals;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundEventRegistry;
@@ -75,6 +74,7 @@ import net.satisfy.wildernature.core.registry.TagsRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/*
 public class OwlEntity extends ShoulderRidingEntity {
     private static final EntityDataAccessor<Integer> STANDING_STATE = SynchedEntityData.defineId(OwlEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(OwlEntity.class, EntityDataSerializers.BOOLEAN);
@@ -914,4 +914,4 @@ public class OwlEntity extends ShoulderRidingEntity {
         STANDING,
         FLYING
     }
-}
+}*/

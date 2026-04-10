@@ -13,17 +13,13 @@ import net.satisfy.wildernature.core.block.entity.BountyBoardBlockEntity;
 import net.satisfy.wildernature.core.block.entity.BurrowBlockEntity;
 import net.satisfy.wildernature.core.block.entity.CompletionistBannerEntity;
 import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
-import net.satisfy.wildernature.core.entity.animal.defensive.BisonEntity;
-import net.satisfy.wildernature.core.entity.animal.defensive.ElephantEntity;
-import net.satisfy.wildernature.core.entity.animal.defensive.HippoEntity;
+import net.satisfy.wildernature.core.entity.animal.defensive.*;
 import net.satisfy.wildernature.core.entity.animal.neutral.*;
 import net.satisfy.wildernature.core.entity.animal.passive.BeaverEntity;
 import net.satisfy.wildernature.core.entity.animal.passive.BoarEntity;
 import net.satisfy.wildernature.core.entity.projectile.BulletEntity;
-import net.satisfy.wildernature.core.entity.animal.defensive.CassowaryEntity;
 import net.satisfy.wildernature.core.entity.animal.tameable.DogEntity;
 import net.satisfy.wildernature.core.entity.animal.passive.HedgehogEntity;
-import net.satisfy.wildernature.core.entity.animal.tameable.OwlEntity;
 import net.satisfy.wildernature.core.entity.projectile.ThrownBoneEntity;
 import net.satisfy.wildernature.core.entity.projectile.ThrownTurkeyEgg;
 
@@ -45,13 +41,13 @@ public class EntityTypeRegistry {
     public static final RegistrySupplier<EntityType<DogEntity>> DOG = createEntity("dog", () -> EntityType.Builder.of(DogEntity::new, MobCategory.CREATURE).sized(0.9f, 1.3f).build(WilderNature.identifier("dog").toString()));
     public static final RegistrySupplier<EntityType<HedgehogEntity>> HEDGEHOG = createEntity("hedgehog", () -> EntityType.Builder.of(HedgehogEntity::new, MobCategory.CREATURE).sized(0.3f, 0.3f).clientTrackingRange(10).build(WilderNature.identifier("hedgehog").toString()));
     public static final RegistrySupplier<EntityType<MiniSheepEntity>> MINISHEEP = createEntity("minisheep", () -> EntityType.Builder.of(MiniSheepEntity::new, MobCategory.CREATURE).sized(0.9f, 1.3f).build(WilderNature.identifier("minisheep").toString()));
-    public static final RegistrySupplier<EntityType<OwlEntity>> OWL = createEntity("owl", () -> EntityType.Builder.of(OwlEntity::new, MobCategory.CREATURE).sized(0.6F, 1.0F).build(WilderNature.identifier("owl").toString()));
     public static final RegistrySupplier<EntityType<RaccoonEntity>> RACCOON = createEntity("raccoon", () -> EntityType.Builder.of(RaccoonEntity::new, MobCategory.CREATURE).sized(0.6f, 0.6f).build(WilderNature.identifier("raccoon").toString()));
     public static final RegistrySupplier<EntityType<SwiftFoxEntity>> SWIFT_FOX = createEntity("swift_fox", () -> EntityType.Builder.of(SwiftFoxEntity::new, MobCategory.CREATURE).sized(0.7f, 0.9f).clientTrackingRange(10).build(String.valueOf(WilderNature.identifier("swift_fox"))));
     public static final RegistrySupplier<EntityType<SquirrelEntity>> SQUIRREL = createEntity("squirrel", () -> EntityType.Builder.of(SquirrelEntity::new, MobCategory.CREATURE).sized(0.4f, 0.9f).build(WilderNature.identifier("squirrel").toString()));
     public static final RegistrySupplier<EntityType<TurkeyEntity>> TURKEY = createEntity("turkey", () -> EntityType.Builder.of(TurkeyEntity::new, MobCategory.CREATURE).sized(0.6F, 1.0F).build(WilderNature.identifier("turkey").toString()));
     public static final RegistrySupplier<EntityType<GiraffeEntity>> GIRAFFE = createEntity("giraffe", () -> EntityType.Builder.of(GiraffeEntity::new, MobCategory.CREATURE).sized(1.5F, 3.5F).build(WilderNature.identifier("giraffe").toString()));
     public static final RegistrySupplier<EntityType<ElephantEntity>> ELEPHANT = createEntity("elephant", () -> EntityType.Builder.of(ElephantEntity::new, MobCategory.CREATURE).sized(2.5F, 3.5F).build(WilderNature.identifier("elephant").toString()));
+    public static final RegistrySupplier<EntityType<LionEntity>> LION = createEntity("lion", () -> EntityType.Builder.of(LionEntity::new, MobCategory.CREATURE).sized(1F, 1.2F).build(WilderNature.identifier("lion").toString()));
 
     public static final RegistrySupplier<EntityType<BulletEntity>> BULLET = createEntity("bullet", () -> EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC).sized(0.3125f, 0.3125f).clientTrackingRange(64).updateInterval(2).build(WilderNature.identifier("bullet").toString()));
     public static final RegistrySupplier<EntityType<ThrownTurkeyEgg>> TURKEY_EGG = createEntity("turkey_egg", () -> EntityType.Builder.<ThrownTurkeyEgg>of(ThrownTurkeyEgg::new, MobCategory.MISC).sized(0.25f, 0.25f).build(WilderNature.identifier("turkey_egg").toString()));
@@ -68,6 +64,7 @@ public class EntityTypeRegistry {
     public static void init() {
         ENTITY_TYPES.register();
         BLOCK_ENTITIES.register();
+        EntityAttributeRegistry.register(LION, LionEntity::createMobAttributes);
         EntityAttributeRegistry.register(BEAVER, BeaverEntity::createMobAttributes);
         EntityAttributeRegistry.register(ELEPHANT, ElephantEntity::createMobAttributes);
         EntityAttributeRegistry.register(HIPPO, HippoEntity::createMobAttributes);
@@ -78,7 +75,6 @@ public class EntityTypeRegistry {
         EntityAttributeRegistry.register(DOG, DogEntity::createMobAttributes);
         EntityAttributeRegistry.register(HEDGEHOG, HedgehogEntity::createMobAttributes);
         EntityAttributeRegistry.register(MINISHEEP, MiniSheepEntity::createMobAttributes);
-        EntityAttributeRegistry.register(OWL, OwlEntity::createMobAttributes);
         EntityAttributeRegistry.register(RACCOON, RaccoonEntity::createMobAttributes);
         EntityAttributeRegistry.register(SWIFT_FOX, SwiftFoxEntity::createMobAttributes);
         EntityAttributeRegistry.register(SQUIRREL, SquirrelEntity::createMobAttributes);

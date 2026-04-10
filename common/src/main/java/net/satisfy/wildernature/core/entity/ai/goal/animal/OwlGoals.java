@@ -26,12 +26,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.Vec3;
-import net.satisfy.wildernature.core.entity.animal.tameable.OwlEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 import java.util.function.Predicate;
-
+/*
 public final class OwlGoals {
     private OwlGoals() {
     }
@@ -564,4 +563,4 @@ public final class OwlGoals {
             return this.isRunning;
         }
     }
-}
+}*/

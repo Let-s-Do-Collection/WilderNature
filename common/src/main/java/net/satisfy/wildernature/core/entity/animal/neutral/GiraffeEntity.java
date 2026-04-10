@@ -22,17 +22,10 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.BreedGoal;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.PanicGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.TemptGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -45,6 +38,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.entity.ai.goal.FollowParentAtDistanceGoal;
+import net.satisfy.wildernature.core.entity.animal.defensive.LionEntity;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundEventRegistry;
@@ -128,51 +122,7 @@ public class GiraffeEntity extends Animal {
                 return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isEating() && super.canContinueToUse();
             }
         });
-        this.goalSelector.addGoal(2, new BreedGoal(this, 1.1D) {
-            @Override
-            public boolean canUse() {
-                return !GiraffeEntity.this.isSleeping() && super.canUse();
-            }
-
-            @Override
-            public boolean canContinueToUse() {
-                return !GiraffeEntity.this.isSleeping() && super.canContinueToUse();
-            }
-        });
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.1D, Ingredient.of(Items.SHORT_GRASS), false) {
-            @Override
-            public boolean canUse() {
-                return !GiraffeEntity.this.isSleeping() && super.canUse();
-            }
-
-            @Override
-            public boolean canContinueToUse() {
-                return !GiraffeEntity.this.isSleeping() && super.canContinueToUse();
-            }
-        });
-        this.goalSelector.addGoal(4, new FollowParentAtDistanceGoal(this, 1.15D) {
-            @Override
-            public boolean canUse() {
-                return !GiraffeEntity.this.isSleeping() && super.canUse();
-            }
-
-            @Override
-            public boolean canContinueToUse() {
-                return !GiraffeEntity.this.isSleeping() && super.canContinueToUse();
-            }
-        });
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
-            @Override
-            public boolean canUse() {
-                return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isRidingBurst() && !GiraffeEntity.this.isEating() && super.canUse();
-            }
-
-            @Override
-            public boolean canContinueToUse() {
-                return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isRidingBurst() && !GiraffeEntity.this.isEating() && super.canContinueToUse();
-            }
-        });
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 10.0F) {
+        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, LionEntity.class, 18.0F, 1.1D, 1.45D) {
             @Override
             public boolean canUse() {
                 return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isEating() && super.canUse();
@@ -183,7 +133,62 @@ public class GiraffeEntity extends Animal {
                 return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isEating() && super.canContinueToUse();
             }
         });
-        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this) {
+        this.goalSelector.addGoal(3, new BreedGoal(this, 1.1D) {
+            @Override
+            public boolean canUse() {
+                return !GiraffeEntity.this.isSleeping() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !GiraffeEntity.this.isSleeping() && super.canContinueToUse();
+            }
+        });
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.1D, Ingredient.of(Items.SHORT_GRASS), false) {
+            @Override
+            public boolean canUse() {
+                return !GiraffeEntity.this.isSleeping() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !GiraffeEntity.this.isSleeping() && super.canContinueToUse();
+            }
+        });
+        this.goalSelector.addGoal(5, new FollowParentAtDistanceGoal(this, 1.15D) {
+            @Override
+            public boolean canUse() {
+                return !GiraffeEntity.this.isSleeping() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !GiraffeEntity.this.isSleeping() && super.canContinueToUse();
+            }
+        });
+        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
+            @Override
+            public boolean canUse() {
+                return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isRidingBurst() && !GiraffeEntity.this.isEating() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isRidingBurst() && !GiraffeEntity.this.isEating() && super.canContinueToUse();
+            }
+        });
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 10.0F) {
+            @Override
+            public boolean canUse() {
+                return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isEating() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isEating() && super.canContinueToUse();
+            }
+        });
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this) {
             @Override
             public boolean canUse() {
                 return !GiraffeEntity.this.isSleeping() && !GiraffeEntity.this.isEating() && super.canUse();

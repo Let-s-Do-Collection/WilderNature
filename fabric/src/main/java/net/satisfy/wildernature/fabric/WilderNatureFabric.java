@@ -88,7 +88,6 @@ public class WilderNatureFabric implements ModInitializer {
         addMobSpawn(TagsRegistry.SPAWNS_RACCOON, EntityTypeRegistry.RACCOON.get(), config.RaccoonSpawnWeight, config.RaccoonMinGroupSize, config.RaccoonMaxGroupSize);
         addMobSpawn(TagsRegistry.SPAWNS_SQUIRREL, EntityTypeRegistry.SQUIRREL.get(), config.SquirrelSpawnWeight, config.SquirrelMinGroupSize, config.SquirrelMaxGroupSize);
         addMobSpawn(TagsRegistry.SPAWNS_SWIFT_FOX, EntityTypeRegistry.SWIFT_FOX.get(), config.SwiftfoxSpawnWeight, config.SwiftfoxMinGroupSize, config.SwiftfoxMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_OWL, EntityTypeRegistry.OWL.get(), config.OwlSpawnWeight, config.OwlMinGroupSize, config.OwlMaxGroupSize);
         addMobSpawn(TagsRegistry.SPAWNS_BOAR, EntityTypeRegistry.BOAR.get(), config.BoarSpawnWeight, config.BoarMinGroupSize, config.BoarMaxGroupSize);
         addMobSpawn(TagsRegistry.SPAWNS_BISON, EntityTypeRegistry.BISON.get(), config.BisonSpawnWeight, config.BisonMinGroupSize, config.BisonMaxGroupSize);
         addMobSpawn(TagsRegistry.SPAWNS_TURKEY, EntityTypeRegistry.TURKEY.get(), config.TurkeySpawnWeight, config.TurkeyMinGroupSize, config.TurkeyMaxGroupSize);
@@ -100,6 +99,7 @@ public class WilderNatureFabric implements ModInitializer {
         addMobSpawn(BiomeTags.IS_SAVANNA, EntityTypeRegistry.GIRAFFE.get(), config.GiraffeSpawnWeight, config.GiraffeMinGroupSize, config.GiraffeMaxGroupSize);
         addMobSpawn(BiomeTags.IS_RIVER, EntityTypeRegistry.HIPPO.get(), config.HippoSpawnWeight, config.HippoMinGroupSize, config.HippoMaxGroupSize);
         addMobSpawn(BiomeTags.IS_RIVER, EntityTypeRegistry.BEAVER.get(), config.BeaverSpawnWeight, config.BeaverMinGroupSize, config.BeaverMaxGroupSize);
+        addMobSpawn(BiomeTags.IS_SAVANNA, EntityTypeRegistry.LION.get(), config.LionSpawnWeight, config.LionMinGroupSize, config.LionMaxGroupSize);
 
         if (config.removeSavannaAnimals) {
             removeSpawn(BiomeTags.IS_SAVANNA, List.of(EntityType.SHEEP, EntityType.PIG, EntityType.CHICKEN, EntityType.COW));
@@ -116,11 +116,11 @@ public class WilderNatureFabric implements ModInitializer {
         if (config.addJungleAnimals) {
             addMobSpawn(BiomeTags.IS_JUNGLE, EntityType.FROG, 8, 3, 4);
         }
+        SpawnPlacements.register(EntityTypeRegistry.LION.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
         SpawnPlacements.register(EntityTypeRegistry.BEAVER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
         SpawnPlacements.register(EntityTypeRegistry.ELEPHANT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
         SpawnPlacements.register(EntityTypeRegistry.GIRAFFE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
         SpawnPlacements.register(EntityTypeRegistry.SQUIRREL.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
-        SpawnPlacements.register(EntityTypeRegistry.OWL.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
         SpawnPlacements.register(EntityTypeRegistry.TURKEY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
         SpawnPlacements.register(EntityTypeRegistry.RACCOON.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
         SpawnPlacements.register(EntityTypeRegistry.DEER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);

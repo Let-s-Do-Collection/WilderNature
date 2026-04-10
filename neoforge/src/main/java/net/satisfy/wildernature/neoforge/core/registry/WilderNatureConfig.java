@@ -13,6 +13,10 @@ public class WilderNatureConfig {
     public static final ModConfigSpec.BooleanValue ADD_JUNGLE_ANIMALS;
     public static final ModConfigSpec.BooleanValue SPAWN_HAZELNUT_BUSH;
 
+    public static final ModConfigSpec.IntValue LION_SPAWN_WEIGHT;
+    public static final ModConfigSpec.IntValue LION_MIN_GROUP_SIZE;
+    public static final ModConfigSpec.IntValue LION_MAX_GROUP_SIZE;
+
     public static final ModConfigSpec.IntValue BEAVER_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue BEAVER_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue BEAVER_MAX_GROUP_SIZE;
@@ -44,10 +48,6 @@ public class WilderNatureConfig {
     public static final ModConfigSpec.IntValue SWIFT_FOX_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue SWIFT_FOX_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue SWIFT_FOX_MAX_GROUP_SIZE;
-
-    public static final ModConfigSpec.IntValue OWL_SPAWN_WEIGHT;
-    public static final ModConfigSpec.IntValue OWL_MIN_GROUP_SIZE;
-    public static final ModConfigSpec.IntValue OWL_MAX_GROUP_SIZE;
 
     public static final ModConfigSpec.IntValue BOAR_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue BOAR_MIN_GROUP_SIZE;
@@ -84,6 +84,10 @@ public class WilderNatureConfig {
     public static boolean addJungleAnimals;
     public static boolean spawnHazelnutBush;
 
+    public static int lionSpawnWeight;
+    public static int lionMinGroupSize;
+    public static int lionMaxGroupSize;
+    
     public static int beaverSpawnWeight;
     public static int beaverMinGroupSize;
     public static int beaverMaxGroupSize;
@@ -115,10 +119,6 @@ public class WilderNatureConfig {
     public static int redWolfSpawnWeight;
     public static int redWolfMinGroupSize;
     public static int redWolfMaxGroupSize;
-
-    public static int owlSpawnWeight;
-    public static int owlMinGroupSize;
-    public static int owlMaxGroupSize;
 
     public static int boarSpawnWeight;
     public static int boarMinGroupSize;
@@ -158,6 +158,10 @@ public class WilderNatureConfig {
         ADD_JUNGLE_ANIMALS = builder.define("addJungleAnimals", true);
         SPAWN_HAZELNUT_BUSH = builder.define("spawnHazelnutBush", true);
 
+        LION_SPAWN_WEIGHT = builder.defineInRange("lionSpawnWeight", 12, 0, 1000);
+        LION_MIN_GROUP_SIZE = builder.defineInRange("lionMinGroupSize", 3, 1, 10);
+        LION_MAX_GROUP_SIZE = builder.defineInRange("lionMaxGroupSize", 5, 1, 10);
+        
         BEAVER_SPAWN_WEIGHT = builder.defineInRange("beaverSpawnWeight", 11, 0, 1000);
         BEAVER_MIN_GROUP_SIZE = builder.defineInRange("beaverMinGroupSize", 2, 1, 10);
         BEAVER_MAX_GROUP_SIZE = builder.defineInRange("beaverMaxGroupSize", 3, 1, 10);
@@ -189,11 +193,7 @@ public class WilderNatureConfig {
         SWIFT_FOX_SPAWN_WEIGHT = builder.defineInRange("redWolfSpawnWeight", 10, 0, 1000);
         SWIFT_FOX_MIN_GROUP_SIZE = builder.defineInRange("redWolfMinGroupSize", 2, 1, 10);
         SWIFT_FOX_MAX_GROUP_SIZE = builder.defineInRange("redWolfMaxGroupSize", 4, 1, 10);
-
-        OWL_SPAWN_WEIGHT = builder.defineInRange("owlSpawnWeight", 12, 0, 1000);
-        OWL_MIN_GROUP_SIZE = builder.defineInRange("owlMinGroupSize", 3, 1, 10);
-        OWL_MAX_GROUP_SIZE = builder.defineInRange("owlMaxGroupSize", 3, 1, 10);
-
+        
         BOAR_SPAWN_WEIGHT = builder.defineInRange("boarSpawnWeight", 14, 0, 1000);
         BOAR_MIN_GROUP_SIZE = builder.defineInRange("boarMinGroupSize", 4, 1, 10);
         BOAR_MAX_GROUP_SIZE = builder.defineInRange("boarMaxGroupSize", 5, 1, 10);
@@ -242,7 +242,11 @@ public class WilderNatureConfig {
         removeForestAnimals = REMOVE_FOREST_ANIMALS.get();
         addJungleAnimals = ADD_JUNGLE_ANIMALS.get();
         spawnHazelnutBush = SPAWN_HAZELNUT_BUSH.get();
-        
+
+        lionSpawnWeight = LION_SPAWN_WEIGHT.get();
+        lionMinGroupSize = LION_MIN_GROUP_SIZE.get();
+        lionMaxGroupSize = LION_MAX_GROUP_SIZE.get();
+
         elephantSpawnWeight = ELEPHANT_SPAWN_WEIGHT.get();
         elephantMinGroupSize = ELEPHANT_MIN_GROUP_SIZE.get();
         elephantMaxGroupSize = ELEPHANT_MAX_GROUP_SIZE.get();
@@ -271,9 +275,9 @@ public class WilderNatureConfig {
         redWolfMinGroupSize = SWIFT_FOX_MIN_GROUP_SIZE.get();
         redWolfMaxGroupSize = SWIFT_FOX_MAX_GROUP_SIZE.get();
 
-        owlSpawnWeight = OWL_SPAWN_WEIGHT.get();
-        owlMinGroupSize = OWL_MIN_GROUP_SIZE.get();
-        owlMaxGroupSize = OWL_MAX_GROUP_SIZE.get();
+        beaverSpawnWeight = BEAVER_SPAWN_WEIGHT.get();
+        beaverMinGroupSize = BEAVER_MIN_GROUP_SIZE.get();
+        beaverMaxGroupSize = BEAVER_MAX_GROUP_SIZE.get();
 
         boarSpawnWeight = BOAR_SPAWN_WEIGHT.get();
         boarMinGroupSize = BOAR_MIN_GROUP_SIZE.get();

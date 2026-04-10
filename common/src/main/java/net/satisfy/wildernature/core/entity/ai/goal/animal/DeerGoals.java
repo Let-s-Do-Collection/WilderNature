@@ -8,7 +8,9 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.entity.animal.neutral.DeerEntity;
 
@@ -223,6 +225,13 @@ public final class DeerGoals {
         @Override
         public void tick() {
             this.counter++;
+            if (!this.deer.level().isClientSide && this.counter % 8 == 0) {
+                BlockPos blockPos = this.deer.blockPosition().below();
+                BlockState blockState = this.deer.level().getBlockState(blockPos);
+                if (!blockState.isAir()) {
+                    this.deer.level().levelEvent(2001, blockPos, Block.getId(blockState));
+                }
+            }
         }
 
         @Override

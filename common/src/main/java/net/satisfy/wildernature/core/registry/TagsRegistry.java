@@ -16,7 +16,6 @@ public class TagsRegistry {
     public static final TagKey<Block> MAKES_BLOCK_GLOW = TagKey.create(Registries.BLOCK, WilderNature.identifier("makes_block_glow"));
     public static final TagKey<Biome> SPAWNS_DEER = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_deer"));
     public static final TagKey<Biome> SPAWNS_BOAR = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_boar"));
-    public static final TagKey<Biome> SPAWNS_OWL = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_owl"));
     public static final TagKey<Biome> SPAWNS_BISON = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_bison"));
     public static final TagKey<Biome> SPAWNS_TURKEY = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_turkey"));
     public static final TagKey<Biome> SPAWNS_RACCOON = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_raccoon"));
@@ -26,7 +25,7 @@ public class TagsRegistry {
     public static final TagKey<Biome> SPAWNS_MINISHEEP = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_minisheep"));
     public static final TagKey<Biome> SPAWNS_CASSOWARY = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_cassowary"));
     public static final TagKey<Biome> SPAWNS_HEDGEHOG = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_hedgehog"));
-    public static final TagKey<EntityType<?>> OWL_TARGETS = TagKey.create(Registries.ENTITY_TYPE, WilderNature.identifier("owl_targets"));
+    public static final TagKey<EntityType<?>> LION_TARGETS = TagKey.create(Registries.ENTITY_TYPE, WilderNature.identifier("lion_targets"));
     public static final TagKey<EntityType<?>> SWIFT_FOX_TARGETS = TagKey.create(Registries.ENTITY_TYPE, WilderNature.identifier("swift_fox_targets"));
     public static final TagKey<EntityType<?>> NEUTRAL = TagKey.create(Registries.ENTITY_TYPE, WilderNature.identifier("bounty_huntable/neutral"));
     public static final TagKey<EntityType<?>> DEFENSIVE = TagKey.create(Registries.ENTITY_TYPE, WilderNature.identifier("bounty_huntable/defensive"));

@@ -1,5 +1,37 @@
-
 {
+  "lion_ambient": {
+    "subtitle": "subtitles.wildernature.lion_ambient",
+    "sounds": [
+      "wildernature:lion_ambient1",
+      "wildernature:lion_ambient2",
+      "wildernature:lion_ambient3"
+    ]
+  },
+  "lion_hurt": {
+    "subtitle": "subtitles.wildernature.lion_hurt",
+    "sounds": [
+      "wildernature:lion_hurt"
+    ]
+  },
+  "lion_death": {
+    "subtitle": "subtitles.wildernature.lion_death",
+    "sounds": [
+      "wildernature:lion_death"
+    ]
+  },
+  "lion_warn": {
+    "subtitle": "subtitles.wildernature.lion_warn",
+    "sounds": [
+      "wildernature:lion_warn1",
+      "wildernature:lion_warn2"
+    ]
+  },
+  "lion_attack": {
+    "subtitle": "subtitles.wildernature.lion_attack",
+    "sounds": [
+      "wildernature:lion_attack"
+    ]
+  },
   "beaver_hurt": {
     "subtitle": "subtitles.wildernature.beaver_hurt",
     "sounds": [
@@ -214,34 +246,6 @@
       "wildernature:bison_angry3"
     ]
   },
-  "pelican_hurt": {
-    "subtitle": "subtitles.wildernature.pelican_hurt",
-    "sounds": [
-      "wildernature:pelican_hurt1",
-      "wildernature:pelican_hurt2",
-      "wildernature:pelican_hurt3"
-    ]
-  },
-  "pelican_death": {
-    "subtitle": "subtitles.wildernature.pelican_death",
-    "sounds": [
-      "wildernature:pelican_death1",
-      "wildernature:pelican_death2",
-      "wildernature:pelican_death3"
-    ]
-  },
-  "pelican_ambient": {
-    "subtitle": "subtitles.wildernature.pelican_ambient",
-    "sounds": [
-      "wildernature:pelican_ambient1",
-      "wildernature:pelican_ambient2",
-      "wildernature:pelican_ambient3",
-      "wildernature:pelican_ambient4",
-      "wildernature:pelican_ambient5",
-      "wildernature:pelican_ambient6",
-      "wildernature:pelican_ambient7"
-    ]
-  },
   "turkey_hurt": {
     "subtitle": "subtitles.wildernature.turkey_hurt",
     "sounds": [
@@ -309,28 +313,6 @@
       "wildernature:blunderbuss_load"
     ]
   },
-  "flamingo_hurt": {
-    "subtitle": "subtitles.wildernature.flamingo_hurt",
-    "sounds": [
-      "wildernature:flamingo_hurt1",
-      "wildernature:flamingo_hurt2",
-      "wildernature:flamingo_hurt3"    ]
-  },
-  "flamingo_death": {
-    "subtitle": "subtitles.wildernature.flamingo_death",
-    "sounds": [
-      "wildernature:flamingo_death"
-    ]
-  },
-  "flamingo_ambient": {
-    "subtitle": "subtitles.wildernature.flamingo_ambient",
-    "sounds": [
-      "wildernature:flamingo_ambient1",
-      "wildernature:flamingo_ambient2",
-      "wildernature:flamingo_ambient3",
-      "wildernature:flamingo_ambient4"
-    ]
-  },
   "hedgehog_hurt": {
     "subtitle": "subtitles.wildernature.hedgehog_hurt",
     "sounds": [
@@ -365,26 +347,6 @@
     "subtitle": "subtitles.wildernature.cassowary_ambient",
     "sounds": [
       "wildernature:cassowary_ambient"
-    ]
-  },
-  "penguin_hurt": {
-    "subtitle": "subtitles.wildernature.penguin_hurt",
-    "sounds": [
-      "wildernature:penguin_hurt"
-    ]
-  },
-  "penguin_death": {
-    "subtitle": "subtitles.wildernature.penguin_death",
-    "sounds": [
-      "wildernature:penguin_death"
-    ]
-  },
-  "penguin_ambient": {
-    "subtitle": "subtitles.wildernature.penguin_ambient",
-    "sounds": [
-      "wildernature:penguin_ambient1",
-      "wildernature:penguin_ambient2",
-      "wildernature:penguin_ambient3"
     ]
   },
   "dog_hurt": {

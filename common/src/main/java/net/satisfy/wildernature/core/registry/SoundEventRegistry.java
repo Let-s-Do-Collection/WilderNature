@@ -11,6 +11,11 @@ import net.satisfy.wildernature.WilderNature;
 public class SoundEventRegistry {
     public static final Registrar<SoundEvent> SOUND_EVENTS = DeferredRegister.create(WilderNature.MOD_ID, Registries.SOUND_EVENT).getRegistrar();
 
+    public static final RegistrySupplier<SoundEvent> LION_AMBIENT = create("lion_ambient");
+    public static final RegistrySupplier<SoundEvent> LION_HURT = create("lion_hurt");
+    public static final RegistrySupplier<SoundEvent> LION_DEATH = create("lion_death");
+    public static final RegistrySupplier<SoundEvent> LION_WARN = create("lion_warn");
+    public static final RegistrySupplier<SoundEvent> LION_ATTACK = create("lion_attack");
     public static final RegistrySupplier<SoundEvent> BEAVER_AMBIENT = create("beaver_ambient");
     public static final RegistrySupplier<SoundEvent> BEAVER_HURT = create("beaver_hurt");
     public static final RegistrySupplier<SoundEvent> BEAVER_DEATH = create("beaver_death");
@@ -34,9 +39,6 @@ public class SoundEventRegistry {
     public static final RegistrySupplier<SoundEvent> SQUIRREL_AMBIENT = create("squirrel_ambient");
     public static final RegistrySupplier<SoundEvent> SQUIRREL_HURT = create("squirrel_hurt");
     public static final RegistrySupplier<SoundEvent> SQUIRREL_DEATH = create("squirrel_death");
-    public static final RegistrySupplier<SoundEvent> OWL_AMBIENT = create("owl_ambient");
-    public static final RegistrySupplier<SoundEvent> OWL_HURT = create("owl_hurt");
-    public static final RegistrySupplier<SoundEvent> OWL_DEATH = create("owl_death");
     public static final RegistrySupplier<SoundEvent> BISON_AMBIENT = create("bison_ambient");
     public static final RegistrySupplier<SoundEvent> BISON_HURT = create("bison_hurt");
     public static final RegistrySupplier<SoundEvent> BISON_HORN = create("bison_horn");

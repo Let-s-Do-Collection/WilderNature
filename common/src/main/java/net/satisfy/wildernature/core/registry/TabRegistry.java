@@ -62,7 +62,7 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.SQUIRREL_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.BOAR_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.ELEPHANT_SPAWN_EGG.get());
-                out.accept(ObjectRegistry.OWL_SPAWN_EGG.get());
+                out.accept(ObjectRegistry.LION_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.BISON_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.GIRAFFE_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.TURKEY_SPAWN_EGG.get());

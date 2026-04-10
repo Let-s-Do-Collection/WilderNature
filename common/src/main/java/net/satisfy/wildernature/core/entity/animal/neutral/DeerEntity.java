@@ -37,6 +37,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.phys.Vec3;
@@ -133,7 +134,11 @@ public class DeerEntity extends Animal {
         this.goalSelector.addGoal(8, new DeerGoals.DeerFollowLeaderGoal(this));
         this.goalSelector.addGoal(9, new TemptGoal(this, 1.2D, Ingredient.of(Items.SHORT_GRASS), false));
         this.goalSelector.addGoal(10, new DeerGoals.DeerEatingGoal(this));
-        this.goalSelector.addGoal(11, new EatFromBlockGoal(this, 1.0D, 8, state -> state.getBlock() == Blocks.SWEET_BERRY_BUSH && state.getValue(SweetBerryBushBlock.AGE) > 1, (level, pos, state, mob) -> { int age = state.getValue(SweetBerryBushBlock.AGE); level.setBlock(pos, state.setValue(SweetBerryBushBlock.AGE, age - 1), 2); }, 2.0F, 24000, SoundEvents.FOX_EAT, this::startEating, this::stopEating));
+        this.goalSelector.addGoal(11, new EatFromBlockGoal(this, 1.0D, 8, state -> state.getBlock() == Blocks.SWEET_BERRY_BUSH && state.getValue(SweetBerryBushBlock.AGE) > 1, (level, pos, state, mob) -> {
+            level.levelEvent(2001, pos, Block.getId(state));
+            int age = state.getValue(SweetBerryBushBlock.AGE);
+            level.setBlock(pos, state.setValue(SweetBerryBushBlock.AGE, age - 1), 2);
+        }, 2.0F, 24000, SoundEvents.FOX_EAT, this::startEating, this::stopEating));
         this.goalSelector.addGoal(12, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
             @Override
             public boolean canUse() {

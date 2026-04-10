@@ -319,12 +319,12 @@ public class CassowaryEntity extends Animal {
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.15D, true) {
             @Override
             public boolean canUse() {
-                return CassowaryEntity.this.level().getDifficulty() != Difficulty.PEACEFUL && CassowaryEntity.this.attackAnimationTicks <= 0 && super.canUse();
+                return !CassowaryEntity.this.isBaby() && CassowaryEntity.this.level().getDifficulty() != Difficulty.PEACEFUL && CassowaryEntity.this.attackAnimationTicks <= 0 && super.canUse();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return CassowaryEntity.this.level().getDifficulty() != Difficulty.PEACEFUL && super.canContinueToUse();
+                return !CassowaryEntity.this.isBaby() && CassowaryEntity.this.level().getDifficulty() != Difficulty.PEACEFUL && super.canContinueToUse();
             }
 
             @Override
@@ -429,6 +429,12 @@ public class CassowaryEntity extends Animal {
     protected void playStepSound(BlockPos blockPos, BlockState blockState) {
         this.playSound(SoundEvents.CHICKEN_STEP, 0.15F, 1.0F);
     }
+
+    @Override
+    public float getVoicePitch() {
+        return this.isBaby() ? 1.6F : 1.0F;
+    }
+
 
     @Override
     @Nullable

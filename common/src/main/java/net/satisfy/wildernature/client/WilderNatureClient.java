@@ -89,12 +89,12 @@ public class WilderNatureClient {
         EntityRendererRegistry.register(DOG, DogRenderer::new);
         EntityRendererRegistry.register(HEDGEHOG, HedgehogRenderer::new);
         EntityRendererRegistry.register(MINISHEEP, MiniSheepRenderer::new);
-        EntityRendererRegistry.register(OWL, OwlRenderer::new);
         EntityRendererRegistry.register(RACCOON, RaccoonRenderer::new);
         EntityRendererRegistry.register(SWIFT_FOX, SwiftFoxRenderer::new);
         EntityRendererRegistry.register(SQUIRREL, SquirrelRenderer::new);
         EntityRendererRegistry.register(TURKEY, TurkeyRenderer::new);
         EntityRendererRegistry.register(BEAVER, BeaverRenderer::new);
+        EntityRendererRegistry.register(LION, LionRenderer::new);
         EntityRendererRegistry.register(BULLET, ThrownItemRenderer::new);
         EntityRendererRegistry.register(TURKEY_EGG, ThrownItemRenderer::new);
         EntityRendererRegistry.register(BONE, ThrownItemRenderer::new);
@@ -102,6 +102,8 @@ public class WilderNatureClient {
 
     public static void registerEntityModelLayer() {
         EntityModelLayerRegistry.register(StylinPurpleHatModel.LAYER_LOCATION, StylinPurpleHatModel::getTexturedModelData);
+        EntityModelLayerRegistry.register(BabyLionModel.LAYER_LOCATION, BabyLionModel::getTexturedModelData);
+        EntityModelLayerRegistry.register(LionModel.LAYER_LOCATION, LionModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BeaverModel.LAYER_LOCATION, BeaverModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BabyElephantModel.LAYER_LOCATION, BabyElephantModel::getTexturedModelData);
         EntityModelLayerRegistry.register(ElephantModel.LAYER_LOCATION, ElephantModel::getTexturedModelData);
@@ -112,13 +114,13 @@ public class WilderNatureClient {
         EntityModelLayerRegistry.register(BisonModel.LAYER_LOCATION, BisonModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BoarModel.LAYER_LOCATION, BoarModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BountyBoardModel.LAYER_LOCATION, BountyBoardModel::getTexturedModelData);
+        EntityModelLayerRegistry.register(BabyCassowaryModel.LAYER_LOCATION, BabyCassowaryModel::getTexturedModelData);
         EntityModelLayerRegistry.register(CassowaryModel.LAYER_LOCATION, CassowaryModel::getTexturedModelData);
         EntityModelLayerRegistry.register(CompletionistBannerRenderer.LAYER_LOCATION, CompletionistBannerRenderer::getTexturedModelData);
         EntityModelLayerRegistry.register(DeerModel.LAYER_LOCATION, DeerModel::getTexturedModelData);
         EntityModelLayerRegistry.register(DogModel.LAYER_LOCATION, DogModel::getTexturedModelData);
         EntityModelLayerRegistry.register(HedgehogModel.LAYER_LOCATION, HedgehogModel::getTexturedModelData);
         EntityModelLayerRegistry.register(MiniSheepModel.LAYER_LOCATION, MiniSheepModel::getTexturedModelData);
-        EntityModelLayerRegistry.register(OwlModel.LAYER_LOCATION, OwlModel::getTexturedModelData);
         EntityModelLayerRegistry.register(RaccoonModel.LAYER_LOCATION, RaccoonModel::getTexturedModelData);
         EntityModelLayerRegistry.register(SwiftFoxModel.LAYER_LOCATION, SwiftFoxModel::getTexturedModelData);
         EntityModelLayerRegistry.register(SquirrelModel.LAYER_LOCATION, SquirrelModel::getTexturedModelData);
