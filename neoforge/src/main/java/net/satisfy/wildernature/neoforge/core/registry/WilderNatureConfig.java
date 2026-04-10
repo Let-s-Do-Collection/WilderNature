@@ -13,6 +13,10 @@ public class WilderNatureConfig {
     public static final ModConfigSpec.BooleanValue ADD_JUNGLE_ANIMALS;
     public static final ModConfigSpec.BooleanValue SPAWN_HAZELNUT_BUSH;
 
+    public static final ModConfigSpec.IntValue BEAVER_SPAWN_WEIGHT;
+    public static final ModConfigSpec.IntValue BEAVER_MIN_GROUP_SIZE;
+    public static final ModConfigSpec.IntValue BEAVER_MAX_GROUP_SIZE;
+
     public static final ModConfigSpec.IntValue ELEPHANT_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue ELEPHANT_MIN_GROUP_SIZE;
     public static final ModConfigSpec.IntValue ELEPHANT_MAX_GROUP_SIZE;
@@ -80,6 +84,10 @@ public class WilderNatureConfig {
     public static boolean addJungleAnimals;
     public static boolean spawnHazelnutBush;
 
+    public static int beaverSpawnWeight;
+    public static int beaverMinGroupSize;
+    public static int beaverMaxGroupSize;
+    
     public static int elephantSpawnWeight;
     public static int elephantMinGroupSize;
     public static int elephantMaxGroupSize;
@@ -149,6 +157,10 @@ public class WilderNatureConfig {
         REMOVE_FOREST_ANIMALS = builder.define("removeForestAnimals", true);
         ADD_JUNGLE_ANIMALS = builder.define("addJungleAnimals", true);
         SPAWN_HAZELNUT_BUSH = builder.define("spawnHazelnutBush", true);
+
+        BEAVER_SPAWN_WEIGHT = builder.defineInRange("beaverSpawnWeight", 11, 0, 1000);
+        BEAVER_MIN_GROUP_SIZE = builder.defineInRange("beaverMinGroupSize", 2, 1, 10);
+        BEAVER_MAX_GROUP_SIZE = builder.defineInRange("beaverMaxGroupSize", 3, 1, 10);
         
         ELEPHANT_SPAWN_WEIGHT = builder.defineInRange("elephantSpawnWeight", 12, 0, 1000);
         ELEPHANT_MIN_GROUP_SIZE = builder.defineInRange("elephantMinGroupSize", 3, 1, 10);

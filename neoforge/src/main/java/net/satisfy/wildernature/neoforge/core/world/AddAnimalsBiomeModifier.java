@@ -34,6 +34,7 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
     }
 
     public static void registerEntities() {
+        registerEntity(EntityTypeRegistry.BEAVER.get(), Animal::checkAnimalSpawnRules);
         registerEntity(EntityTypeRegistry.GIRAFFE.get(), Animal::checkAnimalSpawnRules);
         registerEntity(EntityTypeRegistry.SQUIRREL.get(), Animal::checkAnimalSpawnRules);
         registerEntity(EntityTypeRegistry.OWL.get(), Animal::checkAnimalSpawnRules);
@@ -69,8 +70,9 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_MINISHEEP, EntityTypeRegistry.MINISHEEP.get(), 8, 2, 4);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_CASSOWARY, EntityTypeRegistry.CASSOWARY.get(), 12, 3, 4);
             addMobSpawn(builder, biome, TagsRegistry.SPAWNS_HEDGEHOG, EntityTypeRegistry.HEDGEHOG.get(), 9, 2, 3);
-            addMobSpawn(builder, biome, BiomeTags.IS_RIVER, EntityTypeRegistry.HIPPO.get(), 8, 2, 3);
+            addMobSpawn(builder, biome, BiomeTags.IS_RIVER, EntityTypeRegistry.HIPPO.get(), 8, 3, 5);
             addMobSpawn(builder, biome, BiomeTags.IS_JUNGLE, EntityType.FROG, 8, 3, 4);
+            addMobSpawn(builder, biome, BiomeTags.IS_RIVER, EntityTypeRegistry.BEAVER.get(), 11, 2, 3);
         }
     }
 

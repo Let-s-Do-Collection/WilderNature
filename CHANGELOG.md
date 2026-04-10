@@ -161,21 +161,12 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Added running behavior and animation
 * Spawns have been reduced to Meadow only
 
-**Cassowary**
-* Added territorial behavior with alert, threatening and attack phases
-* Cassowaries now react more aggressively when babies are nearby
-* Added warning phase before attacking players
-* Improved targeting and chase behavior
-* Added alert particles and threatening sounds
-* Cassowaries now maintain visual focus on threats during escalation
-* Added attack effect slowing players briefly on hit
-* Improved overall threat logic and state transitions
-
 **Added**
 * Hollow Cache, a Tree Stump spawning in Forest and Plains Biomes
 * Mushroom Colonies, a renewable source for mushrooms
 * Burrow, created by Dogs for shared storage
 * Bones can now be thrown by using Shift-Right-Click
+* BeaverDam, placed by Beavers near or inside water. Good source for sticks.
 
 **Farm And Charm Compat**
 * Boars can transform Dirt and Coarse Dirt into Fertilized Soil

@@ -58,4 +58,7 @@ public class ConfigFabric implements ConfigData {
     public int ElephantSpawnWeight = 10;
     public int ElephantMinGroupSize = 3;
     public int ElephantMaxGroupSize = 5;
+    public int BeaverSpawnWeight = 11;
+    public int BeaverMinGroupSize = 2;
+    public int BeaverMaxGroupSize = 3;
 }

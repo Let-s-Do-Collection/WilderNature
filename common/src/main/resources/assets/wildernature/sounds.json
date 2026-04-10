@@ -1,4 +1,35 @@
+
 {
+  "beaver_hurt": {
+    "subtitle": "subtitles.wildernature.beaver_hurt",
+    "sounds": [
+      "wildernature:beaver_hurt1",
+      "wildernature:beaver_hurt2"
+    ]
+  },
+  "beaver_death": {
+    "subtitle": "subtitles.wildernature.beaver_death",
+    "sounds": [
+      "wildernature:beaver_death1",
+      "wildernature:beaver_death2"
+    ]
+  },
+  "beaver_ambient": {
+    "subtitle": "subtitles.wildernature.beaver_ambient",
+    "sounds": [
+      "wildernature:beaver_ambient1",
+      "wildernature:beaver_ambient2",
+      "wildernature:beaver_ambient3",
+      "wildernature:beaver_ambient4",
+      "wildernature:beaver_ambient5"
+    ]
+  },
+  "beaver_trade": {
+    "subtitle": "subtitles.wildernature.beaver_trade",
+    "sounds": [
+      "wildernature:beaver_trade"
+    ]
+  },
   "elephant_hurt": {
     "subtitle": "subtitles.wildernature.elephant_hurt",
     "sounds": [

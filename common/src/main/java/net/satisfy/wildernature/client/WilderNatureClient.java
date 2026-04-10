@@ -94,6 +94,7 @@ public class WilderNatureClient {
         EntityRendererRegistry.register(SWIFT_FOX, SwiftFoxRenderer::new);
         EntityRendererRegistry.register(SQUIRREL, SquirrelRenderer::new);
         EntityRendererRegistry.register(TURKEY, TurkeyRenderer::new);
+        EntityRendererRegistry.register(BEAVER, BeaverRenderer::new);
         EntityRendererRegistry.register(BULLET, ThrownItemRenderer::new);
         EntityRendererRegistry.register(TURKEY_EGG, ThrownItemRenderer::new);
         EntityRendererRegistry.register(BONE, ThrownItemRenderer::new);
@@ -101,6 +102,7 @@ public class WilderNatureClient {
 
     public static void registerEntityModelLayer() {
         EntityModelLayerRegistry.register(StylinPurpleHatModel.LAYER_LOCATION, StylinPurpleHatModel::getTexturedModelData);
+        EntityModelLayerRegistry.register(BeaverModel.LAYER_LOCATION, BeaverModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BabyElephantModel.LAYER_LOCATION, BabyElephantModel::getTexturedModelData);
         EntityModelLayerRegistry.register(ElephantModel.LAYER_LOCATION, ElephantModel::getTexturedModelData);
         EntityModelLayerRegistry.register(HippoModel.LAYER_LOCATION, HippoModel::getTexturedModelData);

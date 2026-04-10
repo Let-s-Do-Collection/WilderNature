@@ -88,6 +88,8 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> BURST_OF_EXPERIENCE = registerItem("burst_of_experience", () -> new ExperienceBurstItem(new Item.Properties().rarity(Rarity.COMMON)));
     public static final RegistrySupplier<Item> THICK_LEATHER = registerItem("thick_leather", () -> new Item(getSettings()));
     public static final RegistrySupplier<Item> ELEPHANT_SPAWN_EGG = registerItem("elephant_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.ELEPHANT, -1, -1, getSettings()));
+    public static final RegistrySupplier<Item> BEAVER_SPAWN_EGG = registerItem("beaver_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.BEAVER, -1, -1, getSettings()));
+    public static final RegistrySupplier<Block> BEAVER_DAM = registerWithItem("beaver_dam", () -> new BeaverDamBlock(BlockBehaviour.Properties.of().strength(0.3F).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY).instabreak()));
 
     /**
      * Ideas for Items:
@@ -99,7 +101,6 @@ public class ObjectRegistry {
      * Kangaroos
      * Jaguars
      * Porcupines
-     * --- unsure because of Naturalist ---
      * Bears
      * Crocodiles
      */

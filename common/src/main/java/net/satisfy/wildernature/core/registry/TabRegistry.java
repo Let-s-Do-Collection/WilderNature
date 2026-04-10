@@ -21,6 +21,7 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.BURROW.get());
                 out.accept(ObjectRegistry.BROWN_MUSHROOM_COLONY.get());
                 out.accept(ObjectRegistry.RED_MUSHROOM_COLONY.get());
+                out.accept(ObjectRegistry.BEAVER_DAM.get());
                 out.accept(ObjectRegistry.HAZELNUT.get());
                 out.accept(ObjectRegistry.BISON_MEAT.get());
                 out.accept(ObjectRegistry.COOKED_BISON_MEAT.get());
@@ -66,6 +67,7 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.GIRAFFE_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.TURKEY_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.DOG_SPAWN_EGG.get());
+                out.accept(ObjectRegistry.BEAVER_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.HIPPO_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.HEDGEHOG_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.CASSOWARY_SPAWN_EGG.get());

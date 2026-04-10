@@ -99,6 +99,7 @@ public class WilderNatureFabric implements ModInitializer {
         addMobSpawn(BiomeTags.IS_SAVANNA, EntityTypeRegistry.ELEPHANT.get(), config.ElephantSpawnWeight, config.ElephantMinGroupSize, config.ElephantMaxGroupSize);
         addMobSpawn(BiomeTags.IS_SAVANNA, EntityTypeRegistry.GIRAFFE.get(), config.GiraffeSpawnWeight, config.GiraffeMinGroupSize, config.GiraffeMaxGroupSize);
         addMobSpawn(BiomeTags.IS_RIVER, EntityTypeRegistry.HIPPO.get(), config.HippoSpawnWeight, config.HippoMinGroupSize, config.HippoMaxGroupSize);
+        addMobSpawn(BiomeTags.IS_RIVER, EntityTypeRegistry.BEAVER.get(), config.BeaverSpawnWeight, config.BeaverMinGroupSize, config.BeaverMaxGroupSize);
 
         if (config.removeSavannaAnimals) {
             removeSpawn(BiomeTags.IS_SAVANNA, List.of(EntityType.SHEEP, EntityType.PIG, EntityType.CHICKEN, EntityType.COW));
@@ -115,6 +116,7 @@ public class WilderNatureFabric implements ModInitializer {
         if (config.addJungleAnimals) {
             addMobSpawn(BiomeTags.IS_JUNGLE, EntityType.FROG, 8, 3, 4);
         }
+        SpawnPlacements.register(EntityTypeRegistry.BEAVER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
         SpawnPlacements.register(EntityTypeRegistry.ELEPHANT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
         SpawnPlacements.register(EntityTypeRegistry.GIRAFFE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
         SpawnPlacements.register(EntityTypeRegistry.SQUIRREL.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);

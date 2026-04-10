@@ -6,3 +6,4 @@ mutable field net/minecraft/world/food/FoodProperties saturation F
 mutable field net/minecraft/world/food/FoodProperties nutrition I
 accessible method net/minecraft/world/entity/SpawnPlacements register (Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/entity/SpawnPlacementType;Lnet/minecraft/world/level/levelgen/Heightmap$Types;Lnet/minecraft/world/entity/SpawnPlacements$SpawnPredicate;)V
 accessible method net/minecraft/world/level/block/CropBlock getAgeProperty ()Lnet/minecraft/world/level/block/state/properties/IntegerProperty;
+accessible field net/minecraft/world/item/AxeItem STRIPPABLES Ljava/util/Map;

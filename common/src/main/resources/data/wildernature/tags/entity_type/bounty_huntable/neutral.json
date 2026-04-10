@@ -16,6 +16,7 @@
     "wildernature:squirrel",
     "wildernature:turkey",
     "wildernature:giraffe",
+    "wildernature:beaver",
     {
       "id": "meadow:water_buffalo",
       "required": false
