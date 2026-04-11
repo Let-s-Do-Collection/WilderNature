@@ -60,6 +60,7 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 **Cassowary Rework**
 * Added territorial behavior with alert, threatening and attack phases
 * Cassowaries now react more aggressively when babies are nearby
+* Babies now have their own model
 * Added warning phase before attacking players
 * Improved targeting and chase behavior
 * Added alert particles and threatening sounds
@@ -161,12 +162,37 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Added running behavior and animation
 * Spawns have been reduced to Meadow only
 
+**Lion**
+* Added Lions roaming the Savanna
+* Lions live in small prides and stay close together
+* Lions rest and sleep during the day
+* Lions become active when disturbed or during hunting moments
+* They defend their group if threatened
+
+**Termites & Mounds**
+* Added Termites and Termite Mounds to the Savanna
+* Termites build colonies and live inside their mounds
+* You may find hidden storage chambers inside some mounds
+* Termites collect resources from nearby logs and bring them back home
+* Sometimes you can catch them carrying Woodmeal
+* Killing a termite at the right moment might reward you
+
+**Rotten Logs**
+* Logs near termite mounds can become Rotten Logs over time
+* Rotten Logs can be hollowed out and infested by termites
+* Infested logs can be cleaned with a shovel
+* Cleaning them may reward you with Woodmeal
+* Some Rotten Logs can be turned into farmland
+
 **Added**
 * Hollow Cache, a Tree Stump spawning in Forest and Plains Biomes
 * Mushroom Colonies, a renewable source for mushrooms
 * Burrow, created by Dogs for shared storage
 * Bones can now be thrown by using Shift-Right-Click
 * BeaverDam, placed by Beavers near or inside water. Good source for sticks.
+* Termite Mounds, a Savanna structure inhabited by Termites
+* Rotten Logs, created and maintained by nearby Termites
+* Woodmeal, produced through termite activity and stored in mounds
 
 **Farm And Charm Compat**
 * Boars can transform Dirt and Coarse Dirt into Fertilized Soil

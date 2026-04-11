@@ -12,6 +12,7 @@ public class ConfigFabric implements ConfigData {
     public boolean removeForestAnimals = true;
     public boolean addJungleAnimals = true;
     public boolean spawnHazelnutBush = true;
+    public boolean spawnTermiteMound = true;
 
     public int GiraffeSpawnWeight = 13;
     public int GiraffeMinGroupSize = 2;

@@ -62,15 +62,6 @@ public class BurrowBlockEntity extends RandomizableContainerBlockEntity {
     public static void serverTick(Level level, BlockPos pos, BlockState state, BurrowBlockEntity blockEntity) {
     }
 
-    public boolean hasFreeSlot() {
-        for (ItemStack itemStack : this.inventory) {
-            if (itemStack.isEmpty()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean tryAddItem(ItemStack itemStack) {
         if (itemStack.isEmpty()) {
             return false;
@@ -128,32 +119,6 @@ public class BurrowBlockEntity extends RandomizableContainerBlockEntity {
     @Override
     protected void setItems(NonNullList<ItemStack> list) {
         this.inventory = list;
-    }
-
-    public boolean hasItem(Item item) {
-        for (ItemStack itemStack : this.inventory) {
-            if (!itemStack.isEmpty() && itemStack.is(item)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public ItemStack extractItem(Item item, int count) {
-        for (int slotIndex = 0; slotIndex < this.inventory.size(); slotIndex++) {
-            ItemStack itemStack = this.inventory.get(slotIndex);
-            if (!itemStack.isEmpty() && itemStack.is(item)) {
-                int extractedCount = Math.min(count, itemStack.getCount());
-                ItemStack extractedStack = itemStack.copyWithCount(extractedCount);
-                itemStack.shrink(extractedCount);
-                if (itemStack.isEmpty()) {
-                    this.inventory.set(slotIndex, ItemStack.EMPTY);
-                }
-                this.setChanged();
-                return extractedStack;
-            }
-        }
-        return ItemStack.EMPTY;
     }
 
     @Override

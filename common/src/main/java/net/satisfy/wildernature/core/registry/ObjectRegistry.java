@@ -59,6 +59,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> BISON_SPAWN_EGG = registerItem("bison_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.BISON, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> GIRAFFE_SPAWN_EGG = registerItem("giraffe_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.GIRAFFE, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> DOG_SPAWN_EGG = registerItem("dog_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.DOG, -1, -1, getSettings()));
+    public static final RegistrySupplier<Item> TERMITE_SPAWN_EGG = registerItem("termite_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.TERMITE, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> MINISHEEP_SPAWN_EGG = registerItem("minisheep_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.MINISHEEP, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> HIPPO_SPAWN_EGG = registerItem("hippo_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.HIPPO, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> TURKEY_SPAWN_EGG = registerItem("turkey_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.TURKEY, -1, -1, getSettings()));
@@ -90,10 +91,13 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> BEAVER_SPAWN_EGG = registerItem("beaver_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.BEAVER, -1, -1, getSettings()));
     public static final RegistrySupplier<Block> BEAVER_DAM = registerWithItem("beaver_dam", () -> new BeaverDamBlock(BlockBehaviour.Properties.of().strength(0.3F).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY).instabreak()));
     public static final RegistrySupplier<Item> LION_SPAWN_EGG = registerItem("lion_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.LION, -1, -1, getSettings()));
+    public static final RegistrySupplier<Block> ROTTEN_LOG = registerWithItem("rotten_log", () -> new RottenLogBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LOG)));
+    public static final RegistrySupplier<Block> TERMITE_MOUND = registerWithItem("termite_mound", () -> new TermiteMoundBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT)));
+    public static final RegistrySupplier<Item> WOODMEAL = registerItem("woodmeal", () -> new Item(getSettings()));
+    public static final RegistrySupplier<Block> TERMITE_MOUND_STORAGE = registerWithItem("termite_mound_storage", () -> new BurrowBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK)));
+    public static final RegistrySupplier<Item> FIELD_GUIDE = registerItem("field_guide", () -> new Item(getSettings()));
 
     /**
-     * Ideas for Items:
-     * Animal Compendium
      * Ideas for Animals:
      * Ram, rideable - just like a slow Horse with LOTS of health that pushes away all other entities
      * Koala

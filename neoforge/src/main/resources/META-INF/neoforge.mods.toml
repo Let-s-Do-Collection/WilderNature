@@ -4,7 +4,7 @@ license = "Custom"
 
 config = [
     "wildernature-common.mixins.json",
-    "wildernature.forge.mixins.json"
+    "wildernature.neoforge.mixins.json"
 ]
 
 [[mods]]

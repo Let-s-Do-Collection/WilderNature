@@ -12,6 +12,7 @@ public class WilderNatureConfig {
     public static final ModConfigSpec.BooleanValue REMOVE_FOREST_ANIMALS;
     public static final ModConfigSpec.BooleanValue ADD_JUNGLE_ANIMALS;
     public static final ModConfigSpec.BooleanValue SPAWN_HAZELNUT_BUSH;
+    public static final ModConfigSpec.BooleanValue SPAWN_TERMITE_MOUND;
 
     public static final ModConfigSpec.IntValue LION_SPAWN_WEIGHT;
     public static final ModConfigSpec.IntValue LION_MIN_GROUP_SIZE;
@@ -83,6 +84,7 @@ public class WilderNatureConfig {
     public static boolean removeForestAnimals;
     public static boolean addJungleAnimals;
     public static boolean spawnHazelnutBush;
+    public static boolean spawnTermiteMound;
 
     public static int lionSpawnWeight;
     public static int lionMinGroupSize;
@@ -157,6 +159,7 @@ public class WilderNatureConfig {
         REMOVE_FOREST_ANIMALS = builder.define("removeForestAnimals", true);
         ADD_JUNGLE_ANIMALS = builder.define("addJungleAnimals", true);
         SPAWN_HAZELNUT_BUSH = builder.define("spawnHazelnutBush", true);
+        SPAWN_TERMITE_MOUND = builder.define("spawnTermiteMound", true);
 
         LION_SPAWN_WEIGHT = builder.defineInRange("lionSpawnWeight", 12, 0, 1000);
         LION_MIN_GROUP_SIZE = builder.defineInRange("lionMinGroupSize", 3, 1, 10);
@@ -242,6 +245,7 @@ public class WilderNatureConfig {
         removeForestAnimals = REMOVE_FOREST_ANIMALS.get();
         addJungleAnimals = ADD_JUNGLE_ANIMALS.get();
         spawnHazelnutBush = SPAWN_HAZELNUT_BUSH.get();
+        spawnTermiteMound = SPAWN_TERMITE_MOUND.get();
 
         lionSpawnWeight = LION_SPAWN_WEIGHT.get();
         lionMinGroupSize = LION_MIN_GROUP_SIZE.get();

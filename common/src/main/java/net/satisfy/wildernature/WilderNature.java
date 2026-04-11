@@ -21,6 +21,7 @@ public class WilderNature {
         BountyBoardNetworking.init();
         MenuTypeRegistry.init();
         ParticleTypeRegistry.init();
+        TreeDecoratorTypeRegistry.init();
         RecipeRegistry.init();
         TabRegistry.init();
         SoundEventRegistry.init();

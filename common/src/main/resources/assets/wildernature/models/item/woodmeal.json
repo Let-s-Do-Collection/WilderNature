@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "wildernature:item/animal_compendium"
+    "layer0": "wildernature:item/woodmeal"
   }
 }

@@ -16,6 +16,8 @@
   "block.wildernature.red_mushroom_colony": "Red Mushroom Colony",
   "block.wildernature.swift_fox_trophy": "Swift Fox Trophy",
   "block.wildernature.termite_mound": "Termite Mound",
+  "block.wildernature.termite_mound_storage": "Termite Mound",
+  "block.wildernature.rotten_log": "Rotten Log",
   "block.wildernature.truffle_bag": "Truffle Bag",
   "creative_tab.wildernature": "[Let's Do] WilderNature",
   "entity.wildernature.beaver": "Beaver",
@@ -96,6 +98,7 @@
   "item.wildernature.cooked_turkey_meat": "Cooked Turkey Meat",
   "item.wildernature.cooked_venison": "Cooked Venison",
   "item.wildernature.deer_spawn_egg": "Deer Spawn Egg",
+  "item.wildernature.field_guide": "Field Guide",
   "item.wildernature.diamond_ammunition": "Diamond Ammunition",
   "item.wildernature.dog_spawn_egg": "Dog Spawn Egg",
   "item.wildernature.elephant_spawn_egg": "Elephant Spawn Egg",
@@ -111,6 +114,7 @@
   "item.wildernature.hippo_spawn_egg": "Hippo Spawn Egg",
   "item.wildernature.lion_spawn_egg": "Lion Spawn Egg",
   "item.wildernature.loot_bag": "Loot Bag",
+  "item.wildernature.woodmeal": "Woodmeal",
   "item.wildernature.minisheep_spawn_egg": "Minisheep Spawn Egg",
   "item.wildernature.pathfinders_call": "Pathfinder's Call",
   "item.wildernature.provision_request": "Provision Request",
@@ -225,5 +229,12 @@
   "tooltip.wildernature.compendium": "Apparently, some pages are missing... the Compendium seems to be incomplete...",
   "tooltip.wildernature.truffled": "This item has been refined with truffle:",
   "tooltip.wildernature.truffled.nutrition": "+20% Nutrition",
-  "tooltip.wildernature.truffled.saturationModifier": "+20% Saturation"
+  "tooltip.wildernature.truffled.saturationModifier": "+20% Saturation",
+  "subtitles.wildernature.elephant_ambient": "Elephant trumpets",
+  "subtitles.wildernature.elephant_step": "Elephant thuds",
+  "subtitles.wildernature.elephant_hurt": "Elephant bellows",
+  "subtitles.wildernature.elephant_death": "Elephant crashes",
+  "subtitles.wildernature.hippo_ambient": "Hippo grunts",
+  "subtitles.wildernature.hippo_hurt": "Hippo bellows",
+  "subtitles.wildernature.hippo_death": "Hippo splashes"
 }

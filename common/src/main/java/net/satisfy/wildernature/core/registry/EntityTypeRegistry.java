@@ -9,11 +9,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.core.block.entity.BountyBoardBlockEntity;
-import net.satisfy.wildernature.core.block.entity.BurrowBlockEntity;
-import net.satisfy.wildernature.core.block.entity.CompletionistBannerEntity;
-import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
+import net.satisfy.wildernature.core.block.entity.*;
 import net.satisfy.wildernature.core.entity.animal.defensive.*;
+import net.satisfy.wildernature.core.entity.monster.TermiteEntity;
 import net.satisfy.wildernature.core.entity.animal.neutral.*;
 import net.satisfy.wildernature.core.entity.animal.passive.BeaverEntity;
 import net.satisfy.wildernature.core.entity.animal.passive.BoarEntity;
@@ -30,8 +28,11 @@ public class EntityTypeRegistry {
     public static final RegistrySupplier<BlockEntityType<CompletionistBannerEntity>> COMPLETIONIST_BANNER_BLOCK_ENTITY = createBlockEntity("completionist_banner", () -> BlockEntityType.Builder.of(CompletionistBannerEntity::new, ObjectRegistry.FOX_TRAPPER_BANNER.get(), ObjectRegistry.FOX_TRAPPER_WALL_BANNER.get(), ObjectRegistry.BUNNY_STALKER_BANNER.get(), ObjectRegistry.BUNNY_STALKER_WALL_BANNER.get(), ObjectRegistry.COD_CATCHER_BANNER.get(), ObjectRegistry.COD_CATCHER_WALL_BANNER.get()).build(null));
     public static final RegistrySupplier<BlockEntityType<BountyBoardBlockEntity>> BOUNTY_BOARD_BLOCK_ENTITY = createBlockEntity("bounty_board", () -> BlockEntityType.Builder.of(BountyBoardBlockEntity::new, ObjectRegistry.BOUNTY_BOARD.get()).build(null));
     public static final RegistrySupplier<BlockEntityType<HollowCacheBlockEntity>> HOLLOW_CACHE_BLOCK_ENTITY = createBlockEntity("hollow_cache", () -> BlockEntityType.Builder.of(HollowCacheBlockEntity::new, ObjectRegistry.HOLLOW_CACHE.get()).build(null));
-    public static final RegistrySupplier<BlockEntityType<BurrowBlockEntity>> BURROW_BLOCK_ENTITY = createBlockEntity("burrow", () -> BlockEntityType.Builder.of(BurrowBlockEntity::new, ObjectRegistry.BURROW.get()).build(null));
+    public static final RegistrySupplier<BlockEntityType<BurrowBlockEntity>> BURROW_BLOCK_ENTITY = createBlockEntity("burrow", () -> BlockEntityType.Builder.of(BurrowBlockEntity::new, ObjectRegistry.BURROW.get(), ObjectRegistry.TERMITE_MOUND_STORAGE.get()).build(null));
+    public static final RegistrySupplier<BlockEntityType<TermiteMoundBlockEntity>> TERMITE_MOUND_BLOCK_ENTITY = createBlockEntity("termite_mound", () -> BlockEntityType.Builder.of(TermiteMoundBlockEntity::new, ObjectRegistry.TERMITE_MOUND.get()).build(null));
+    public static final RegistrySupplier<BlockEntityType<RottenLogBlockEntity>> ROTTEN_LOG_BLOCK_ENTITY = createBlockEntity("rotten_log", () -> BlockEntityType.Builder.of(RottenLogBlockEntity::new, ObjectRegistry.ROTTEN_LOG.get()).build(null));
 
+    public static final RegistrySupplier<EntityType<TermiteEntity>> TERMITE = createEntity("termite", () -> EntityType.Builder.of(TermiteEntity::new, MobCategory.CREATURE).sized(0.2f, 0.2f).build(WilderNature.identifier("termite").toString()));
     public static final RegistrySupplier<EntityType<BeaverEntity>> BEAVER = createEntity("beaver", () -> EntityType.Builder.of(BeaverEntity::new, MobCategory.CREATURE).sized(0.6f, 0.5f).build(WilderNature.identifier("beaver").toString()));
     public static final RegistrySupplier<EntityType<HippoEntity>> HIPPO = createEntity("hippo", () -> EntityType.Builder.of(HippoEntity::new, MobCategory.CREATURE).sized(2f, 2.4f).build(WilderNature.identifier("hippo").toString()));
     public static final RegistrySupplier<EntityType<BisonEntity>> BISON = createEntity("bison", () -> EntityType.Builder.of(BisonEntity::new, MobCategory.CREATURE).sized(1.8f, 2.2f).build(WilderNature.identifier("bison").toString()));
@@ -64,6 +65,7 @@ public class EntityTypeRegistry {
     public static void init() {
         ENTITY_TYPES.register();
         BLOCK_ENTITIES.register();
+        EntityAttributeRegistry.register(TERMITE, TermiteEntity::createMobAttributes);
         EntityAttributeRegistry.register(LION, LionEntity::createMobAttributes);
         EntityAttributeRegistry.register(BEAVER, BeaverEntity::createMobAttributes);
         EntityAttributeRegistry.register(ELEPHANT, ElephantEntity::createMobAttributes);

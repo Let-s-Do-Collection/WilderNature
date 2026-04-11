@@ -16,9 +16,12 @@ public class TabRegistry {
             .icon(() -> new ItemStack(ObjectRegistry.BOUNTY_BOARD.get()))
             .title(Component.translatable("creative_tab.wildernature"))
             .displayItems((parameters, out) -> {
-                out.accept(ObjectRegistry.TRUFFLE_BAG.get());
+                out.accept(ObjectRegistry.TERMITE_MOUND.get());
+                out.accept(ObjectRegistry.TERMITE_MOUND_STORAGE.get());
+                out.accept(ObjectRegistry.ROTTEN_LOG.get());
                 out.accept(ObjectRegistry.HOLLOW_CACHE.get());
                 out.accept(ObjectRegistry.BURROW.get());
+                out.accept(ObjectRegistry.TRUFFLE_BAG.get());
                 out.accept(ObjectRegistry.BROWN_MUSHROOM_COLONY.get());
                 out.accept(ObjectRegistry.RED_MUSHROOM_COLONY.get());
                 out.accept(ObjectRegistry.BEAVER_DAM.get());
@@ -39,10 +42,12 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.PROVISION_REQUEST.get());
                 out.accept(ObjectRegistry.ELITE_BOUNTY.get());
                 out.accept(ObjectRegistry.GUILD_COMMISSION.get());
+                out.accept(ObjectRegistry.FIELD_GUIDE.get());
                 out.accept(ObjectRegistry.BISON_HORN.get());
                 out.accept(ObjectRegistry.TURKEY_EGG.get());
                 out.accept(ObjectRegistry.FISH_OIL.get());
                 out.accept(ObjectRegistry.TRUFFLE.get());
+                out.accept(ObjectRegistry.WOODMEAL.get());
                 out.accept(ObjectRegistry.LOOT_BAG.get());
                 out.accept(ObjectRegistry.FUR_CLOAK.get());
                 out.accept(ObjectRegistry.STYLIN_PURPLE_HAT.get());
@@ -55,6 +60,7 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.FOX_TRAPPER_BANNER.get());
                 out.accept(ObjectRegistry.BUNNY_STALKER_BANNER.get());
                 out.accept(ObjectRegistry.COD_CATCHER_BANNER.get());
+                out.accept(ObjectRegistry.BURST_OF_EXPERIENCE.get());
                 out.accept(ObjectRegistry.DEER_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.SWIFT_FOX_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.RACCOON_SPAWN_EGG.get());
@@ -71,6 +77,7 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.HIPPO_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.HEDGEHOG_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.CASSOWARY_SPAWN_EGG.get());
+                out.accept(ObjectRegistry.TERMITE_SPAWN_EGG.get());
             })
             .build());
 

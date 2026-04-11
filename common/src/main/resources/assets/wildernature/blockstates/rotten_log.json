@@ -1,0 +1,388 @@
+{
+  "variants": {
+    "axis=y,moisture=0,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested"
+    },
+    "axis=y,moisture=1,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested"
+    },
+    "axis=y,moisture=2,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested"
+    },
+    "axis=y,moisture=3,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested"
+    },
+    "axis=y,moisture=4,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested"
+    },
+    "axis=y,moisture=5,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested"
+    },
+    "axis=y,moisture=6,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested"
+    },
+    "axis=y,moisture=7,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested"
+    },
+    "axis=y,moisture=0,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow"
+    },
+    "axis=y,moisture=1,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow"
+    },
+    "axis=y,moisture=2,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow"
+    },
+    "axis=y,moisture=3,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow"
+    },
+    "axis=y,moisture=4,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow"
+    },
+    "axis=y,moisture=5,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow"
+    },
+    "axis=y,moisture=6,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow"
+    },
+    "axis=y,moisture=7,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow"
+    },
+    "axis=y,moisture=0,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil"
+    },
+    "axis=y,moisture=1,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil"
+    },
+    "axis=y,moisture=2,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil"
+    },
+    "axis=y,moisture=3,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil"
+    },
+    "axis=y,moisture=4,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil"
+    },
+    "axis=y,moisture=5,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil"
+    },
+    "axis=y,moisture=6,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil"
+    },
+    "axis=y,moisture=7,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil"
+    },
+    "axis=y,moisture=0,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry"
+    },
+    "axis=y,moisture=1,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry"
+    },
+    "axis=y,moisture=2,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry"
+    },
+    "axis=y,moisture=3,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry"
+    },
+    "axis=y,moisture=4,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry"
+    },
+    "axis=y,moisture=5,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry"
+    },
+    "axis=y,moisture=6,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry"
+    },
+    "axis=y,moisture=7,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_moist"
+    },
+    "axis=x,moisture=0,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=1,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=2,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=3,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=4,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=5,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=6,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=7,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=0,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=1,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=2,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=3,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=4,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=5,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=6,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=7,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=0,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=1,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=2,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=3,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=4,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=5,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=6,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=7,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=0,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=1,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=2,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=3,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=4,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=5,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=6,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,moisture=7,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_moist",
+      "x": 90,
+      "y": 90
+    },
+    "axis=z,moisture=0,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested",
+      "x": 90
+    },
+    "axis=z,moisture=1,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested",
+      "x": 90
+    },
+    "axis=z,moisture=2,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested",
+      "x": 90
+    },
+    "axis=z,moisture=3,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested",
+      "x": 90
+    },
+    "axis=z,moisture=4,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested",
+      "x": 90
+    },
+    "axis=z,moisture=5,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested",
+      "x": 90
+    },
+    "axis=z,moisture=6,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested",
+      "x": 90
+    },
+    "axis=z,moisture=7,stage=infested": {
+      "model": "wildernature:block/rotten_log_infested",
+      "x": 90
+    },
+    "axis=z,moisture=0,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow",
+      "x": 90
+    },
+    "axis=z,moisture=1,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow",
+      "x": 90
+    },
+    "axis=z,moisture=2,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow",
+      "x": 90
+    },
+    "axis=z,moisture=3,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow",
+      "x": 90
+    },
+    "axis=z,moisture=4,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow",
+      "x": 90
+    },
+    "axis=z,moisture=5,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow",
+      "x": 90
+    },
+    "axis=z,moisture=6,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow",
+      "x": 90
+    },
+    "axis=z,moisture=7,stage=hollow": {
+      "model": "wildernature:block/rotten_log_hollow",
+      "x": 90
+    },
+    "axis=z,moisture=0,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil",
+      "x": 90
+    },
+    "axis=z,moisture=1,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil",
+      "x": 90
+    },
+    "axis=z,moisture=2,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil",
+      "x": 90
+    },
+    "axis=z,moisture=3,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil",
+      "x": 90
+    },
+    "axis=z,moisture=4,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil",
+      "x": 90
+    },
+    "axis=z,moisture=5,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil",
+      "x": 90
+    },
+    "axis=z,moisture=6,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil",
+      "x": 90
+    },
+    "axis=z,moisture=7,stage=soil": {
+      "model": "wildernature:block/rotten_log_soil",
+      "x": 90
+    },
+    "axis=z,moisture=0,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry",
+      "x": 90
+    },
+    "axis=z,moisture=1,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry",
+      "x": 90
+    },
+    "axis=z,moisture=2,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry",
+      "x": 90
+    },
+    "axis=z,moisture=3,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry",
+      "x": 90
+    },
+    "axis=z,moisture=4,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry",
+      "x": 90
+    },
+    "axis=z,moisture=5,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry",
+      "x": 90
+    },
+    "axis=z,moisture=6,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_dry",
+      "x": 90
+    },
+    "axis=z,moisture=7,stage=farmland": {
+      "model": "wildernature:block/rotten_log_farmland_moist",
+      "x": 90
+    }
+  }
+}

@@ -33,6 +33,9 @@ public class WilderNatureNeoForge {
         if (event.getItemStack().getItem() == ObjectRegistry.FISH_OIL.get()) {
             event.setBurnTime(1600);
         }
+        if (event.getItemStack().getItem() == ObjectRegistry.WOODMEAL.get()) {
+            event.setBurnTime(125);
+        }
     }
 
     private void onFoodEating(LivingEntityUseItemEvent event) {

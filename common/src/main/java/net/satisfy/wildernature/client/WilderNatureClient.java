@@ -94,6 +94,7 @@ public class WilderNatureClient {
         EntityRendererRegistry.register(SQUIRREL, SquirrelRenderer::new);
         EntityRendererRegistry.register(TURKEY, TurkeyRenderer::new);
         EntityRendererRegistry.register(BEAVER, BeaverRenderer::new);
+        EntityRendererRegistry.register(TERMITE, TermiteRenderer::new);
         EntityRendererRegistry.register(LION, LionRenderer::new);
         EntityRendererRegistry.register(BULLET, ThrownItemRenderer::new);
         EntityRendererRegistry.register(TURKEY_EGG, ThrownItemRenderer::new);
@@ -102,6 +103,7 @@ public class WilderNatureClient {
 
     public static void registerEntityModelLayer() {
         EntityModelLayerRegistry.register(StylinPurpleHatModel.LAYER_LOCATION, StylinPurpleHatModel::getTexturedModelData);
+        EntityModelLayerRegistry.register(TermiteModel.LAYER_LOCATION, TermiteModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BabyLionModel.LAYER_LOCATION, BabyLionModel::getTexturedModelData);
         EntityModelLayerRegistry.register(LionModel.LAYER_LOCATION, LionModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BeaverModel.LAYER_LOCATION, BeaverModel::getTexturedModelData);

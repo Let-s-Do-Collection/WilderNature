@@ -69,16 +69,23 @@ public class WilderNatureFabric implements ModInitializer {
         ConfigFabric config = AutoConfig.getConfigHolder(ConfigFabric.class).getConfig();
         BiomeModification world = BiomeModifications.create(WilderNature.identifier("world_features"));
         Predicate<BiomeSelectionContext> spawnsPatchHazelnutBush = getWilderNatureSelector();
+        Predicate<BiomeSelectionContext> spawnTermiteMound = BiomeSelectors.tag(BiomeTags.IS_SAVANNA);
 
         if (config.spawnHazelnutBush) {
             world.add(ModificationPhase.ADDITIONS, spawnsPatchHazelnutBush, context -> context.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.PATCH_HAZELNUT_BUSH));
         } else {
             world.add(ModificationPhase.REMOVALS, spawnsPatchHazelnutBush, context -> context.getGenerationSettings().removeFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.PATCH_HAZELNUT_BUSH));
         }
+        if (config.spawnTermiteMound) {
+            world.add(ModificationPhase.ADDITIONS, spawnTermiteMound, context -> context.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.TERMITE_MOUND));
+        } else {
+            world.add(ModificationPhase.REMOVALS, spawnTermiteMound, context -> context.getGenerationSettings().removeFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.TERMITE_MOUND));
+        }
     }
 
     private void registerFuel() {
         FuelRegistry.INSTANCE.add(ObjectRegistry.FISH_OIL.get(), 1600);
+        FuelRegistry.INSTANCE.add(ObjectRegistry.WOODMEAL.get(), 150);
     }
 
     void addSpawns() {

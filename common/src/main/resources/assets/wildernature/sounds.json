@@ -195,25 +195,6 @@
       "wildernature:squirrel_ambient5"
     ]
   },
-  "owl_hurt": {
-    "subtitle": "subtitles.wildernature.owl_hurt",
-    "sounds": [
-      "wildernature:owl_hurt"
-    ]
-  },
-  "owl_death": {
-    "subtitle": "subtitles.wildernature.owl_death",
-    "sounds": [
-      "wildernature:owl_death"
-    ]
-  },
-  "owl_ambient": {
-    "subtitle": "subtitles.wildernature.owl_ambient",
-    "sounds": [
-      "wildernature:owl_ambient1",
-      "wildernature:owl_ambient2"
-    ]
-  },
   "bison_hurt": {
     "subtitle": "subtitles.wildernature.bison_hurt",
     "sounds": [
