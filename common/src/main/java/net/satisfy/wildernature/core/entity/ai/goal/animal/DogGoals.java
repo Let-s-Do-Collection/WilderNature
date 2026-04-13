@@ -18,8 +18,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.satisfy.wildernature.core.block.entity.BurrowBlockEntity;
-import net.satisfy.wildernature.core.entity.animal.tameable.DogEntity;
 import net.satisfy.wildernature.core.entity.animal.neutral.RaccoonEntity;
+import net.satisfy.wildernature.core.entity.animal.tameable.DogEntity;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundEventRegistry;
@@ -337,7 +337,7 @@ public class DogGoals {
                 this.dog.setOrderedToSit(false);
             }
             this.dog.clearRestState();
-            this.barkCooldownTicks = 0;
+            this.barkCooldownTicks = 30 + this.dog.getRandom().nextInt(40);
         }
 
         @Override
@@ -364,7 +364,7 @@ public class DogGoals {
                 this.barkCooldownTicks--;
             } else {
                 this.dog.level().playSound(null, this.dog, SoundEventRegistry.DOG_AMBIENT.get(), SoundSource.NEUTRAL, 0.8F, 1.1F);
-                this.barkCooldownTicks = 20;
+                this.barkCooldownTicks = 55 + this.dog.getRandom().nextInt(50);
             }
         }
 
@@ -601,7 +601,7 @@ public class DogGoals {
             BlockPos standPos = this.targetPos.above();
 
             if (!standPos.closerToCenterThan(this.dog.position(), 1.5D)) {
-                this.dog.getNavigation().moveTo(standPos.getX() + 0.5D, standPos.getY(), standPos.getZ() + 0.5D, 1.15D);
+                this.dog.getNavigation().moveTo(standPos.getX() + 0.5D, standPos.getY() + 0.5D, standPos.getZ() + 0.5D, 1.15D);
                 return;
             }
 
@@ -870,7 +870,7 @@ public class DogGoals {
             }
 
             BlockPos standPos = burrowPos.above();
-            this.dog.getNavigation().moveTo(standPos.getX() + 0.5D, standPos.getY(), standPos.getZ() + 0.5D, 1.25D);
+            this.dog.getNavigation().moveTo(standPos.getX() + 0.5D, standPos.getY() + 0.5D, standPos.getZ() + 0.5D, 1.25D);
             this.dog.getLookControl().setLookAt(burrowPos.getX() + 0.5D, burrowPos.getY() + 0.5D, burrowPos.getZ() + 0.5D);
 
             if (!standPos.closerToCenterThan(this.dog.position(), 1.5D)) {
@@ -954,6 +954,7 @@ public class DogGoals {
 
     public static class FetchThrownBoneGoal extends Goal {
         private static final double SEARCH_RANGE = 16.0D;
+        private static final double PICKUP_RANGE = 4.0D;
         private static final double DROP_RANGE = 2.25D;
 
         private final DogEntity dog;
@@ -1007,7 +1008,8 @@ public class DogGoals {
                 this.dog.getNavigation().moveTo(this.targetBone, 1.4D);
                 this.dog.getLookControl().setLookAt(this.targetBone, 30.0F, 30.0F);
 
-                if (this.dog.distanceToSqr(this.targetBone) <= 2.0D) {
+                if (this.dog.distanceToSqr(this.targetBone) <= PICKUP_RANGE) {
+                    this.dog.getNavigation().stop();
                     ItemStack targetStack = this.targetBone.getItem();
                     if (!targetStack.isEmpty() && targetStack.is(Items.BONE)) {
                         ItemStack takenStack = targetStack.split(1);
@@ -1064,7 +1066,7 @@ public class DogGoals {
             }
 
             BlockPos standPos = burrowPos.above();
-            this.dog.getNavigation().moveTo(standPos.getX() + 0.5D, standPos.getY(), standPos.getZ() + 0.5D, 1.25D);
+            this.dog.getNavigation().moveTo(standPos.getX() + 0.5D, standPos.getY() + 0.5D, standPos.getZ() + 0.5D, 1.25D);
             this.dog.getLookControl().setLookAt(burrowPos.getX() + 0.5D, burrowPos.getY() + 0.5D, burrowPos.getZ() + 0.5D);
 
             if (!standPos.closerToCenterThan(this.dog.position(), 1.5D)) return;
@@ -1127,6 +1129,7 @@ public class DogGoals {
                 if (!itemEntity.isAlive()) continue;
                 if (!itemEntity.getItem().is(Items.BONE)) continue;
                 if (!itemEntity.onGround()) continue;
+                if (itemEntity.hasPickUpDelay()) continue;
 
                 double checkedDistance = this.dog.distanceToSqr(itemEntity);
                 if (checkedDistance < closestDistance) {

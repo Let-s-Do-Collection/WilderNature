@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.Block;
 import net.satisfy.wildernature.WilderNature;
 
 public class TagsRegistry {
+    public static final TagKey<Item> SWIFT_FOX_BRIBE = TagKey.create(Registries.ITEM, WilderNature.identifier("swift_fox_bribe"));
     public static final TagKey<Item> BEAVER_PAYMENT = TagKey.create(Registries.ITEM, WilderNature.identifier("beaver_payment"));
     public static final TagKey<Item> DOG_FOOD = TagKey.create(Registries.ITEM, WilderNature.identifier("dog_food"));
     public static final TagKey<Item> SQUIRREL_HOLDABLE = TagKey.create(Registries.ITEM, WilderNature.identifier("squirrel_holdable"));

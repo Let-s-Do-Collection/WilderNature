@@ -48,8 +48,8 @@ public class SwiftFoxEntity extends Animal {
     private static final int ATTACK_DURATION = 12;
     private static final int SNEAK_DURATION = 20;
     private static final int SLEEP_START_TICKS = 120;
-    private static final int STEAL_COOLDOWN_MIN = 200;
-    private static final int STEAL_COOLDOWN_MAX = 400;
+    private static final int STEAL_COOLDOWN_MIN = 8000;
+    private static final int STEAL_COOLDOWN_MAX = 12000;
     private static final int RETURN_COOLDOWN_MIN = 200;
     private static final int RETURN_COOLDOWN_MAX = 400;
     private static final int GIFT_COOLDOWN_MIN = 600;
@@ -235,7 +235,7 @@ public class SwiftFoxEntity extends Animal {
     }
 
     public boolean canReturnNow() {
-        return this.returnCooldownTicks <= 0 && !this.hiddenItem.isEmpty() && this.returnTargetPlayerUuid != null;
+        return !this.hiddenItem.isEmpty() && this.returnTargetPlayerUuid != null;
     }
 
     public boolean canGiftNow() {
@@ -348,6 +348,7 @@ public class SwiftFoxEntity extends Animal {
         this.setItemSlot(EquipmentSlot.MAINHAND, stolenItem);
         this.setStolenFromPlayer(player);
         this.resetStealCooldown();
+        this.resetReturnCooldown();
         this.triggerAttackAnimation();
     }
 
@@ -414,7 +415,7 @@ public class SwiftFoxEntity extends Animal {
     public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
 
-        if (this.isFood(itemStack)) {
+        if (itemStack.is(TagsRegistry.SWIFT_FOX_BRIBE)) {
             if (!this.level().isClientSide()) {
                 this.usePlayerItem(player, hand, itemStack);
                 this.addTrust(8);
@@ -422,8 +423,20 @@ public class SwiftFoxEntity extends Animal {
 
                 if (this.hasHiddenItem()) {
                     this.startReturningHiddenItemTo(player);
-                    this.resetReturnCooldown();
                 }
+
+                if (this.getHealth() < this.getMaxHealth()) {
+                    this.heal(2.0F);
+                }
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide());
+        }
+
+        if (this.isFood(itemStack)) {
+            if (!this.level().isClientSide()) {
+                this.usePlayerItem(player, hand, itemStack);
+                this.addTrust(8);
+                this.trustedPlayerUuid = player.getUUID();
 
                 if (this.getHealth() < this.getMaxHealth()) {
                     this.heal(2.0F);

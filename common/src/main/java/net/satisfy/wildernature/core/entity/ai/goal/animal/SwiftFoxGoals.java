@@ -403,6 +403,7 @@ public class SwiftFoxGoals {
                 }
                 this.swiftFox.addTrust(10);
                 this.swiftFox.resetReturnCooldown();
+                this.swiftFox.resetStealCooldown();
                 this.swiftFox.stopReturningHiddenItem();
             }
         }
