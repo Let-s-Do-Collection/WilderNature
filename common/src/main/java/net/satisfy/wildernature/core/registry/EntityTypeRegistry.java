@@ -11,7 +11,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.core.block.entity.*;
 import net.satisfy.wildernature.core.entity.animal.defensive.*;
-import net.satisfy.wildernature.core.entity.monster.TermiteEntity;
+import net.satisfy.wildernature.core.entity.animal.tameable.ScorpionEntity;
+import net.satisfy.wildernature.core.entity.animal.passive.TermiteEntity;
 import net.satisfy.wildernature.core.entity.animal.neutral.*;
 import net.satisfy.wildernature.core.entity.animal.passive.BeaverEntity;
 import net.satisfy.wildernature.core.entity.animal.passive.BoarEntity;
@@ -49,6 +50,7 @@ public class EntityTypeRegistry {
     public static final RegistrySupplier<EntityType<GiraffeEntity>> GIRAFFE = createEntity("giraffe", () -> EntityType.Builder.of(GiraffeEntity::new, MobCategory.CREATURE).sized(1.5F, 3.5F).build(WilderNature.identifier("giraffe").toString()));
     public static final RegistrySupplier<EntityType<ElephantEntity>> ELEPHANT = createEntity("elephant", () -> EntityType.Builder.of(ElephantEntity::new, MobCategory.CREATURE).sized(2.5F, 3.5F).build(WilderNature.identifier("elephant").toString()));
     public static final RegistrySupplier<EntityType<LionEntity>> LION = createEntity("lion", () -> EntityType.Builder.of(LionEntity::new, MobCategory.CREATURE).sized(1F, 1.2F).build(WilderNature.identifier("lion").toString()));
+    public static final RegistrySupplier<EntityType<ScorpionEntity>> SCORPION = createEntity("scorpion", () -> EntityType.Builder.of(ScorpionEntity::new, MobCategory.CREATURE).sized(0.4F, 0.4F).build(WilderNature.identifier("scorpion").toString()));
 
     public static final RegistrySupplier<EntityType<BulletEntity>> BULLET = createEntity("bullet", () -> EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC).sized(0.3125f, 0.3125f).clientTrackingRange(64).updateInterval(2).build(WilderNature.identifier("bullet").toString()));
     public static final RegistrySupplier<EntityType<ThrownTurkeyEgg>> TURKEY_EGG = createEntity("turkey_egg", () -> EntityType.Builder.<ThrownTurkeyEgg>of(ThrownTurkeyEgg::new, MobCategory.MISC).sized(0.25f, 0.25f).build(WilderNature.identifier("turkey_egg").toString()));
@@ -65,6 +67,7 @@ public class EntityTypeRegistry {
     public static void init() {
         ENTITY_TYPES.register();
         BLOCK_ENTITIES.register();
+        EntityAttributeRegistry.register(SCORPION, TermiteEntity::createMobAttributes);
         EntityAttributeRegistry.register(TERMITE, TermiteEntity::createMobAttributes);
         EntityAttributeRegistry.register(LION, LionEntity::createMobAttributes);
         EntityAttributeRegistry.register(BEAVER, BeaverEntity::createMobAttributes);

@@ -76,6 +76,7 @@ public class TabRegistry {
                 out.accept(ObjectRegistry.BEAVER_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.HIPPO_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.HEDGEHOG_SPAWN_EGG.get());
+                out.accept(ObjectRegistry.SCORPION_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.CASSOWARY_SPAWN_EGG.get());
                 out.accept(ObjectRegistry.TERMITE_SPAWN_EGG.get());
             })

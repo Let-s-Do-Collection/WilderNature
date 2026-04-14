@@ -40,6 +40,14 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Giraffes can defend themselves with powerful kicks
 * Babies stay close to adults and follow the herd
 
+**Scorpion**
+* Scorpions live hidden beneath the surface and burrow into Dirt, Coarse Dirt and Sand
+* They ambush nearby targets, striking quickly with poison before retreating
+* When threatened, they rely on stealth and quick repositioning instead of direct fights
+* A trust based system allows players to carefully calm and tame them
+* Fermented Spider Eyes can be used to gain their trust over time
+* Their glowing eyes reveal their presence in the dark just before they strike
+
 **SwiftFox**
 * Added player item stealing behavior with sneak and escape logic
 * SwiftFoxes can steal items directly from player hands

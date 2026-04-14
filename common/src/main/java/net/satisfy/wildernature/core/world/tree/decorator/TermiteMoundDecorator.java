@@ -9,7 +9,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
-import net.satisfy.wildernature.core.registry.TreeDecoratorTypeRegistry;
+import net.satisfy.wildernature.core.registry.WorldgenRegistry;
 
 public class TermiteMoundDecorator extends TreeDecorator {
     public static final TermiteMoundDecorator INSTANCE = new TermiteMoundDecorator();
@@ -17,7 +17,7 @@ public class TermiteMoundDecorator extends TreeDecorator {
 
     @Override
     protected TreeDecoratorType<?> type() {
-        return TreeDecoratorTypeRegistry.TERMITE_MOUND_DECORATOR.get();
+        return WorldgenRegistry.TERMITE_MOUND_DECORATOR.get();
     }
 
     @Override

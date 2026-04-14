@@ -1,7 +1,10 @@
 package net.satisfy.wildernature.core.entity.ai.goal.animal;
 
 import dev.architectury.platform.Platform;
+import java.util.EnumSet;
+import java.util.Objects;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -10,11 +13,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
-import net.minecraft.world.entity.ai.goal.DoorInteractGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
@@ -24,15 +26,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
 import net.satisfy.wildernature.core.entity.animal.neutral.RaccoonEntity;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.EnumSet;
-import java.util.Objects;
 
 public class RaccoonGoals {
 
@@ -101,14 +104,18 @@ public class RaccoonGoals {
         }
     }
 
-    public static class RaccoonDoorInteractGoal extends DoorInteractGoal {
+    public static class RaccoonDoorInteractGoal extends Goal {
+        private static final int OPEN_AFTER_TICKS = 8;
+        private static final int MAX_USE_TICKS = 12;
+
         private final RaccoonEntity raccoon;
-        private int counter;
+        private BlockPos targetDoorPos;
+        private int useTicks;
+        private boolean openedDoor;
 
         public RaccoonDoorInteractGoal(RaccoonEntity raccoon) {
-            super(raccoon);
             this.raccoon = raccoon;
-            this.setFlags(EnumSet.of(Flag.LOOK, Flag.MOVE));
+            this.setFlags(EnumSet.of(Flag.LOOK));
         }
 
         @Override
@@ -117,61 +124,158 @@ public class RaccoonGoals {
                 return false;
             }
 
-            if (!super.canUse()) {
-                return false;
-            }
-
-            return this.raccoon.distanceToSqr(this.doorPos.getX() + 0.5D, this.doorPos.getY() + 0.5D, this.doorPos.getZ() + 0.5D) <= 2.0D;
+            this.targetDoorPos = this.findTargetDoor();
+            return this.targetDoorPos != null;
         }
 
         @Override
         public boolean canContinueToUse() {
-            if (this.raccoon.isSleeping() || this.raccoon.isPanicking()) {
-                return false;
-            }
-
-            return this.hasDoor && this.counter < 42.6;
+            return this.targetDoorPos != null
+                    && !this.openedDoor
+                    && this.useTicks < MAX_USE_TICKS
+                    && !this.raccoon.isSleeping()
+                    && !this.raccoon.isPanicking()
+                    && this.raccoon.distanceToSqr(Vec3.atCenterOf(this.targetDoorPos)) <= 6.25D
+                    && this.isWoodenDoor(this.targetDoorPos)
+                    && this.isClosedWoodenDoor(this.targetDoorPos);
         }
 
         @Override
         public void start() {
-            this.counter = 0;
+            this.useTicks = 0;
+            this.openedDoor = false;
+            this.raccoon.wakeUp();
             Objects.requireNonNull(this.raccoon.getAttribute(Attributes.MOVEMENT_SPEED)).removeModifier(RaccoonEntity.DOOR_DO_NOT_MOVE_MODIFIER.id());
             Objects.requireNonNull(this.raccoon.getAttribute(Attributes.MOVEMENT_SPEED)).addTransientModifier(RaccoonEntity.DOOR_DO_NOT_MOVE_MODIFIER);
-            super.start();
-            this.raccoon.getNavigation().stop();
             this.raccoon.startOpenDoorAnim();
         }
 
         @Override
         public void tick() {
-            this.raccoon.getNavigation().stop();
-            this.raccoon.getLookControl().setLookAt(this.doorPos.getX() + 0.5D, this.doorPos.getY() + 0.5D, this.doorPos.getZ() + 0.5D);
+            if (this.targetDoorPos == null) {
+                return;
+            }
 
-            this.counter++;
+            this.raccoon.getLookControl().setLookAt(this.targetDoorPos.getX() + 0.5D, this.targetDoorPos.getY() + 0.5D, this.targetDoorPos.getZ() + 0.5D);
+            this.useTicks++;
 
-            if (this.counter == 38) {
-                this.setOpen(true);
+            if (this.useTicks >= OPEN_AFTER_TICKS && !this.openedDoor) {
+                this.setDoorOpen(this.targetDoorPos);
+                this.openedDoor = true;
             }
         }
 
         @Override
         public void stop() {
             Objects.requireNonNull(this.raccoon.getAttribute(Attributes.MOVEMENT_SPEED)).removeModifier(RaccoonEntity.DOOR_DO_NOT_MOVE_MODIFIER.id());
-            this.counter = 0;
+            this.useTicks = 0;
+            this.openedDoor = false;
+            this.targetDoorPos = null;
             this.raccoon.stopOpenDoorAnim();
-            super.stop();
+        }
+
+        @Nullable
+        private BlockPos findTargetDoor() {
+            BlockPos entityBlockPos = this.raccoon.blockPosition();
+            BlockPos navigationTargetPos = this.raccoon.getNavigation().getTargetPos();
+            BlockPos nearestDoorPos = null;
+            double nearestDistance = Double.MAX_VALUE;
+
+            for (int offsetY = -1; offsetY <= 1; offsetY++) {
+                for (int offsetX = -1; offsetX <= 1; offsetX++) {
+                    for (int offsetZ = -1; offsetZ <= 1; offsetZ++) {
+                        BlockPos checkedPos = entityBlockPos.offset(offsetX, offsetY, offsetZ);
+                        BlockPos lowerDoorPos = this.toLowerDoorPos(checkedPos);
+                        if (lowerDoorPos == null || !this.isClosedWoodenDoor(lowerDoorPos)) {
+                            continue;
+                        }
+
+                        double checkedDistance = this.raccoon.distanceToSqr(Vec3.atCenterOf(lowerDoorPos));
+                        if (checkedDistance > 6.25D) {
+                            continue;
+                        }
+
+                        if (navigationTargetPos != null) {
+                            double doorToTargetDistance = lowerDoorPos.distSqr(navigationTargetPos);
+                            double entityToTargetDistance = entityBlockPos.distSqr(navigationTargetPos);
+                            if (doorToTargetDistance > entityToTargetDistance + 2.0D) {
+                                continue;
+                            }
+                        }
+
+                        if (checkedDistance < nearestDistance) {
+                            nearestDistance = checkedDistance;
+                            nearestDoorPos = lowerDoorPos;
+                        }
+                    }
+                }
+            }
+
+            if (nearestDoorPos != null) {
+                return nearestDoorPos;
+            }
+
+            Direction movementDirection = this.raccoon.getMotionDirection();
+            if (movementDirection.getAxis().isHorizontal()) {
+                BlockPos forwardPos = entityBlockPos.relative(movementDirection);
+                BlockPos lowerDoorPos = this.toLowerDoorPos(forwardPos);
+                if (lowerDoorPos != null && this.isClosedWoodenDoor(lowerDoorPos)) {
+                    return lowerDoorPos;
+                }
+            }
+
+            return null;
+        }
+
+        @Nullable
+        private BlockPos toLowerDoorPos(BlockPos blockPos) {
+            BlockState blockState = this.raccoon.level().getBlockState(blockPos);
+            if (!(blockState.getBlock() instanceof DoorBlock) || !blockState.is(BlockTags.WOODEN_DOORS)) {
+                return null;
+            }
+
+            if (blockState.hasProperty(DoorBlock.HALF) && blockState.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) {
+                return blockPos.below();
+            }
+
+            return blockPos;
+        }
+
+        private boolean isWoodenDoor(BlockPos blockPos) {
+            BlockState blockState = this.raccoon.level().getBlockState(blockPos);
+            return blockState.getBlock() instanceof DoorBlock && blockState.is(BlockTags.WOODEN_DOORS);
+        }
+
+        private boolean isClosedWoodenDoor(BlockPos blockPos) {
+            BlockState blockState = this.raccoon.level().getBlockState(blockPos);
+            return blockState.getBlock() instanceof DoorBlock && blockState.is(BlockTags.WOODEN_DOORS) && !blockState.getValue(DoorBlock.OPEN);
+        }
+
+        private void setDoorOpen(BlockPos blockPos) {
+            BlockState blockState = this.raccoon.level().getBlockState(blockPos);
+            if (!(blockState.getBlock() instanceof DoorBlock doorBlock) || !blockState.is(BlockTags.WOODEN_DOORS) || blockState.getValue(DoorBlock.OPEN)) {
+                return;
+            }
+
+            doorBlock.setOpen(this.raccoon, this.raccoon.level(), blockState, blockPos, true);
         }
     }
 
     public static class RaccoonVillageStrollGoal extends Goal {
         private static final int SEARCH_COOLDOWN_MIN = 40;
         private static final int SEARCH_COOLDOWN_MAX = 90;
+        private static final int STUCK_TIMEOUT_TICKS = 50;
+        private static final int PATH_RECHECK_INTERVAL_TICKS = 20;
 
         private final RaccoonEntity raccoon;
         private final double speedModifier;
         private BlockPos targetDoorPos;
         private int searchCooldownTicks;
+        private int stuckTicks;
+        private int pathRecheckCooldownTicks;
+        private Vec3 lastPosition = Vec3.ZERO;
+        private boolean cachedCanReachTarget;
+        private BlockPos cachedPathTargetPos;
 
         public RaccoonVillageStrollGoal(RaccoonEntity raccoon, double speedModifier) {
             this.raccoon = raccoon;
@@ -185,7 +289,7 @@ public class RaccoonGoals {
                 return false;
             }
 
-            if (this.targetDoorPos != null && this.isValidDoor(this.targetDoorPos)) {
+            if (this.targetDoorPos != null && this.isValidDoor(this.targetDoorPos) && this.canReachCached(this.targetDoorPos)) {
                 return true;
             }
 
@@ -196,12 +300,34 @@ public class RaccoonGoals {
 
             this.targetDoorPos = this.findNearestDoor();
             this.searchCooldownTicks = this.getNextSearchCooldown();
-            return this.targetDoorPos != null;
+            if (this.targetDoorPos == null) {
+                return false;
+            }
+
+            if (!this.canReachCached(this.targetDoorPos)) {
+                this.targetDoorPos = null;
+                return false;
+            }
+
+            return true;
         }
 
         @Override
         public boolean canContinueToUse() {
-            return !this.raccoon.level().isDay() && !this.raccoon.isPanicking() && !this.raccoon.isSleeping() && this.targetDoorPos != null && this.isValidDoor(this.targetDoorPos);
+            return !this.raccoon.level().isDay()
+                    && !this.raccoon.isPanicking()
+                    && !this.raccoon.isSleeping()
+                    && !this.raccoon.isOpeningDoor()
+                    && this.targetDoorPos != null
+                    && this.isValidDoor(this.targetDoorPos)
+                    && this.canContinueWithCachedPath(this.targetDoorPos);
+        }
+
+        @Override
+        public void start() {
+            this.stuckTicks = 0;
+            this.pathRecheckCooldownTicks = PATH_RECHECK_INTERVAL_TICKS;
+            this.lastPosition = this.raccoon.position();
         }
 
         @Override
@@ -209,6 +335,11 @@ public class RaccoonGoals {
             this.raccoon.getNavigation().stop();
             this.targetDoorPos = null;
             this.searchCooldownTicks = 0;
+            this.stuckTicks = 0;
+            this.pathRecheckCooldownTicks = 0;
+            this.lastPosition = Vec3.ZERO;
+            this.cachedCanReachTarget = false;
+            this.cachedPathTargetPos = null;
         }
 
         @Override
@@ -217,13 +348,31 @@ public class RaccoonGoals {
                 return;
             }
 
-            if (!this.isValidDoor(this.targetDoorPos)) {
+            if (!this.isValidDoor(this.targetDoorPos) || !this.canContinueWithCachedPath(this.targetDoorPos)) {
                 this.targetDoorPos = null;
                 this.searchCooldownTicks = this.getNextSearchCooldown() * 2;
+                this.stuckTicks = 0;
                 return;
             }
 
             this.raccoon.getNavigation().moveTo(this.targetDoorPos.getX() + 0.5D, this.targetDoorPos.getY(), this.targetDoorPos.getZ() + 0.5D, this.speedModifier);
+
+            Vec3 currentPosition = this.raccoon.position();
+            if (currentPosition.distanceToSqr(this.lastPosition) < 0.01D) {
+                this.stuckTicks++;
+            } else {
+                this.stuckTicks = 0;
+                this.lastPosition = currentPosition;
+            }
+
+            if (this.stuckTicks >= STUCK_TIMEOUT_TICKS || this.raccoon.getNavigation().isDone()) {
+                this.raccoon.getNavigation().stop();
+                this.targetDoorPos = null;
+                this.searchCooldownTicks = this.getNextSearchCooldown() * 2;
+                this.stuckTicks = 0;
+                this.cachedCanReachTarget = false;
+                this.cachedPathTargetPos = null;
+            }
         }
 
         private int getNextSearchCooldown() {
@@ -260,12 +409,39 @@ public class RaccoonGoals {
         private boolean isValidDoor(BlockPos blockPos) {
             return this.raccoon.level().getBlockState(blockPos).is(BlockTags.WOODEN_DOORS);
         }
+
+        private boolean canReachCached(BlockPos blockPos) {
+            if (blockPos.equals(this.cachedPathTargetPos)) {
+                return this.cachedCanReachTarget;
+            }
+
+            Path path = this.raccoon.getNavigation().createPath(blockPos, 0);
+            this.cachedPathTargetPos = blockPos.immutable();
+            this.cachedCanReachTarget = path != null && path.canReach();
+            this.pathRecheckCooldownTicks = PATH_RECHECK_INTERVAL_TICKS;
+            return this.cachedCanReachTarget;
+        }
+
+        private boolean canContinueWithCachedPath(BlockPos blockPos) {
+            if (!blockPos.equals(this.cachedPathTargetPos)) {
+                return this.canReachCached(blockPos);
+            }
+
+            if (this.pathRecheckCooldownTicks > 0) {
+                this.pathRecheckCooldownTicks--;
+                return this.cachedCanReachTarget;
+            }
+
+            return this.canReachCached(blockPos);
+        }
     }
 
     public static class RaccoonOpenContainerGoal extends Goal {
         private static final int SEARCH_COOLDOWN_MIN = 30;
         private static final int SEARCH_COOLDOWN_MAX = 80;
         private static final int LOOTING_DURATION = 22;
+        private static final int STUCK_TIMEOUT_TICKS = 50;
+        private static final int PATH_RECHECK_INTERVAL_TICKS = 20;
 
         private final RaccoonEntity raccoon;
         private final double speedModifier;
@@ -273,6 +449,11 @@ public class RaccoonGoals {
         private int searchCooldownTicks;
         private int lootingTicks;
         private boolean containerOpened;
+        private int stuckTicks;
+        private int pathRecheckCooldownTicks;
+        private Vec3 lastPosition = Vec3.ZERO;
+        private boolean cachedCanReachTarget;
+        private BlockPos cachedPathTargetPos;
 
         public RaccoonOpenContainerGoal(RaccoonEntity raccoon, double speedModifier) {
             this.raccoon = raccoon;
@@ -286,7 +467,7 @@ public class RaccoonGoals {
                 return false;
             }
 
-            if (this.targetContainerPos != null && this.isValidContainer(this.targetContainerPos)) {
+            if (this.targetContainerPos != null && this.isValidContainer(this.targetContainerPos) && this.canReachCached(this.targetContainerPos)) {
                 return true;
             }
 
@@ -297,12 +478,24 @@ public class RaccoonGoals {
 
             this.targetContainerPos = this.findNearestContainer();
             this.searchCooldownTicks = this.getNextSearchCooldown();
-            return this.targetContainerPos != null;
+            if (this.targetContainerPos == null) {
+                return false;
+            }
+
+            if (!this.canReachCached(this.targetContainerPos)) {
+                this.targetContainerPos = null;
+                return false;
+            }
+
+            return true;
         }
 
         @Override
         public boolean canContinueToUse() {
-            return this.raccoon.canLootContainers() && this.targetContainerPos != null && this.isValidContainer(this.targetContainerPos);
+            return this.raccoon.canLootContainers()
+                    && this.targetContainerPos != null
+                    && this.isValidContainer(this.targetContainerPos)
+                    && this.canContinueWithCachedPath(this.targetContainerPos);
         }
 
         @Override
@@ -311,6 +504,9 @@ public class RaccoonGoals {
             this.raccoon.setContainerLooting(true);
             this.containerOpened = false;
             this.lootingTicks = 0;
+            this.stuckTicks = 0;
+            this.pathRecheckCooldownTicks = PATH_RECHECK_INTERVAL_TICKS;
+            this.lastPosition = this.raccoon.position();
         }
 
         @Override
@@ -321,6 +517,11 @@ public class RaccoonGoals {
             this.targetContainerPos = null;
             this.searchCooldownTicks = 0;
             this.lootingTicks = 0;
+            this.stuckTicks = 0;
+            this.pathRecheckCooldownTicks = 0;
+            this.lastPosition = Vec3.ZERO;
+            this.cachedCanReachTarget = false;
+            this.cachedPathTargetPos = null;
         }
 
         @Override
@@ -329,11 +530,12 @@ public class RaccoonGoals {
                 return;
             }
 
-            if (!this.isValidContainer(this.targetContainerPos)) {
+            if (!this.isValidContainer(this.targetContainerPos) || !this.canContinueWithCachedPath(this.targetContainerPos)) {
                 this.closeContainer();
                 this.targetContainerPos = null;
                 this.searchCooldownTicks = this.getNextSearchCooldown() * 2;
                 this.lootingTicks = 0;
+                this.stuckTicks = 0;
                 return;
             }
 
@@ -341,11 +543,31 @@ public class RaccoonGoals {
                 this.closeContainer();
                 this.raccoon.getNavigation().moveTo(this.targetContainerPos.getX() + 0.5D, this.targetContainerPos.getY(), this.targetContainerPos.getZ() + 0.5D, this.speedModifier);
                 this.lootingTicks = 0;
+
+                Vec3 currentPosition = this.raccoon.position();
+                if (currentPosition.distanceToSqr(this.lastPosition) < 0.01D) {
+                    this.stuckTicks++;
+                } else {
+                    this.stuckTicks = 0;
+                    this.lastPosition = currentPosition;
+                }
+
+                if (this.stuckTicks >= STUCK_TIMEOUT_TICKS || this.raccoon.getNavigation().isDone()) {
+                    this.raccoon.getNavigation().stop();
+                    this.targetContainerPos = null;
+                    this.searchCooldownTicks = this.getNextSearchCooldown() * 2;
+                    this.stuckTicks = 0;
+                    this.cachedCanReachTarget = false;
+                    this.cachedPathTargetPos = null;
+                }
+
                 return;
             }
 
             this.raccoon.getNavigation().stop();
             this.raccoon.getLookControl().setLookAt(this.targetContainerPos.getX() + 0.5D, this.targetContainerPos.getY() + 0.5D, this.targetContainerPos.getZ() + 0.5D);
+            this.stuckTicks = 0;
+            this.lastPosition = this.raccoon.position();
 
             if (!this.containerOpened) {
                 this.openContainer();
@@ -404,6 +626,7 @@ public class RaccoonGoals {
                     }
                 }
             }
+
             return closestContainerPos;
         }
 
@@ -425,11 +648,43 @@ public class RaccoonGoals {
             return false;
         }
 
+        private boolean canReachCached(BlockPos blockPos) {
+            if (blockPos.equals(this.cachedPathTargetPos)) {
+                return this.cachedCanReachTarget;
+            }
+
+            Path path = this.raccoon.getNavigation().createPath(blockPos, 0);
+            this.cachedPathTargetPos = blockPos.immutable();
+            this.cachedCanReachTarget = path != null && path.canReach();
+            this.pathRecheckCooldownTicks = PATH_RECHECK_INTERVAL_TICKS;
+            return this.cachedCanReachTarget;
+        }
+
+        private boolean canContinueWithCachedPath(BlockPos blockPos) {
+            if (!blockPos.equals(this.cachedPathTargetPos)) {
+                return this.canReachCached(blockPos);
+            }
+
+            if (this.pathRecheckCooldownTicks > 0) {
+                this.pathRecheckCooldownTicks--;
+                return this.cachedCanReachTarget;
+            }
+
+            return this.canReachCached(blockPos);
+        }
+
         private void openContainer() {
             if (this.targetContainerPos == null) {
                 return;
             }
+
             BlockState blockState = this.raccoon.level().getBlockState(this.targetContainerPos);
+            BlockEntity blockEntity = this.raccoon.level().getBlockEntity(this.targetContainerPos);
+
+            if (blockEntity != null) {
+                blockEntity.triggerEvent(1, 1);
+            }
+
             this.raccoon.level().blockEvent(this.targetContainerPos, blockState.getBlock(), 1, 1);
         }
 
@@ -437,7 +692,14 @@ public class RaccoonGoals {
             if (this.targetContainerPos == null || !this.containerOpened) {
                 return;
             }
+
             BlockState blockState = this.raccoon.level().getBlockState(this.targetContainerPos);
+            BlockEntity blockEntity = this.raccoon.level().getBlockEntity(this.targetContainerPos);
+
+            if (blockEntity != null) {
+                blockEntity.triggerEvent(1, 0);
+            }
+
             this.raccoon.level().blockEvent(this.targetContainerPos, blockState.getBlock(), 1, 0);
             this.containerOpened = false;
         }
@@ -664,7 +926,14 @@ public class RaccoonGoals {
             if (this.targetContainerPos == null) {
                 return;
             }
+
             BlockState blockState = this.raccoon.level().getBlockState(this.targetContainerPos);
+            BlockEntity blockEntity = this.raccoon.level().getBlockEntity(this.targetContainerPos);
+
+            if (blockEntity != null) {
+                blockEntity.triggerEvent(1, 1);
+            }
+
             this.raccoon.level().blockEvent(this.targetContainerPos, blockState.getBlock(), 1, 1);
         }
 
@@ -672,7 +941,14 @@ public class RaccoonGoals {
             if (this.targetContainerPos == null || !this.containerOpened) {
                 return;
             }
+
             BlockState blockState = this.raccoon.level().getBlockState(this.targetContainerPos);
+            BlockEntity blockEntity = this.raccoon.level().getBlockEntity(this.targetContainerPos);
+
+            if (blockEntity != null) {
+                blockEntity.triggerEvent(1, 0);
+            }
+
             this.raccoon.level().blockEvent(this.targetContainerPos, blockState.getBlock(), 1, 0);
             this.containerOpened = false;
         }

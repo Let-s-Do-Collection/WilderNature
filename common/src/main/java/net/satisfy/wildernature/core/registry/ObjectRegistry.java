@@ -38,19 +38,31 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> COOKED_TURKEY_MEAT = registerItem("cooked_turkey_meat", () -> new Item(getSettings().food(Foods.COOKED_CHICKEN)));
     public static final RegistrySupplier<Item> CASSOWARY_MEAT = registerItem("cassowary_meat", () -> new Item(getSettings().food(Foods.RABBIT)));
     public static final RegistrySupplier<Item> COOKED_CASSOWARY_MEAT = registerItem("cooked_cassowary_meat", () -> new Item(getSettings().food(Foods.COOKED_RABBIT)));
+    public static final RegistrySupplier<Item> HAZELNUT = registerItem("hazelnut", () -> new ItemNameBlockItem(ObjectRegistry.HAZELNUT_BUSH.get(), getSettings().food((new FoodProperties.Builder()).nutrition(4).saturationModifier(0.3F).fast().build())));
+    public static final RegistrySupplier<Item> TRUFFLE = registerItem("truffle", () -> new Item(getSettings().rarity(Rarity.RARE)));
+    public static final RegistrySupplier<Item> TURKEY_EGG = registerItem("turkey_egg", () -> new TurkeyEggItem(getSettings()));
+
     public static final RegistrySupplier<Item> BLUNDERBUSS = registerItem("blunderbuss", BlunderBussItem::new);
     public static final RegistrySupplier<Item> FLINT_AMMUNITION = registerItem("flint_ammunition", () -> new FlintAmmunitionItem(getSettings().rarity(Rarity.UNCOMMON), 2));
     public static final RegistrySupplier<Item> DIAMOND_AMMUNITION = registerItem("diamond_ammunition", () -> new AmmunitionItem(getSettings().rarity(Rarity.COMMON), 12));
+
     public static final RegistrySupplier<Item> FUR_CLOAK = registerItem("fur_cloak", () -> new FurCloakItem(ArmorMaterials.LEATHER.value(), ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+    public static final RegistrySupplier<Item> STYLIN_PURPLE_HAT = registerItem("stylin_purple_hat", () -> new StylinPurpleHatItem(ArmorMaterialRegistry.STYLIN_HAT.value(), ArmorItem.Type.HELMET, getSettings().rarity(Rarity.RARE), WilderNature.identifier("textures/models/armor/stylin_purple_hat.png")));
+
     public static final RegistrySupplier<Item> FISH_OIL = registerItem("fish_oil", () -> new Item(getSettings().stacksTo(16)));
     public static final RegistrySupplier<Item> LOOT_BAG = registerItem("loot_bag", () -> new LootBagItem(getSettings().rarity(Rarity.COMMON)));
     public static final RegistrySupplier<Item> BISON_HORN = registerItem("bison_horn", () -> new BisonHornItem(new Item.Properties().stacksTo(1), SoundEventRegistry.BISON_HORN.get()));
+    public static final RegistrySupplier<Item> FIELD_GUIDE = registerItem("field_guide", () -> new Item(getSettings()));
     public static final RegistrySupplier<Item> FIELD_NOTES = registerItem("field_notes", () -> new ContractItem(getSettings().rarity(Rarity.UNCOMMON)));
     public static final RegistrySupplier<Item> PATHFINDERS_CALL = registerItem("pathfinders_call", () -> new ContractItem(getSettings().rarity(Rarity.UNCOMMON)));
-    public static final RegistrySupplier<Item> TRACKING_ORDER = registerItem("tracking_order", () -> new ContractItem(getSettings().rarity(Rarity.RARE)));
     public static final RegistrySupplier<Item> PROVISION_REQUEST = registerItem("provision_request", () -> new ContractItem(getSettings().rarity(Rarity.UNCOMMON)));
-    public static final RegistrySupplier<Item> ELITE_BOUNTY = registerItem("elite_bounty", () -> new ContractItem(getSettings().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> TRACKING_ORDER = registerItem("tracking_order", () -> new ContractItem(getSettings().rarity(Rarity.RARE)));
     public static final RegistrySupplier<Item> GUILD_COMMISSION = registerItem("guild_commission", () -> new ContractItem(getSettings().rarity(Rarity.RARE)));
+    public static final RegistrySupplier<Item> ELITE_BOUNTY = registerItem("elite_bounty", () -> new ContractItem(getSettings().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> BURST_OF_EXPERIENCE = registerItem("burst_of_experience", () -> new ExperienceBurstItem(new Item.Properties().rarity(Rarity.COMMON)));
+    public static final RegistrySupplier<Item> THICK_LEATHER = registerItem("thick_leather", () -> new Item(getSettings()));
+    public static final RegistrySupplier<Item> WOODMEAL = registerItem("woodmeal", () -> new Item(getSettings()));
+
     public static final RegistrySupplier<Item> DEER_SPAWN_EGG = registerItem("deer_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.DEER, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> SWIFT_FOX_SPAWN_EGG = registerItem("swift_fox_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.SWIFT_FOX, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> RACCOON_SPAWN_EGG = registerItem("raccoon_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.RACCOON, -1, -1, getSettings()));
@@ -65,9 +77,11 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> TURKEY_SPAWN_EGG = registerItem("turkey_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.TURKEY, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> CASSOWARY_SPAWN_EGG = registerItem("cassowary_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.CASSOWARY, -1, -1, getSettings()));
     public static final RegistrySupplier<Item> HEDGEHOG_SPAWN_EGG = registerItem("hedgehog_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.HEDGEHOG, -1, -1, getSettings()));
-    public static final RegistrySupplier<Item> TRUFFLE = registerItem("truffle", () -> new Item(getSettings().rarity(Rarity.RARE)));
+    public static final RegistrySupplier<Item> ELEPHANT_SPAWN_EGG = registerItem("elephant_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.ELEPHANT, -1, -1, getSettings()));
+    public static final RegistrySupplier<Item> BEAVER_SPAWN_EGG = registerItem("beaver_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.BEAVER, -1, -1, getSettings()));
+    public static final RegistrySupplier<Item> LION_SPAWN_EGG = registerItem("lion_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.LION, -1, -1, getSettings()));
+    public static final RegistrySupplier<Item> SCORPION_SPAWN_EGG = registerItem("scorpion_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.SCORPION, -1, -1, getSettings()));
     public static final RegistrySupplier<Block> HAZELNUT_BUSH = registerWithoutItem("hazelnut_bush", () -> new HazelnutBushBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).randomTicks().noCollission().sound(SoundType.SWEET_BERRY_BUSH).pushReaction(PushReaction.DESTROY)));
-    public static final RegistrySupplier<Item> HAZELNUT = registerItem("hazelnut", () -> new ItemNameBlockItem(ObjectRegistry.HAZELNUT_BUSH.get(), getSettings().food((new FoodProperties.Builder()).nutrition(4).saturationModifier(0.3F).fast().build())));
     public static final RegistrySupplier<Block> BOUNTY_BOARD = registerWithItem("bounty_board", () -> new BountyBoardBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)));
     public static final RegistrySupplier<Block> DEER_TROPHY = registerWithItem("deer_trophy", () -> new DeerTrophyBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)));
     public static final RegistrySupplier<Block> SWIFT_FOX_TROPHY = registerWithItem("swift_fox_trophy", () -> new RedWolfTrophyBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)));
@@ -78,37 +92,15 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> BUNNY_STALKER_WALL_BANNER = registerWithoutItem("bunny_stalker_wall_banner", () -> new CompletionistWallBannerBlock(BlockBehaviour.Properties.of().strength(1F).instrument(NoteBlockInstrument.BASS).noCollission().sound(SoundType.WOOD)));
     public static final RegistrySupplier<Block> COD_CATCHER_BANNER = registerWithItem("cod_catcher_banner", () -> new CompletionistBannerBlock(BlockBehaviour.Properties.of().strength(1F).instrument(NoteBlockInstrument.BASS).noCollission().sound(SoundType.WOOD)));
     public static final RegistrySupplier<Block> COD_CATCHER_WALL_BANNER = registerWithoutItem("cod_catcher_wall_banner", () -> new CompletionistWallBannerBlock(BlockBehaviour.Properties.of().strength(1F).instrument(NoteBlockInstrument.BASS).noCollission().sound(SoundType.WOOD)));
-    public static final RegistrySupplier<Item> STYLIN_PURPLE_HAT = registerItem("stylin_purple_hat", () -> new StylinPurpleHatItem(ArmorMaterialRegistry.STYLIN_HAT.value(), ArmorItem.Type.HELMET, getSettings().rarity(Rarity.RARE), WilderNature.identifier("textures/models/armor/stylin_purple_hat.png")));
-    public static final RegistrySupplier<Item> TURKEY_EGG = registerItem("turkey_egg", () -> new TurkeyEggItem(getSettings()));
     public static final RegistrySupplier<Block> TRUFFLE_BAG = registerWithItem("truffle_bag", () -> new BagBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACK_WOOL)));
     public static final RegistrySupplier<Block> HOLLOW_CACHE = registerWithItem("hollow_cache", () -> new HollowCacheBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD).noOcclusion()));
     public static final RegistrySupplier<Block> BURROW = registerWithItem("burrow", () -> new BurrowBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK)));
+    public static final RegistrySupplier<Block> TERMITE_MOUND_STORAGE = registerWithItem("termite_mound_storage", () -> new BurrowBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK)));
+    public static final RegistrySupplier<Block> BEAVER_DAM = registerWithItem("beaver_dam", () -> new BeaverDamBlock(BlockBehaviour.Properties.of().strength(0.3F).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY).instabreak()));
     public static final RegistrySupplier<Block> BROWN_MUSHROOM_COLONY = registerWithItem("brown_mushroom_colony", () -> new MushroomColonyBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).randomTicks().noCollission().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY)));
     public static final RegistrySupplier<Block> RED_MUSHROOM_COLONY = registerWithItem("red_mushroom_colony", () -> new MushroomColonyBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).randomTicks().noCollission().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY)));
-    public static final RegistrySupplier<Item> BURST_OF_EXPERIENCE = registerItem("burst_of_experience", () -> new ExperienceBurstItem(new Item.Properties().rarity(Rarity.COMMON)));
-    public static final RegistrySupplier<Item> THICK_LEATHER = registerItem("thick_leather", () -> new Item(getSettings()));
-    public static final RegistrySupplier<Item> ELEPHANT_SPAWN_EGG = registerItem("elephant_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.ELEPHANT, -1, -1, getSettings()));
-    public static final RegistrySupplier<Item> BEAVER_SPAWN_EGG = registerItem("beaver_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.BEAVER, -1, -1, getSettings()));
-    public static final RegistrySupplier<Block> BEAVER_DAM = registerWithItem("beaver_dam", () -> new BeaverDamBlock(BlockBehaviour.Properties.of().strength(0.3F).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY).instabreak()));
-    public static final RegistrySupplier<Item> LION_SPAWN_EGG = registerItem("lion_spawn_egg", () -> new ArchitecturySpawnEggItem(EntityTypeRegistry.LION, -1, -1, getSettings()));
     public static final RegistrySupplier<Block> ROTTEN_LOG = registerWithItem("rotten_log", () -> new RottenLogBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LOG)));
     public static final RegistrySupplier<Block> TERMITE_MOUND = registerWithItem("termite_mound", () -> new TermiteMoundBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT)));
-    public static final RegistrySupplier<Item> WOODMEAL = registerItem("woodmeal", () -> new Item(getSettings()));
-    public static final RegistrySupplier<Block> TERMITE_MOUND_STORAGE = registerWithItem("termite_mound_storage", () -> new BurrowBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK)));
-    public static final RegistrySupplier<Item> FIELD_GUIDE = registerItem("field_guide", () -> new Item(getSettings()));
-
-    /**
-     * Ideas for Animals:
-     * Ram, rideable - just like a slow Horse with LOTS of health that pushes away all other entities
-     * Koala
-     * Chameleon
-     * Kangaroos
-     * Jaguars
-     * Porcupines
-     * Bears
-     * Crocodiles
-     */
-
 
     public static void init() {
         ITEMS.register();

@@ -12,7 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.satisfy.wildernature.core.entity.monster.TermiteEntity;
+import net.satisfy.wildernature.core.entity.animal.passive.TermiteEntity;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.Nullable;

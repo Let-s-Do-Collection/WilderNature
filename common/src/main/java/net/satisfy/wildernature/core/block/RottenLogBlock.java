@@ -43,7 +43,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.wildernature.core.block.entity.RottenLogBlockEntity;
 import net.satisfy.wildernature.core.block.entity.TermiteMoundBlockEntity;
-import net.satisfy.wildernature.core.entity.monster.TermiteEntity;
+import net.satisfy.wildernature.core.entity.animal.passive.TermiteEntity;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;

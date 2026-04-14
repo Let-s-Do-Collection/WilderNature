@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.satisfy.wildernature.client.model.entity.model.TermiteModel;
-import net.satisfy.wildernature.core.entity.monster.TermiteEntity;
+import net.satisfy.wildernature.core.entity.animal.passive.TermiteEntity;
 
 @Environment(EnvType.CLIENT)
 public class TermiteHeldItemLayer extends RenderLayer<TermiteEntity, TermiteModel<TermiteEntity>> {

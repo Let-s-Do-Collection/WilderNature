@@ -13,7 +13,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.animation.TermiteAnimation;
-import net.satisfy.wildernature.core.entity.monster.TermiteEntity;
+import net.satisfy.wildernature.core.entity.animal.passive.TermiteEntity;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")

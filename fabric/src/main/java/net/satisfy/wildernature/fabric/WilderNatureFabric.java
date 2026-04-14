@@ -29,9 +29,11 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.core.entity.animal.tameable.ScorpionEntity;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.TagsRegistry;
@@ -42,6 +44,10 @@ import net.satisfy.wildernature.fabric.core.world.PlacedFeatures;
 public class WilderNatureFabric implements ModInitializer {
     private static Predicate<BiomeSelectionContext> getWilderNatureSelector() {
         return BiomeSelectors.tag(TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_patch_hazelnut_bush")));
+    }
+
+    private static Predicate<BiomeSelectionContext> getHollowCacheSelector() {
+        return BiomeSelectors.includeByKey(Biomes.PLAINS, Biomes.FOREST, Biomes.FLOWER_FOREST, Biomes.BIRCH_FOREST);
     }
 
     @Override
@@ -70,16 +76,24 @@ public class WilderNatureFabric implements ModInitializer {
         BiomeModification world = BiomeModifications.create(WilderNature.identifier("world_features"));
         Predicate<BiomeSelectionContext> spawnsPatchHazelnutBush = getWilderNatureSelector();
         Predicate<BiomeSelectionContext> spawnTermiteMound = BiomeSelectors.tag(BiomeTags.IS_SAVANNA);
+        Predicate<BiomeSelectionContext> spawnHollowCache = getHollowCacheSelector();
 
         if (config.spawnHazelnutBush) {
             world.add(ModificationPhase.ADDITIONS, spawnsPatchHazelnutBush, context -> context.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.PATCH_HAZELNUT_BUSH));
         } else {
             world.add(ModificationPhase.REMOVALS, spawnsPatchHazelnutBush, context -> context.getGenerationSettings().removeFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.PATCH_HAZELNUT_BUSH));
         }
+
         if (config.spawnTermiteMound) {
             world.add(ModificationPhase.ADDITIONS, spawnTermiteMound, context -> context.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.TERMITE_MOUND));
         } else {
             world.add(ModificationPhase.REMOVALS, spawnTermiteMound, context -> context.getGenerationSettings().removeFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.TERMITE_MOUND));
+        }
+
+        if (config.spawnHollowCache) {
+            world.add(ModificationPhase.ADDITIONS, spawnHollowCache, context -> context.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.HOLLOW_CACHE));
+        } else {
+            world.add(ModificationPhase.REMOVALS, spawnHollowCache, context -> context.getGenerationSettings().removeFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.HOLLOW_CACHE));
         }
     }
 
@@ -102,6 +116,7 @@ public class WilderNatureFabric implements ModInitializer {
         addMobSpawn(TagsRegistry.SPAWNS_MINISHEEP, EntityTypeRegistry.MINISHEEP.get(), config.MiniSheepSpawnWeight, config.MiniSheepMinGroupSize, config.MiniSheepMaxGroupSize);
         addMobSpawn(TagsRegistry.SPAWNS_CASSOWARY, EntityTypeRegistry.CASSOWARY.get(), config.CassowarySpawnWeight, config.CassowaryMinGroupSize, config.CassowaryMaxGroupSize);
         addMobSpawn(TagsRegistry.SPAWNS_HEDGEHOG, EntityTypeRegistry.HEDGEHOG.get(), config.HedgehogSpawnWeight, config.HedgehogMinGroupSize, config.HedgehogMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_SCORPION, EntityTypeRegistry.SCORPION.get(), config.ScorpionSpawnWeight, config.ScorpionMinGroupSize, config.ScorpionMaxGroupSize);
         addMobSpawn(BiomeTags.IS_SAVANNA, EntityTypeRegistry.ELEPHANT.get(), config.ElephantSpawnWeight, config.ElephantMinGroupSize, config.ElephantMaxGroupSize);
         addMobSpawn(BiomeTags.IS_SAVANNA, EntityTypeRegistry.GIRAFFE.get(), config.GiraffeSpawnWeight, config.GiraffeMinGroupSize, config.GiraffeMaxGroupSize);
         addMobSpawn(BiomeTags.IS_RIVER, EntityTypeRegistry.HIPPO.get(), config.HippoSpawnWeight, config.HippoMinGroupSize, config.HippoMaxGroupSize);
@@ -123,6 +138,8 @@ public class WilderNatureFabric implements ModInitializer {
         if (config.addJungleAnimals) {
             addMobSpawn(BiomeTags.IS_JUNGLE, EntityType.FROG, 8, 3, 4);
         }
+
+        SpawnPlacements.register(EntityTypeRegistry.SCORPION.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ScorpionEntity::checkScorpionSpawnRules);
         SpawnPlacements.register(EntityTypeRegistry.LION.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
         SpawnPlacements.register(EntityTypeRegistry.BEAVER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
         SpawnPlacements.register(EntityTypeRegistry.ELEPHANT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
@@ -142,6 +159,7 @@ public class WilderNatureFabric implements ModInitializer {
     }
 
     void addMobSpawn(TagKey<Biome> tag, EntityType<?> entityType, int weight, int minGroupSize, int maxGroupSize) {
+        if (weight <= 0 || minGroupSize <= 0 || maxGroupSize <= 0 || minGroupSize > maxGroupSize) return;
         BiomeModifications.addSpawn(biomeSelector -> biomeSelector.hasTag(tag), MobCategory.CREATURE, entityType, weight, minGroupSize, maxGroupSize);
     }
 

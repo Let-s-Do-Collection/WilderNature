@@ -33,6 +33,7 @@ import net.minecraft.world.entity.ai.goal.FollowParentGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.IronGolem;
@@ -50,11 +51,9 @@ import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
 import net.satisfy.wildernature.core.entity.ai.behavior.CacheEatingMob;
 import net.satisfy.wildernature.core.entity.ai.behavior.CacheStoringMob;
 import net.satisfy.wildernature.core.entity.ai.behavior.ShelteringMob;
-import net.satisfy.wildernature.core.entity.ai.navigation.BetterWallClimberNavigation;
 import net.satisfy.wildernature.core.entity.ai.goal.CacheEatGoal;
 import net.satisfy.wildernature.core.entity.ai.goal.CacheStoreGoal;
 import net.satisfy.wildernature.core.entity.ai.goal.animal.RaccoonGoals;
-import net.satisfy.wildernature.core.entity.ai.goal.SeekShelterGoal;
 import net.satisfy.wildernature.core.entity.animal.tameable.DogEntity;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
@@ -148,7 +147,6 @@ public class RaccoonEntity extends Animal implements CacheStoringMob, Sheltering
         this.goalSelector.addGoal(3, new RaccoonGoals.RaccoonAvoidEntityGoal<>(this, IronGolem.class));
         this.goalSelector.addGoal(4, new RaccoonGoals.RaccoonAvoidEntityGoal<>(this, Villager.class));
         this.goalSelector.addGoal(5, new RaccoonGoals.RaccoonAvoidEntityGoal<>(this, DogEntity.class));
-        this.goalSelector.addGoal(6, new SeekShelterGoal<>(this, 1.15D));
         this.goalSelector.addGoal(7, new RaccoonGoals.RaccoonDoorInteractGoal(this));
         this.goalSelector.addGoal(8, new RaccoonGoals.RaccoonWashSelfGoal(this));
         this.goalSelector.addGoal(9, new CacheStoreGoal<>(this, 1.15D));
@@ -229,7 +227,11 @@ public class RaccoonEntity extends Animal implements CacheStoringMob, Sheltering
 
     @Override
     protected @NotNull PathNavigation createNavigation(Level level) {
-        return new BetterWallClimberNavigation(this, level);
+        GroundPathNavigation groundPathNavigation = new GroundPathNavigation(this, level);
+        groundPathNavigation.setCanFloat(true);
+        groundPathNavigation.setCanOpenDoors(true);
+        groundPathNavigation.setCanPassDoors(true);
+        return groundPathNavigation;
     }
 
     @Override

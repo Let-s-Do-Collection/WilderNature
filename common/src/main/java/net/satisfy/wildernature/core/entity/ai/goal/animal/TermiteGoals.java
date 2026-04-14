@@ -23,7 +23,7 @@ import net.satisfy.wildernature.core.block.RottenLogBlock;
 import net.satisfy.wildernature.core.block.entity.BurrowBlockEntity;
 import net.satisfy.wildernature.core.block.entity.RottenLogBlockEntity;
 import net.satisfy.wildernature.core.block.entity.TermiteMoundBlockEntity;
-import net.satisfy.wildernature.core.entity.monster.TermiteEntity;
+import net.satisfy.wildernature.core.entity.animal.passive.TermiteEntity;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.Nullable;
 

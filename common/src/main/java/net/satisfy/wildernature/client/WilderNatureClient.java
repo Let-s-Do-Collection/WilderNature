@@ -95,6 +95,7 @@ public class WilderNatureClient {
         EntityRendererRegistry.register(TURKEY, TurkeyRenderer::new);
         EntityRendererRegistry.register(BEAVER, BeaverRenderer::new);
         EntityRendererRegistry.register(TERMITE, TermiteRenderer::new);
+        EntityRendererRegistry.register(SCORPION, ScorpionRenderer::new);
         EntityRendererRegistry.register(LION, LionRenderer::new);
         EntityRendererRegistry.register(BULLET, ThrownItemRenderer::new);
         EntityRendererRegistry.register(TURKEY_EGG, ThrownItemRenderer::new);
@@ -127,6 +128,7 @@ public class WilderNatureClient {
         EntityModelLayerRegistry.register(SwiftFoxModel.LAYER_LOCATION, SwiftFoxModel::getTexturedModelData);
         EntityModelLayerRegistry.register(SquirrelModel.LAYER_LOCATION, SquirrelModel::getTexturedModelData);
         EntityModelLayerRegistry.register(TurkeyModel.LAYER_LOCATION, TurkeyModel::getTexturedModelData);
+        EntityModelLayerRegistry.register(ScorpionModel.LAYER_LOCATION, ScorpionModel::getTexturedModelData);
         EntityModelLayerRegistry.register(HollowCacheModel.LAYER_LOCATION, HollowCacheModel::getTexturedModelData);
     }
 }

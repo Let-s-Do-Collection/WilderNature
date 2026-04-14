@@ -26,6 +26,7 @@ public class TagsRegistry {
     public static final TagKey<Biome> SPAWNS_MINISHEEP = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_minisheep"));
     public static final TagKey<Biome> SPAWNS_CASSOWARY = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_cassowary"));
     public static final TagKey<Biome> SPAWNS_HEDGEHOG = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_hedgehog"));
+    public static final TagKey<Biome> SPAWNS_SCORPION = TagKey.create(Registries.BIOME, WilderNature.identifier("spawns_scorpion"));
     public static final TagKey<EntityType<?>> LION_TARGETS = TagKey.create(Registries.ENTITY_TYPE, WilderNature.identifier("lion_targets"));
     public static final TagKey<EntityType<?>> SWIFT_FOX_TARGETS = TagKey.create(Registries.ENTITY_TYPE, WilderNature.identifier("swift_fox_targets"));
     public static final TagKey<EntityType<?>> NEUTRAL = TagKey.create(Registries.ENTITY_TYPE, WilderNature.identifier("bounty_huntable/neutral"));

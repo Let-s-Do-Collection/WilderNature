@@ -1,0 +1,13 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": [
+    "minecraft:plains",
+    "minecraft:forest",
+    "minecraft:flower_forest",
+    "minecraft:birch_forest"
+  ],
+  "features": [
+    "wildernature:hollow_cache"
+  ],
+  "step": "vegetal_decoration"
+}

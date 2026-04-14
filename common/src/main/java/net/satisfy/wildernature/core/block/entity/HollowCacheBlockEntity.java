@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.wildernature.core.block.HollowCacheBlock;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class HollowCacheBlockEntity extends RandomizableContainerBlockEntity {
     private NonNullList<ItemStack> inventory;
@@ -39,13 +40,13 @@ public class HollowCacheBlockEntity extends RandomizableContainerBlockEntity {
             @Override
             protected void onOpen(Level level, BlockPos pos, BlockState state) {
                 HollowCacheBlock.setOpen(state, level, pos, true);
-                level.playSound(null, pos, SoundEvents.BARREL_OPEN, SoundSource.BLOCKS, 0.8F, 0.9F + level.random.nextFloat() * 0.2F);
+                level.playSound(null, pos, SoundEvents.WOOD_STEP, SoundSource.BLOCKS, 0.8F, 0.9F + level.random.nextFloat() * 0.2F);
             }
 
             @Override
             protected void onClose(Level level, BlockPos pos, BlockState state) {
                 HollowCacheBlock.setOpen(state, level, pos, false);
-                level.playSound(null, pos, SoundEvents.BARREL_CLOSE, SoundSource.BLOCKS, 0.8F, 0.9F + level.random.nextFloat() * 0.2F);
+                level.playSound(null, pos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 0.8F, 0.9F + level.random.nextFloat() * 0.2F);
                 HollowCacheBlockEntity.this.scheduleCloseParticles();
             }
 
@@ -209,5 +210,10 @@ public class HollowCacheBlockEntity extends RandomizableContainerBlockEntity {
         if (!this.remove && !player.isSpectator()) {
             this.stateManager.decrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
+    }
+
+    @Override
+    public void unpackLootTable(@Nullable Player player) {
+        super.unpackLootTable(player);
     }
 }
