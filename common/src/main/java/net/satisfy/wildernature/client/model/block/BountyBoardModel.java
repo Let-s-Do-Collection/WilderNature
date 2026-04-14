@@ -25,13 +25,13 @@ public class BountyBoardModel<T extends Entity> extends EntityModel<T> {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
 
-        PartDefinition board = partdefinition.addOrReplaceChild("board", CubeListBuilder.create().texOffs(0, 26).addBox(22.0F, -30.0F, -1.0F, 2.0F, 30.0F, 2.0F, new CubeDeformation(0.0F))
+        PartDefinition board = partdefinition.addOrReplaceChild("board", CubeListBuilder.create().texOffs(28, 32).addBox(22.0F, -30.0F, -1.0F, 2.0F, 30.0F, 2.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 0).addBox(-6.0F, -28.0F, 0.0F, 28.0F, 18.0F, 0.0F, new CubeDeformation(0.0F))
-                .texOffs(24, 26).addBox(18.0F, -8.0F, 0.0F, 4.0F, 4.0F, 0.0F, new CubeDeformation(0.0F))
+                .texOffs(18, 26).mirror().addBox(17.0F, -8.0F, 0.0F, 5.0F, 5.0F, 0.0F, new CubeDeformation(0.0F)).mirror(false)
                 .texOffs(0, 22).addBox(-6.0F, -10.0F, -1.0F, 28.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
-                .texOffs(8, 26).addBox(-8.0F, -30.0F, -1.0F, 2.0F, 30.0F, 2.0F, new CubeDeformation(0.0F))
-                .texOffs(16, 26).addBox(-6.0F, -8.0F, 0.0F, 4.0F, 4.0F, 0.0F, new CubeDeformation(0.0F))
-                .texOffs(0, 18).addBox(-6.0F, -30.0F, -1.0F, 28.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(-16.0F, 24.0F, 0.0F));
+                .texOffs(36, 32).addBox(-8.0F, -30.0F, -1.0F, 2.0F, 30.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 26).addBox(-6.0F, -8.0F, 0.0F, 5.0F, 5.0F, 0.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 18).addBox(-6.0F, -30.0F, -1.0F, 28.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 64, 64);
     }

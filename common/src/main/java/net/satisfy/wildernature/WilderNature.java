@@ -18,6 +18,7 @@ public class WilderNature {
         EntityTypeRegistry.init();
         VanillaBoneThrowEvent.init();
         BountyEvents.init();
+        MobEffectRegistry.init();
         BountyBoardNetworking.init();
         MenuTypeRegistry.init();
         ParticleTypeRegistry.init();

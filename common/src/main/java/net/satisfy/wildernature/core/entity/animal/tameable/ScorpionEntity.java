@@ -2,6 +2,8 @@ package net.satisfy.wildernature.core.entity.animal.tameable;
 
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -14,6 +16,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -41,12 +44,12 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.satisfy.wildernature.core.entity.ai.goal.animal.ScorpionGoals;
+import net.satisfy.wildernature.core.registry.MobEffectRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ScorpionEntity extends TamableAnimal {
-    public static final int POISON_DURATION = 60;
-    public static final int POISON_AMPLIFIER = 0;
+    public static final int POISON_DURATION = 200;
     public static final double AGGRO_RADIUS = 4.0D;
     public static final int BURROW_COOLDOWN_MIN = 200;
     public static final int BURROW_COOLDOWN_MAX = 400;
@@ -347,7 +350,10 @@ public class ScorpionEntity extends TamableAnimal {
     public boolean doHurtTarget(Entity target) {
         boolean hit = super.doHurtTarget(target);
         if (hit && target instanceof LivingEntity livingEntity) {
-            livingEntity.addEffect(new MobEffectInstance(MobEffects.POISON, POISON_DURATION, POISON_AMPLIFIER));
+            Holder<MobEffect> neurotoxin = BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffectRegistry.NEUROTOXIN.get());
+            MobEffectInstance existingEffect = livingEntity.getEffect(neurotoxin);
+            int amplifier = existingEffect == null ? 0 : Math.min(2, existingEffect.getAmplifier() + 1);
+            livingEntity.addEffect(new MobEffectInstance(neurotoxin, POISON_DURATION, amplifier));
         }
         return hit;
     }
