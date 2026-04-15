@@ -1,0 +1,12 @@
+{
+  "entity": "wildernature:dog",
+  "friendly": true,
+  "neutral": true,
+  "defensive": true,
+  "tameable": true,
+  "spawn": {
+    "biomes": [
+      "minecraft:plains"
+    ]
+  }
+}

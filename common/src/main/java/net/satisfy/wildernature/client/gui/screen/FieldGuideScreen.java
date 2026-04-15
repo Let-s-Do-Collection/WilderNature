@@ -6,11 +6,15 @@ import java.util.List;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Inventory;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.util.WilderNatureClientUtil;
@@ -28,19 +32,24 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
     private static final ResourceLocation DEFENSIVE_TEXTURE = WilderNature.identifier("textures/gui/icons/defensive.png");
     private static final ResourceLocation DEFENSIVE_GRAYSCALE_TEXTURE = WilderNature.identifier("textures/gui/icons/defensive_grayscale.png");
     private static final ResourceLocation HEART_TEXTURE = WilderNature.identifier("textures/gui/icons/heart.png");
+    private static final ResourceLocation PAGE_FORWARD_TEXTURE = WilderNature.identifier("textures/gui/widgets/page_forward.png");
+    private static final ResourceLocation PAGE_FORWARD_HIGHLIGHTED_TEXTURE = WilderNature.identifier("textures/gui/widgets/page_forward_highlighted.png");
+    private static final ResourceLocation PAGE_BACKWARD_TEXTURE = WilderNature.identifier("textures/gui/widgets/page_backward.png");
+    private static final ResourceLocation PAGE_BACKWARD_HIGHLIGHTED_TEXTURE = WilderNature.identifier("textures/gui/widgets/page_backward_highlighted.png");
+    private static final ResourceLocation TAMEABLE_TEXTURE = WilderNature.identifier("textures/gui/icons/tameable.png");
+    private static final ResourceLocation NOT_TAMEABLE_TEXTURE = WilderNature.identifier("textures/gui/icons/not_tameable.png");
 
     private static final int TEXTURE_WIDTH = 316;
     private static final int TEXTURE_HEIGHT = 190;
 
-    private static final int LIST_LEFT_OFFSET = 12;
-    private static final int LIST_TOP_OFFSET = 18;
-    private static final int LIST_WIDTH = 111;
-    private static final int ENTRY_HEIGHT = 22;
-    private static final int VISIBLE_ENTRY_COUNT = 7;
-
-    private static final int TRAIT_ICON_WIDTH = 12;
-    private static final int TRAIT_ICON_HEIGHT = 12;
+    private static final int TRAIT_ICON_WIDTH = 11;
+    private static final int TRAIT_ICON_HEIGHT = 11;
     private static final int BIOME_ICON_SIZE = 16;
+
+    private static final int LEFT_TAMEABLE_ICON_X = 120;
+    private static final int RIGHT_TAMEABLE_ICON_X = 270;
+    private static final int TAMEABLE_ICON_Y = 118;
+    private static final float TAMEABLE_ICON_ALPHA = 0.65F;
 
     private static final int LEFT_ENTRY_FRIENDLY_ICON_X = 37;
     private static final int RIGHT_ENTRY_FRIENDLY_ICON_X = 187;
@@ -59,12 +68,17 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
     private static final int ENTITY_PREVIEW_Y = 44;
     private static final int ENTITY_PREVIEW_CENTER_X = 31;
     private static final int ENTITY_PREVIEW_BASELINE_Y = 38;
+    private static final int ENTITY_PREVIEW_HITBOX_WIDTH = 63;
+    private static final int ENTITY_PREVIEW_HITBOX_HEIGHT = 61;
+
     private static final float ENTITY_PREVIEW_SCALE = 22.0F;
+    private static final float ENTITY_PREVIEW_MAX_HEIGHT = 36.0F;
+    private static final float ENTITY_PREVIEW_MIN_SCALE = 8.0F;
 
     private static final int LEFT_HEALTH_AREA_X = 35;
     private static final int RIGHT_HEALTH_AREA_X = 185;
     private static final int HEALTH_AREA_Y = 118;
-    private static final int HEALTH_AREA_WIDTH = 96;
+    private static final int HEALTH_AREA_WIDTH = 68;
     private static final int HEALTH_AREA_HEIGHT = 11;
     private static final int HEART_WIDTH = 9;
     private static final int HEART_HEIGHT = 9;
@@ -79,41 +93,89 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
     private static final int TITLE_FIELD_WIDTH = 74;
     private static final int TITLE_FIELD_HEIGHT = 11;
 
+    private static final int PAGE_BACKWARD_X = 15;
+    private static final int PAGE_FORWARD_X = 283;
+    private static final int PAGE_BUTTON_Y = 163;
+    private static final int PAGE_BUTTON_WIDTH = 18;
+    private static final int PAGE_BUTTON_HEIGHT = 10;
+
+    private static final int LEFT_MOUSE_AREA_X = 9;
+    private static final int RIGHT_MOUSE_AREA_X = 159;
+    private static final int MOUSE_AREA_Y = 8;
+    private static final int MOUSE_AREA_WIDTH = 148;
+    private static final int MOUSE_AREA_HEIGHT = 172;
+
     private static final int TITLE_COLOR = 0xFFA48165;
 
     private final List<FieldGuideEntry> entries;
-    private int selectedIndex;
-    private int scrollOffset;
+    private int pageIndex;
+    private float leftLookYaw;
+    private float leftLookPitch;
+    private float rightLookYaw;
+    private float rightLookPitch;
 
     public FieldGuideScreen(FieldGuideMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, Component.empty());
         this.imageWidth = TEXTURE_WIDTH;
         this.imageHeight = TEXTURE_HEIGHT;
         this.entries = new ArrayList<>(menu.getEntries());
-        this.selectedIndex = this.entries.isEmpty() ? -1 : 0;
-        this.scrollOffset = 0;
+        this.pageIndex = 0;
+        this.leftLookYaw = 0.0F;
+        this.leftLookPitch = 0.0F;
+        this.rightLookYaw = 0.0F;
+        this.rightLookPitch = 0.0F;
     }
 
     @Override
     protected void init() {
         super.init();
+        this.pageIndex = Mth.clamp(this.pageIndex, 0, this.getMaxPageIndex());
+    }
 
-        if (!this.entries.isEmpty() && (this.selectedIndex < 0 || this.selectedIndex >= this.entries.size())) {
-            this.selectedIndex = 0;
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        int backwardX = this.leftPos + PAGE_BACKWARD_X;
+        int forwardX = this.leftPos + PAGE_FORWARD_X;
+        int buttonY = this.topPos + PAGE_BUTTON_Y;
+
+        if (this.hasPreviousPage() && this.isPointInside(mouseX, mouseY, backwardX, buttonY, PAGE_BUTTON_WIDTH, PAGE_BUTTON_HEIGHT)) {
+            this.pageIndex--;
+            this.playPageTurnSound();
+            return true;
         }
+
+        if (this.hasNextPage() && this.isPointInside(mouseX, mouseY, forwardX, buttonY, PAGE_BUTTON_WIDTH, PAGE_BUTTON_HEIGHT)) {
+            this.pageIndex++;
+            this.playPageTurnSound();
+            return true;
+        }
+
+        FieldGuideEntry leftEntry = this.getLeftEntry();
+        if (leftEntry != null && this.isPointInside(mouseX, mouseY, this.leftPos + LEFT_ENTITY_PREVIEW_X, this.topPos + ENTITY_PREVIEW_Y, ENTITY_PREVIEW_HITBOX_WIDTH, ENTITY_PREVIEW_HITBOX_HEIGHT)) {
+            this.playAmbientSound(leftEntry);
+            return true;
+        }
+
+        FieldGuideEntry rightEntry = this.getRightEntry();
+        if (rightEntry != null && this.isPointInside(mouseX, mouseY, this.leftPos + RIGHT_ENTITY_PREVIEW_X, this.topPos + ENTITY_PREVIEW_Y, ENTITY_PREVIEW_HITBOX_WIDTH, ENTITY_PREVIEW_HITBOX_HEIGHT)) {
+            this.playAmbientSound(rightEntry);
+            return true;
+        }
+
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        int maxScroll = Math.max(0, this.entries.size() - VISIBLE_ENTRY_COUNT);
-
-        if (scrollY < 0.0D && this.scrollOffset < maxScroll) {
-            this.scrollOffset++;
+        if (scrollY < 0.0D && this.hasNextPage()) {
+            this.pageIndex++;
+            this.playPageTurnSound();
             return true;
         }
 
-        if (scrollY > 0.0D && this.scrollOffset > 0) {
-            this.scrollOffset--;
+        if (scrollY > 0.0D && this.hasPreviousPage()) {
+            this.pageIndex--;
+            this.playPageTurnSound();
             return true;
         }
 
@@ -121,25 +183,9 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        int listLeft = this.leftPos + LIST_LEFT_OFFSET;
-        int listTop = this.topPos + LIST_TOP_OFFSET;
-
-        if (mouseX >= listLeft && mouseX <= listLeft + LIST_WIDTH && mouseY >= listTop && mouseY <= listTop + VISIBLE_ENTRY_COUNT * ENTRY_HEIGHT) {
-            int clickedIndex = (int) ((mouseY - listTop) / ENTRY_HEIGHT) + this.scrollOffset;
-            if (clickedIndex >= 0 && clickedIndex < this.entries.size()) {
-                this.selectedIndex = clickedIndex;
-                return true;
-            }
-        }
-
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
-
-    @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-        this.renderBg(guiGraphics, partialTick, mouseX, mouseY);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderTooltips(guiGraphics, mouseX, mouseY);
     }
 
@@ -147,6 +193,7 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
         this.renderEntries(guiGraphics, mouseX, mouseY);
+        this.renderPageButtons(guiGraphics, mouseX, mouseY);
     }
 
     @Override
@@ -154,14 +201,15 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
     }
 
     private void renderEntries(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        if (this.selectedIndex < 0 || this.selectedIndex >= this.entries.size()) {
-            return;
+        FieldGuideEntry leftEntry = this.getLeftEntry();
+        FieldGuideEntry rightEntry = this.getRightEntry();
+
+        if (leftEntry != null) {
+            this.renderEntry(guiGraphics, mouseX, mouseY, leftEntry, true);
         }
 
-        this.renderEntry(guiGraphics, mouseX, mouseY, this.entries.get(this.selectedIndex), true);
-
-        if (this.selectedIndex + 1 < this.entries.size()) {
-            this.renderEntry(guiGraphics, mouseX, mouseY, this.entries.get(this.selectedIndex + 1), false);
+        if (rightEntry != null) {
+            this.renderEntry(guiGraphics, mouseX, mouseY, rightEntry, false);
         }
     }
 
@@ -172,28 +220,52 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
         int defensiveIconX = this.leftPos + (leftPage ? LEFT_ENTRY_DEFENSIVE_ICON_X : RIGHT_ENTRY_DEFENSIVE_ICON_X);
         int healthAreaX = this.leftPos + (leftPage ? LEFT_HEALTH_AREA_X : RIGHT_HEALTH_AREA_X);
         int titleFieldX = this.leftPos + (leftPage ? LEFT_TITLE_FIELD_X : RIGHT_TITLE_FIELD_X);
+        int tameableIconX = this.leftPos + (leftPage ? LEFT_TAMEABLE_ICON_X : RIGHT_TAMEABLE_ICON_X);
         int[] biomeSlots = leftPage ? LEFT_BIOME_SLOTS : RIGHT_BIOME_SLOTS;
 
-        this.renderEntityPreview(guiGraphics, entry, mouseX, mouseY, entityPreviewX, this.topPos + ENTITY_PREVIEW_Y);
+        this.renderEntityPreview(guiGraphics, entry, mouseX, mouseY, entityPreviewX, this.topPos + ENTITY_PREVIEW_Y, leftPage);
         this.renderFriendlyIcon(guiGraphics, entry, friendlyIconX, this.topPos + ENTRY_FRIENDLY_ICON_Y);
         this.renderNeutralIcon(guiGraphics, entry, neutralIconX, this.topPos + ENTRY_NEUTRAL_ICON_Y);
         this.renderDefensiveIcon(guiGraphics, entry, defensiveIconX, this.topPos + ENTRY_DEFENSIVE_ICON_Y);
         this.renderHealth(guiGraphics, entry, healthAreaX, this.topPos + HEALTH_AREA_Y);
         this.renderTitle(guiGraphics, entry, titleFieldX, this.topPos + TITLE_FIELD_Y);
+        this.renderTameableIcon(guiGraphics, entry, tameableIconX, this.topPos + TAMEABLE_ICON_Y);
         this.renderBiomeIcons(guiGraphics, entry, biomeSlots);
     }
 
+    private void renderTameableIcon(GuiGraphics guiGraphics, FieldGuideEntry entry, int iconX, int iconY) {
+        ResourceLocation texture = entry.tameable() ? TAMEABLE_TEXTURE : NOT_TAMEABLE_TEXTURE;
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, TAMEABLE_ICON_ALPHA);
+        guiGraphics.blit(texture, iconX, iconY, 0, 0, TRAIT_ICON_WIDTH, TRAIT_ICON_HEIGHT, TRAIT_ICON_WIDTH, TRAIT_ICON_HEIGHT);
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    private void renderPageButtons(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        int backwardX = this.leftPos + PAGE_BACKWARD_X;
+        int forwardX = this.leftPos + PAGE_FORWARD_X;
+        int buttonY = this.topPos + PAGE_BUTTON_Y;
+
+        if (this.hasPreviousPage()) {
+            ResourceLocation texture = this.isPointInside(mouseX, mouseY, backwardX, buttonY, PAGE_BUTTON_WIDTH, PAGE_BUTTON_HEIGHT) ? PAGE_BACKWARD_HIGHLIGHTED_TEXTURE : PAGE_BACKWARD_TEXTURE;
+            guiGraphics.blit(texture, backwardX, buttonY, 0, 0, PAGE_BUTTON_WIDTH, PAGE_BUTTON_HEIGHT, PAGE_BUTTON_WIDTH, PAGE_BUTTON_HEIGHT);
+        }
+
+        if (this.hasNextPage()) {
+            ResourceLocation texture = this.isPointInside(mouseX, mouseY, forwardX, buttonY, PAGE_BUTTON_WIDTH, PAGE_BUTTON_HEIGHT) ? PAGE_FORWARD_HIGHLIGHTED_TEXTURE : PAGE_FORWARD_TEXTURE;
+            guiGraphics.blit(texture, forwardX, buttonY, 0, 0, PAGE_BUTTON_WIDTH, PAGE_BUTTON_HEIGHT, PAGE_BUTTON_WIDTH, PAGE_BUTTON_HEIGHT);
+        }
+    }
+
     private void renderTooltips(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        if (this.selectedIndex < 0 || this.selectedIndex >= this.entries.size()) {
+        FieldGuideEntry leftEntry = this.getLeftEntry();
+        FieldGuideEntry rightEntry = this.getRightEntry();
+
+        if (leftEntry != null && this.renderTooltipsForPage(guiGraphics, mouseX, mouseY, leftEntry, true)) {
             return;
         }
 
-        if (this.renderTooltipsForPage(guiGraphics, mouseX, mouseY, this.entries.get(this.selectedIndex), true)) {
-            return;
-        }
-
-        if (this.selectedIndex + 1 < this.entries.size()) {
-            this.renderTooltipsForPage(guiGraphics, mouseX, mouseY, this.entries.get(this.selectedIndex + 1), false);
+        if (rightEntry != null) {
+            this.renderTooltipsForPage(guiGraphics, mouseX, mouseY, rightEntry, false);
         }
     }
 
@@ -202,26 +274,32 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
         int neutralIconX = this.leftPos + (leftPage ? LEFT_ENTRY_NEUTRAL_ICON_X : RIGHT_ENTRY_NEUTRAL_ICON_X);
         int defensiveIconX = this.leftPos + (leftPage ? LEFT_ENTRY_DEFENSIVE_ICON_X : RIGHT_ENTRY_DEFENSIVE_ICON_X);
         int healthAreaX = this.leftPos + (leftPage ? LEFT_HEALTH_AREA_X : RIGHT_HEALTH_AREA_X);
+        int tameableIconX = this.leftPos + (leftPage ? LEFT_TAMEABLE_ICON_X : RIGHT_TAMEABLE_ICON_X);
         Component entityName = BuiltInRegistries.ENTITY_TYPE.get(entry.entityId()).getDescription();
 
-        if (entry.friendly() && this.isHovering(mouseX, mouseY, friendlyIconX, this.topPos + ENTRY_FRIENDLY_ICON_Y, TRAIT_ICON_WIDTH, TRAIT_ICON_HEIGHT)) {
+        if (entry.friendly() && this.isPointInside(mouseX, mouseY, friendlyIconX, this.topPos + ENTRY_FRIENDLY_ICON_Y, TRAIT_ICON_WIDTH, TRAIT_ICON_HEIGHT)) {
             guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.wildernature.friendly", entityName), mouseX, mouseY);
             return true;
         }
 
-        if (entry.neutral() && this.isHovering(mouseX, mouseY, neutralIconX, this.topPos + ENTRY_NEUTRAL_ICON_Y, TRAIT_ICON_WIDTH, TRAIT_ICON_HEIGHT)) {
+        if (entry.neutral() && this.isPointInside(mouseX, mouseY, neutralIconX, this.topPos + ENTRY_NEUTRAL_ICON_Y, TRAIT_ICON_WIDTH, TRAIT_ICON_HEIGHT)) {
             guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.wildernature.neutral", entityName), mouseX, mouseY);
             return true;
         }
 
-        if (entry.defensive() && this.isHovering(mouseX, mouseY, defensiveIconX, this.topPos + ENTRY_DEFENSIVE_ICON_Y, TRAIT_ICON_WIDTH, TRAIT_ICON_HEIGHT)) {
+        if (entry.defensive() && this.isPointInside(mouseX, mouseY, defensiveIconX, this.topPos + ENTRY_DEFENSIVE_ICON_Y, TRAIT_ICON_WIDTH, TRAIT_ICON_HEIGHT)) {
             guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.wildernature.defensive", entityName), mouseX, mouseY);
             return true;
         }
 
-        if (this.isHovering(mouseX, mouseY, healthAreaX, this.topPos + HEALTH_AREA_Y, HEALTH_AREA_WIDTH, HEALTH_AREA_HEIGHT)) {
+        if (this.isPointInside(mouseX, mouseY, tameableIconX, this.topPos + TAMEABLE_ICON_Y, TRAIT_ICON_WIDTH, TRAIT_ICON_HEIGHT)) {
+            guiGraphics.renderTooltip(this.font, Component.translatable(entry.tameable() ? "tooltip.wildernature.tameable" : "tooltip.wildernature.not_tameable", entityName), mouseX, mouseY);
+            return true;
+        }
+
+        if (this.isPointInside(mouseX, mouseY, healthAreaX, this.topPos + HEALTH_AREA_Y, HEALTH_AREA_WIDTH, HEALTH_AREA_HEIGHT)) {
             int hearts = Mth.ceil(WilderNatureClientUtil.getMaxHealth(entry) / 2.0F);
-            guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.wildernature.health", entityName, hearts), mouseX, mouseY);
+            guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.wildernature.health", hearts), mouseX, mouseY);
             return true;
         }
 
@@ -237,16 +315,15 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
 
         List<ResourceLocation> displayedBiomes = biomeIds.subList(0, Math.min(biomeIds.size(), biomeSlots.length));
         int[] slotIndexes = WilderNatureClientUtil.getCenteredSlotIndexes(displayedBiomes.size());
-        Component entityName = BuiltInRegistries.ENTITY_TYPE.get(entry.entityId()).getDescription();
 
         for (int index = 0; index < displayedBiomes.size(); index++) {
             int iconX = this.leftPos + biomeSlots[slotIndexes[index]];
             int iconY = this.topPos + BIOME_ICON_Y;
 
-            if (this.isHovering(mouseX, mouseY, iconX, iconY, BIOME_ICON_SIZE, BIOME_ICON_SIZE)) {
+            if (this.isPointInside(mouseX, mouseY, iconX, iconY, BIOME_ICON_SIZE, BIOME_ICON_SIZE)) {
                 ResourceLocation biomeId = displayedBiomes.get(index);
                 Component biomeName = Component.translatable("biome." + biomeId.getNamespace() + "." + biomeId.getPath());
-                guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.wildernature.spawn", entityName, biomeName), mouseX, mouseY);
+                guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.wildernature.spawn", biomeName), mouseX, mouseY);
                 return true;
             }
         }
@@ -269,7 +346,7 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
         guiGraphics.blit(texture, iconX, iconY, 0, 0, TRAIT_ICON_WIDTH, TRAIT_ICON_HEIGHT, TRAIT_ICON_WIDTH, TRAIT_ICON_HEIGHT);
     }
 
-    private void renderEntityPreview(GuiGraphics guiGraphics, FieldGuideEntry entry, int mouseX, int mouseY, int areaX, int areaY) {
+    private void renderEntityPreview(GuiGraphics guiGraphics, FieldGuideEntry entry, int mouseX, int mouseY, int areaX, int areaY, boolean leftPage) {
         LivingEntity livingEntity = WilderNatureClientUtil.createLivingEntity(entry);
         if (livingEntity == null) {
             return;
@@ -278,8 +355,25 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
         int entityX = areaX + ENTITY_PREVIEW_CENTER_X;
         int entityY = areaY + ENTITY_PREVIEW_BASELINE_Y;
 
-        float yawOffset = (float) Math.atan((entityX - mouseX) / 40.0F);
-        float pitchOffset = (float) Math.atan((entityY - mouseY) / 40.0F);
+        int mouseAreaX = this.leftPos + (leftPage ? LEFT_MOUSE_AREA_X : RIGHT_MOUSE_AREA_X);
+        int mouseAreaY = this.topPos + MOUSE_AREA_Y;
+        boolean mouseInsideArea = this.isPointInside(mouseX, mouseY, mouseAreaX, mouseAreaY, MOUSE_AREA_WIDTH, MOUSE_AREA_HEIGHT);
+
+        float yawOffset = leftPage ? this.leftLookYaw : this.rightLookYaw;
+        float pitchOffset = leftPage ? this.leftLookPitch : this.rightLookPitch;
+
+        if (mouseInsideArea) {
+            yawOffset = (float) Math.atan((entityX - mouseX) / 40.0F);
+            pitchOffset = (float) Math.atan((entityY - mouseY) / 40.0F);
+
+            if (leftPage) {
+                this.leftLookYaw = yawOffset;
+                this.leftLookPitch = pitchOffset;
+            } else {
+                this.rightLookYaw = yawOffset;
+                this.rightLookPitch = pitchOffset;
+            }
+        }
 
         Quaternionf bodyRotation = Axis.ZP.rotationDegrees(180.0F);
         Quaternionf pitchRotation = Axis.XP.rotationDegrees(pitchOffset * 20.0F);
@@ -297,12 +391,15 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
         livingEntity.yHeadRot = livingEntity.getYRot();
         livingEntity.yHeadRotO = livingEntity.getYRot();
 
+        float entityHeight = Math.max(livingEntity.getBbHeight(), 0.1F);
+        float scaledHeight = entityHeight * ENTITY_PREVIEW_SCALE;
+        float clampedScale = scaledHeight > ENTITY_PREVIEW_MAX_HEIGHT ? ENTITY_PREVIEW_MAX_HEIGHT / entityHeight : ENTITY_PREVIEW_SCALE;
+        clampedScale = Math.max(clampedScale, ENTITY_PREVIEW_MIN_SCALE);
+
         Vector3f translation = new Vector3f(0.0F, livingEntity.getBbHeight() * 0.5F, 0.0F);
         Quaternionf cameraRotation = pitchRotation.conjugate(new Quaternionf());
 
-        guiGraphics.flush();
-        InventoryScreen.renderEntityInInventory(guiGraphics, entityX, entityY, ENTITY_PREVIEW_SCALE, translation, bodyRotation, cameraRotation, livingEntity);
-        guiGraphics.flush();
+        InventoryScreen.renderEntityInInventory(guiGraphics, entityX, entityY, clampedScale, translation, bodyRotation, cameraRotation, livingEntity);
 
         livingEntity.yBodyRot = previousBodyRot;
         livingEntity.setYRot(previousYRot);
@@ -356,8 +453,59 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
         }
     }
 
-    private boolean isHovering(int mouseX, int mouseY, int x, int y, int width, int height) {
+    private FieldGuideEntry getLeftEntry() {
+        int leftEntryIndex = this.pageIndex * 2;
+        if (leftEntryIndex >= 0 && leftEntryIndex < this.entries.size()) {
+            return this.entries.get(leftEntryIndex);
+        }
+        return null;
+    }
+
+    private FieldGuideEntry getRightEntry() {
+        int rightEntryIndex = this.pageIndex * 2 + 1;
+        if (rightEntryIndex >= 0 && rightEntryIndex < this.entries.size()) {
+            return this.entries.get(rightEntryIndex);
+        }
+        return null;
+    }
+
+    private int getMaxPageIndex() {
+        if (this.entries.isEmpty()) {
+            return 0;
+        }
+
+        return (this.entries.size() - 1) / 2;
+    }
+
+    private boolean hasPreviousPage() {
+        return this.pageIndex > 0;
+    }
+
+    private boolean hasNextPage() {
+        return this.pageIndex < this.getMaxPageIndex();
+    }
+
+    private boolean isPointInside(double mouseX, double mouseY, int x, int y, int width, int height) {
         return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
+    }
+
+    private void playPageTurnSound() {
+        if (this.minecraft != null) {
+            this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
+        }
+    }
+
+    private void playAmbientSound(FieldGuideEntry entry) {
+        if (this.minecraft == null || entry.ambientSound() == null) {
+            return;
+        }
+
+        SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.get(entry.ambientSound());
+        if (soundEvent == null || soundEvent == SoundEvents.EMPTY) {
+            return;
+        }
+
+        this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(soundEvent, 1.0F));
     }
 
     @Override

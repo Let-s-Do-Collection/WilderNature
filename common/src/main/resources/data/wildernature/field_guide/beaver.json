@@ -1,14 +1,13 @@
 {
-  "entity": "wildernature:boar",
+  "entity": "wildernature:beaver",
+  "ambient_sound": "wildernature:beaver_ambient",
   "friendly": true,
   "neutral": false,
   "defensive": false,
   "tameable": false,
   "spawn": {
     "biomes": [
-      "minecraft:savanna",
-      "minecraft:taiga",
-      "minecraft:plains"
+      "minecraft:river"
     ]
   }
 }

@@ -81,7 +81,7 @@ public class WilderNatureClientUtil {
     public static ResourceLocation getBiomeTexture(ResourceLocation biomeId) {
         String biomePath = biomeId.getPath();
         return switch (biomePath) {
-            case "plains", "sunflower_plains", "birch_forest", "dark_forest", "beach", "desert", "forest", "river", "savanna", "taiga" -> WilderNature.identifier("textures/gui/icons/" + biomePath + ".png");
+            case "plains", "sunflower_plains", "birch_forest", "dark_forest", "beach", "desert", "forest", "river", "savanna", "taiga", "meadow" -> WilderNature.identifier("textures/gui/icons/" + biomePath + ".png");
             default -> null;
         };
     }

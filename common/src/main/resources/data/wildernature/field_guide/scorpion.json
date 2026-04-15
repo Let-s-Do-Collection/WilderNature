@@ -1,0 +1,12 @@
+{
+  "entity": "wildernature:scorpion",
+  "friendly": false,
+  "neutral": false,
+  "defensive": true,
+  "tameable": true,
+  "spawn": {
+    "biomes": [
+      "minecraft:desert"
+    ]
+  }
+}

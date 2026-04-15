@@ -1,0 +1,12 @@
+{
+  "entity": "wildernature:lion",
+  "friendly": false,
+  "neutral": false,
+  "defensive": true,
+  "tameable": false,
+  "spawn": {
+    "biomes": [
+      "minecraft:savanna"
+    ]
+  }
+}

@@ -1,14 +1,12 @@
 {
-  "entity": "wildernature:boar",
+  "entity": "wildernature:minisheep",
   "friendly": true,
   "neutral": false,
   "defensive": false,
   "tameable": false,
   "spawn": {
     "biomes": [
-      "minecraft:savanna",
-      "minecraft:taiga",
-      "minecraft:plains"
+      "minecraft:meadow"
     ]
   }
 }

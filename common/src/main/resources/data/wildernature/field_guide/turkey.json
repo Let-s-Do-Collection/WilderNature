@@ -1,14 +1,14 @@
 {
-  "entity": "wildernature:boar",
+  "entity": "wildernature:turkey",
   "friendly": true,
   "neutral": false,
   "defensive": false,
   "tameable": false,
   "spawn": {
     "biomes": [
-      "minecraft:savanna",
-      "minecraft:taiga",
-      "minecraft:plains"
+      "minecraft:forest",
+      "minecraft:birch_forest",
+      "minecraft:taiga"
     ]
   }
 }

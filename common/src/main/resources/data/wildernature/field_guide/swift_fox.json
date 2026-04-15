@@ -1,0 +1,12 @@
+{
+  "entity": "wildernature:swift_fox",
+  "friendly": false,
+  "neutral": true,
+  "defensive": false,
+  "tameable": false,
+  "spawn": {
+    "biomes": [
+      "minecraft:taiga"
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "entity": "wildernature:hippo",
+  "friendly": false,
+  "neutral": false,
+  "defensive": true,
+  "tameable": false,
+  "spawn": {
+    "biomes": [
+      "minecraft:river"
+    ]
+  }
+}
