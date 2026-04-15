@@ -27,6 +27,12 @@ public class SoundEventRegistry {
     public static final RegistrySupplier<SoundEvent> HIPPO_AMBIENT = create("hippo_ambient");
     public static final RegistrySupplier<SoundEvent> HIPPO_HURT = create("hippo_hurt");
     public static final RegistrySupplier<SoundEvent> HIPPO_DEATH = create("hippo_death");
+    public static final RegistrySupplier<SoundEvent> SCORPION_AMBIENT = create("scorpion_ambient");
+    public static final RegistrySupplier<SoundEvent> SCORPION_HURT = create("scorpion_hurt");
+    public static final RegistrySupplier<SoundEvent> SCORPION_DEATH = create("scorpion_death");
+    public static final RegistrySupplier<SoundEvent> TERMITE_AMBIENT = create("termite_ambient");
+    public static final RegistrySupplier<SoundEvent> TERMITE_HURT = create("termite_hurt");
+    public static final RegistrySupplier<SoundEvent> TERMITE_DEATH = create("termite_death");
     public static final RegistrySupplier<SoundEvent> GIRAFFE_AMBIENT = create("giraffe_ambient");
     public static final RegistrySupplier<SoundEvent> GIRAFFE_HURT = create("giraffe_hurt");
     public static final RegistrySupplier<SoundEvent> GIRAFFE_DEATH = create("giraffe_death");

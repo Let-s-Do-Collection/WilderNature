@@ -1,6 +1,7 @@
 package net.satisfy.wildernature.core.entity.animal.tameable;
 
 import java.util.UUID;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -45,11 +46,12 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.satisfy.wildernature.core.entity.ai.goal.animal.ScorpionGoals;
 import net.satisfy.wildernature.core.registry.MobEffectRegistry;
+import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ScorpionEntity extends TamableAnimal {
-    
+
     public static final int POISON_DURATION = 200;
     public static final double AGGRO_RADIUS = 4.0D;
     public static final int BURROW_COOLDOWN_MIN = 200;
@@ -545,17 +547,17 @@ public class ScorpionEntity extends TamableAnimal {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvents.SPIDER_AMBIENT;
+        return SoundEventRegistry.SCORPION_AMBIENT.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvents.SPIDER_HURT;
+        return SoundEventRegistry.SCORPION_HURT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.SPIDER_DEATH;
+        return SoundEventRegistry.SCORPION_DEATH.get();
     }
 
     @Override

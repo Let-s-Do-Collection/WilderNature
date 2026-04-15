@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wildernature:truffle_bag"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "wildernature:truffle"
+  }
+}

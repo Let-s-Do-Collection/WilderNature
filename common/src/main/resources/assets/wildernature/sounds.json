@@ -1,4 +1,42 @@
 {
+  "scorpion_ambient": {
+    "subtitle": "subtitles.wildernature.scorpion_ambient",
+    "sounds": [
+      "wildernature:scorpion_ambient"
+    ]
+  },
+  "scorpion_hurt": {
+    "subtitle": "subtitles.wildernature.scorpion_hurt",
+    "sounds": [
+      "wildernature:scorpion_hurt"
+    ]
+  },
+  "scorpion_death": {
+    "subtitle": "subtitles.wildernature.scorpion_death",
+    "sounds": [
+      "wildernature:scorpion_death"
+    ]
+  },
+  "termite_ambient": {
+    "subtitle": "subtitles.wildernature.termite_ambient",
+    "sounds": [
+      "wildernature:termite_ambient1",
+      "wildernature:termite_ambient2",
+      "wildernature:termite_ambient3"
+    ]
+  },
+  "termite_hurt": {
+    "subtitle": "subtitles.wildernature.termite_hurt",
+    "sounds": [
+      "wildernature:termite_hurt"
+    ]
+  },
+  "termite_death": {
+    "subtitle": "subtitles.wildernature.termite_death",
+    "sounds": [
+      "wildernature:termite_death"
+    ]
+  },
   "lion_ambient": {
     "subtitle": "subtitles.wildernature.lion_ambient",
     "sounds": [

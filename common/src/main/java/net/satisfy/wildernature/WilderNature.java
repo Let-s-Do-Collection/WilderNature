@@ -4,6 +4,7 @@ import dev.architectury.registry.ReloadListenerRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.satisfy.wildernature.core.event.BountyEvents;
+import net.satisfy.wildernature.core.event.ThickLeatherScissorHandler;
 import net.satisfy.wildernature.core.event.VanillaBoneThrowEvent;
 import net.satisfy.wildernature.core.fieldguide.FieldGuideDataLoader;
 import net.satisfy.wildernature.core.network.BountyBoardNetworking;
@@ -20,6 +21,7 @@ public class WilderNature {
         ObjectRegistry.init();
         EntityTypeRegistry.init();
         VanillaBoneThrowEvent.init();
+        ThickLeatherScissorHandler.init();
         BountyEvents.init();
         MobEffectRegistry.init();
         BountyBoardNetworking.init();

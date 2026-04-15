@@ -251,5 +251,11 @@
   "tooltip.wildernature.field_guide": "Ein Leitfaden zur Tierwelt um dich herum.",
   "tooltip.wildernature.field_guide.edition": "Erstausgabe",
   "guild.wildernature.welcome_to_wildernature.title": "Willkommen in der Wildnis",
-  "guild.wildernature.welcome_to_wildernature.desc": "Finde eine Ebene."
+  "guild.wildernature.welcome_to_wildernature.desc": "Finde eine Ebene.",
+  "subtitles.wildernature.scorpion_ambient": "Skorpion knackt",
+  "subtitles.wildernature.scorpion_hurt": "Skorpion zischt",
+  "subtitles.wildernature.scorpion_death": "Skorpion zuckt",
+  "subtitles.wildernature.termite_ambient": "Termiten rascheln",
+  "subtitles.wildernature.termite_hurt": "Termite quietscht",
+  "subtitles.wildernature.termite_death": "Termite knirscht"
 }

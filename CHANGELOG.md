@@ -91,16 +91,6 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Added block and dust particles while rolling
 * Improved threat response and movement during panic states
 
-**Owl Rework**
-* Completely overhauled owl behavior and AI
-* Owls now look for natural perches before going to sleep
-* Added sleep preparation with randomized timing
-* Improved wake up logic with better threat detection
-* Refined flying and landing to properly align with perches
-* Owls now hunt at night with randomized hunting windows
-* They actively target undead mobs during hunts
-* Owls can now find and eat dropped rotten flesh
-
 **Deer Rework**
 * Added awareness system reacting to player movement, sprinting and held items
 * Added panic system with herd wide reactions
@@ -204,6 +194,7 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Rotten Logs, created and maintained by nearby Termites
 * Woodmeal, produced through termite activity and stored in mounds
 * Field Journal - once known as Animal Compendium - showing really basic informations about certain animals
+* ThickLeather - dropped by Elephants, Hippos and other Entities. Right-Click with a Shear to transform it into Leather
 
 **Farm And Charm Compat**
 * Boars can transform Dirt and Coarse Dirt into Fertilized Soil
