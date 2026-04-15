@@ -9,6 +9,7 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 **Changed**
 * Recolored Hazelnut Bushes
 * Recolored Fish Oil
+* BountyBoard got a texture & model redone from scratch
 * Turkeys now lay Turkey Eggs instead of regular Eggs
 * RedWolf has been renamed to SwiftFox
 

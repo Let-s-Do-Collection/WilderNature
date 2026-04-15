@@ -4,13 +4,17 @@ import dev.architectury.platform.Platform;
 import dev.architectury.utils.Env;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
+import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.core.fieldguide.FieldGuideEntry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 
 public class WilderNatureClientUtil {
-
-public static void init() {
+    public static void init() {
         if (Platform.isFabric() && Platform.getEnvironment() == Env.CLIENT) {
             initClient();
         }
@@ -21,17 +25,64 @@ public static void init() {
     }
 
     public static void makeHorn(Item item) {
-        var player = Minecraft.getInstance().player;
-        if (player != null) {
-            ItemProperties.register(item, ResourceLocation.withDefaultNamespace("blowing"), (p_174635_, p_174636_, p_174637_, p_174638_) -> {
-                if (p_174637_ == null) {
-                    return 0.0F;
-                } else {
-                    return p_174637_.getUseItem() != p_174635_ ? 0.0F : (float) (p_174635_.getUseDuration(player) -
-                            p_174637_.getUseItemRemainingTicks()) / 20.0F;
-                }
-            });
+        ItemProperties.register(item, ResourceLocation.withDefaultNamespace("blowing"), (itemStack, clientLevel, livingEntity, seed) -> {
+            if (livingEntity == null) {
+                return 0.0F;
+            }
+
+            if (livingEntity.getUseItem() != itemStack) {
+                return 0.0F;
+            }
+
+            return (float) (itemStack.getUseDuration(livingEntity) - livingEntity.getUseItemRemainingTicks()) / 20.0F;
+        });
+
+        ItemProperties.register(item, ResourceLocation.withDefaultNamespace("using"), (itemStack, clientLevel, livingEntity, seed) -> livingEntity != null && livingEntity.isUsingItem() && livingEntity.getUseItem() == itemStack ? 1.0F : 0.0F);
+    }
+
+    public static LivingEntity createLivingEntity(FieldGuideEntry entry) {
+        return createLivingEntity(entry.entityId());
+    }
+
+    public static LivingEntity createLivingEntity(ResourceLocation entityId) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level == null) {
+            return null;
         }
-        ItemProperties.register(item, ResourceLocation.withDefaultNamespace("using"), (p_174630_, p_174631_, p_174632_, p_174633_) -> p_174632_ != null && p_174632_.isUsingItem() && p_174632_.getUseItem() == p_174630_ ? 1.0F : 0.0F);
+
+        EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(entityId);
+        var entity = entityType.create(minecraft.level);
+        if (entity instanceof LivingEntity livingEntity) {
+            return livingEntity;
+        }
+
+        return null;
+    }
+
+    public static float getMaxHealth(FieldGuideEntry entry) {
+        LivingEntity livingEntity = createLivingEntity(entry);
+        if (livingEntity == null) {
+            return 0.0F;
+        }
+
+        return livingEntity.getMaxHealth();
+    }
+
+    public static int[] getCenteredSlotIndexes(int count) {
+        return switch (count) {
+            case 1 -> new int[]{2};
+            case 2 -> new int[]{1, 3};
+            case 3 -> new int[]{1, 2, 3};
+            case 4 -> new int[]{0, 1, 3, 4};
+            default -> new int[]{0, 1, 2, 3, 4};
+        };
+    }
+
+    public static ResourceLocation getBiomeTexture(ResourceLocation biomeId) {
+        String biomePath = biomeId.getPath();
+        return switch (biomePath) {
+            case "plains", "sunflower_plains", "birch_forest", "dark_forest", "beach", "desert", "forest", "river", "savanna", "taiga" -> WilderNature.identifier("textures/gui/icons/" + biomePath + ".png");
+            default -> null;
+        };
     }
 }

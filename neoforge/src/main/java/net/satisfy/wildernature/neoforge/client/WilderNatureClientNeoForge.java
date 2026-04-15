@@ -17,6 +17,7 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.WilderNatureClient;
 import net.satisfy.wildernature.client.gui.screen.BountyBoardScreen;
+import net.satisfy.wildernature.client.gui.screen.FieldGuideScreen;
 import net.satisfy.wildernature.client.particle.*;
 import net.satisfy.wildernature.core.registry.MenuTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
@@ -43,6 +44,7 @@ public class WilderNatureClientNeoForge {
     @SubscribeEvent
     public static void clientSetup(RegisterMenuScreensEvent event) {
         event.register(MenuTypeRegistry.BOUNTY_BOARD_MENU.get(), BountyBoardScreen::new);
+        event.register(MenuTypeRegistry.FIELD_GUIDE_MENU.get(), FieldGuideScreen::new);
     }
 
     @SubscribeEvent

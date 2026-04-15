@@ -1,0 +1,15 @@
+{
+  "entity": "wildernature:deer",
+  "friendly": false,
+  "neutral": true,
+  "defensive": false,
+  "spawn": {
+    "biomes": [
+      "minecraft:forest",
+      "minecraft:taiga",
+      "minecraft:plains",
+      "minecraft:dark_forest",
+      "minecraft:birch_forest"
+    ]
+  }
+}

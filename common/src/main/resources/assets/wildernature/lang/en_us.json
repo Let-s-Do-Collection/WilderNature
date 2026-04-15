@@ -239,5 +239,10 @@
   "subtitles.wildernature.elephant_death": "Elephant crashes",
   "subtitles.wildernature.hippo_ambient": "Hippo grunts",
   "subtitles.wildernature.hippo_hurt": "Hippo bellows",
-  "subtitles.wildernature.hippo_death": "Hippo splashes"
+  "subtitles.wildernature.hippo_death": "Hippo splashes",
+  "tooltip.wildernature.friendly": "%s is friendly towards you",
+  "tooltip.wildernature.neutral": "%s is neutral",
+  "tooltip.wildernature.defensive": "%s is defensive",
+  "tooltip.wildernature.health": "%s has %s hearts",
+  "tooltip.wildernature.spawn": "%s can be found in %s"
 }

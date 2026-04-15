@@ -13,9 +13,11 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.GrassColor;
 import net.satisfy.wildernature.client.gui.screen.BountyBoardScreen;
+import net.satisfy.wildernature.client.gui.screen.FieldGuideScreen;
 import net.satisfy.wildernature.client.model.armor.StylinPurpleHatModel;
 import net.satisfy.wildernature.client.model.block.BountyBoardModel;
 import net.satisfy.wildernature.client.model.block.HollowCacheModel;
@@ -68,6 +70,7 @@ public class WilderNatureClient {
         ParticleProviderRegistry.register(ParticleTypeRegistry.BURST_OF_EXPERIENCE.get(), BurstOfExperienceParticle.Provider::new);
 
         MenuRegistry.registerScreenFactory(MenuTypeRegistry.BOUNTY_BOARD_MENU.get(), BountyBoardScreen::new);
+        MenuRegistry.registerScreenFactory(MenuTypeRegistry.FIELD_GUIDE_MENU.get(), FieldGuideScreen::new);
 
         makeHorn(ObjectRegistry.BISON_HORN.get());
     }
