@@ -16,8 +16,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.NotNull;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
+import org.jetbrains.annotations.NotNull;
 
 public class ThrownBoneEntity extends ThrowableItemProjectile {
     private static final float DAMPING_FACTOR = 0.35F;

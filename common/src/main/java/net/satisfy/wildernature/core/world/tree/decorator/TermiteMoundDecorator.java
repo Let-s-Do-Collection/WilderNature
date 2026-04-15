@@ -1,15 +1,16 @@
 package net.satisfy.wildernature.core.world.tree.decorator;
 
 import com.mojang.serialization.MapCodec;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.WorldgenRegistry;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class TermiteMoundDecorator extends TreeDecorator {
     public static final TermiteMoundDecorator INSTANCE = new TermiteMoundDecorator();

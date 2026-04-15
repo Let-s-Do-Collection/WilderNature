@@ -13,7 +13,6 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.GrassColor;
 import net.satisfy.wildernature.client.gui.screen.BountyBoardScreen;
@@ -33,8 +32,8 @@ import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 
 import static net.satisfy.wildernature.client.util.WilderNatureClientUtil.makeHorn;
-import static net.satisfy.wildernature.core.registry.EntityTypeRegistry.*;
 import static net.satisfy.wildernature.core.registry.EntityTypeRegistry.TURKEY_EGG;
+import static net.satisfy.wildernature.core.registry.EntityTypeRegistry.*;
 import static net.satisfy.wildernature.core.registry.ObjectRegistry.*;
 
 @Environment(EnvType.CLIENT)

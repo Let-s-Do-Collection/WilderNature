@@ -1,7 +1,5 @@
 package net.satisfy.wildernature.core.block;
 
-import java.util.*;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -48,6 +46,8 @@ import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 
 public class RottenLogBlock extends RotatedPillarBlock implements EntityBlock {
     public static final EnumProperty<Stage> STAGE = EnumProperty.create("stage", Stage.class);

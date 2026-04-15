@@ -1,8 +1,6 @@
 package net.satisfy.wildernature.client.gui.screen;
 
 import com.mojang.math.Axis;
-import java.util.List;
-import java.util.Optional;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -24,6 +22,9 @@ import net.satisfy.wildernature.core.network.BountyBoardNetworking;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+
+import java.util.List;
+import java.util.Optional;
 
 public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> {
     private static final ResourceLocation TEXTURE = WilderNature.identifier("textures/gui/bounty_board/bounty_board.png");

@@ -1,13 +1,13 @@
 package net.satisfy.wildernature.core.gui.handler;
 
-import java.util.List;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.satisfy.wildernature.core.fieldguide.FieldGuideEntry;
 import net.satisfy.wildernature.core.registry.MenuTypeRegistry;
+
+import java.util.List;
 
 public class FieldGuideMenu extends AbstractContainerMenu {
     private final List<FieldGuideEntry> entries;

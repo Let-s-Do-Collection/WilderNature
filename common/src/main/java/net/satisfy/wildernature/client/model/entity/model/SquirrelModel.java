@@ -11,8 +11,8 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.core.entity.animal.neutral.SquirrelEntity;
 import net.satisfy.wildernature.client.model.entity.animation.SquirrelAnimation;
+import net.satisfy.wildernature.core.entity.animal.neutral.SquirrelEntity;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(EnvType.CLIENT)

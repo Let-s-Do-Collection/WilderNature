@@ -1,8 +1,9 @@
 package net.satisfy.wildernature.core.bounty;
 
 import com.google.gson.JsonObject;
-import java.util.UUID;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.UUID;
 
 public record GuildCommissionDefinition(UUID id, String titleKey, String descriptionKey, BountyDefinition.BountyType type, ResourceLocation target, int amount, boolean allowPeaceful, ResourceLocation icon, ResourceLocation rewardItem, int rewardCount, int rewardXp, int weight, boolean repeatable) {
     public static GuildCommissionDefinition fromJson(JsonObject jsonObject) {

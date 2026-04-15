@@ -1,8 +1,5 @@
 package net.satisfy.wildernature.core.block.entity;
 
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
@@ -16,6 +13,10 @@ import net.satisfy.wildernature.core.entity.animal.passive.TermiteEntity;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TermiteMoundBlockEntity extends BlockEntity {
     public static final int MAX_CONNECTED_MOUND_BLOCKS = 5;

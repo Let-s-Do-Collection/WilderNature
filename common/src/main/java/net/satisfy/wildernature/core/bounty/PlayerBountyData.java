@@ -1,9 +1,10 @@
 package net.satisfy.wildernature.core.bounty;
 
+import net.minecraft.nbt.CompoundTag;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import net.minecraft.nbt.CompoundTag;
 
 public class PlayerBountyData {
     private BountyDefinition activeBounty;

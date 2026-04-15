@@ -1,9 +1,10 @@
 package net.satisfy.wildernature.core.entity.ai.goal;
 
-import java.util.List;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Animal;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class FollowParentAtDistanceGoal extends Goal {
     private static final double HORIZONTAL_SCAN_RANGE = 8.0D;

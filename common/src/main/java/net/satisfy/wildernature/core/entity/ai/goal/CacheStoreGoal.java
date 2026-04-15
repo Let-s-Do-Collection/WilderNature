@@ -1,6 +1,5 @@
 package net.satisfy.wildernature.core.entity.ai.goal;
 
-import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -10,6 +9,8 @@ import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
 import net.satisfy.wildernature.core.entity.ai.behavior.CacheStoringMob;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.EnumSet;
 
 public class CacheStoreGoal<T extends PathfinderMob & CacheStoringMob> extends Goal {
     private static final int SEARCH_COOLDOWN_MIN = 100;

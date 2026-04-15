@@ -3,7 +3,6 @@ package net.satisfy.wildernature.core.registry;
 import dev.architectury.registry.level.entity.EntityAttributeRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
-import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -11,16 +10,18 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.core.block.entity.*;
 import net.satisfy.wildernature.core.entity.animal.defensive.*;
-import net.satisfy.wildernature.core.entity.animal.tameable.ScorpionEntity;
-import net.satisfy.wildernature.core.entity.animal.passive.TermiteEntity;
 import net.satisfy.wildernature.core.entity.animal.neutral.*;
 import net.satisfy.wildernature.core.entity.animal.passive.BeaverEntity;
 import net.satisfy.wildernature.core.entity.animal.passive.BoarEntity;
-import net.satisfy.wildernature.core.entity.projectile.BulletEntity;
-import net.satisfy.wildernature.core.entity.animal.tameable.DogEntity;
 import net.satisfy.wildernature.core.entity.animal.passive.HedgehogEntity;
+import net.satisfy.wildernature.core.entity.animal.passive.TermiteEntity;
+import net.satisfy.wildernature.core.entity.animal.tameable.DogEntity;
+import net.satisfy.wildernature.core.entity.animal.tameable.ScorpionEntity;
+import net.satisfy.wildernature.core.entity.projectile.BulletEntity;
 import net.satisfy.wildernature.core.entity.projectile.ThrownBoneEntity;
 import net.satisfy.wildernature.core.entity.projectile.ThrownTurkeyEgg;
+
+import java.util.function.Supplier;
 
 public class EntityTypeRegistry {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(WilderNature.MOD_ID, Registries.BLOCK_ENTITY_TYPE);

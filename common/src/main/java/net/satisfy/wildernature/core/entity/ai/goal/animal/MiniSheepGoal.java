@@ -1,12 +1,13 @@
 package net.satisfy.wildernature.core.entity.ai.goal.animal;
 
-import java.util.EnumSet;
-import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.satisfy.wildernature.core.entity.animal.neutral.MiniSheepEntity;
+
+import java.util.EnumSet;
+import java.util.UUID;
 
 public class MiniSheepGoal {
     private static final double LEADER_FOLLOW_START_DISTANCE = 36.0D;

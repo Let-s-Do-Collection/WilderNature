@@ -6,14 +6,10 @@ import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeDeformation;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.model.geom.builders.*;
 import net.satisfy.wildernature.WilderNature;
-import net.satisfy.wildernature.core.entity.animal.neutral.DeerEntity;
 import net.satisfy.wildernature.client.model.entity.animation.DeerAnimation;
+import net.satisfy.wildernature.core.entity.animal.neutral.DeerEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class DeerModel extends HierarchicalModel<DeerEntity> {

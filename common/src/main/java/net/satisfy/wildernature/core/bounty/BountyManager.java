@@ -1,8 +1,5 @@
 package net.satisfy.wildernature.core.bounty;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -28,6 +25,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @SuppressWarnings("deprecation")
 public final class BountyManager {

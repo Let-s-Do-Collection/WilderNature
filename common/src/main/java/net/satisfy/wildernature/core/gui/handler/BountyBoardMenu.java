@@ -1,7 +1,5 @@
 package net.satisfy.wildernature.core.gui.handler;
 
-import java.util.*;
-
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -18,15 +16,16 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
-import net.satisfy.wildernature.core.bounty.BountyCategory;
-import net.satisfy.wildernature.core.bounty.BountyDefinition;
-import net.satisfy.wildernature.core.bounty.BountyManager;
-import net.satisfy.wildernature.core.bounty.BountyReward;
-import net.satisfy.wildernature.core.bounty.PlayerBountyData;
+import net.satisfy.wildernature.core.bounty.*;
 import net.satisfy.wildernature.core.network.BountyBoardNetworking;
 import net.satisfy.wildernature.core.registry.MenuTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class BountyBoardMenu extends AbstractContainerMenu {
     private final SimpleContainer contractPreviewContainer = new SimpleContainer(1);

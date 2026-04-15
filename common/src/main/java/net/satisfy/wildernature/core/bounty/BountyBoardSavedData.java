@@ -8,12 +8,7 @@ import net.satisfy.wildernature.WilderNature;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class BountyBoardSavedData extends SavedData {
     public static final String DATA_NAME = WilderNature.MOD_ID + "_bounty_board";

@@ -1,9 +1,5 @@
 package net.satisfy.wildernature.core.block;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,6 +26,11 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import net.satisfy.wildernature.core.util.WilderNatureUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class BisonTrophyBlock extends WallDecorationBlock {
     private static final Supplier<VoxelShape> voxelShapeSupplier = () -> {

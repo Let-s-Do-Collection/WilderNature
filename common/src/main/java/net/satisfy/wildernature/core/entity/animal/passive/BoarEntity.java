@@ -1,6 +1,5 @@
 package net.satisfy.wildernature.core.entity.animal.passive;
 
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ItemParticleOption;
@@ -17,21 +16,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.AnimationState;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.BreedGoal;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.FollowParentGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.PanicGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.TemptGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -50,12 +38,14 @@ import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.core.block.MushroomColonyBlock;
 import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
 import net.satisfy.wildernature.core.entity.ai.behavior.CacheEatingMob;
-import net.satisfy.wildernature.core.entity.ai.goal.animal.BoarRootingGoal;
 import net.satisfy.wildernature.core.entity.ai.goal.CacheEatGoal;
 import net.satisfy.wildernature.core.entity.ai.goal.EatFromBlockGoal;
+import net.satisfy.wildernature.core.entity.ai.goal.animal.BoarRootingGoal;
 import net.satisfy.wildernature.core.registry.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class BoarEntity extends Animal implements CacheEatingMob {
     private static final Ingredient FOOD_ITEMS = Ingredient.of(TagsRegistry.BOAR_FOOD);

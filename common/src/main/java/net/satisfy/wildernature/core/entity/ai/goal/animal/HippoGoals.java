@@ -1,7 +1,5 @@
 package net.satisfy.wildernature.core.entity.ai.goal.animal;
 
-import java.util.EnumSet;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -17,6 +15,9 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Path;
 import net.satisfy.wildernature.core.entity.animal.defensive.HippoEntity;
+
+import java.util.EnumSet;
+import java.util.List;
 
 public final class HippoGoals {
     private HippoGoals() {

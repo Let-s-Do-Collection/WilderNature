@@ -2,15 +2,16 @@ package net.satisfy.wildernature.core.network;
 
 import dev.architectury.networking.NetworkManager;
 import io.netty.buffer.Unpooled;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.core.gui.handler.BountyBoardMenu;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @SuppressWarnings("removal")
 public final class BountyBoardNetworking {

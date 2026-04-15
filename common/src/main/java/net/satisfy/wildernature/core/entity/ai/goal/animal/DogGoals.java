@@ -1,7 +1,5 @@
 package net.satisfy.wildernature.core.entity.ai.goal.animal;
 
-import java.util.EnumSet;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -24,6 +22,9 @@ import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.EnumSet;
+import java.util.List;
 
 public class DogGoals {
     public static class GoAfterCatGoal extends Goal {

@@ -1,6 +1,5 @@
 package net.satisfy.wildernature.core.entity.ai.goal;
 
-import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -13,6 +12,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.wildernature.core.entity.ai.behavior.ShelteringMob;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.EnumSet;
 
 public class SeekShelterGoal<T extends PathfinderMob & ShelteringMob> extends Goal {
     private static final int SEARCH_COOLDOWN_MIN = 100;

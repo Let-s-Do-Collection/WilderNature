@@ -1,6 +1,5 @@
 package net.satisfy.wildernature.core.item;
 
-import java.util.List;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -18,6 +17,8 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class ExperienceBurstItem extends Item {
     public ExperienceBurstItem(Properties properties) {

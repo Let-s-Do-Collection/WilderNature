@@ -2,11 +2,12 @@ package net.satisfy.wildernature.core.fieldguide;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public record FieldGuideEntry(
         ResourceLocation id,

@@ -1,11 +1,11 @@
 package net.satisfy.wildernature.core.entity.ai.goal.animal;
 
-import java.util.EnumSet;
-
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
 import net.minecraft.world.entity.player.Player;
 import net.satisfy.wildernature.core.entity.animal.tameable.ScorpionEntity;
+
+import java.util.EnumSet;
 
 public class ScorpionGoals {
 

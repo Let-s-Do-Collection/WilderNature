@@ -1,8 +1,6 @@
 package net.satisfy.wildernature.core.entity.ai.goal.animal;
 
 import dev.architectury.platform.Platform;
-import java.util.EnumSet;
-import java.util.Objects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -36,6 +34,9 @@ import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
 import net.satisfy.wildernature.core.entity.animal.neutral.RaccoonEntity;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.EnumSet;
+import java.util.Objects;
 
 public class RaccoonGoals {
 

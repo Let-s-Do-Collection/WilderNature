@@ -8,9 +8,6 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.entity.animal.defensive.LionEntity;
-import net.satisfy.wildernature.core.entity.animal.neutral.DeerEntity;
-import net.satisfy.wildernature.core.entity.animal.neutral.MiniSheepEntity;
-import net.satisfy.wildernature.core.entity.animal.passive.BoarEntity;
 import net.satisfy.wildernature.core.registry.TagsRegistry;
 import org.jetbrains.annotations.Nullable;
 

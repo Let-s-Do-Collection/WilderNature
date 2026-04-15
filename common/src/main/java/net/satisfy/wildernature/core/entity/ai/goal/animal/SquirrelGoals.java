@@ -1,9 +1,5 @@
 package net.satisfy.wildernature.core.entity.ai.goal.animal;
 
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -15,6 +11,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.wildernature.core.block.HazelnutBushBlock;
 import net.satisfy.wildernature.core.entity.animal.neutral.SquirrelEntity;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.UUID;
 
 public class SquirrelGoals {
 

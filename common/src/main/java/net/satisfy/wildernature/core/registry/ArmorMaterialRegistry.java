@@ -1,8 +1,5 @@
 package net.satisfy.wildernature.core.registry;
 
-import java.util.EnumMap;
-import java.util.List;
-import java.util.function.Supplier;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -12,6 +9,10 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.satisfy.wildernature.WilderNature;
+
+import java.util.EnumMap;
+import java.util.List;
+import java.util.function.Supplier;
 
 public class ArmorMaterialRegistry {
     public static final Holder<ArmorMaterial> STYLIN_HAT;

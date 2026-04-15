@@ -1,8 +1,9 @@
 package net.satisfy.wildernature.core.bounty;
 
-import java.util.UUID;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.UUID;
 
 public record BountyDefinition(UUID id, BountyType type, BountyTargetType targetType, BountyCategory category, ResourceLocation targetId, int requiredAmount, BountyReward reward, boolean guildCommission) {
     public CompoundTag save() {

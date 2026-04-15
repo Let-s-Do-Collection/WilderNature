@@ -1,7 +1,5 @@
 package net.satisfy.wildernature.core.entity.ai.goal.animal;
 
-import java.util.EnumSet;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -14,10 +12,13 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.satisfy.wildernature.core.entity.animal.passive.HedgehogEntity;
 import net.satisfy.wildernature.core.entity.animal.neutral.SwiftFoxEntity;
+import net.satisfy.wildernature.core.entity.animal.passive.HedgehogEntity;
 import net.satisfy.wildernature.core.registry.TagsRegistry;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.EnumSet;
+import java.util.List;
 
 public class SwiftFoxGoals {
     public static class SwiftFoxHuntSmallCritterGoal extends Goal {

@@ -15,8 +15,8 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.item.AmmunitionItem;
-import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.network.EntityPacketHandler;
+import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 public class BulletEntity extends Fireball {
