@@ -4,11 +4,17 @@ import dev.architectury.platform.Platform;
 import dev.architectury.utils.Env;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.core.fieldguide.FieldGuideEntry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
@@ -81,8 +87,49 @@ public class WilderNatureClientUtil {
     public static ResourceLocation getBiomeTexture(ResourceLocation biomeId) {
         String biomePath = biomeId.getPath();
         return switch (biomePath) {
-            case "plains", "sunflower_plains", "birch_forest", "dark_forest", "beach", "desert", "forest", "river", "savanna", "taiga", "meadow" -> WilderNature.identifier("textures/gui/icons/" + biomePath + ".png");
+            case "plains", "sunflower_plains", "birch_forest", "dark_forest", "beach", "desert", "forest", "river", "savanna", "taiga", "meadow", "frozen_peaks" -> WilderNature.identifier("textures/gui/icons/" + biomePath + ".png");
             default -> null;
         };
+    }
+
+    public static ItemStack getFoodPreviewStack(FieldGuideEntry entry) {
+        if (entry.food() == null || entry.food().isBlank()) {
+            return ItemStack.EMPTY;
+        }
+
+        if (!entry.food().startsWith("#")) {
+            Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(entry.food()));
+            return item == Items.AIR ? ItemStack.EMPTY : new ItemStack(item);
+        }
+
+        ResourceLocation tagId = ResourceLocation.parse(entry.food().substring(1));
+        TagKey<Item> tagKey = TagKey.create(Registries.ITEM, tagId);
+        var optionalTag = BuiltInRegistries.ITEM.getTag(tagKey);
+
+        if (optionalTag.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+
+        for (Holder<Item> holder : optionalTag.get()) {
+            Item item = holder.value();
+            if (item != Items.AIR) {
+                return new ItemStack(item);
+            }
+        }
+
+        return ItemStack.EMPTY;
+    }
+
+    public static Component getFoodTooltip(FieldGuideEntry entry) {
+        if (entry.food() == null || entry.food().isBlank()) {
+            return null;
+        }
+
+        if (!entry.food().startsWith("#")) {
+            ItemStack itemStack = getFoodPreviewStack(entry);
+            return itemStack.isEmpty() ? null : Component.translatable("tooltip.wildernature.eats", itemStack.getHoverName());
+        }
+
+        return Component.translatable("tooltip.wildernature.eats_tag", entry.food());
     }
 }

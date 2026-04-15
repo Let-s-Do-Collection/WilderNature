@@ -1,9 +1,11 @@
 {
   "entity": "wildernature:minisheep",
-  "friendly": true,
-  "neutral": false,
+  "ambient_sound": "minecraft:entity.sheep.ambient",
+  "friendly": false,
+  "neutral": true,
   "defensive": false,
   "tameable": false,
+  "food": "#wildernature:minisheep_food",
   "spawn": {
     "biomes": [
       "minecraft:meadow"

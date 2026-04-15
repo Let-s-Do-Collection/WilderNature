@@ -1,0 +1,18 @@
+{
+  "entity": "minecraft:pig",
+  "ambient_sound": "minecraft:entity.pig.ambient",
+  "friendly": true,
+  "neutral": false,
+  "defensive": false,
+  "tameable": false,
+  "food": "#minecraft:pig_food",
+  "spawn": {
+    "biomes": [
+      "minecraft:plains",
+      "minecraft:forest",
+      "minecraft:birch_forest",
+      "minecraft:taiga",
+      "minecraft:meadow"
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "entity": "minecraft:sheep",
+  "ambient_sound": "minecraft:entity.sheep.ambient",
+  "friendly": true,
+  "neutral": false,
+  "defensive": false,
+  "tameable": false,
+  "food": "#minecraft:sheep_food",
+  "spawn": {
+    "biomes": [
+      "minecraft:plains",
+      "minecraft:sunflower_plains",
+      "minecraft:forest",
+      "minecraft:birch_forest",
+      "minecraft:taiga"
+    ]
+  }
+}

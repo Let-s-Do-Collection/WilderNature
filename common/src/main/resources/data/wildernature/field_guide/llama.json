@@ -1,0 +1,12 @@
+{
+  "entity": "minecraft:trader_llama",
+  "ambient_sound": "minecraft:entity.llama.ambient",
+  "friendly": true,
+  "neutral": false,
+  "defensive": false,
+  "tameable": false,
+  "food": "#minecraft:llama_food",
+  "spawn": {
+    "biomes": []
+  }
+}

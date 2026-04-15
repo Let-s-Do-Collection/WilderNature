@@ -408,7 +408,7 @@ public class SwiftFoxEntity extends Animal {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(TagsRegistry.DOG_FOOD);
+        return stack.is(TagsRegistry.SWIFT_FOX_FOOD);
     }
 
     @Override

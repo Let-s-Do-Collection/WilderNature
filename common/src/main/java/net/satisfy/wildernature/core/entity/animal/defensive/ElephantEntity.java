@@ -34,7 +34,6 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -45,6 +44,7 @@ import net.satisfy.wildernature.core.entity.ai.goal.animal.ElephantGoals;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundEventRegistry;
+import net.satisfy.wildernature.core.registry.TagsRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,7 +55,7 @@ public class ElephantEntity extends Animal {
     private static final int FLAG_DRINKING = 0x00001000;
     private static final int FLAG_TRUMPETING = 0x00010000;
 
-    public static final Ingredient FOOD_ITEMS = Ingredient.of(Items.MELON_SLICE, Items.PUMPKIN, Items.APPLE, Items.SUGAR_CANE);
+    public static final Ingredient FOOD_ITEMS = Ingredient.of(TagsRegistry.ELEPHANT_FOOD);
 
     public static final double HERD_RADIUS = 18.0D;
     public static final double HERD_RETURN_RADIUS = 10.0D;
@@ -335,7 +335,7 @@ public class ElephantEntity extends Animal {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+        return stack.is(TagsRegistry.ELEPHANT_FOOD);
     }
 
     @Override

@@ -1,0 +1,16 @@
+{
+  "entity": "minecraft:horse",
+  "ambient_sound": "minecraft:entity.horse.ambient",
+  "friendly": true,
+  "neutral": false,
+  "defensive": false,
+  "tameable": true,
+  "food": "#minecraft:horse_food",
+  "spawn": {
+    "biomes": [
+      "minecraft:plains",
+      "minecraft:sunflower_plains",
+      "minecraft:savanna"
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "entity": "minecraft:mule",
+  "ambient_sound": "minecraft:entity.mule.ambient",
+  "friendly": true,
+  "neutral": false,
+  "defensive": false,
+  "tameable": true,
+  "food": "#minecraft:horse_food",
+  "spawn": {
+    "biomes": []
+  }
+}

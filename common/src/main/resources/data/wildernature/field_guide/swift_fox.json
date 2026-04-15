@@ -1,9 +1,11 @@
 {
   "entity": "wildernature:swift_fox",
+  "ambient_sound": "minecraft:entity.fox.ambient",
   "friendly": false,
   "neutral": true,
   "defensive": false,
   "tameable": false,
+  "food": "#wildernature:swift_fox_food",
   "spawn": {
     "biomes": [
       "minecraft:taiga"

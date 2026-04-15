@@ -1,9 +1,11 @@
 {
   "entity": "wildernature:elephant",
+  "ambient_sound": "wildernature:elephant_ambient",
   "friendly": false,
   "neutral": false,
   "defensive": true,
   "tameable": false,
+  "food": "#wildernature:elephant_food",
   "spawn": {
     "biomes": [
       "minecraft:savanna"

@@ -1,9 +1,11 @@
 {
   "entity": "wildernature:squirrel",
+  "ambient_sound": "wildernature:squirrel_ambient",
   "friendly": true,
   "neutral": false,
   "defensive": false,
   "tameable": false,
+  "food": "#wildernature:squirrel_food",
   "spawn": {
     "biomes": [
       "minecraft:taiga",

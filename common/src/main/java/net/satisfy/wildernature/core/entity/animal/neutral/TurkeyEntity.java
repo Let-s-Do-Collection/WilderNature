@@ -39,17 +39,12 @@ import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.SoundEventRegistry;
+import net.satisfy.wildernature.core.registry.TagsRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class TurkeyEntity extends Chicken {
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(
-            Items.WHEAT_SEEDS,
-            Items.MELON_SEEDS,
-            Items.PUMPKIN_SEEDS,
-            Items.BEETROOT_SEEDS,
-            Items.BREAD
-    );
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(TagsRegistry.TURKEY_FOOD);
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(TurkeyEntity.class, EntityDataSerializers.BOOLEAN);
     public static final int TURKEY_ATTACK_TICKS = (int) (1.6F * 20) + 2;
 
@@ -228,7 +223,7 @@ public class TurkeyEntity extends Chicken {
 
     @Override
     public boolean isFood(ItemStack itemStack) {
-        return FOOD_ITEMS.test(itemStack);
+        return itemStack.is(TagsRegistry.TURKEY_FOOD);
     }
 
     @Override

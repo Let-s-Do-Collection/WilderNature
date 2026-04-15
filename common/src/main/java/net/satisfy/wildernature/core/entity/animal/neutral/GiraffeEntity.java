@@ -42,6 +42,7 @@ import net.satisfy.wildernature.core.entity.animal.defensive.LionEntity;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundEventRegistry;
+import net.satisfy.wildernature.core.registry.TagsRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -616,7 +617,7 @@ public class GiraffeEntity extends Animal {
 
     @Override
     public boolean isFood(ItemStack itemStack) {
-        return itemStack.is(Items.SHORT_GRASS);
+        return itemStack.is(TagsRegistry.GIRAFFE_FOOD);
     }
 
     @Override

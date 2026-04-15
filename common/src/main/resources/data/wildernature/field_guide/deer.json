@@ -1,9 +1,11 @@
 {
   "entity": "wildernature:deer",
+  "ambient_sound": "wildernature:deer_ambient",
   "friendly": false,
   "neutral": true,
   "defensive": false,
   "tameable": false,
+  "food": "#wildernature:deer_food",
   "spawn": {
     "biomes": [
       "minecraft:forest",

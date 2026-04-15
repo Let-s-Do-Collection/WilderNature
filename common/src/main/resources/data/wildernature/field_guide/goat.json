@@ -1,0 +1,14 @@
+{
+  "entity": "minecraft:goat",
+  "ambient_sound": "minecraft:entity.goat.ambient",
+  "friendly": false,
+  "neutral": true,
+  "defensive": false,
+  "tameable": false,
+  "food": "#minecraft:goat_food",
+  "spawn": {
+    "biomes": [
+      "minecraft:frozen_peaks"
+    ]
+  }
+}

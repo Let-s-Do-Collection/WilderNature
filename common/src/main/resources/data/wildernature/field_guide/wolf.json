@@ -1,0 +1,14 @@
+{
+  "entity": "minecraft:wolf",
+  "ambient_sound": "minecraft:entity.wolf.ambient",
+  "friendly": false,
+  "neutral": true,
+  "defensive": false,
+  "tameable": true,
+  "food": "#minecraft:wolf_food",
+  "spawn": {
+    "biomes": [
+      "minecraft:taiga"
+    ]
+  }
+}

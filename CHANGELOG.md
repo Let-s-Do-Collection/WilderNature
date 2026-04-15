@@ -191,7 +191,8 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Rotten Logs can be hollowed out and infested by termites
 * Infested logs can be cleaned with a shovel
 * Cleaning them may reward you with Woodmeal
-* Some Rotten Logs can be turned into farmland
+* Rotten Logs can be filled with Dirt
+* Rotten Logs filled with Dirt can be transformed into Farmland
 
 **Added**
 * Hollow Cache, a Tree Stump spawning in Forest and Plains Biomes
@@ -202,6 +203,7 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Termite Mounds, a Savanna structure inhabited by Termites
 * Rotten Logs, created and maintained by nearby Termites
 * Woodmeal, produced through termite activity and stored in mounds
+* Field Journal - once known as Animal Compendium - showing really basic informations about certain animals
 
 **Farm And Charm Compat**
 * Boars can transform Dirt and Coarse Dirt into Fertilized Soil

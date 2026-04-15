@@ -1,9 +1,11 @@
 {
   "entity": "wildernature:cassowary",
+  "ambient_sound": "wildernature:cassowary_ambient",
   "friendly": false,
   "neutral": false,
   "defensive": true,
   "tameable": false,
+  "food": "#wildernature:cassowary_food",
   "spawn": {
     "biomes": [
       "minecraft:savanna"

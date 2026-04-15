@@ -44,6 +44,7 @@ import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.entity.ai.goal.animal.BisonGoals;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundEventRegistry;
+import net.satisfy.wildernature.core.registry.TagsRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,7 +101,7 @@ public class BisonEntity extends Animal {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(Items.WHEAT) || stack.is(Items.HAY_BLOCK);
+        return stack.is(TagsRegistry.BISON_FOOD);
     }
 
     public static @NotNull AttributeSupplier.Builder createMobAttributes() {

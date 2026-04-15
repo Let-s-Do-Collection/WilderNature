@@ -41,18 +41,15 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> HAZELNUT = registerItem("hazelnut", () -> new ItemNameBlockItem(ObjectRegistry.HAZELNUT_BUSH.get(), getSettings().food((new FoodProperties.Builder()).nutrition(4).saturationModifier(0.3F).fast().build())));
     public static final RegistrySupplier<Item> TRUFFLE = registerItem("truffle", () -> new Item(getSettings().rarity(Rarity.RARE)));
     public static final RegistrySupplier<Item> TURKEY_EGG = registerItem("turkey_egg", () -> new TurkeyEggItem(getSettings()));
-
     public static final RegistrySupplier<Item> BLUNDERBUSS = registerItem("blunderbuss", BlunderBussItem::new);
     public static final RegistrySupplier<Item> FLINT_AMMUNITION = registerItem("flint_ammunition", () -> new FlintAmmunitionItem(getSettings().rarity(Rarity.UNCOMMON), 2));
     public static final RegistrySupplier<Item> DIAMOND_AMMUNITION = registerItem("diamond_ammunition", () -> new AmmunitionItem(getSettings().rarity(Rarity.COMMON), 12));
-
     public static final RegistrySupplier<Item> FUR_CLOAK = registerItem("fur_cloak", () -> new FurCloakItem(ArmorMaterials.LEATHER.value(), ArmorItem.Type.CHESTPLATE, new Item.Properties()));
     public static final RegistrySupplier<Item> STYLIN_PURPLE_HAT = registerItem("stylin_purple_hat", () -> new StylinPurpleHatItem(ArmorMaterialRegistry.STYLIN_HAT.value(), ArmorItem.Type.HELMET, getSettings().rarity(Rarity.RARE), WilderNature.identifier("textures/models/armor/stylin_purple_hat.png")));
-
     public static final RegistrySupplier<Item> FISH_OIL = registerItem("fish_oil", () -> new Item(getSettings().stacksTo(16)));
     public static final RegistrySupplier<Item> LOOT_BAG = registerItem("loot_bag", () -> new LootBagItem(getSettings().rarity(Rarity.COMMON)));
     public static final RegistrySupplier<Item> BISON_HORN = registerItem("bison_horn", () -> new BisonHornItem(new Item.Properties().stacksTo(1), SoundEventRegistry.BISON_HORN.get()));
-    public static final RegistrySupplier<Item> FIELD_GUIDE = registerItem("field_guide", () -> new FieldGuideItem(getSettings()));
+    public static final RegistrySupplier<Item> FIELD_GUIDE = registerItem("field_guide", () -> new FieldGuideItem(getSettings().rarity(Rarity.UNCOMMON)));
     public static final RegistrySupplier<Item> FIELD_NOTES = registerItem("field_notes", () -> new ContractItem(getSettings().rarity(Rarity.UNCOMMON)));
     public static final RegistrySupplier<Item> PATHFINDERS_CALL = registerItem("pathfinders_call", () -> new ContractItem(getSettings().rarity(Rarity.UNCOMMON)));
     public static final RegistrySupplier<Item> PROVISION_REQUEST = registerItem("provision_request", () -> new ContractItem(getSettings().rarity(Rarity.UNCOMMON)));

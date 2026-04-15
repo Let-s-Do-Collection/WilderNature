@@ -9,6 +9,20 @@ import net.minecraft.world.level.block.Block;
 import net.satisfy.wildernature.WilderNature;
 
 public class TagsRegistry {
+    public static final TagKey<Item> BOAR_FOOD = TagKey.create(Registries.ITEM, WilderNature.identifier("boar_food"));
+    public static final TagKey<Item> BISON_FOOD = TagKey.create(Registries.ITEM, WilderNature.identifier("bison_food"));
+    public static final TagKey<Item> CASSOWARY_FOOD = TagKey.create(Registries.ITEM, WilderNature.identifier("cassowary_food"));
+    public static final TagKey<Item> DEER_FOOD = TagKey.create(Registries.ITEM, WilderNature.identifier("deer_food"));
+    public static final TagKey<Item> ELEPHANT_FOOD = TagKey.create(Registries.ITEM, WilderNature.identifier("elephant_food"));
+    public static final TagKey<Item> GIRAFFE_FOOD = TagKey.create(Registries.ITEM, WilderNature.identifier("giraffe_food"));
+    public static final TagKey<Item> HEDGEHOG_FOOD = TagKey.create(Registries.ITEM, WilderNature.identifier("hedgehog_food"));
+    public static final TagKey<Item> HIPPO_FOOD = TagKey.create(Registries.ITEM, WilderNature.identifier("hippo_food"));
+    public static final TagKey<Item> LION_FOOD = TagKey.create(Registries.ITEM, WilderNature.identifier("lion_food"));
+    public static final TagKey<Item> MINISHEEP_FOOD = TagKey.create(Registries.ITEM, WilderNature.identifier("minisheep_food"));
+    public static final TagKey<Item> RACCOON_FOOD = TagKey.create(Registries.ITEM, WilderNature.identifier("raccoon_food"));
+    public static final TagKey<Item> SWIFT_FOX_FOOD = TagKey.create(Registries.ITEM, WilderNature.identifier("swift_fox_food"));
+    public static final TagKey<Item> TURKEY_FOOD = TagKey.create(Registries.ITEM, WilderNature.identifier("turkey_food"));
+    public static final TagKey<Item> SQUIRREL_FOOD = TagKey.create(Registries.ITEM, WilderNature.identifier("squirrel_food"));
     public static final TagKey<Item> SWIFT_FOX_BRIBE = TagKey.create(Registries.ITEM, WilderNature.identifier("swift_fox_bribe"));
     public static final TagKey<Item> BEAVER_PAYMENT = TagKey.create(Registries.ITEM, WilderNature.identifier("beaver_payment"));
     public static final TagKey<Item> DOG_FOOD = TagKey.create(Registries.ITEM, WilderNature.identifier("dog_food"));

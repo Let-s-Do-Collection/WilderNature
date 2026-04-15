@@ -33,6 +33,7 @@ import net.satisfy.wildernature.core.entity.ai.goal.FollowParentAtDistanceGoal;
 import net.satisfy.wildernature.core.entity.ai.goal.animal.LionGoals;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundEventRegistry;
+import net.satisfy.wildernature.core.registry.TagsRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -685,7 +686,7 @@ public class LionEntity extends Animal {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(Items.BEEF);
+        return stack.is(TagsRegistry.LION_FOOD);
     }
 
     @Override

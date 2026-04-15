@@ -1,0 +1,14 @@
+{
+  "entity": "minecraft:armadillo",
+  "ambient_sound": "minecraft:entity.armadillo.ambient",
+  "friendly": true,
+  "neutral": false,
+  "defensive": false,
+  "tameable": false,
+  "food": "",
+  "spawn": {
+    "biomes": [
+      "minecraft:savanna"
+    ]
+  }
+}

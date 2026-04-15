@@ -50,6 +50,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.wildernature.core.entity.ai.goal.animal.MiniSheepGoal;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
+import net.satisfy.wildernature.core.registry.TagsRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -118,7 +119,7 @@ public class MiniSheepEntity extends Animal implements Shearable {
                 return !MiniSheepEntity.this.isMiniSheepSleeping() && !MiniSheepEntity.this.isFleeing() && !MiniSheepEntity.this.isMaehAnimating() && super.canContinueToUse();
             }
         });
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1.1D, Ingredient.of(Items.WHEAT), false) {
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.1D, Ingredient.of(TagsRegistry.MINISHEEP_FOOD), false) {
             @Override
             public boolean canUse() {
                 return !MiniSheepEntity.this.isMiniSheepSleeping() && !MiniSheepEntity.this.isFleeing() && !MiniSheepEntity.this.isMaehAnimating() && super.canUse();
@@ -823,6 +824,6 @@ public class MiniSheepEntity extends Animal implements Shearable {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(Items.WHEAT);
+        return stack.is(TagsRegistry.MINISHEEP_FOOD);
     }
 }

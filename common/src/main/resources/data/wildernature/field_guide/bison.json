@@ -1,9 +1,11 @@
 {
   "entity": "wildernature:bison",
+  "ambient_sound": "wildernature:bison_ambient",
   "friendly": false,
   "neutral": false,
   "defensive": true,
   "tameable": false,
+  "food": "#wildernature:bison_food",
   "spawn": {
     "biomes": [
       "minecraft:savanna"

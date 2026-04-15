@@ -55,15 +55,12 @@ import net.satisfy.wildernature.core.entity.ai.goal.CacheEatGoal;
 import net.satisfy.wildernature.core.entity.ai.goal.CacheStoreGoal;
 import net.satisfy.wildernature.core.entity.ai.goal.animal.RaccoonGoals;
 import net.satisfy.wildernature.core.entity.animal.tameable.DogEntity;
-import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
-import net.satisfy.wildernature.core.registry.ObjectRegistry;
-import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
-import net.satisfy.wildernature.core.registry.SoundEventRegistry;
+import net.satisfy.wildernature.core.registry.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class RaccoonEntity extends Animal implements CacheStoringMob, ShelteringMob, CacheEatingMob {
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.APPLE, Items.BEETROOT, Items.SWEET_BERRIES, Items.POTATO, Items.COOKED_COD, Items.COOKED_SALMON, Items.CARROT);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(TagsRegistry.RACCOON_FOOD);
     private static final EntityDataAccessor<Integer> DATA_FLAGS_ID = SynchedEntityData.defineId(RaccoonEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_SLEEPING = SynchedEntityData.defineId(RaccoonEntity.class, EntityDataSerializers.BOOLEAN);
 
@@ -287,7 +284,7 @@ public class RaccoonEntity extends Animal implements CacheStoringMob, Sheltering
 
     @Override
     public boolean isFood(ItemStack itemStack) {
-        return FOOD_ITEMS.test(itemStack);
+        return itemStack.is(TagsRegistry.RACCOON_FOOD);
     }
 
     @Override

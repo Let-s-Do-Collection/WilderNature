@@ -49,6 +49,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ScorpionEntity extends TamableAnimal {
+    
     public static final int POISON_DURATION = 200;
     public static final double AGGRO_RADIUS = 4.0D;
     public static final int BURROW_COOLDOWN_MIN = 200;

@@ -1,14 +1,16 @@
 {
   "entity": "wildernature:boar",
+  "ambient_sound": "wildernature:boar_ambient",
   "friendly": true,
   "neutral": false,
   "defensive": false,
   "tameable": false,
+  "food": "#wildernature:boar_food",
   "spawn": {
     "biomes": [
       "minecraft:savanna",
       "minecraft:taiga",
-      "minecraft:plains"
+      "minecraft:forest"
     ]
   }
 }

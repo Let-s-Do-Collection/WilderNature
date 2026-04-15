@@ -1,8 +1,6 @@
 package net.satisfy.wildernature.client.gui.screen;
 
 import com.mojang.math.Axis;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -14,14 +12,17 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.util.WilderNatureClientUtil;
 import net.satisfy.wildernature.core.fieldguide.FieldGuideEntry;
 import net.satisfy.wildernature.core.gui.handler.FieldGuideMenu;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
     private static final ResourceLocation TEXTURE = ResourceLocation.parse("wildernature:textures/gui/field_guide/field_guide.png");
@@ -38,18 +39,29 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
     private static final ResourceLocation PAGE_BACKWARD_HIGHLIGHTED_TEXTURE = WilderNature.identifier("textures/gui/widgets/page_backward_highlighted.png");
     private static final ResourceLocation TAMEABLE_TEXTURE = WilderNature.identifier("textures/gui/icons/tameable.png");
     private static final ResourceLocation NOT_TAMEABLE_TEXTURE = WilderNature.identifier("textures/gui/icons/not_tameable.png");
+    private static final ResourceLocation NOT_BREEDABLE_TEXTURE = WilderNature.identifier("textures/gui/icons/not_breedable.png");
 
     private static final int TEXTURE_WIDTH = 316;
     private static final int TEXTURE_HEIGHT = 190;
 
-    private static final int TRAIT_ICON_WIDTH = 11;
-    private static final int TRAIT_ICON_HEIGHT = 11;
+    private static final int TRAIT_ICON_WIDTH = 12;
+    private static final int TRAIT_ICON_HEIGHT = 12;
     private static final int BIOME_ICON_SIZE = 16;
+    private static final int FOOD_ICON_SIZE = 16;
 
     private static final int LEFT_TAMEABLE_ICON_X = 120;
     private static final int RIGHT_TAMEABLE_ICON_X = 270;
     private static final int TAMEABLE_ICON_Y = 118;
     private static final float TAMEABLE_ICON_ALPHA = 0.65F;
+
+    private static final int TAMEABLE_ICON_WIDTH = 11;
+    private static final int TAMEABLE_ICON_HEIGHT = 11;
+    private static final int FOOD_ICON_WIDTH = 11;
+    private static final int FOOD_ICON_HEIGHT = 11;
+
+    private static final int LEFT_FOOD_ICON_X = 106;
+    private static final int RIGHT_FOOD_ICON_X = 256;
+    private static final int FOOD_ICON_Y = 118;
 
     private static final int LEFT_ENTRY_FRIENDLY_ICON_X = 37;
     private static final int RIGHT_ENTRY_FRIENDLY_ICON_X = 187;
@@ -221,6 +233,7 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
         int healthAreaX = this.leftPos + (leftPage ? LEFT_HEALTH_AREA_X : RIGHT_HEALTH_AREA_X);
         int titleFieldX = this.leftPos + (leftPage ? LEFT_TITLE_FIELD_X : RIGHT_TITLE_FIELD_X);
         int tameableIconX = this.leftPos + (leftPage ? LEFT_TAMEABLE_ICON_X : RIGHT_TAMEABLE_ICON_X);
+        int foodIconX = this.leftPos + (leftPage ? LEFT_FOOD_ICON_X : RIGHT_FOOD_ICON_X);
         int[] biomeSlots = leftPage ? LEFT_BIOME_SLOTS : RIGHT_BIOME_SLOTS;
 
         this.renderEntityPreview(guiGraphics, entry, mouseX, mouseY, entityPreviewX, this.topPos + ENTITY_PREVIEW_Y, leftPage);
@@ -230,13 +243,34 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
         this.renderHealth(guiGraphics, entry, healthAreaX, this.topPos + HEALTH_AREA_Y);
         this.renderTitle(guiGraphics, entry, titleFieldX, this.topPos + TITLE_FIELD_Y);
         this.renderTameableIcon(guiGraphics, entry, tameableIconX, this.topPos + TAMEABLE_ICON_Y);
+        this.renderFoodIcon(guiGraphics, entry, foodIconX, this.topPos + FOOD_ICON_Y);
         this.renderBiomeIcons(guiGraphics, entry, biomeSlots);
     }
 
     private void renderTameableIcon(GuiGraphics guiGraphics, FieldGuideEntry entry, int iconX, int iconY) {
         ResourceLocation texture = entry.tameable() ? TAMEABLE_TEXTURE : NOT_TAMEABLE_TEXTURE;
         guiGraphics.setColor(1.0F, 1.0F, 1.0F, TAMEABLE_ICON_ALPHA);
-        guiGraphics.blit(texture, iconX, iconY, 0, 0, TRAIT_ICON_WIDTH, TRAIT_ICON_HEIGHT, TRAIT_ICON_WIDTH, TRAIT_ICON_HEIGHT);
+        guiGraphics.blit(texture, iconX, iconY, 0, 0, TAMEABLE_ICON_WIDTH, TAMEABLE_ICON_HEIGHT, TAMEABLE_ICON_WIDTH, TAMEABLE_ICON_HEIGHT);
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    private void renderFoodIcon(GuiGraphics guiGraphics, FieldGuideEntry entry, int iconX, int iconY) {
+        ItemStack foodPreviewStack = WilderNatureClientUtil.getFoodPreviewStack(entry);
+        ResourceLocation texture = foodPreviewStack.isEmpty() ? NOT_BREEDABLE_TEXTURE : null;
+
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, TAMEABLE_ICON_ALPHA);
+
+        if (texture != null) {
+            guiGraphics.blit(texture, iconX, iconY, 0, 0, FOOD_ICON_WIDTH, FOOD_ICON_HEIGHT, FOOD_ICON_WIDTH, FOOD_ICON_HEIGHT);
+        } else {
+            float scale = (float) FOOD_ICON_WIDTH / 16.0F;
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(iconX, iconY, 0.0F);
+            guiGraphics.pose().scale(scale, scale, 1.0F);
+            guiGraphics.renderItem(foodPreviewStack, 0, 0);
+            guiGraphics.pose().popPose();
+        }
+
         guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
@@ -275,6 +309,7 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
         int defensiveIconX = this.leftPos + (leftPage ? LEFT_ENTRY_DEFENSIVE_ICON_X : RIGHT_ENTRY_DEFENSIVE_ICON_X);
         int healthAreaX = this.leftPos + (leftPage ? LEFT_HEALTH_AREA_X : RIGHT_HEALTH_AREA_X);
         int tameableIconX = this.leftPos + (leftPage ? LEFT_TAMEABLE_ICON_X : RIGHT_TAMEABLE_ICON_X);
+        int foodIconX = this.leftPos + (leftPage ? LEFT_FOOD_ICON_X : RIGHT_FOOD_ICON_X);
         Component entityName = BuiltInRegistries.ENTITY_TYPE.get(entry.entityId()).getDescription();
 
         if (entry.friendly() && this.isPointInside(mouseX, mouseY, friendlyIconX, this.topPos + ENTRY_FRIENDLY_ICON_Y, TRAIT_ICON_WIDTH, TRAIT_ICON_HEIGHT)) {
@@ -292,9 +327,17 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
             return true;
         }
 
-        if (this.isPointInside(mouseX, mouseY, tameableIconX, this.topPos + TAMEABLE_ICON_Y, TRAIT_ICON_WIDTH, TRAIT_ICON_HEIGHT)) {
+        if (this.isPointInside(mouseX, mouseY, tameableIconX, this.topPos + TAMEABLE_ICON_Y, TAMEABLE_ICON_WIDTH, TAMEABLE_ICON_HEIGHT)) {
             guiGraphics.renderTooltip(this.font, Component.translatable(entry.tameable() ? "tooltip.wildernature.tameable" : "tooltip.wildernature.not_tameable", entityName), mouseX, mouseY);
             return true;
+        }
+
+        if (this.isPointInside(mouseX, mouseY, foodIconX, this.topPos + FOOD_ICON_Y, FOOD_ICON_WIDTH, FOOD_ICON_HEIGHT)) {
+            Component foodTooltip = WilderNatureClientUtil.getFoodTooltip(entry);
+            if (foodTooltip != null) {
+                guiGraphics.renderTooltip(this.font, foodTooltip, mouseX, mouseY);
+                return true;
+            }
         }
 
         if (this.isPointInside(mouseX, mouseY, healthAreaX, this.topPos + HEALTH_AREA_Y, HEALTH_AREA_WIDTH, HEALTH_AREA_HEIGHT)) {

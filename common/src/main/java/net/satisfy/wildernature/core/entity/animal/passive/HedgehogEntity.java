@@ -57,10 +57,7 @@ import net.satisfy.wildernature.core.entity.ai.goal.RandomActionGoal;
 import net.satisfy.wildernature.core.entity.animal.neutral.SwiftFoxEntity;
 import net.satisfy.wildernature.core.entity.animal.defensive.BisonEntity;
 import net.satisfy.wildernature.core.entity.animal.defensive.CassowaryEntity;
-import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
-import net.satisfy.wildernature.core.registry.ObjectRegistry;
-import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
-import net.satisfy.wildernature.core.registry.SoundEventRegistry;
+import net.satisfy.wildernature.core.registry.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -727,7 +724,7 @@ public class HedgehogEntity extends Animal implements CacheEatingMob {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(Items.RED_MUSHROOM) || stack.is(Items.BROWN_MUSHROOM);
+        return stack.is(TagsRegistry.HEDGEHOG_FOOD);
     }
 
     @Override

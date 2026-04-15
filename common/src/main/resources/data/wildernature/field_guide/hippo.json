@@ -1,9 +1,11 @@
 {
   "entity": "wildernature:hippo",
+  "ambient_sound": "wildernature:hippo_ambient",
   "friendly": false,
   "neutral": false,
   "defensive": true,
   "tameable": false,
+  "food": "#wildernature:hippo_food",
   "spawn": {
     "biomes": [
       "minecraft:river"

@@ -53,15 +53,12 @@ import net.satisfy.wildernature.core.entity.ai.behavior.CacheEatingMob;
 import net.satisfy.wildernature.core.entity.ai.goal.animal.BoarRootingGoal;
 import net.satisfy.wildernature.core.entity.ai.goal.CacheEatGoal;
 import net.satisfy.wildernature.core.entity.ai.goal.EatFromBlockGoal;
-import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
-import net.satisfy.wildernature.core.registry.ObjectRegistry;
-import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
-import net.satisfy.wildernature.core.registry.SoundEventRegistry;
+import net.satisfy.wildernature.core.registry.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BoarEntity extends Animal implements CacheEatingMob {
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.BEEF, Items.CHICKEN, Items.BEETROOT, Items.SWEET_BERRIES, Items.POTATO, Items.COOKED_COD, Items.COOKED_SALMON, Items.CARROT);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(TagsRegistry.BOAR_FOOD);
     private static final ResourceKey<LootTable> ROOTING_LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE, WilderNature.identifier("gameplay/boar_rooting"));
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(BoarEntity.class, EntityDataSerializers.BOOLEAN);
 

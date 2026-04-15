@@ -38,6 +38,7 @@ import net.satisfy.wildernature.core.entity.ai.goal.animal.HippoGoals;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import net.satisfy.wildernature.core.registry.SoundEventRegistry;
+import net.satisfy.wildernature.core.registry.TagsRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -610,7 +611,7 @@ public class HippoEntity extends Animal {
 
     @Override
     public boolean isFood(ItemStack itemStack) {
-        return this.isAcceptedFood(itemStack.getItem());
+        return itemStack.is(TagsRegistry.HIPPO_FOOD);
     }
 
     private boolean isAcceptedFood(Item item) {

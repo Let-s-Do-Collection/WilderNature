@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class SquirrelEntity extends Animal implements CacheStoringMob, ShelteringMob, CacheEatingMob {
+
     private static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(SquirrelEntity.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Integer> DATA_TRUST_LEVEL = SynchedEntityData.defineId(SquirrelEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_DELIVERING_GIFT = SynchedEntityData.defineId(SquirrelEntity.class, EntityDataSerializers.BOOLEAN);
@@ -244,7 +245,7 @@ public class SquirrelEntity extends Animal implements CacheStoringMob, Shelterin
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(ObjectRegistry.HAZELNUT.get());
+        return stack.is(TagsRegistry.SQUIRREL_FOOD);
     }
 
     public int getTrustLevel() {

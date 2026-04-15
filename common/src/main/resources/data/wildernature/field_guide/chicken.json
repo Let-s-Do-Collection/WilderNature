@@ -1,0 +1,14 @@
+{
+  "entity": "minecraft:chicken",
+  "ambient_sound": "minecraft:entity.chicken.ambient",
+  "friendly": true,
+  "neutral": false,
+  "defensive": false,
+  "tameable": false,
+  "food": "#minecraft:chicken_food",
+  "spawn": {
+    "biomes": [
+      "minecraft:plains"
+    ]
+  }
+}

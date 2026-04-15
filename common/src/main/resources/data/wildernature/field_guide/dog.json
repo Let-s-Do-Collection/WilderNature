@@ -1,9 +1,11 @@
 {
   "entity": "wildernature:dog",
+  "ambient_sound": "wildernature:dog_ambient",
   "friendly": true,
   "neutral": true,
   "defensive": true,
   "tameable": true,
+  "food": "#wildernature:dog_food",
   "spawn": {
     "biomes": [
       "minecraft:plains"

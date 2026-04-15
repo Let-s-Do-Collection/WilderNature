@@ -1,0 +1,18 @@
+{
+  "entity": "minecraft:bee",
+  "ambient_sound": "minecraft:entity.bee.loop",
+  "friendly": false,
+  "neutral": false,
+  "defensive": true,
+  "tameable": false,
+  "food": "#minecraft:bee_food",
+  "spawn": {
+    "biomes": [
+      "minecraft:meadow",
+      "minecraft:plains",
+      "minecraft:sunflower_plains",
+      "minecraft:forest",
+      "minecraft:birch_forest"
+    ]
+  }
+}

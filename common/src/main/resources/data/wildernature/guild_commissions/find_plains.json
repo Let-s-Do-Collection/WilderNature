@@ -1,0 +1,21 @@
+{
+  "id": "find_plains",
+  "enabled": true,
+  "title": "guild.wildernature.welcome_to_wildernature.title",
+  "description": "guild.wildernature.welcome_to_wildernature.desc",
+  "type": "explore",
+  "target": "minecraft:plains",
+  "amount": 1,
+  "allow_peaceful": true,
+  "icon": {
+    "type": "item",
+    "value": "wildernature:field_guide"
+  },
+  "reward": {
+    "item": "wildernature:field_guide",
+    "count": 1,
+    "xp": 5
+  },
+  "weight": 20,
+  "repeatable": false
+}

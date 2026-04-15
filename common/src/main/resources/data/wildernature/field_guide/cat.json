@@ -1,0 +1,12 @@
+{
+  "entity": "minecraft:cat",
+  "ambient_sound": "minecraft:entity.cat.ambient",
+  "friendly": true,
+  "neutral": false,
+  "defensive": false,
+  "tameable": true,
+  "food": "#minecraft:cat_food",
+  "spawn": {
+    "biomes": []
+  }
+}

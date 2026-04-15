@@ -1,0 +1,18 @@
+{
+  "entity": "minecraft:cow",
+  "ambient_sound": "minecraft:entity.cow.ambient",
+  "friendly": true,
+  "neutral": false,
+  "defensive": false,
+  "tameable": false,
+  "food": "#minecraft:cow_food",
+  "spawn": {
+    "biomes": [
+      "minecraft:plains",
+      "minecraft:forest",
+      "minecraft:dark_forest",
+      "minecraft:taiga",
+      "minecraft:meadow"
+    ]
+  }
+}

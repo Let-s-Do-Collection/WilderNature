@@ -5,6 +5,7 @@
   "neutral": false,
   "defensive": false,
   "tameable": false,
+  "food": "minecraft:stick",
   "spawn": {
     "biomes": [
       "minecraft:river"

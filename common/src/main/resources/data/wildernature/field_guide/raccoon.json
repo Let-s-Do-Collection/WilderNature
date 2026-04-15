@@ -1,14 +1,16 @@
 {
   "entity": "wildernature:raccoon",
+  "ambient_sound": "wildernature:raccoon_ambient",
   "friendly": false,
   "neutral": true,
   "defensive": false,
   "tameable": false,
+  "food": "#wildernature:raccoon_food",
   "spawn": {
     "biomes": [
-      "minecraft:plains",
-      "minecraft:sunflower_plains",
-      "minecraft:forest"
+      "minecraft:forest",
+      "minecraft:taiga",
+      "minecraft:plains"
     ]
   }
 }
