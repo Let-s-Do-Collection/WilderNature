@@ -17,6 +17,7 @@ import net.satisfy.wildernature.core.entity.animal.passive.HedgehogEntity;
 import net.satisfy.wildernature.core.entity.animal.passive.TermiteEntity;
 import net.satisfy.wildernature.core.entity.animal.tameable.DogEntity;
 import net.satisfy.wildernature.core.entity.animal.tameable.ScorpionEntity;
+import net.satisfy.wildernature.core.entity.fx.GlowingBlock;
 import net.satisfy.wildernature.core.entity.projectile.BulletEntity;
 import net.satisfy.wildernature.core.entity.projectile.ThrownBoneEntity;
 import net.satisfy.wildernature.core.entity.projectile.ThrownTurkeyEgg;
@@ -34,6 +35,7 @@ public class EntityTypeRegistry {
     public static final RegistrySupplier<BlockEntityType<TermiteMoundBlockEntity>> TERMITE_MOUND_BLOCK_ENTITY = createBlockEntity("termite_mound", () -> BlockEntityType.Builder.of(TermiteMoundBlockEntity::new, ObjectRegistry.TERMITE_MOUND.get()).build(null));
     public static final RegistrySupplier<BlockEntityType<RottenLogBlockEntity>> ROTTEN_LOG_BLOCK_ENTITY = createBlockEntity("rotten_log", () -> BlockEntityType.Builder.of(RottenLogBlockEntity::new, ObjectRegistry.ROTTEN_LOG.get()).build(null));
 
+    public static final RegistrySupplier<EntityType<GlowingBlock>> GLOWING_BLOCK = createEntity("glowing_block", () -> EntityType.Builder.of(GlowingBlock::new, MobCategory.MISC).sized(1.0f, 1.0f).clientTrackingRange(64).build(WilderNature.identifier("glowing_block").toString()));
     public static final RegistrySupplier<EntityType<TermiteEntity>> TERMITE = createEntity("termite", () -> EntityType.Builder.of(TermiteEntity::new, MobCategory.CREATURE).sized(0.2f, 0.2f).build(WilderNature.identifier("termite").toString()));
     public static final RegistrySupplier<EntityType<BeaverEntity>> BEAVER = createEntity("beaver", () -> EntityType.Builder.of(BeaverEntity::new, MobCategory.CREATURE).sized(0.6f, 0.5f).build(WilderNature.identifier("beaver").toString()));
     public static final RegistrySupplier<EntityType<HippoEntity>> HIPPO = createEntity("hippo", () -> EntityType.Builder.of(HippoEntity::new, MobCategory.CREATURE).sized(2f, 2.4f).build(WilderNature.identifier("hippo").toString()));

@@ -3,6 +3,168 @@
   "values": [
     "minecraft:chest",
     "minecraft:ender_chest",
-    "minecraft:barrel"
+    "minecraft:barrel",
+    "minecraft:trapped_chest",
+    "minecraft:spawner",
+    "minecraft:crafting_table",
+    "wildernature:termite_mound_storage",
+    "wildernature:burrow",
+    "wildernature:hollow_cache",
+    {
+      "id": "farm_and_charm:stove",
+      "required": false
+    },
+    {
+      "id": "farm_and_charm:cooking_pot",
+      "required": false
+    },
+    {
+      "id": "farm_and_charm:roaster",
+      "required": false
+    },
+    {
+      "id": "farm_and_charm:mincer",
+      "required": false
+    },
+    {
+      "id": "farm_and_charm:crafting_bowl",
+      "required": false
+    },
+    {
+      "id": "farm_and_charm:silo_copper",
+      "required": false
+    },
+    {
+      "id": "farm_and_charm:feeding_trough",
+      "required": false
+    },
+    {
+      "id": "farm_and_charm:water_trough",
+      "required": false
+    },
+    {
+      "id": "farm_and_charm:pet_bowl",
+      "required": false
+    },
+    {
+      "id": "farm_and_charm:chicken_coop",
+      "required": false
+    },
+    {
+      "id": "farm_and_charm:chicken_nest",
+      "required": false
+    },
+    {
+      "id": "farm_and_charm:tool_rack",
+      "required": false
+    },
+    {
+      "id": "bakery:baker_station",
+      "required": false
+    },
+    {
+      "id": "bakery:small_cooking_pot",
+      "required": false
+    },
+    {
+      "id": "bakery:kitchen_sink",
+      "required": false
+    },
+    {
+      "id": "bakery:cabinet",
+      "required": false
+    },
+    {
+      "id": "bakery:drawer",
+      "required": false
+    },
+    {
+      "id": "bakery:wall_cabinet",
+      "required": false
+    },
+    {
+      "id": "vinery:grapevine_pot",
+      "required": false
+    },
+    {
+      "id": "vinery:fermentation_barrel",
+      "required": false
+    },
+    {
+      "id": "vinery:apple_press",
+      "required": false
+    },
+    {
+      "id": "vinery:wine_box",
+      "required": false
+    },
+    {
+      "id": "candlelight:cooking_pot",
+      "required": false
+    },
+    {
+      "id": "candlelight:cooking_pan",
+      "required": false
+    },
+    {
+      "id": "candlelight:drawer",
+      "required": false
+    },
+    {
+      "id": "candlelight:cabinet",
+      "required": false
+    },
+    {
+      "id": "candlelight:kitchen_sink",
+      "required": false
+    },
+    {
+      "id": "meadow:cookpot",
+      "required": false
+    },
+    {
+      "id": "meadow:cooking_frame",
+      "required": false
+    },
+    {
+      "id": "meadow:fondue_pot",
+      "required": false
+    },
+    {
+      "id": "meadow:cheese_form",
+      "required": false
+    },
+    {
+      "id": "meadow:woodcutter",
+      "required": false
+    },
+    {
+      "id": "meadow:pine_wardrobe",
+      "required": false
+    },
+    {
+      "id": "meadow:pine_cabinet",
+      "required": false
+    },
+    {
+      "id": "meadow:pine_wall_cabinet",
+      "required": false
+    },
+    {
+      "id": "brewery:cabinet",
+      "required": false
+    },
+    {
+      "id": "brewery:drawer",
+      "required": false
+    },
+    {
+      "id": "brewery:sideboard",
+      "required": false
+    },
+    {
+      "id": "brewery:wall_cabinet",
+      "required": false
+    }
   ]
 }

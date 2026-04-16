@@ -19,6 +19,7 @@ import net.satisfy.wildernature.client.gui.screen.BountyBoardScreen;
 import net.satisfy.wildernature.client.gui.screen.FieldGuideScreen;
 import net.satisfy.wildernature.client.model.armor.StylinPurpleHatModel;
 import net.satisfy.wildernature.client.model.block.BountyBoardModel;
+import net.satisfy.wildernature.client.model.block.GlowingBlockModel;
 import net.satisfy.wildernature.client.model.block.HollowCacheModel;
 import net.satisfy.wildernature.client.model.entity.model.*;
 import net.satisfy.wildernature.client.particle.*;
@@ -81,6 +82,7 @@ public class WilderNatureClient {
     }
 
     public static void registerEntityRenderers() {
+        EntityRendererRegistry.register(GLOWING_BLOCK, GlowingBlockRenderer::new);
         EntityRendererRegistry.register(ELEPHANT, ElephantRenderer::new);
         EntityRendererRegistry.register(HIPPO, HippoRenderer::new);
         EntityRendererRegistry.register(GIRAFFE, GiraffeRenderer::new);
@@ -132,5 +134,6 @@ public class WilderNatureClient {
         EntityModelLayerRegistry.register(TurkeyModel.LAYER_LOCATION, TurkeyModel::getTexturedModelData);
         EntityModelLayerRegistry.register(ScorpionModel.LAYER_LOCATION, ScorpionModel::getTexturedModelData);
         EntityModelLayerRegistry.register(HollowCacheModel.LAYER_LOCATION, HollowCacheModel::getTexturedModelData);
+        EntityModelLayerRegistry.register(GlowingBlockModel.LAYER_LOCATION, GlowingBlockModel::getTexturedModelData);
     }
 }
