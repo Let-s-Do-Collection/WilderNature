@@ -5,6 +5,7 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 **Fixed**
 * Idle animations for most entities are now much smoother and more natural
 * Hazelnut Bushes no longer turn into Sweetberry Bushes when bone mealed
+* Improved wolf fur cloak animation and crouch alignment
 
 **Changed**
 * Recolored Hazelnut Bushes

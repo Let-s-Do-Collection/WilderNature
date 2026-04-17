@@ -17,7 +17,6 @@ import net.satisfy.wildernature.fabric.core.player.model.WolfFurChestplateModel;
 import org.jetbrains.annotations.NotNull;
 
 public class WolfFurChestplateLayer<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {
-
     private final WolfFurChestplateModel<T> model;
 
     public WolfFurChestplateLayer(RenderLayerParent<T, M> renderLayerParent) {
@@ -26,25 +25,24 @@ public class WolfFurChestplateLayer<T extends LivingEntity, M extends HumanoidMo
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int i, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (entity instanceof Player player) {
-            ItemStack chestItem = player.getInventory().armor.get(2);
-            boolean hasFurCloakTrinket = FurCloakTrinket.isEquippedBy(player);
-
-            boolean chestSlotEmpty = chestItem.isEmpty();
-            boolean chestSlotHasFurCloak = chestItem.getItem() instanceof FurCloakItem;
-
-            boolean shouldRender = (hasFurCloakTrinket && chestSlotEmpty) || chestSlotHasFurCloak;
-
-            if (shouldRender) {
-                this.model.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-
-                poseStack.pushPose();
-                poseStack.translate(0.0d, 0.0d, 0.0d);
-                renderColoredCutoutModel(this.model, getTextureLocation(entity), poseStack, multiBufferSource, i, entity, 1);
-                poseStack.popPose();
-            }
+    public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+        if (!(entity instanceof Player player)) {
+            return;
         }
+
+        ItemStack chestItem = player.getInventory().armor.get(2);
+        boolean hasFurCloakTrinket = FurCloakTrinket.isEquippedBy(player);
+        boolean chestSlotEmpty = chestItem.isEmpty();
+        boolean chestSlotHasFurCloak = chestItem.getItem() instanceof FurCloakItem;
+        boolean shouldRender = (hasFurCloakTrinket && chestSlotEmpty) || chestSlotHasFurCloak;
+
+        if (!shouldRender) {
+            return;
+        }
+
+        this.model.syncToBody(this.getParentModel().body, player.isCrouching());
+        this.model.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        renderColoredCutoutModel(this.model, getTextureLocation(entity), poseStack, multiBufferSource, packedLight, entity, -1);
     }
 
     @Override

@@ -35,39 +35,11 @@
       "required": false
     },
     {
-      "id": "farm_and_charm:feeding_trough",
-      "required": false
-    },
-    {
-      "id": "farm_and_charm:water_trough",
-      "required": false
-    },
-    {
-      "id": "farm_and_charm:pet_bowl",
-      "required": false
-    },
-    {
-      "id": "farm_and_charm:chicken_coop",
-      "required": false
-    },
-    {
-      "id": "farm_and_charm:chicken_nest",
-      "required": false
-    },
-    {
-      "id": "farm_and_charm:tool_rack",
-      "required": false
-    },
-    {
       "id": "bakery:baker_station",
       "required": false
     },
     {
       "id": "bakery:small_cooking_pot",
-      "required": false
-    },
-    {
-      "id": "bakery:kitchen_sink",
       "required": false
     },
     {
@@ -95,10 +67,6 @@
       "required": false
     },
     {
-      "id": "vinery:wine_box",
-      "required": false
-    },
-    {
       "id": "candlelight:cooking_pot",
       "required": false
     },
@@ -112,10 +80,6 @@
     },
     {
       "id": "candlelight:cabinet",
-      "required": false
-    },
-    {
-      "id": "candlelight:kitchen_sink",
       "required": false
     },
     {
