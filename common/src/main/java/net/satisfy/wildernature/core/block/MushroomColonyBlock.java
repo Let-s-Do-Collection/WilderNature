@@ -12,12 +12,16 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biomes;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -27,8 +31,11 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.function.Function;
+
 public class MushroomColonyBlock extends BushBlock implements BonemealableBlock {
-    public static final MapCodec<MushroomColonyBlock> CODEC = simpleCodec(MushroomColonyBlock::new);
+    public static final MapCodec<MushroomColonyBlock> CODEC = simpleCodec(properties -> new MushroomColonyBlock(properties, randomSource -> List.of()));
     public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 4);
     public static final IntegerProperty COLONY_AGE = AGE;
 
@@ -40,8 +47,11 @@ public class MushroomColonyBlock extends BushBlock implements BonemealableBlock 
             Block.box(2.0D, 0.0D, 2.0D, 14.0D, 7.0D, 14.0D)
     };
 
-    public MushroomColonyBlock(BlockBehaviour.Properties properties) {
+    private final Function<RandomSource, List<ItemStack>> harvestDropFunction;
+
+    public MushroomColonyBlock(BlockBehaviour.Properties properties, Function<RandomSource, List<ItemStack>> harvestDropFunction) {
         super(properties.noCollission().instabreak().sound(SoundType.CROP).randomTicks());
+        this.harvestDropFunction = harvestDropFunction;
         this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0));
     }
 
@@ -106,12 +116,10 @@ public class MushroomColonyBlock extends BushBlock implements BonemealableBlock 
         }
 
         if (!level.isClientSide) {
-            int brownCount = 1 + level.random.nextInt(2);
-            int redCount = level.random.nextInt(3) == 0 ? 1 : 0;
-
-            popResource(level, pos, new ItemStack(Items.BROWN_MUSHROOM, brownCount));
-            if (redCount > 0) {
-                popResource(level, pos, new ItemStack(Items.RED_MUSHROOM, redCount));
+            for (ItemStack dropStack : this.harvestDropFunction.apply(level.random)) {
+                if (!dropStack.isEmpty()) {
+                    popResource(level, pos, dropStack.copy());
+                }
             }
 
             level.setBlock(pos, state.setValue(AGE, 2), 2);

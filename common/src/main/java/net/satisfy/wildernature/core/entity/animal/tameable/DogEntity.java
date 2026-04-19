@@ -403,7 +403,7 @@ public class DogEntity extends TamableAnimal {
     }
 
     private boolean shouldCancelRest() {
-        return this.isOrderedToSit()
+        if (this.isOrderedToSit()
                 || this.isAttacking()
                 || this.isFetching()
                 || this.isPanicking()
@@ -413,7 +413,19 @@ public class DogEntity extends TamableAnimal {
                 || !this.onGround()
                 || !this.getNavigation().isDone()
                 || this.getDeltaMovement().horizontalDistanceSqr() > 0.01D
-                || this.isDigging();
+                || this.isDigging()) {
+            return true;
+        }
+
+        if (this.isTame()) {
+            LivingEntity owner = this.getOwner();
+            if (owner == null) {
+                return true;
+            }
+            return this.distanceToSqr(owner) > OWNER_REST_RANGE * OWNER_REST_RANGE;
+        }
+
+        return false;
     }
 
     private void startLying() {

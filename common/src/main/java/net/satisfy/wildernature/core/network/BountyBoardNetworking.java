@@ -67,6 +67,7 @@ public final class BountyBoardNetworking {
             int activeRequiredKills = buffer.readInt();
             boolean activeCompleted = buffer.readBoolean();
             boolean restoreContractAvailable = buffer.readBoolean();
+            boolean rewardsUnlocked = buffer.readBoolean();
             int abandonedCount = buffer.readInt();
             List<UUID> abandonedBountyIds = new ArrayList<>(abandonedCount);
 
@@ -84,6 +85,7 @@ public final class BountyBoardNetworking {
                             activeRequiredKills,
                             activeCompleted,
                             restoreContractAvailable,
+                            rewardsUnlocked,
                             abandonedBountyIds
                     );
                 }
@@ -115,11 +117,12 @@ public final class BountyBoardNetworking {
                 menu.getActiveRequiredKills(),
                 menu.hasCompletedActiveBounty(),
                 menu.hasRestoreContractAvailable(),
+                menu.areRewardSlotsUnlocked(),
                 new ArrayList<>(menu.getAbandonedBountyIds())
         );
     }
 
-    public static void sendSync(ServerPlayer serverPlayer, int selectedBountyIndex, boolean hasActiveBounty, int activeBountyIndex, int activeProgress, int activeRequiredKills, boolean activeCompleted, boolean restoreContractAvailable, List<UUID> abandonedBountyIds) {
+    public static void sendSync(ServerPlayer serverPlayer, int selectedBountyIndex, boolean hasActiveBounty, int activeBountyIndex, int activeProgress, int activeRequiredKills, boolean activeCompleted, boolean restoreContractAvailable, boolean rewardsUnlocked, List<UUID> abandonedBountyIds) {
         RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), serverPlayer.registryAccess());
         buffer.writeInt(selectedBountyIndex);
         buffer.writeBoolean(hasActiveBounty);
@@ -128,6 +131,7 @@ public final class BountyBoardNetworking {
         buffer.writeInt(activeRequiredKills);
         buffer.writeBoolean(activeCompleted);
         buffer.writeBoolean(restoreContractAvailable);
+        buffer.writeBoolean(rewardsUnlocked);
         buffer.writeInt(abandonedBountyIds.size());
 
         for (UUID abandonedBountyId : abandonedBountyIds) {

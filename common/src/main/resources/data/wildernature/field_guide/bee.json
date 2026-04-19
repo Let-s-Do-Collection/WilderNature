@@ -2,8 +2,8 @@
   "entity": "minecraft:bee",
   "ambient_sound": "minecraft:entity.bee.loop",
   "friendly": false,
-  "neutral": false,
-  "defensive": true,
+  "neutral": true,
+  "defensive": false,
   "tameable": false,
   "food": "#minecraft:bee_food",
   "spawn": {

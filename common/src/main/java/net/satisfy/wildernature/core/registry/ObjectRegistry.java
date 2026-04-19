@@ -20,6 +20,7 @@ import net.satisfy.wildernature.core.block.*;
 import net.satisfy.wildernature.core.item.*;
 import net.satisfy.wildernature.core.util.WilderNatureUtil;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -46,8 +47,8 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> BURROW = registerWithItem("burrow", () -> new BurrowBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK)));
     public static final RegistrySupplier<Block> TERMITE_MOUND_STORAGE = registerWithItem("termite_mound_storage", () -> new BurrowBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK)));
     public static final RegistrySupplier<Block> BEAVER_DAM = registerWithItem("beaver_dam", () -> new BeaverDamBlock(BlockBehaviour.Properties.of().strength(0.3F).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY).instabreak()));
-    public static final RegistrySupplier<Block> BROWN_MUSHROOM_COLONY = registerWithItem("brown_mushroom_colony", () -> new MushroomColonyBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).randomTicks().noCollission().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY)));
-    public static final RegistrySupplier<Block> RED_MUSHROOM_COLONY = registerWithItem("red_mushroom_colony", () -> new MushroomColonyBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).randomTicks().noCollission().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY)));
+    public static final RegistrySupplier<Block> BROWN_MUSHROOM_COLONY = registerWithItem("brown_mushroom_colony", () -> new MushroomColonyBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).randomTicks().noCollission().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY), random -> List.of(new ItemStack(Items.BROWN_MUSHROOM, 2 + random.nextInt(3)))));
+    public static final RegistrySupplier<Block> RED_MUSHROOM_COLONY = registerWithItem("red_mushroom_colony", () -> new MushroomColonyBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).randomTicks().noCollission().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY), random -> List.of(new ItemStack(Items.RED_MUSHROOM, 2 + random.nextInt(3)))));
     public static final RegistrySupplier<Block> ROTTEN_LOG = registerWithItem("rotten_log", () -> new RottenLogBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LOG)));
     public static final RegistrySupplier<Block> TERMITE_MOUND = registerWithItem("termite_mound", () -> new TermiteMoundBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT)));
     public static final RegistrySupplier<Item> BISON_MEAT = registerItem("bison_meat", () -> new Item(getSettings().food(Foods.BEEF)));

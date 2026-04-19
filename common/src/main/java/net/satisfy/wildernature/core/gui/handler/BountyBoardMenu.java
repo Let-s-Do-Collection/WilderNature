@@ -342,24 +342,43 @@ public class BountyBoardMenu extends AbstractContainerMenu {
     }
 
     private void unlockRewardSlots(ServerPlayer serverPlayer) {
+
         Optional<BountyDefinition> activeBounty = this.getActiveBounty();
+
         if (activeBounty.isEmpty()) {
+
             return;
+
         }
 
         ItemStack contractStack = this.contractPreviewContainer.getItem(0);
+
         if (!this.canTurnInActiveContract(contractStack)) {
+
             return;
+
         }
 
+        PlayerBountyData playerBountyData = BountyManager.getPlayerBountyData(serverPlayer);
+
+        playerBountyData.setRewardsUnlocked(true);
+
+        BountyManager.savePlayerBountyData(serverPlayer, playerBountyData);
+
         ItemStack rewardItemStack = new ItemStack(BuiltInRegistries.ITEM.get(activeBounty.get().reward().previewItemId()), activeBounty.get().reward().previewCount());
+
         ItemStack rewardExperienceStack = BountyManager.createExperienceBurstStack(activeBounty.get().reward().experienceReward());
 
         this.rewardContainer.setItem(0, rewardItemStack);
+
         this.rewardContainer.setItem(1, rewardExperienceStack);
+
         this.rewardsUnlocked.set(1);
+
         this.updateActiveData();
+
         this.syncMenuState(serverPlayer);
+
     }
 
     private void tryFinalizeUnlockedRewards() {
@@ -379,6 +398,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
             return;
         }
 
+        serverPlayer.serverLevel().playSound(null, serverPlayer.blockPosition(), SoundEventRegistry.BOUNTY_COMPLETED.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
         this.contractPreviewContainer.setItem(0, ItemStack.EMPTY);
         this.rewardContainer.setItem(0, ItemStack.EMPTY);
         this.rewardContainer.setItem(1, ItemStack.EMPTY);
@@ -398,6 +418,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
                 this.getActiveRequiredKills(),
                 this.hasCompletedActiveBounty(),
                 this.hasRestoreContractAvailable(),
+                this.areRewardSlotsUnlocked(),
                 new ArrayList<>(this.abandonedBountyIds)
         );
     }
@@ -592,7 +613,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
 
         boolean claimed = BountyManager.claimActiveBounty(serverPlayer);
         if (claimed) {
-            serverPlayer.serverLevel().playSound(null, serverPlayer.blockPosition(), SoundEventRegistry.BOUNTY_COMPLETED.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+            serverPlayer.serverLevel().playSound(null, serverPlayer.blockPosition(), SoundEventRegistry.BOUNTY_ACCEPTED.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
             this.selectedBountyIndex = this.findFirstSelectableBountyIndex();
             this.updateActiveData();
             this.syncMenuState(serverPlayer);
@@ -608,65 +629,102 @@ public class BountyBoardMenu extends AbstractContainerMenu {
     }
 
     private void updateActiveData() {
+
         if (this.playerInventory.player instanceof ServerPlayer) {
+
             this.syncAbandonedBountyIds();
+
             PlayerBountyData playerBountyData = this.getPlayerBountyData();
 
             if (!playerBountyData.hasActiveBounty() || playerBountyData.getActiveBounty() == null) {
+
                 this.hasActiveBounty.set(0);
+
                 this.activeBountyIndex.set(-1);
+
                 this.activeProgress.set(0);
+
                 this.activeRequiredKills.set(0);
+
                 this.activeCompleted.set(0);
+
                 this.restoreContractAvailable.set(0);
+
                 this.rewardsUnlocked.set(0);
 
                 if (this.selectedBountyIndex < 0 || this.selectedBountyIndex >= this.bounties.size() || this.isBountyAbandoned(this.bounties.get(this.selectedBountyIndex).id())) {
+
                     this.selectedBountyIndex = this.findFirstSelectableBountyIndex();
+
                 }
 
                 this.updateContractPreviewSlot();
+
                 return;
+
             }
 
             BountyDefinition activeBounty = playerBountyData.getActiveBounty();
+
             int resolvedActiveBountyIndex = -1;
 
             for (int index = 0; index < this.bounties.size(); index++) {
+
                 if (this.bounties.get(index).id().equals(activeBounty.id())) {
+
                     resolvedActiveBountyIndex = index;
+
                     break;
+
                 }
+
             }
 
-            boolean hasInsertedTurnInContract = this.canTurnInActiveContract(this.contractPreviewContainer.getItem(0));
-            boolean rewardsAreUnlocked = !this.rewardContainer.getItem(0).isEmpty() || !this.rewardContainer.getItem(1).isEmpty();
+            boolean rewardsUnlockedPersistent = playerBountyData.areRewardsUnlocked();
 
-            if (playerBountyData.isCompleted() && hasInsertedTurnInContract && !rewardsAreUnlocked) {
+            if (playerBountyData.isCompleted() && rewardsUnlockedPersistent && this.rewardContainer.getItem(0).isEmpty() && this.rewardContainer.getItem(1).isEmpty()) {
+
                 ItemStack rewardItemStack = new ItemStack(BuiltInRegistries.ITEM.get(activeBounty.reward().previewItemId()), activeBounty.reward().previewCount());
+
                 ItemStack rewardExperienceStack = BountyManager.createExperienceBurstStack(activeBounty.reward().experienceReward());
+
                 this.rewardContainer.setItem(0, rewardItemStack);
+
                 this.rewardContainer.setItem(1, rewardExperienceStack);
-                rewardsAreUnlocked = true;
+
             }
 
             this.selectedBountyIndex = resolvedActiveBountyIndex;
+
             this.hasActiveBounty.set(1);
+
             this.activeBountyIndex.set(resolvedActiveBountyIndex);
+
             this.activeProgress.set(playerBountyData.getCurrentProgress());
+
             this.activeRequiredKills.set(activeBounty.requiredAmount());
+
             this.activeCompleted.set(playerBountyData.isCompleted() ? 1 : 0);
-            this.rewardsUnlocked.set(rewardsAreUnlocked ? 1 : 0);
-            this.restoreContractAvailable.set(!playerBountyData.isCompleted() && !rewardsAreUnlocked && !this.hasPlayerContractItem(activeBounty.id()) ? 1 : 0);
+
+            this.rewardsUnlocked.set(rewardsUnlockedPersistent ? 1 : 0);
+
+            this.restoreContractAvailable.set(!playerBountyData.isCompleted() && !rewardsUnlockedPersistent && !this.hasPlayerContractItem(activeBounty.id()) ? 1 : 0);
+
         }
 
         this.updateContractPreviewSlot();
+
     }
 
     private void updateContractPreviewSlot() {
         if (this.hasActiveBounty()) {
             Optional<BountyDefinition> activeBounty = this.getActiveBounty();
             if (activeBounty.isPresent()) {
+                if (this.areRewardSlotsUnlocked()) {
+                    this.contractPreviewContainer.setItem(0, ItemStack.EMPTY);
+                    return;
+                }
+
                 if (this.hasTurnInContractInserted()) {
                     return;
                 }
@@ -720,7 +778,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         return customDataTag.hasUUID("BountyId") && customDataTag.getUUID("BountyId").equals(bountyId);
     }
 
-    public void applySyncFromServer(int selectedBountyIndex, boolean hasActiveBounty, int activeBountyIndex, int activeProgress, int activeRequiredKills, boolean activeCompleted, boolean restoreContractAvailable, List<UUID> abandonedBountyIds) {
+    public void applySyncFromServer(int selectedBountyIndex, boolean hasActiveBounty, int activeBountyIndex, int activeProgress, int activeRequiredKills, boolean activeCompleted, boolean restoreContractAvailable, boolean rewardsUnlocked, List<UUID> abandonedBountyIds) {
         this.abandonedBountyIds.clear();
         this.abandonedBountyIds.addAll(abandonedBountyIds);
 
@@ -735,6 +793,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         this.activeRequiredKills.set(activeRequiredKills);
         this.activeCompleted.set(activeCompleted ? 1 : 0);
         this.restoreContractAvailable.set(restoreContractAvailable ? 1 : 0);
+        this.rewardsUnlocked.set(rewardsUnlocked ? 1 : 0);
         this.updateContractPreviewSlot();
     }
 

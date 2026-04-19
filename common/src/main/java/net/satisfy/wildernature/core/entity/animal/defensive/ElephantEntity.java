@@ -19,7 +19,13 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.BreedGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
@@ -763,6 +769,10 @@ public class ElephantEntity extends Animal {
     }
 
     public void startThrow() {
+        if (this.isBaby()) {
+            return;
+        }
+
         this.setThrowing(true);
         this.throwTicks = ElephantGoals.THROW_DURATION;
         this.throwImpactDone = false;
@@ -770,6 +780,10 @@ public class ElephantEntity extends Animal {
     }
 
     public void startStamp() {
+        if (this.isBaby()) {
+            return;
+        }
+
         this.setStamping(true);
         this.stampTicks = ElephantGoals.STAMP_DURATION;
         this.stampImpactDone = false;
@@ -777,6 +791,10 @@ public class ElephantEntity extends Animal {
     }
 
     public void startCharge(double directionX, double directionZ) {
+        if (this.isBaby()) {
+            return;
+        }
+
         Vec3 direction = new Vec3(directionX, 0.0D, directionZ);
         if (direction.lengthSqr() < 1.0E-6D) return;
 
@@ -798,15 +816,15 @@ public class ElephantEntity extends Animal {
     }
 
     public boolean canStartThrow() {
-        return this.throwCooldownTicks <= 0 && !this.isBusy();
+        return !this.isBaby() && this.throwCooldownTicks <= 0 && !this.isBusy();
     }
 
     public boolean canStartStamp() {
-        return this.stampCooldownTicks <= 0 && !this.isBusy();
+        return !this.isBaby() && this.stampCooldownTicks <= 0 && !this.isBusy();
     }
 
     public boolean canStartCharge() {
-        return this.chargeCooldownTicks <= 0 && !this.isBusy();
+        return !this.isBaby() && this.chargeCooldownTicks <= 0 && !this.isBusy();
     }
 
     public boolean canStartDrinking() {
@@ -928,6 +946,10 @@ public class ElephantEntity extends Animal {
 
     @Override
     public boolean doHurtTarget(Entity target) {
+        if (this.isBaby()) {
+            return false;
+        }
+
         boolean hasHit = super.doHurtTarget(target);
         if (hasHit) {
             this.attackCooldownTicks = ATTACK_COOLDOWN_TICKS;

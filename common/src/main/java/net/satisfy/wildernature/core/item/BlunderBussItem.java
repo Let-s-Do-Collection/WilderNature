@@ -97,12 +97,12 @@ public class BlunderBussItem extends ProjectileWeaponItem {
     protected void shoot(Level world, Player player, ItemStack ammo, AmmunitionItem bulletItem) {
         if (bulletItem instanceof FlintAmmunitionItem) {
             int pelletCount = 4 + world.getRandom().nextInt(5);
-            for (int i = 0; i < pelletCount; i++) {
+            for (int pelletIndex = 0; pelletIndex < pelletCount; pelletIndex++) {
                 BulletEntity pellet = bulletItem.createProjectile(world, ammo.copy(), player);
                 float spread = (float) (getInaccuracy() * 3.5);
-                pellet.shootFromRotation(player, player.getXRot(), player.getYRot(), 0, (float) getProjectileSpeed() * 0.6f, spread);
-                pellet.setDamage(((bulletItem.getDamage() + 3) * getDamageMultiplier()));
-                pellet.setIgnoreInvulnerability(true);
+                pellet.shootFromRotation(player, player.getXRot(), player.getYRot(), 0, (float) getProjectileSpeed() * 0.6F, spread);
+                pellet.setDamage(bulletItem.getDamage() * getDamageMultiplier());
+                pellet.setIgnoreInvulnerability(false);
                 pellet.setLifeTicks(12 + world.getRandom().nextInt(4));
                 world.addFreshEntity(pellet);
             }

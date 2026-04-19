@@ -7,18 +7,16 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.satisfy.wildernature.WilderNature;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDate;
 import java.util.*;
 
 public class BountyBoardSavedData extends SavedData {
     public static final String DATA_NAME = WilderNature.MOD_ID + "_bounty_board";
 
-    private LocalDate currentDay = LocalDate.MIN;
+    private long currentDay;
     private final List<BountyDefinition> dailyBounties = new ArrayList<>();
     private final Map<UUID, PlayerBountyData> playerBountyDataMap = new LinkedHashMap<>();
 
     public static BountyBoardSavedData get(ServerLevel serverLevel) {
-        
         return serverLevel.getServer().overworld().getDataStorage().computeIfAbsent(
                 new SavedData.Factory<>(BountyBoardSavedData::new, BountyBoardSavedData::load, null),
                 DATA_NAME
@@ -42,10 +40,10 @@ public class BountyBoardSavedData extends SavedData {
     }
 
     public void ensureCurrentBounties(ServerLevel serverLevel) {
-        LocalDate currentDate = LocalDate.now();
+        long day = serverLevel.getDayTime() / 24000L;
 
-        if (!currentDate.equals(this.currentDay) || this.dailyBounties.isEmpty()) {
-            this.currentDay = currentDate;
+        if (day != this.currentDay || this.dailyBounties.isEmpty()) {
+            this.currentDay = day;
             this.dailyBounties.clear();
             this.dailyBounties.addAll(BountyGenerator.generateDailyBounties(serverLevel));
             this.setDirty();
@@ -58,7 +56,7 @@ public class BountyBoardSavedData extends SavedData {
 
     @Override
     public @NotNull CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
-        tag.putString("current_day", this.currentDay.toString());
+        tag.putLong("current_day", this.currentDay);
         tag.putInt("daily_bounty_size", this.dailyBounties.size());
 
         for (int index = 0; index < this.dailyBounties.size(); index++) {
@@ -83,7 +81,7 @@ public class BountyBoardSavedData extends SavedData {
         BountyBoardSavedData savedData = new BountyBoardSavedData();
 
         if (tag.contains("current_day")) {
-            savedData.currentDay = LocalDate.parse(tag.getString("current_day"));
+            savedData.currentDay = tag.getLong("current_day");
         }
 
         int dailyBountySize = tag.getInt("daily_bounty_size");

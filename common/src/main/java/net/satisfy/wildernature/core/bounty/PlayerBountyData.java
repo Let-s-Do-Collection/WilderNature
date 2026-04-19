@@ -11,6 +11,7 @@ public class PlayerBountyData {
     private int currentProgress;
     private int trackedStartAmount;
     private int trackedHighestAmount;
+    private boolean rewardsUnlocked;
     private final Set<UUID> abandonedBounties = new HashSet<>();
 
     public BountyDefinition getActiveBounty() {
@@ -33,11 +34,20 @@ public class PlayerBountyData {
         return this.abandonedBounties;
     }
 
+    public boolean areRewardsUnlocked() {
+        return this.rewardsUnlocked;
+    }
+
+    public void setRewardsUnlocked(boolean rewardsUnlocked) {
+        this.rewardsUnlocked = rewardsUnlocked;
+    }
+
     public void setActiveBounty(BountyDefinition activeBounty) {
         this.activeBounty = activeBounty;
         this.currentProgress = 0;
         this.trackedStartAmount = 0;
         this.trackedHighestAmount = 0;
+        this.rewardsUnlocked = false;
     }
 
     public void clearActiveBounty() {
@@ -45,6 +55,7 @@ public class PlayerBountyData {
         this.currentProgress = 0;
         this.trackedStartAmount = 0;
         this.trackedHighestAmount = 0;
+        this.rewardsUnlocked = false;
     }
 
     public void abandonActiveBounty() {
@@ -78,6 +89,7 @@ public class PlayerBountyData {
             compoundTag.putInt("current_progress", this.currentProgress);
             compoundTag.putInt("tracked_start_amount", this.trackedStartAmount);
             compoundTag.putInt("tracked_highest_amount", this.trackedHighestAmount);
+            compoundTag.putBoolean("rewards_unlocked", this.rewardsUnlocked);
         }
 
         int abandonedIndex = 0;
@@ -98,6 +110,7 @@ public class PlayerBountyData {
             playerBountyData.currentProgress = compoundTag.getInt("current_progress");
             playerBountyData.trackedStartAmount = compoundTag.getInt("tracked_start_amount");
             playerBountyData.trackedHighestAmount = compoundTag.getInt("tracked_highest_amount");
+            playerBountyData.rewardsUnlocked = compoundTag.getBoolean("rewards_unlocked");
         }
 
         int abandonedSize = compoundTag.getInt("abandoned_size");

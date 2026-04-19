@@ -1,9 +1,9 @@
 {
   "entity": "wildernature:dog",
   "ambient_sound": "wildernature:dog_ambient",
-  "friendly": true,
+  "friendly": false,
   "neutral": true,
-  "defensive": true,
+  "defensive": false,
   "tameable": true,
   "food": "#wildernature:dog_food",
   "spawn": {
