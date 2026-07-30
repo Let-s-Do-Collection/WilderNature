@@ -1,0 +1,15 @@
+{
+  "entity": "wildernature:lion",
+  "ambient_sound": "wildernature:lion_ambient",
+  "friendly": false,
+  "neutral": false,
+  "defensive": true,
+  "tameable": false,
+  "male": true,
+  "food": "#wildernature:lion_food",
+  "spawn": {
+    "biomes": [
+      "minecraft:savanna"
+    ]
+  }
+}

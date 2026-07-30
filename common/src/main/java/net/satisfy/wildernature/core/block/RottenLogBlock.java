@@ -185,6 +185,12 @@ public class RottenLogBlock extends RotatedPillarBlock implements EntityBlock {
         return type == EntityTypeRegistry.ROTTEN_LOG_BLOCK_ENTITY.get() ? (currentLevel, currentPos, currentState, blockEntity) -> RottenLogBlockEntity.tick((ServerLevel) currentLevel, currentPos, currentState, (RottenLogBlockEntity) blockEntity) : null;
     }
 
+    public static boolean isFarmland(BlockState state) {
+        return state.is(ObjectRegistry.ROTTEN_LOG.get())
+                && state.getValue(STAGE) == Stage.FARMLAND
+                && state.getValue(AXIS) == Direction.Axis.Y;
+    }
+
     public static BlockState createInfestedState(BlockState originalState) {
         Direction.Axis axis = originalState.hasProperty(AXIS) ? originalState.getValue(AXIS) : Direction.Axis.Y;
         return ObjectRegistry.ROTTEN_LOG.get().defaultBlockState().setValue(AXIS, axis).setValue(STAGE, Stage.INFESTED).setValue(MOISTURE, 0);

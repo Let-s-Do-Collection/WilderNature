@@ -1,5 +1,6 @@
 package net.satisfy.wildernature.client.render.entity;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -20,6 +21,16 @@ public class SquirrelRenderer extends MobRenderer<SquirrelEntity, SquirrelModel>
     public SquirrelRenderer(EntityRendererProvider.Context context) {
         super(context, new SquirrelModel(context.bakeLayer(SquirrelModel.LAYER_LOCATION)), 0.4F);
         this.addLayer(new SquirrelHeldItemLayer(this, context.getItemInHandRenderer()));
+    }
+
+    @Override
+    protected void scale(SquirrelEntity entity, PoseStack poseStack, float partialTick) {
+        if (entity.isBaby()) {
+            this.shadowRadius = 0.25F;
+            poseStack.scale(0.55F, 0.55F, 0.55F);
+        } else {
+            this.shadowRadius = 0.4F;
+        }
     }
 
     @Override

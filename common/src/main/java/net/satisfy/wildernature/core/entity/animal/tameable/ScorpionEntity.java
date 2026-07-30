@@ -366,7 +366,8 @@ public class ScorpionEntity extends TamableAnimal {
 
             this.entityData.set(DATA_CALMED, false);
 
-            if (source.getEntity() instanceof LivingEntity attacker && !this.isOwnedBy(attacker)) {
+            if (source.getEntity() instanceof LivingEntity attacker && !this.isOwnedBy(attacker)
+                    && !(attacker instanceof Player attackingPlayer && (attackingPlayer.isCreative() || attackingPlayer.isSpectator()))) {
                 this.setTarget(attacker);
             }
         }

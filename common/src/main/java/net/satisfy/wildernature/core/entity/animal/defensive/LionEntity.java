@@ -596,7 +596,7 @@ public class LionEntity extends Animal {
         if (wasHurt) {
             this.wakeUp();
             Entity attacker = source.getEntity();
-            if (attacker instanceof Player player) {
+            if (attacker instanceof Player player && this.canTargetPlayer(player)) {
                 this.alertPride(player);
                 this.triggerRoar();
                 this.setTarget(player);

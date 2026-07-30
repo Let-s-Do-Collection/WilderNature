@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -26,21 +27,22 @@ public class WolfFurChestplateLayer<T extends LivingEntity, M extends HumanoidMo
 
     @Override
     public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (!(entity instanceof Player player)) {
-            return;
+        boolean shouldRender;
+        if (entity instanceof Player player) {
+            ItemStack chestItem = player.getInventory().armor.get(2);
+            boolean hasFurCloakTrinket = FurCloakTrinket.isEquippedBy(player);
+            boolean chestSlotEmpty = chestItem.isEmpty();
+            boolean chestSlotHasFurCloak = chestItem.getItem() instanceof FurCloakItem;
+            shouldRender = (hasFurCloakTrinket && chestSlotEmpty) || chestSlotHasFurCloak;
+        } else {
+            shouldRender = entity.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof FurCloakItem;
         }
-
-        ItemStack chestItem = player.getInventory().armor.get(2);
-        boolean hasFurCloakTrinket = FurCloakTrinket.isEquippedBy(player);
-        boolean chestSlotEmpty = chestItem.isEmpty();
-        boolean chestSlotHasFurCloak = chestItem.getItem() instanceof FurCloakItem;
-        boolean shouldRender = (hasFurCloakTrinket && chestSlotEmpty) || chestSlotHasFurCloak;
 
         if (!shouldRender) {
             return;
         }
 
-        this.model.syncToBody(this.getParentModel().body, player.isCrouching());
+        this.model.syncToBody(this.getParentModel().body, entity.isCrouching());
         this.model.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         renderColoredCutoutModel(this.model, getTextureLocation(entity), poseStack, multiBufferSource, packedLight, entity, -1);
     }

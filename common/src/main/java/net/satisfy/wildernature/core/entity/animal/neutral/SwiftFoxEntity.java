@@ -52,6 +52,7 @@ public class SwiftFoxEntity extends Animal {
     private static final int GIFT_COOLDOWN_MAX = 1200;
     private static final int TRUST_MIN = 0;
     private static final int TRUST_MAX = 100;
+    private static final int TRUST_BREED_THRESHOLD = 45;
 
     public final AnimationState attackAnimationState = new AnimationState();
     public final AnimationState sneakAnimationState = new AnimationState();
@@ -430,12 +431,18 @@ public class SwiftFoxEntity extends Animal {
 
         if (this.isFood(itemStack)) {
             if (!this.level().isClientSide()) {
-                this.usePlayerItem(player, hand, itemStack);
-                this.addTrust(8);
-                this.trustedPlayerUuid = player.getUUID();
+                boolean trustedByPlayer = this.trustedPlayerUuid != null && this.trustedPlayerUuid.equals(player.getUUID());
+                if (!this.isBaby() && trustedByPlayer && this.trustLevel >= TRUST_BREED_THRESHOLD && this.canFallInLove()) {
+                    this.usePlayerItem(player, hand, itemStack);
+                    this.setInLove(player);
+                } else {
+                    this.usePlayerItem(player, hand, itemStack);
+                    this.addTrust(8);
+                    this.trustedPlayerUuid = player.getUUID();
 
-                if (this.getHealth() < this.getMaxHealth()) {
-                    this.heal(2.0F);
+                    if (this.getHealth() < this.getMaxHealth()) {
+                        this.heal(2.0F);
+                    }
                 }
             }
             return InteractionResult.sidedSuccess(this.level().isClientSide());

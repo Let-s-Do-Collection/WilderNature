@@ -72,6 +72,7 @@ public class MushroomColonyBlock extends BushBlock implements BonemealableBlock 
                 || state.is(Blocks.GRASS_BLOCK)
                 || state.is(Blocks.PODZOL)
                 || state.is(Blocks.MYCELIUM)
+                || RottenLogBlock.isFarmland(state)
                 || this.isFarmAndCharmFertilizedSoil(state);
     }
 

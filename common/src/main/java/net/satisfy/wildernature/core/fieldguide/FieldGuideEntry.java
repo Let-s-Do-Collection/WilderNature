@@ -17,6 +17,7 @@ public record FieldGuideEntry(
         boolean neutral,
         boolean defensive,
         boolean tameable,
+        boolean male,
         String food,
         List<ResourceLocation> biomes
 ) {
@@ -27,12 +28,13 @@ public record FieldGuideEntry(
         boolean neutral = GsonHelper.getAsBoolean(jsonObject, "neutral", false);
         boolean defensive = GsonHelper.getAsBoolean(jsonObject, "defensive", false);
         boolean tameable = GsonHelper.getAsBoolean(jsonObject, "tameable", false);
+        boolean male = GsonHelper.getAsBoolean(jsonObject, "male", false);
         String food = jsonObject.has("food") ? GsonHelper.getAsString(jsonObject, "food") : null;
 
         JsonObject spawnObject = GsonHelper.getAsJsonObject(jsonObject, "spawn", new JsonObject());
         List<ResourceLocation> biomes = parseResourceLocationList(GsonHelper.getAsJsonArray(spawnObject, "biomes", new JsonArray()));
 
-        return new FieldGuideEntry(id, entityId, ambientSound, friendly, neutral, defensive, tameable, food, List.copyOf(biomes));
+        return new FieldGuideEntry(id, entityId, ambientSound, friendly, neutral, defensive, tameable, male, food, List.copyOf(biomes));
     }
 
     public void write(FriendlyByteBuf friendlyByteBuf) {
@@ -46,6 +48,7 @@ public record FieldGuideEntry(
         friendlyByteBuf.writeBoolean(this.neutral);
         friendlyByteBuf.writeBoolean(this.defensive);
         friendlyByteBuf.writeBoolean(this.tameable);
+        friendlyByteBuf.writeBoolean(this.male);
         friendlyByteBuf.writeBoolean(this.food != null);
         if (this.food != null) {
             friendlyByteBuf.writeUtf(this.food);
@@ -61,10 +64,11 @@ public record FieldGuideEntry(
         boolean neutral = friendlyByteBuf.readBoolean();
         boolean defensive = friendlyByteBuf.readBoolean();
         boolean tameable = friendlyByteBuf.readBoolean();
+        boolean male = friendlyByteBuf.readBoolean();
         String food = friendlyByteBuf.readBoolean() ? friendlyByteBuf.readUtf() : null;
         List<ResourceLocation> biomes = friendlyByteBuf.readList(FriendlyByteBuf::readResourceLocation);
 
-        return new FieldGuideEntry(id, entityId, ambientSound, friendly, neutral, defensive, tameable, food, List.copyOf(biomes));
+        return new FieldGuideEntry(id, entityId, ambientSound, friendly, neutral, defensive, tameable, male, food, List.copyOf(biomes));
     }
 
     public boolean hasFood() {

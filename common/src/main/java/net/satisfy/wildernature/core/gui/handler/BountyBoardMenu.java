@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -374,6 +375,8 @@ public class BountyBoardMenu extends AbstractContainerMenu {
         this.rewardContainer.setItem(1, rewardExperienceStack);
 
         this.rewardsUnlocked.set(1);
+
+        serverPlayer.serverLevel().playSound(null, serverPlayer.blockPosition(), SoundEvents.VAULT_OPEN_SHUTTER, SoundSource.BLOCKS, 0.8F, 1.0F);
 
         this.updateActiveData();
 

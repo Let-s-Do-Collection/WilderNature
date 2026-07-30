@@ -191,12 +191,12 @@ public class DogEntity extends TamableAnimal {
         this.goalSelector.addGoal(9, new FollowParentGoal(this, 1.1D) {
             @Override
             public boolean canUse() {
-                return DogEntity.this.canMoveFreely() && super.canUse();
+                return DogEntity.this.canMoveFreely() && !DogEntity.this.isOrderedToSit() && super.canUse();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return DogEntity.this.canMoveFreely() && super.canContinueToUse();
+                return DogEntity.this.canMoveFreely() && !DogEntity.this.isOrderedToSit() && super.canContinueToUse();
             }
         });
         this.goalSelector.addGoal(10, new DogGoals.DogCollectBoneGoal(this));

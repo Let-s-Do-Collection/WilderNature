@@ -55,6 +55,8 @@
   "gui.wildernature.bounty_board.objective.hunt.single": "Jage %s",
   "gui.wildernature.bounty_board.objective.observe": "Beobachte %s",
   "gui.wildernature.bounty_board.progress": "Fortschritt",
+  "gui.wildernature.bounty_board.reset_info": "Neue Aufträge alle 3 Ingame-Tage",
+  "gui.wildernature.bounty_board.reset_info.detail": "Erneuert sich mit der Weltzeit, nicht der Echtzeit",
   "gui.wildernature.bounty_board.reward": "Belohnung",
   "gui.wildernature.bounty_board.reward_locked": "Diese Belohnung ist gesperrt.",
   "gui.wildernature.bounty_board.reward_locked_desc": "Schließe das Kopfgeld für %s ab, um sie zu beanspruchen.",
@@ -259,5 +261,7 @@
   "subtitles.wildernature.scorpion_death": "Skorpion zuckt",
   "subtitles.wildernature.termite_ambient": "Termiten rascheln",
   "subtitles.wildernature.termite_hurt": "Termite quietscht",
-  "subtitles.wildernature.termite_death": "Termite knirscht"
+  "subtitles.wildernature.termite_death": "Termite knirscht",
+  "guild.wildernature.big_game_hunter.title": "Großwildjäger",
+  "guild.wildernature.big_game_hunter.desc": "Jage Elefanten."
 }

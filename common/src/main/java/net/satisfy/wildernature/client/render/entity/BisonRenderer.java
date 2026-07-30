@@ -27,16 +27,8 @@ public class BisonRenderer extends MobRenderer<BisonEntity, BisonModel<BisonEnti
     public void render(BisonEntity entity, float yaw, float partialTicks, PoseStack pose, MultiBufferSource buffer, int packedLight) {
         if (entity.isBaby()) {
             this.shadowRadius = 0.3f;
-            var h = this.model.head();
-            float sx = h.xScale, sy = h.yScale, sz = h.zScale;
-            h.xScale = 1.75f;
-            h.yScale = 1.75f;
-            h.zScale = 1.75f;
             pose.scale(0.5f, 0.5f, 0.5f);
             super.render(entity, yaw, partialTicks, pose, buffer, packedLight);
-            h.xScale = sx;
-            h.yScale = sy;
-            h.zScale = sz;
             return;
         }
         this.shadowRadius = 0.9f;

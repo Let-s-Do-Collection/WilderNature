@@ -1,6 +1,7 @@
 package net.satisfy.wildernature.client.gui.screen;
 
 import com.mojang.math.Axis;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -58,6 +59,10 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
     private static final int CONTRACT_ICON_OFFSET_Y = 2;
     private static final int REWARD_ICON_OFFSET_X = 68;
     private static final int REWARD_ICON_OFFSET_Y = 2;
+    private static final int RESET_INFO_X = 262;
+    private static final int RESET_INFO_Y = 5;
+    private static final int RESET_INFO_WIDTH = 9;
+    private static final int RESET_INFO_HEIGHT = 7;
     private static final int ABANDON_BUTTON_X = 255;
     private static final int ABANDON_BUTTON_Y = 39;
     private static final int ABANDON_BUTTON_WIDTH = 14;
@@ -269,6 +274,17 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
     }
 
     private void renderHoveredItemTooltips(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        int resetInfoX = this.leftPos + RESET_INFO_X;
+        int resetInfoY = this.topPos + RESET_INFO_Y;
+        if (mouseX >= resetInfoX && mouseX < resetInfoX + RESET_INFO_WIDTH
+                && mouseY >= resetInfoY && mouseY < resetInfoY + RESET_INFO_HEIGHT) {
+            guiGraphics.renderComponentTooltip(this.font, List.of(
+                    Component.translatable("gui.wildernature.bounty_board.reset_info").withStyle(ChatFormatting.GOLD),
+                    Component.translatable("gui.wildernature.bounty_board.reset_info.detail").withStyle(ChatFormatting.GRAY)
+            ), mouseX, mouseY);
+            return;
+        }
+
         int abandonButtonX = this.leftPos + ABANDON_BUTTON_X;
         int abandonButtonY = this.topPos + ABANDON_BUTTON_Y;
 

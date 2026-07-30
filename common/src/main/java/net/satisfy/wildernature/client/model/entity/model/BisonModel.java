@@ -104,7 +104,7 @@ public class BisonModel<T extends BisonEntity> extends HierarchicalModel<T> {
 
             poseStack.pushPose();
             this.body.translateAndRotate(poseStack);
-            poseStack.translate(0.0D, 0.0D, 0.5D);
+            poseStack.translate(0.0D, 1.25D, 0.5D);
             poseStack.scale(1.85F, 1.85F, 1.85F);
             this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, alpha);
             poseStack.popPose();

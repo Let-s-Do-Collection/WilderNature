@@ -16,6 +16,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.core.entity.animal.defensive.LionEntity;
 import net.satisfy.wildernature.core.fieldguide.FieldGuideEntry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 
@@ -47,7 +48,11 @@ public class WilderNatureClientUtil {
     }
 
     public static LivingEntity createLivingEntity(FieldGuideEntry entry) {
-        return createLivingEntity(entry.entityId());
+        LivingEntity livingEntity = createLivingEntity(entry.entityId());
+        if (livingEntity instanceof LionEntity lion) {
+            lion.setMale(entry.male());
+        }
+        return livingEntity;
     }
 
     public static LivingEntity createLivingEntity(ResourceLocation entityId) {

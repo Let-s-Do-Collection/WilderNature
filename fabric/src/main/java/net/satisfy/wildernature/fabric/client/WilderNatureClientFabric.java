@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.minecraft.client.renderer.entity.ArmorStandRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -32,6 +33,8 @@ public class WilderNatureClientFabric implements ClientModInitializer {
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {
             if (entityRenderer instanceof PlayerRenderer renderer) {
                 registrationHelper.register(new WolfFurChestplateLayer<>(renderer));
+            } else if (entityRenderer instanceof ArmorStandRenderer armorStandRenderer) {
+                registrationHelper.register(new WolfFurChestplateLayer<>(armorStandRenderer));
             }
         });
 

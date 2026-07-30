@@ -6,6 +6,14 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Idle animations for most entities are now much smoother and more natural
 * Hazelnut Bushes no longer turn into Sweetberry Bushes when bone mealed
 * Improved wolf fur cloak animation and crouch alignment
+* Fur Cloaks now render when placed on Armor Stands
+* Lions and Scorpions no longer retaliate against creative-mode players
+* Baby Dogs now stay put when ordered to sit instead of following adults
+* Baby Bison head proportions corrected
+* Baby Squirrels now render at proper baby size
+* Giraffes can now step over single blocks while being ridden
+* Crops and Mushroom Colonies can now be planted on tilled Rotten Log farmland
+* Swift Foxes can now be bred once they trust you enough
 
 **Changed**
 * Recolored Hazelnut Bushes
@@ -15,7 +23,7 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * RedWolf has been renamed to SwiftFox
 
 **Bounty Board**
-* Added a daily bounty system with fresh objectives every day
+* Added a bounty system that refreshes with fresh objectives every 3 in-game days
 * Added Hunt, Gather, Observe, and Explore bounty types
 * Rewards now scale with difficulty and task size
 * Larger tasks grant better rewards
@@ -23,6 +31,8 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Added biome exploration bounties
 * Added observation bounties using the spyglass
 * Added reward previews for bounties
+* Reward slots now play a sound when they unlock
+* Added a hover tooltip explaining the 3-day refresh cycle
 
 **Hippo**
 * Say hello to the new Hippos!
@@ -85,11 +95,6 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Improved herd behavior and group reactions
 * Added coordinated panic behavior across nearby Bisons
 * Panic can now spread naturally through the herd
-* Added rolling behavior
-* Rolling Bisons can damage nearby entities
-* Rolling can affect the terrain around them
-* Grass can be trampled into Dirt and Coarse Dirt during rolls
-* Added block and dust particles while rolling
 * Improved threat response and movement during panic states
 
 **Deer Rework**
@@ -168,6 +173,7 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Lions rest and sleep during the day
 * Lions become active when disturbed or during hunting moments
 * They defend their group if threatened
+* Male Lions (with mane) now have their own Field Guide entry
 
 **Termites & Mounds**
 * Added Termites and Termite Mounds to the Savanna

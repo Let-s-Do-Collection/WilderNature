@@ -1,0 +1,16 @@
+{
+  "id": "wildernature:elephant_hunter_mark",
+  "enabled": true,
+  "title": "guild.wildernature.big_game_hunter.title",
+  "description": "guild.wildernature.big_game_hunter.desc",
+  "type": "hunt",
+  "target": "wildernature:elephant",
+  "amount": 8,
+  "allow_peaceful": false,
+  "icon": "wildernature:guild_commission",
+  "reward": {
+    "item": "wildernature:blunderbuss",
+    "count": 1,
+    "experience": 40
+  }
+}

@@ -1,9 +1,12 @@
 package net.satisfy.wildernature.neoforge.client;
 
+import net.minecraft.client.model.ArmorStandArmorModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -71,6 +74,14 @@ public class WilderNatureClientNeoForge {
     public static void constructLayers(EntityRenderersEvent.AddLayers event) {
         addLayerToPlayerSkin(event, "default", WolfFurChestplateLayer::new);
         addLayerToPlayerSkin(event, "slim", WolfFurChestplateLayer::new);
+        addLayerToArmorStand(event);
+    }
+
+    private static void addLayerToArmorStand(EntityRenderersEvent.AddLayers event) {
+        LivingEntityRenderer<ArmorStand, ArmorStandArmorModel> renderer = event.getRenderer(EntityType.ARMOR_STAND);
+        if (renderer != null) {
+            renderer.addLayer(new WolfFurChestplateLayer<>(renderer));
+        }
     }
 
     private static <E extends Player, M extends HumanoidModel<E>>
