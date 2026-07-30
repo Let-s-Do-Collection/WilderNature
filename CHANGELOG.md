@@ -2,6 +2,9 @@
 
 This update makes WilderNature entities feel more alive, adding distinct behaviors, daily routines, sleep cycles, and interactions with the world around them.
 
+Due to the massive amount of changes the release channel has been changed to **Beta**
+
+
 **Fixed**
 * Idle animations for most entities are now much smoother and more natural
 * Hazelnut Bushes no longer turn into Sweetberry Bushes when bone mealed
