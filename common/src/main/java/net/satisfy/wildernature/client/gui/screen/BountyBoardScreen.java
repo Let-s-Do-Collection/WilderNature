@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.core.bounty.BountyBoardSavedData;
 import net.satisfy.wildernature.core.bounty.BountyCategory;
 import net.satisfy.wildernature.core.bounty.BountyDefinition;
 import net.satisfy.wildernature.core.bounty.BountyManager;
@@ -273,6 +274,16 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
         guiGraphics.blit(TEXTURE, abandonButtonX, abandonButtonY, textureU, textureV, ABANDON_BUTTON_WIDTH, ABANDON_BUTTON_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
     }
 
+    private Component bountyResetCountdown() {
+        long cycleTicks = 24000L * BountyBoardSavedData.BOUNTY_CYCLE_DAYS;
+        long dayTime = this.minecraft != null && this.minecraft.level != null ? this.minecraft.level.getDayTime() : 0L;
+        long remaining = cycleTicks - Math.floorMod(dayTime, cycleTicks);
+        long days = remaining / 24000L;
+        long hours = (remaining % 24000L) / 1000L;
+        String time = days > 0 ? days + "d " + hours + "h" : Math.max(1L, hours) + "h";
+        return Component.translatable("gui.wildernature.bounty_board.reset_countdown", time).withStyle(ChatFormatting.DARK_GRAY);
+    }
+
     private void renderHoveredItemTooltips(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         int resetInfoX = this.leftPos + RESET_INFO_X;
         int resetInfoY = this.topPos + RESET_INFO_Y;
@@ -280,7 +291,8 @@ public class BountyBoardScreen extends AbstractContainerScreen<BountyBoardMenu> 
                 && mouseY >= resetInfoY && mouseY < resetInfoY + RESET_INFO_HEIGHT) {
             guiGraphics.renderComponentTooltip(this.font, List.of(
                     Component.translatable("gui.wildernature.bounty_board.reset_info").withStyle(ChatFormatting.GOLD),
-                    Component.translatable("gui.wildernature.bounty_board.reset_info.detail").withStyle(ChatFormatting.GRAY)
+                    Component.translatable("gui.wildernature.bounty_board.reset_info.detail").withStyle(ChatFormatting.GRAY),
+                    this.bountyResetCountdown()
             ), mouseX, mouseY);
             return;
         }

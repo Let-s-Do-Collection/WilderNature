@@ -432,11 +432,10 @@ public class SwiftFoxEntity extends Animal {
         if (this.isFood(itemStack)) {
             if (!this.level().isClientSide()) {
                 boolean trustedByPlayer = this.trustedPlayerUuid != null && this.trustedPlayerUuid.equals(player.getUUID());
+                this.usePlayerItem(player, hand, itemStack);
                 if (!this.isBaby() && trustedByPlayer && this.trustLevel >= TRUST_BREED_THRESHOLD && this.canFallInLove()) {
-                    this.usePlayerItem(player, hand, itemStack);
                     this.setInLove(player);
                 } else {
-                    this.usePlayerItem(player, hand, itemStack);
                     this.addTrust(8);
                     this.trustedPlayerUuid = player.getUUID();
 

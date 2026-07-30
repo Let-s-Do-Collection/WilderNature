@@ -20,4 +20,13 @@ public abstract class CropBlockMixin {
             cir.setReturnValue(true);
         }
     }
+
+    @Inject(method = "getGrowthSpeed", at = @At("RETURN"), cancellable = true)
+    private static void wildernature$getGrowthSpeed(BlockState state, BlockGetter level, BlockPos pos, CallbackInfoReturnable<Float> cir) {
+        BlockState below = level.getBlockState(pos.below());
+        if (RottenLogBlock.isFarmland(below)) {
+            float bonus = below.getValue(RottenLogBlock.MOISTURE) > 0 ? 3.0F : 1.0F;
+            cir.setReturnValue(cir.getReturnValueF() + bonus);
+        }
+    }
 }

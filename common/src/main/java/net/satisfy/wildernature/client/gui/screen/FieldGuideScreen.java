@@ -310,7 +310,7 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
         int healthAreaX = this.leftPos + (leftPage ? LEFT_HEALTH_AREA_X : RIGHT_HEALTH_AREA_X);
         int tameableIconX = this.leftPos + (leftPage ? LEFT_TAMEABLE_ICON_X : RIGHT_TAMEABLE_ICON_X);
         int foodIconX = this.leftPos + (leftPage ? LEFT_FOOD_ICON_X : RIGHT_FOOD_ICON_X);
-        Component entityName = BuiltInRegistries.ENTITY_TYPE.get(entry.entityId()).getDescription();
+        Component entityName = this.entryDisplayName(entry);
 
         if (entry.friendly() && this.isPointInside(mouseX, mouseY, friendlyIconX, this.topPos + ENTRY_FRIENDLY_ICON_Y, TRAIT_ICON_WIDTH, TRAIT_ICON_HEIGHT)) {
             guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.wildernature.friendly", entityName), mouseX, mouseY);
@@ -468,11 +468,18 @@ public class FieldGuideScreen extends AbstractContainerScreen<FieldGuideMenu> {
     }
 
     private void renderTitle(GuiGraphics guiGraphics, FieldGuideEntry entry, int fieldX, int fieldY) {
-        String title = BuiltInRegistries.ENTITY_TYPE.get(entry.entityId()).getDescription().getString();
+        String title = this.entryDisplayName(entry).getString();
         int textWidth = this.font.width(title);
         int textX = fieldX + (TITLE_FIELD_WIDTH - textWidth) / 2;
         int textY = fieldY + (TITLE_FIELD_HEIGHT - this.font.lineHeight) / 2;
         guiGraphics.drawString(this.font, title, textX, textY, TITLE_COLOR, false);
+    }
+
+    private Component entryDisplayName(FieldGuideEntry entry) {
+        if (entry.title() != null && !entry.title().isBlank()) {
+            return Component.translatable(entry.title());
+        }
+        return BuiltInRegistries.ENTITY_TYPE.get(entry.entityId()).getDescription();
     }
 
     private void renderBiomeIcons(GuiGraphics guiGraphics, FieldGuideEntry entry, int[] biomeSlots) {

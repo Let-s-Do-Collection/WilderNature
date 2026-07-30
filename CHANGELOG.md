@@ -12,8 +12,9 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Baby Bison head proportions corrected
 * Baby Squirrels now render at proper baby size
 * Giraffes can now step over single blocks while being ridden
-* Crops and Mushroom Colonies can now be planted on tilled Rotten Log farmland
+* Crops, Pumpkin/Melon stems, and Mushroom Colonies can now be grown on tilled Rotten Log farmland (moisture speeds up growth)
 * Swift Foxes can now be bred once they trust you enough
+* Scorpions can now be fed at normal range to build trust (feeding was previously almost impossible to trigger)
 
 **Changed**
 * Recolored Hazelnut Bushes
@@ -32,7 +33,7 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Added observation bounties using the spyglass
 * Added reward previews for bounties
 * Reward slots now play a sound when they unlock
-* Added a hover tooltip explaining the 3-day refresh cycle
+* Added a hover tooltip explaining the 3-day refresh cycle, with a live countdown to the next reset
 
 **Hippo**
 * Say hello to the new Hippos!
@@ -57,7 +58,9 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * They ambush nearby targets, striking quickly with poison before retreating
 * When threatened, they rely on stealth and quick repositioning instead of direct fights
 * A trust based system allows players to carefully calm and tame them
-* Fermented Spider Eyes can be used to gain their trust over time
+* Feed them Spider Eyes or Rotten Flesh while sneaking to slowly earn their trust
+* Once calm, a Fermented Spider Eye completes the taming
+* Their trust and mood are shown through sounds and body language
 * Their glowing eyes reveal their presence in the dark just before they strike
 
 **SwiftFox**
@@ -173,7 +176,7 @@ This update makes WilderNature entities feel more alive, adding distinct behavio
 * Lions rest and sleep during the day
 * Lions become active when disturbed or during hunting moments
 * They defend their group if threatened
-* Male Lions (with mane) now have their own Field Guide entry
+* The Field Guide now lists Lions and Lionesses as separate entries (males show their mane)
 
 **Termites & Mounds**
 * Added Termites and Termite Mounds to the Savanna

@@ -6,7 +6,8 @@
   "mixins": [
     "CatMixin",
     "CreeperMixin",
-    "CropBlockMixin"
+    "CropBlockMixin",
+    "StemBlockMixin"
   ],
   "client": [
   ],

@@ -18,10 +18,12 @@ public class ScorpionModel<T extends ScorpionEntity> extends HierarchicalModel<T
 
     private final ModelPart root;
     private final ModelPart scorpion;
+    private final ModelPart tail;
 
     public ScorpionModel(ModelPart root) {
         this.root = root;
         this.scorpion = root.getChild("scorpion");
+        this.tail = this.scorpion.getChild("torso").getChild("tail");
     }
 
     public static LayerDefinition getTexturedModelData() {
@@ -92,6 +94,10 @@ public class ScorpionModel<T extends ScorpionEntity> extends HierarchicalModel<T
 
         if (entity.isOrderedToSit()) {
             this.scorpion.y += 2.0F;
+        }
+
+        if (entity.isCalmed()) {
+            this.tail.xRot += 0.6F;
         }
     }
 

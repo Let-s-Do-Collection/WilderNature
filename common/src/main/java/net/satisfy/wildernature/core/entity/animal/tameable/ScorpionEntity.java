@@ -11,6 +11,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -437,9 +438,6 @@ public class ScorpionEntity extends TamableAnimal {
         if (!player.isShiftKeyDown()) {
             return false;
         }
-        if (this.distanceTo(player) < 2.5D) {
-            return false;
-        }
         if (this.getTarget() != null) {
             return false;
         }
@@ -456,11 +454,15 @@ public class ScorpionEntity extends TamableAnimal {
             trustLevel++;
             this.entityData.set(DATA_TRUST, trustLevel);
             this.entityData.set(DATA_TRUST_COOLDOWN, TRUST_COOLDOWN_TICKS);
+
+            float pitch = 0.7F + (trustLevel / (float) MAX_TRUST) * 0.6F;
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEventRegistry.SCORPION_AMBIENT.get(), SoundSource.NEUTRAL, 0.7F, pitch);
         }
 
         if (trustLevel >= MAX_TRUST) {
             this.entityData.set(DATA_CALMED, true);
             this.setTarget(null);
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEventRegistry.SCORPION_AMBIENT.get(), SoundSource.NEUTRAL, 0.9F, 0.5F);
         }
 
         return true;

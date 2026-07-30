@@ -5,6 +5,7 @@
   "neutral": false,
   "defensive": true,
   "tameable": false,
+  "title": "entity.wildernature.lioness",
   "food": "#wildernature:lion_food",
   "spawn": {
     "biomes": [
