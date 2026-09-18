@@ -261,7 +261,43 @@ public class RaccoonGoals {
             doorBlock.setOpen(this.raccoon, this.raccoon.level(), blockState, blockPos, true);
         }
     }
+    
+    public static class HarvestBerryBushGoal extends MoveToBlockGoal {
+        private final RaccoonEntity raccoon;
+        
+    public HarvestBerryBushGoal(RaccoonEntity raccoon, double speed) {
+        super(raccoon, speed, 8);
+        this.raccoon = raccoon;
+    }
 
+    @Override
+    protected boolean isValidTarget(LevelReader level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        return state.is(Blocks.SWEET_BERRY_BUSH) && state.getValue(SweetBerryBushBlock.AGE) >= 2;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (this.isReachedTarget()) {
+            BlockState state = raccoon.level().getBlockState(this.blockPos);
+            if (state.is(Blocks.SWEET_BERRY_BUSH) && state.getValue(SweetBerryBushBlock.AGE) >= 2) {
+                int dropCount = 1 + raccoon.getRandom().nextInt(2);
+                ItemStack berries = new ItemStack(Items.SWEET_BERRIES, dropCount);
+
+                if (raccoon.getMainHandItem().isEmpty()) {
+                    raccoon.setItemSlot(EquipmentSlot.MAINHAND, berries);
+                } else {
+                    Block.popResource(raccoon.level(), blockPos, berries); // drop them
+                }
+
+                raccoon.level().setBlock(blockPos, state.setValue(SweetBerryBushBlock.AGE, 1), 2);
+                raccoon.playSound(SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, 1.0F, 1.0F);
+            }
+        }
+      }
+   }
+    
     public static class RaccoonVillageStrollGoal extends Goal {
         private static final int SEARCH_COOLDOWN_MIN = 40;
         private static final int SEARCH_COOLDOWN_MAX = 90;
