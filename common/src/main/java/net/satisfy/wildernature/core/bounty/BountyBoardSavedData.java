@@ -47,7 +47,27 @@ public class BountyBoardSavedData extends SavedData {
             this.currentDay = day;
             this.dailyBounties.clear();
             this.dailyBounties.addAll(BountyGenerator.generateDailyBounties(serverLevel));
+            this.resetRepeatableGuildCommissionCooldowns(serverLevel);
             this.setDirty();
+        }
+    }
+
+    private void resetRepeatableGuildCommissionCooldowns(ServerLevel serverLevel) {
+        List<GuildCommissionDefinition> guildCommissions = GuildCommissionLoader.load(serverLevel.getServer().getResourceManager());
+        Set<UUID> repeatableCommissionIds = new HashSet<>();
+
+        for (GuildCommissionDefinition guildCommission : guildCommissions) {
+            if (guildCommission.repeatable()) {
+                repeatableCommissionIds.add(guildCommission.id());
+            }
+        }
+
+        if (repeatableCommissionIds.isEmpty()) {
+            return;
+        }
+
+        for (PlayerBountyData playerBountyData : this.playerBountyDataMap.values()) {
+            playerBountyData.getAbandonedBounties().removeAll(repeatableCommissionIds);
         }
     }
 

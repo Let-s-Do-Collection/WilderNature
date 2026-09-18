@@ -3,12 +3,14 @@ package net.satisfy.wildernature.core.block.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.satisfy.wildernature.core.entity.animal.passive.TermiteEntity;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
@@ -17,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayDeque;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public class TermiteMoundBlockEntity extends BlockEntity {
     public static final int MAX_CONNECTED_MOUND_BLOCKS = 5;
@@ -28,7 +31,6 @@ public class TermiteMoundBlockEntity extends BlockEntity {
     public static final int MAX_ACTIVE_INFESTATIONS = 2;
     public static final int MIN_RELEASE_COOLDOWN = 80;
     public static final int MAX_RELEASE_COOLDOWN = 180;
-    public static final double ACTIVE_TERMITE_RADIUS = 16.0D;
 
     private int storedTermites;
     private int releaseCooldown;
@@ -36,6 +38,7 @@ public class TermiteMoundBlockEntity extends BlockEntity {
     private int nextInfestationId = 1;
     private boolean initialized;
     private final Set<Integer> activeInfestationIds = new HashSet<>();
+    private final Set<UUID> releasedTermiteIds = new HashSet<>();
 
     public TermiteMoundBlockEntity(BlockPos pos, BlockState state) {
         super(EntityTypeRegistry.TERMITE_MOUND_BLOCK_ENTITY.get(), pos, state);
@@ -80,7 +83,7 @@ public class TermiteMoundBlockEntity extends BlockEntity {
             return;
         }
 
-        int activeOutsideCount = countNearbyAssignedTermites(level, entrancePos);
+        int activeOutsideCount = blockEntity.releasedTermiteIds.size();
         int desiredOutsideCount = Math.min(moundBlockCount, Math.max(1, capacity / 2));
 
         if (blockEntity.storedTermites <= 0 || activeOutsideCount >= desiredOutsideCount) {
@@ -89,9 +92,33 @@ public class TermiteMoundBlockEntity extends BlockEntity {
             return;
         }
 
-        if (releaseTermite(level, entrancePos)) {
+        TermiteEntity releasedTermite = releaseTermite(level, entrancePos);
+        if (releasedTermite != null) {
             blockEntity.storedTermites--;
+            blockEntity.releasedTermiteIds.add(releasedTermite.getUUID());
             blockEntity.releaseCooldown = getRandomCooldown(level);
+            blockEntity.setChanged();
+        }
+    }
+
+    public static void registerReleasedTermite(ServerLevel level, BlockPos moundPos, UUID termiteId) {
+        TermiteMoundBlockEntity blockEntity = getEntranceBlockEntity(level, moundPos);
+        if (blockEntity == null) {
+            return;
+        }
+
+        if (blockEntity.releasedTermiteIds.add(termiteId)) {
+            blockEntity.setChanged();
+        }
+    }
+
+    public static void notifyTermiteRemoved(ServerLevel level, BlockPos moundPos, UUID termiteId) {
+        TermiteMoundBlockEntity blockEntity = getEntranceBlockEntity(level, moundPos);
+        if (blockEntity == null) {
+            return;
+        }
+
+        if (blockEntity.releasedTermiteIds.remove(termiteId)) {
             blockEntity.setChanged();
         }
     }
@@ -216,14 +243,11 @@ public class TermiteMoundBlockEntity extends BlockEntity {
         return visitedPositions;
     }
 
-    private static int countNearbyAssignedTermites(ServerLevel level, BlockPos entrancePos) {
-        return level.getEntitiesOfClass(TermiteEntity.class, new AABB(entrancePos).inflate(ACTIVE_TERMITE_RADIUS), termite -> termite.isAlive() && entrancePos.equals(termite.getMoundPos())).size();
-    }
-
-    private static boolean releaseTermite(ServerLevel level, BlockPos entrancePos) {
+    @Nullable
+    private static TermiteEntity releaseTermite(ServerLevel level, BlockPos entrancePos) {
         TermiteEntity termite = EntityTypeRegistry.TERMITE.get().create(level);
         if (termite == null) {
-            return false;
+            return null;
         }
 
         BlockPos exitPos = findExitPos(level, entrancePos);
@@ -239,7 +263,7 @@ public class TermiteMoundBlockEntity extends BlockEntity {
         level.playSound(null, entrancePos, net.minecraft.sounds.SoundEvents.BEEHIVE_EXIT, net.minecraft.sounds.SoundSource.BLOCKS, 0.9F, 0.35F + level.getRandom().nextFloat() * 0.1F);
         level.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF, spawnX, spawnY + 0.2D, spawnZ, 6, 0.2D, 0.1D, 0.2D, 0.02D);
 
-        return level.addFreshEntity(termite);
+        return level.addFreshEntity(termite) ? termite : null;
     }
 
     private static BlockPos findExitPos(ServerLevel level, BlockPos entrancePos) {
@@ -275,6 +299,12 @@ public class TermiteMoundBlockEntity extends BlockEntity {
         tag.putInt("NextInfestationId", this.nextInfestationId);
         tag.putBoolean("Initialized", this.initialized);
         tag.put("ActiveInfestationIds", new IntArrayTag(this.activeInfestationIds.stream().mapToInt(Integer::intValue).toArray()));
+
+        ListTag releasedTermitesTag = new ListTag();
+        for (UUID termiteId : this.releasedTermiteIds) {
+            releasedTermitesTag.add(NbtUtils.createUUID(termiteId));
+        }
+        tag.put("ReleasedTermites", releasedTermitesTag);
     }
 
     @Override
@@ -288,6 +318,13 @@ public class TermiteMoundBlockEntity extends BlockEntity {
         this.activeInfestationIds.clear();
         for (int infestationId : tag.getIntArray("ActiveInfestationIds")) {
             this.activeInfestationIds.add(infestationId);
+        }
+
+        this.releasedTermiteIds.clear();
+        if (tag.contains("ReleasedTermites")) {
+            for (Tag termiteIdTag : tag.getList("ReleasedTermites", Tag.TAG_INT_ARRAY)) {
+                this.releasedTermiteIds.add(NbtUtils.loadUUID(termiteIdTag));
+            }
         }
     }
 }

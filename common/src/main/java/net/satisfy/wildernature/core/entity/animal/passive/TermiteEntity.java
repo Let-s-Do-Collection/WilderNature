@@ -10,6 +10,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AnimationState;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -21,6 +22,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.satisfy.wildernature.core.block.entity.TermiteMoundBlockEntity;
 import net.satisfy.wildernature.core.entity.ai.goal.animal.TermiteGoals;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.SoundEventRegistry;
@@ -154,6 +156,15 @@ public class TermiteEntity extends Monster {
 
     public void setMoundPos(@Nullable BlockPos pos) {
         this.entityData.set(DATA_MOUND_POS, Optional.ofNullable(pos));
+    }
+
+    @Override
+    public void remove(Entity.RemovalReason reason) {
+        BlockPos moundPos = this.getMoundPos();
+        if (moundPos != null && this.level() instanceof ServerLevel serverLevel) {
+            TermiteMoundBlockEntity.notifyTermiteRemoved(serverLevel, moundPos, this.getUUID());
+        }
+        super.remove(reason);
     }
 
     @Override

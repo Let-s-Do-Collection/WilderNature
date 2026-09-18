@@ -21,7 +21,7 @@ public final class GuildCommissionLoader {
 
     public static List<GuildCommissionDefinition> load(ResourceManager resourceManager) {
         List<GuildCommissionDefinition> commissions = new ArrayList<>();
-        Map<ResourceLocation, Resource> resources = resourceManager.listResources("guild_commissions", path -> path.getPath().endsWith(".json"));
+        Map<ResourceLocation, Resource> resources = resourceManager.listResources("guild_commission", path -> path.getPath().endsWith(".json"));
 
         for (Map.Entry<ResourceLocation, Resource> entry : resources.entrySet()) {
             Resource resource = entry.getValue();

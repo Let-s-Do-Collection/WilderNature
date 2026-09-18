@@ -766,11 +766,6 @@ public class BountyBoardMenu extends AbstractContainerMenu {
                     return;
                 }
 
-                if (this.hasRestoreContractAvailable()) {
-                    this.contractPreviewContainer.setItem(0, new ItemStack(Items.EMERALD));
-                    return;
-                }
-
                 this.contractPreviewContainer.setItem(0, ItemStack.EMPTY);
                 return;
             }

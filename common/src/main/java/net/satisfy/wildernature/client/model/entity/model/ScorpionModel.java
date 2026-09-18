@@ -7,6 +7,7 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.util.Mth;
 import net.satisfy.wildernature.WilderNature;
 import net.satisfy.wildernature.client.model.entity.animation.ScorpionAnimation;
 import net.satisfy.wildernature.core.entity.animal.tameable.ScorpionEntity;
@@ -92,9 +93,8 @@ public class ScorpionModel<T extends ScorpionEntity> extends HierarchicalModel<T
         this.animate(entity.attackState, ScorpionAnimation.attack, ageInTicks, 1.0F);
         this.animate(entity.burrowState, ScorpionAnimation.bury, ageInTicks, 1.0F);
 
-        if (entity.isOrderedToSit()) {
-            this.scorpion.y += 2.0F;
-        }
+        float partialTick = Mth.clamp(ageInTicks - entity.tickCount, 0.0F, 1.0F);
+        this.scorpion.y += 2.0F * entity.getSitAnim(partialTick);
 
         if (entity.isCalmed()) {
             this.tail.xRot += 0.6F;

@@ -77,6 +77,8 @@ public class ScorpionEntity extends TamableAnimal {
     private int attackCooldown;
     private int retreatTicks;
     private double burrowOriginY;
+    private float sitAnimO;
+    private float sitAnim;
 
     public ScorpionEntity(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -189,6 +191,13 @@ public class ScorpionEntity extends TamableAnimal {
         }
 
         this.tickBurrowMotionClientAndServer();
+
+        this.sitAnimO = this.sitAnim;
+        float sitTarget = this.isOrderedToSit() ? 1.0F : 0.0F;
+        this.sitAnim += (sitTarget - this.sitAnim) * 0.3F;
+        if (Math.abs(sitTarget - this.sitAnim) < 0.01F) {
+            this.sitAnim = sitTarget;
+        }
 
         boolean moving = this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-4D;
         this.walkState.animateWhen(moving && !this.isBurrowBusy(), this.tickCount);
@@ -335,6 +344,10 @@ public class ScorpionEntity extends TamableAnimal {
 
     public boolean isBurrowBusy() {
         return this.entityData.get(DATA_BURROW_STATE) != BURROW_STATE_NONE;
+    }
+
+    public float getSitAnim(float partialTick) {
+        return this.sitAnimO + (this.sitAnim - this.sitAnimO) * partialTick;
     }
 
     public boolean isBurrowed() {

@@ -279,7 +279,10 @@ public class RottenLogBlock extends RotatedPillarBlock implements EntityBlock {
             termite.setMoundPos(moundPos);
             termite.setReturningToMound(moundPos != null);
             termite.finalizeSpawn(level, level.getCurrentDifficultyAt(spawnPos), MobSpawnType.TRIGGERED, null);
-            level.addFreshEntity(termite);
+
+            if (level.addFreshEntity(termite) && moundPos != null) {
+                TermiteMoundBlockEntity.registerReleasedTermite(level, moundPos, termite.getUUID());
+            }
         }
     }
 

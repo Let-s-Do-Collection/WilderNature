@@ -3,6 +3,17 @@
 **Fixed**
 * Dedicated servers no longer crash on startup with AbstractMethodError from Bounty Board networking
 * Bounty Board reward duplication exploit — claiming only one reward and reopening the board no longer refills both
+* Fixed being unable to place an Emerald in the Bounty Board to restore a lost contract
+* Guild Commissions now actually appear on the Bounty Board (resource path mismatch prevented them from ever loading)
+* Repeatable Guild Commissions no longer stay permanently locked out for a player after being completed once — they become available again on the next 3-day refresh
+* Rotten Log now drops itself when broken (missing loot table meant it dropped nothing at all)
+* Burrow, Termite Mound Storage, and Termite Mound now drop themselves when broken (same missing loot table issue)
+* Moved the axe/shovel mineable block tags from the old `tags/blocks/` path to `tags/block/` (1.21 datapack path rename) — they were silently ignored, so all affected blocks had no correct tool assigned
+* Termite Mounds no longer produce an ever-growing, unbounded number of Termites over time — the population cap now tracks actually-alive Termites instead of just the ones currently within 16 blocks of the mound, closing a leak that caused mounds to keep spawning replacements for Termites that had simply wandered off, fought, or foraged out of range
+
+**Changed**
+* Reduced grown-up Elephant melee attack range
+* Smoothed the tamed Scorpion's sit/stand transition so it no longer visibly clips into the ground right after being told to stand up
 
 [1.1.5]
 

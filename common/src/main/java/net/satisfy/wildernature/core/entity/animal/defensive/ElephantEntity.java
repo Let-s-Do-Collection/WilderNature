@@ -90,7 +90,7 @@ public class ElephantEntity extends Animal {
     private static final int TRUST_TAKEOVER_THRESHOLD = 40;
     private static final int ATTACK_COOLDOWN_TICKS = 80;
     private static final int POST_CHARGE_ATTACK_DELAY_TICKS = 50;
-    private static final double MELEE_ATTACK_RANGE_SQR = 4.0D;
+    private static final double MELEE_ATTACK_RANGE_SQR = 2.25D;
     private static final double MAX_ATTACK_VERTICAL_DISTANCE = 1.5D;
     private static final double BABY_PROTECT_TRIGGER_RADIUS = 4.0D;
 
