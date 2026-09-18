@@ -10,6 +10,8 @@
 * Burrow, Termite Mound Storage, and Termite Mound now drop themselves when broken (same missing loot table issue)
 * Moved the axe/shovel mineable block tags from the old `tags/blocks/` path to `tags/block/` (1.21 datapack path rename) — they were silently ignored, so all affected blocks had no correct tool assigned
 * Termite Mounds no longer produce an ever-growing, unbounded number of Termites over time — the population cap now tracks actually-alive Termites instead of just the ones currently within 16 blocks of the mound, closing a leak that caused mounds to keep spawning replacements for Termites that had simply wandered off, fought, or foraged out of range
+* Added missing config translation keys for several new animals
+* Bison, Cassowary, Deer, and Turkey now drop their cooked meat directly when killed with a weapon enchanted with Fire Aspect (or any other `#minecraft:smelts_loot` enchantment), matching vanilla behavior
 
 **Changed**
 * Reduced grown-up Elephant melee attack range
