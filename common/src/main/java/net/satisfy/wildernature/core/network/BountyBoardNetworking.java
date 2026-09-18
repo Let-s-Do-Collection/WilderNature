@@ -59,6 +59,9 @@ public final class BountyBoardNetworking {
             });
         });
 
+    }
+
+    public static void initClient() {
         NetworkManager.registerReceiver(NetworkManager.s2c(), SYNC, (buffer, context) -> {
             int selectedBountyIndex = buffer.readInt();
             boolean hasActiveBounty = buffer.readBoolean();

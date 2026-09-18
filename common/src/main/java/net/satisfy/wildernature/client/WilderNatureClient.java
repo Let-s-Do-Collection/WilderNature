@@ -28,6 +28,7 @@ import net.satisfy.wildernature.client.render.block.CompletionistBannerRenderer;
 import net.satisfy.wildernature.client.render.block.HollowCacheRenderer;
 import net.satisfy.wildernature.client.render.entity.*;
 import net.satisfy.wildernature.client.util.WilderNatureClientUtil;
+import net.satisfy.wildernature.core.network.BountyBoardNetworking;
 import net.satisfy.wildernature.core.registry.MenuTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
@@ -42,6 +43,8 @@ public class WilderNatureClient {
     public static final ModelLayerLocation WOLF_FUR_CHESTPLATE_LAYER = new ModelLayerLocation(ResourceLocation.parse("minecraft:player"), "wolf_fur_chestplate");
 
     public static void onInitializeClient() {
+        BountyBoardNetworking.initClient();
+
         RenderTypeRegistry.register(RenderType.cutout(), DEER_TROPHY.get(), HAZELNUT_BUSH.get(), BOUNTY_BOARD.get(), BURROW.get(), RED_MUSHROOM_COLONY.get(), BROWN_MUSHROOM_COLONY.get(), BEAVER_DAM.get());
 
         BlockEntityRendererRegistry.register(COMPLETIONIST_BANNER_BLOCK_ENTITY.get(), CompletionistBannerRenderer::new);

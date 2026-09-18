@@ -184,7 +184,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
             @Override
             public void setChanged() {
                 super.setChanged();
-                BountyBoardMenu.this.tryFinalizeUnlockedRewards();
+                BountyBoardMenu.this.handleRewardSlotChanged(0);
             }
         });
 
@@ -202,7 +202,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
             @Override
             public void setChanged() {
                 super.setChanged();
-                BountyBoardMenu.this.tryFinalizeUnlockedRewards();
+                BountyBoardMenu.this.handleRewardSlotChanged(1);
             }
         });
     }
@@ -366,13 +366,15 @@ public class BountyBoardMenu extends AbstractContainerMenu {
 
         BountyManager.savePlayerBountyData(serverPlayer, playerBountyData);
 
-        ItemStack rewardItemStack = new ItemStack(BuiltInRegistries.ITEM.get(activeBounty.get().reward().previewItemId()), activeBounty.get().reward().previewCount());
+        if (!playerBountyData.isItemRewardClaimed()) {
+            ItemStack rewardItemStack = new ItemStack(BuiltInRegistries.ITEM.get(activeBounty.get().reward().previewItemId()), activeBounty.get().reward().previewCount());
+            this.rewardContainer.setItem(0, rewardItemStack);
+        }
 
-        ItemStack rewardExperienceStack = BountyManager.createExperienceBurstStack(activeBounty.get().reward().experienceReward());
-
-        this.rewardContainer.setItem(0, rewardItemStack);
-
-        this.rewardContainer.setItem(1, rewardExperienceStack);
+        if (!playerBountyData.isExperienceRewardClaimed()) {
+            ItemStack rewardExperienceStack = BountyManager.createExperienceBurstStack(activeBounty.get().reward().experienceReward());
+            this.rewardContainer.setItem(1, rewardExperienceStack);
+        }
 
         this.rewardsUnlocked.set(1);
 
@@ -384,7 +386,7 @@ public class BountyBoardMenu extends AbstractContainerMenu {
 
     }
 
-    private void tryFinalizeUnlockedRewards() {
+    private void handleRewardSlotChanged(int rewardIndex) {
         if (!(this.playerInventory.player instanceof ServerPlayer serverPlayer)) {
             return;
         }
@@ -393,7 +395,32 @@ public class BountyBoardMenu extends AbstractContainerMenu {
             return;
         }
 
-        if (!this.rewardContainer.getItem(0).isEmpty() || !this.rewardContainer.getItem(1).isEmpty()) {
+        if (!this.rewardContainer.getItem(rewardIndex).isEmpty()) {
+            return;
+        }
+
+        PlayerBountyData playerBountyData = BountyManager.getPlayerBountyData(serverPlayer);
+        if (!playerBountyData.hasActiveBounty()) {
+            return;
+        }
+
+        if (rewardIndex == 0) {
+            if (playerBountyData.isItemRewardClaimed()) {
+                return;
+            }
+
+            playerBountyData.setItemRewardClaimed(true);
+        } else {
+            if (playerBountyData.isExperienceRewardClaimed()) {
+                return;
+            }
+
+            playerBountyData.setExperienceRewardClaimed(true);
+        }
+
+        BountyManager.savePlayerBountyData(serverPlayer, playerBountyData);
+
+        if (!playerBountyData.isItemRewardClaimed() || !playerBountyData.isExperienceRewardClaimed()) {
             return;
         }
 
@@ -685,15 +712,17 @@ public class BountyBoardMenu extends AbstractContainerMenu {
 
             boolean rewardsUnlockedPersistent = playerBountyData.areRewardsUnlocked();
 
-            if (playerBountyData.isCompleted() && rewardsUnlockedPersistent && this.rewardContainer.getItem(0).isEmpty() && this.rewardContainer.getItem(1).isEmpty()) {
+            if (playerBountyData.isCompleted() && rewardsUnlockedPersistent) {
 
-                ItemStack rewardItemStack = new ItemStack(BuiltInRegistries.ITEM.get(activeBounty.reward().previewItemId()), activeBounty.reward().previewCount());
+                if (!playerBountyData.isItemRewardClaimed() && this.rewardContainer.getItem(0).isEmpty()) {
+                    ItemStack rewardItemStack = new ItemStack(BuiltInRegistries.ITEM.get(activeBounty.reward().previewItemId()), activeBounty.reward().previewCount());
+                    this.rewardContainer.setItem(0, rewardItemStack);
+                }
 
-                ItemStack rewardExperienceStack = BountyManager.createExperienceBurstStack(activeBounty.reward().experienceReward());
-
-                this.rewardContainer.setItem(0, rewardItemStack);
-
-                this.rewardContainer.setItem(1, rewardExperienceStack);
+                if (!playerBountyData.isExperienceRewardClaimed() && this.rewardContainer.getItem(1).isEmpty()) {
+                    ItemStack rewardExperienceStack = BountyManager.createExperienceBurstStack(activeBounty.reward().experienceReward());
+                    this.rewardContainer.setItem(1, rewardExperienceStack);
+                }
 
             }
 

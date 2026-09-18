@@ -12,6 +12,8 @@ public class PlayerBountyData {
     private int trackedStartAmount;
     private int trackedHighestAmount;
     private boolean rewardsUnlocked;
+    private boolean itemRewardClaimed;
+    private boolean experienceRewardClaimed;
     private final Set<UUID> abandonedBounties = new HashSet<>();
 
     public BountyDefinition getActiveBounty() {
@@ -42,12 +44,30 @@ public class PlayerBountyData {
         this.rewardsUnlocked = rewardsUnlocked;
     }
 
+    public boolean isItemRewardClaimed() {
+        return this.itemRewardClaimed;
+    }
+
+    public void setItemRewardClaimed(boolean itemRewardClaimed) {
+        this.itemRewardClaimed = itemRewardClaimed;
+    }
+
+    public boolean isExperienceRewardClaimed() {
+        return this.experienceRewardClaimed;
+    }
+
+    public void setExperienceRewardClaimed(boolean experienceRewardClaimed) {
+        this.experienceRewardClaimed = experienceRewardClaimed;
+    }
+
     public void setActiveBounty(BountyDefinition activeBounty) {
         this.activeBounty = activeBounty;
         this.currentProgress = 0;
         this.trackedStartAmount = 0;
         this.trackedHighestAmount = 0;
         this.rewardsUnlocked = false;
+        this.itemRewardClaimed = false;
+        this.experienceRewardClaimed = false;
     }
 
     public void clearActiveBounty() {
@@ -56,6 +76,8 @@ public class PlayerBountyData {
         this.trackedStartAmount = 0;
         this.trackedHighestAmount = 0;
         this.rewardsUnlocked = false;
+        this.itemRewardClaimed = false;
+        this.experienceRewardClaimed = false;
     }
 
     public void abandonActiveBounty() {
@@ -90,6 +112,8 @@ public class PlayerBountyData {
             compoundTag.putInt("tracked_start_amount", this.trackedStartAmount);
             compoundTag.putInt("tracked_highest_amount", this.trackedHighestAmount);
             compoundTag.putBoolean("rewards_unlocked", this.rewardsUnlocked);
+            compoundTag.putBoolean("item_reward_claimed", this.itemRewardClaimed);
+            compoundTag.putBoolean("experience_reward_claimed", this.experienceRewardClaimed);
         }
 
         int abandonedIndex = 0;
@@ -111,6 +135,8 @@ public class PlayerBountyData {
             playerBountyData.trackedStartAmount = compoundTag.getInt("tracked_start_amount");
             playerBountyData.trackedHighestAmount = compoundTag.getInt("tracked_highest_amount");
             playerBountyData.rewardsUnlocked = compoundTag.getBoolean("rewards_unlocked");
+            playerBountyData.itemRewardClaimed = compoundTag.getBoolean("item_reward_claimed");
+            playerBountyData.experienceRewardClaimed = compoundTag.getBoolean("experience_reward_claimed");
         }
 
         int abandonedSize = compoundTag.getInt("abandoned_size");

@@ -1,3 +1,9 @@
+[1.1.6]
+
+**Fixed**
+* Dedicated servers no longer crash on startup with AbstractMethodError from Bounty Board networking
+* Bounty Board reward duplication exploit — claiming only one reward and reopening the board no longer refills both
+
 [1.1.5]
 
 This update makes WilderNature entities feel more alive, adding distinct behaviors, daily routines, sleep cycles, and interactions with the world around them.
