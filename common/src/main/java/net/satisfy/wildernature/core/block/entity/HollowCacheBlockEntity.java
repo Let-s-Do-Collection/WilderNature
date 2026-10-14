@@ -79,7 +79,7 @@ public class HollowCacheBlockEntity extends RandomizableContainerBlockEntity {
         if (blockEntity.pendingCloseParticlesTicks > 0) {
             blockEntity.pendingCloseParticlesTicks--;
             if (blockEntity.pendingCloseParticlesTicks == 0 && level instanceof ServerLevel serverLevel) {
-                HollowCacheBlock.spawnCacheCloseParticles(serverLevel, pos);
+                HollowCacheBlock.spawnCacheCloseParticles(serverLevel, pos, state);
             }
         }
     }

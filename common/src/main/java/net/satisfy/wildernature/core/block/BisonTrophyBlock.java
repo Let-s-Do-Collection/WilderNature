@@ -24,7 +24,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.wildernature.core.registry.SoundEventRegistry;
-import net.satisfy.wildernature.core.util.WilderNatureUtil;
+import net.satisfy.foundation.util.ShapeUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -46,7 +46,7 @@ public class BisonTrophyBlock extends WallDecorationBlock {
     };
     public static final Map<Direction, VoxelShape> SHAPE = Util.make(new HashMap<>(), map -> {
         for (Direction direction : Direction.Plane.HORIZONTAL.stream().toList()) {
-            map.put(direction, WilderNatureUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
+            map.put(direction, ShapeUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
         }
     });
 

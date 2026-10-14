@@ -1,3 +1,46 @@
+[1.1.7]
+
+**Requires**
+* Cloth Config is no longer bundled on Fabric and has to be installed separately
+* Trinkets (Fabric) and Curios (NeoForge) are now optional instead of required
+
+**Added**
+* Accessories support: the Fur Cloak can be worn in the Cape slot
+* The Bounty Board has a new model: the contracts hang on their own and sway, and they flutter when you open the board, accept or finish a contract
+* The Bounty Board gets emptier the more of today's contracts you have accepted, finished or canceled
+* Burrows and Termite Mound Storage throw up dirt when opened and closed
+* Termite Mounds drop dust from their open sides
+* Infested Rotten Logs release spores and crumbs, and moist Rotten Log farmland drips water
+* Picking Hazelnuts shakes leaves off the bush, and using Bone Meal on it shows the usual growth particles
+* Beaver Dams bubble under water 
+* New Animations option in the Misc config group to turn these block animations off
+* WilderNature creative tab is split into two side tabs: Wilds & Bounties and Spawn Eggs
+
+**Fixed**
+* Termites and Beavers no longer change blocks when the mobGriefing game rule is turned off
+* The leaves a Hollow Cache pushes out when it closes now appear around the trunk instead of inside it
+* Swift Foxes never spawned naturally because their biome tag still used the old Red Wolf name
+* Swift Foxes dropped nothing when killed because their loot table still used the old Red Wolf name
+* Fur Cloaks and Stylin' Purple Hats no longer stack
+* Your active contract stays on the Bounty Board after the daily refresh, so it can still be finished and handed in
+* Restoring a lost contract with an Emerald now also works for completed contracts and unlocks their rewards
+* NeoForge: the world options (removing farm animals, Hazelnut Bushes, Termite Mounds, Hollow Caches) had no effect and now work like on Fabric
+* NeoForge: Frogs in jungles can now be turned off
+* NeoForge: Cows are now removed from jungles like on Fabric
+* NeoForge: Hazelnut Bushes now generate in the same biomes as on Fabric
+* NeoForge: Fur Cloaks worn in a Curios slot are now visible
+* NeoForge: the Fur Cloak can now be worn in the Curios Back slot. Before, its slot tag was never loaded and players had no slot for it
+* Fur Cloaks worn in an accessory slot are only shown while the chest slot is empty
+* Opening a Burrow played its opening sound twice
+* Some texts showed "%d" instead of a number, for example the Ammunition damage and the contract progress in some languages
+
+**Changed**
+* The config was rebuilt and is now split into World and Spawning, with tooltips and limits for every option and the same defaults on Fabric and NeoForge. Old config files are reset to the defaults, so please check your settings after updating
+* Spawn weights are limited to 0–100 and group sizes to 1–10
+* The Fur Cloak now moves like the vanilla cape
+
+***
+
 [1.1.6]
 
 **Fixed**

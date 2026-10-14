@@ -2,8 +2,8 @@
   "feature": "wildernature:termite_mound",
   "placement": [
     {
-      "type": "minecraft:rarity_filter",
-      "chance": 36
+      "type": "wildernature:config_rarity_filter",
+      "option": "termite_mound"
     },
     {
       "type": "minecraft:in_square"

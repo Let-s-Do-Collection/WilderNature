@@ -3,6 +3,9 @@ package net.satisfy.wildernature.core.block.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -19,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.satisfy.wildernature.platform.PlatformHelper;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,11 +37,13 @@ public class BurrowBlockEntity extends RandomizableContainerBlockEntity {
             @Override
             protected void onOpen(Level level, BlockPos pos, BlockState state) {
                 level.playSound(null, pos, SoundEvents.GRASS_BREAK, SoundSource.BLOCKS, 0.7F, 0.85F + level.random.nextFloat() * 0.15F);
+                spawnDirtParticles(level, pos, state, 14, 0.12D);
             }
 
             @Override
             protected void onClose(Level level, BlockPos pos, BlockState state) {
                 level.playSound(null, pos, SoundEvents.GRASS_PLACE, SoundSource.BLOCKS, 0.7F, 0.85F + level.random.nextFloat() * 0.15F);
+                spawnDirtParticles(level, pos, state, 8, 0.05D);
             }
 
             @Override
@@ -53,6 +59,12 @@ public class BurrowBlockEntity extends RandomizableContainerBlockEntity {
                 return false;
             }
         };
+    }
+
+    private static void spawnDirtParticles(Level level, BlockPos pos, BlockState state, int count, double speed) {
+        if (PlatformHelper.isAnimationsEnabled() && level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, state), pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D, count, 0.3D, 0.05D, 0.3D, speed);
+        }
     }
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, BurrowBlockEntity blockEntity) {

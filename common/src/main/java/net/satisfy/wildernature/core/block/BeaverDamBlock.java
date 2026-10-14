@@ -2,6 +2,10 @@ package net.satisfy.wildernature.core.block;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -21,6 +25,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.satisfy.wildernature.platform.PlatformHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class BeaverDamBlock extends Block implements SimpleWaterloggedBlock {
@@ -69,6 +74,33 @@ public class BeaverDamBlock extends Block implements SimpleWaterloggedBlock {
     @Override
     protected boolean useShapeForLightOcclusion(BlockState state) {
         return false;
+    }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (!PlatformHelper.isAnimationsEnabled()) {
+            return;
+        }
+        if (state.getValue(WATERLOGGED)) {
+            if (random.nextInt(4) == 0) {
+                level.addParticle(ParticleTypes.BUBBLE, pos.getX() + random.nextDouble(), pos.getY() + random.nextDouble() * 0.6D, pos.getZ() + random.nextDouble(), 0.0D, 0.04D, 0.0D);
+            }
+            if (random.nextInt(6) == 0 && !level.getFluidState(pos.above()).is(FluidTags.WATER)) {
+                level.addParticle(ParticleTypes.SPLASH, pos.getX() + random.nextDouble(), pos.getY() + 1.0D, pos.getZ() + random.nextDouble(), 0.0D, 0.0D, 0.0D);
+            }
+            return;
+        }
+        if (random.nextInt(5) != 0) {
+            return;
+        }
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            if (level.getFluidState(pos.relative(direction)).is(FluidTags.WATER)) {
+                double x = pos.getX() + 0.5D + direction.getStepX() * 0.5D;
+                double z = pos.getZ() + 0.5D + direction.getStepZ() * 0.5D;
+                level.addParticle(ParticleTypes.SPLASH, x + (random.nextDouble() - 0.5D) * 0.6D, pos.getY() + 0.3D + random.nextDouble() * 0.4D, z + (random.nextDouble() - 0.5D) * 0.6D, 0.0D, 0.0D, 0.0D);
+                return;
+            }
+        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package net.satisfy.wildernature.core.entity.ai.goal.animal;
 
 import dev.architectury.platform.Platform;
+import net.satisfy.wildernature.platform.PlatformHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -121,6 +122,9 @@ public class RaccoonGoals {
 
         @Override
         public boolean canUse() {
+            if (!PlatformHelper.isRaccoonDoorsEnabled()) {
+                return false;
+            }
             if (this.raccoon.isSleeping() || this.raccoon.isPanicking() || this.raccoon.isWashing() || this.raccoon.isRaccoonRunning()) {
                 return false;
             }
@@ -464,6 +468,9 @@ public class RaccoonGoals {
 
         @Override
         public boolean canUse() {
+            if (!PlatformHelper.isRaccoonStealingEnabled()) {
+                return false;
+            }
             if (!this.raccoon.canLootContainers()) {
                 return false;
             }
@@ -728,6 +735,9 @@ public class RaccoonGoals {
 
         @Override
         public boolean canUse() {
+            if (!PlatformHelper.isRaccoonStealingEnabled()) {
+                return false;
+            }
             if (!Platform.isModLoaded("farm_and_charm")) {
                 return false;
             }
@@ -1120,6 +1130,9 @@ public class RaccoonGoals {
 
         @Override
         public boolean canUse() {
+            if (!PlatformHelper.isRaccoonStealingEnabled()) {
+                return false;
+            }
             if (this.raccoon.level().isDay()) {
                 return false;
             }

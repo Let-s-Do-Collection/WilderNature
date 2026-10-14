@@ -1,6 +1,7 @@
 package net.satisfy.wildernature.core.entity.ai.goal.animal;
 
 import net.minecraft.core.BlockPos;
+import net.satisfy.wildernature.platform.PlatformHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -42,6 +43,7 @@ public class BoarRootingGoal extends Goal {
 
     @Override
     public boolean canUse() {
+        if (!PlatformHelper.isBoarRootingEnabled()) return false;
         if (this.boar.isBaby()) return false;
         if (this.boar.isDigging()) return false;
         if (this.boar.isSleeping()) return false;

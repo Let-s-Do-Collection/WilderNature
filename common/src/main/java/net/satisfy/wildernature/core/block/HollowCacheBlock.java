@@ -140,11 +140,15 @@ public class HollowCacheBlock extends BaseEntityBlock {
         }
     }
 
-    public static void spawnCacheCloseParticles(ServerLevel level, BlockPos blockPos) {
+    public static void spawnCacheCloseParticles(ServerLevel level, BlockPos blockPos, BlockState blockState) {
+        Direction front = blockState.getValue(FACING);
+        Direction[] sides = {front.getOpposite(), front.getClockWise(), front.getCounterClockWise()};
         for (int particleIndex = 0; particleIndex < 10; particleIndex++) {
-            double offsetX = (level.random.nextDouble() - 0.5D) * 0.7D;
-            double offsetY = level.random.nextDouble() * 0.0D;
-            double offsetZ = (level.random.nextDouble() - 0.5D) * 0.7D;
+            Direction side = sides[level.random.nextInt(sides.length)];
+            double along = (level.random.nextDouble() - 0.5D) * 0.7D;
+            double offsetX = side.getStepX() * 0.45D + side.getStepZ() * along;
+            double offsetY = level.random.nextDouble() * 0.1D;
+            double offsetZ = side.getStepZ() * 0.45D + side.getStepX() * along;
             level.sendParticles(ParticleTypeRegistry.CACHE_CLOSE.get(), blockPos.getX() + 0.5D + offsetX, blockPos.getY() + offsetY, blockPos.getZ() + 0.5D + offsetZ, 1, 0.0D, 0.0D, 0.0D, 0.0D);
         }
     }

@@ -1,8 +1,9 @@
 package net.satisfy.wildernature.core.block;
 
 import com.mojang.serialization.MapCodec;
+import net.satisfy.foundation.overlay.BlockNotice;
+import net.satisfy.wildernature.platform.PlatformHelper;
 import dev.architectury.registry.menu.MenuRegistry;
-import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,9 +17,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -44,7 +43,7 @@ import net.satisfy.wildernature.core.bounty.BountyManager;
 import net.satisfy.wildernature.core.bounty.PlayerBountyData;
 import net.satisfy.wildernature.core.gui.handler.BountyBoardMenu;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
-import net.satisfy.wildernature.core.util.WilderNatureUtil;
+import net.satisfy.foundation.util.ShapeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,10 +60,10 @@ public class BountyBoardBlock extends BaseEntityBlock {
     public static final Map<Direction, Map<Part, VoxelShape>> SHAPE = Util.make(new HashMap<>(), map -> {
         for (Direction direction : Direction.Plane.HORIZONTAL.stream().toList()) {
             Map<Part, VoxelShape> partShapeMap = new HashMap<>();
-            partShapeMap.put(Part.BOTTOM_LEFT, WilderNatureUtil.rotateShape(Direction.NORTH, direction, SHAPE_BOTTOM_LEFT));
-            partShapeMap.put(Part.BOTTOM_RIGHT, WilderNatureUtil.rotateShape(Direction.NORTH, direction, SHAPE_BOTTOM_RIGHT));
-            partShapeMap.put(Part.TOP_LEFT, WilderNatureUtil.rotateShape(Direction.NORTH, direction, SHAPE_TOP_LEFT));
-            partShapeMap.put(Part.TOP_RIGHT, WilderNatureUtil.rotateShape(Direction.NORTH, direction, SHAPE_TOP_RIGHT));
+            partShapeMap.put(Part.BOTTOM_LEFT, ShapeUtil.rotateShape(Direction.NORTH, direction, SHAPE_BOTTOM_LEFT));
+            partShapeMap.put(Part.BOTTOM_RIGHT, ShapeUtil.rotateShape(Direction.NORTH, direction, SHAPE_BOTTOM_RIGHT));
+            partShapeMap.put(Part.TOP_LEFT, ShapeUtil.rotateShape(Direction.NORTH, direction, SHAPE_TOP_LEFT));
+            partShapeMap.put(Part.TOP_RIGHT, ShapeUtil.rotateShape(Direction.NORTH, direction, SHAPE_TOP_RIGHT));
             map.put(direction, partShapeMap);
         }
     });
@@ -207,6 +206,11 @@ public class BountyBoardBlock extends BaseEntityBlock {
             return InteractionResult.CONSUME;
         }
 
+        if (!PlatformHelper.isBountyBoardEnabled()) {
+            BlockNotice.send(serverPlayer, pos, Component.translatable("hud.wildernature.bounty_board.disabled"));
+            return InteractionResult.CONSUME;
+        }
+
         BlockPos basePos = getBasePos(state, pos);
         BlockEntity blockEntity = world.getBlockEntity(basePos);
 
@@ -214,10 +218,11 @@ public class BountyBoardBlock extends BaseEntityBlock {
             return InteractionResult.PASS;
         }
 
+        world.blockEvent(basePos, this, BountyBoardBlockEntity.WOBBLE_EVENT, 0);
         MenuRegistry.openExtendedMenu(serverPlayer, menuProvider, buffer -> {
             BountyBoardSavedData savedData = BountyBoardSavedData.get(serverPlayer.serverLevel());
             PlayerBountyData playerBountyData = savedData.getPlayerBountyData(serverPlayer.getUUID());
-            List<BountyDefinition> dailyBounties = savedData.getDailyBounties();
+            List<BountyDefinition> dailyBounties = BountyManager.getBoardBounties(serverPlayer.serverLevel(), playerBountyData);
 
             BountyBoardMenu.writeBounties(buffer, dailyBounties, new ArrayList<>(playerBountyData.getAbandonedBounties()));
 
@@ -292,8 +297,4 @@ public class BountyBoardBlock extends BaseEntityBlock {
         }
     }
 
-    @Override
-    public void appendHoverText(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Component> list, TooltipFlag tooltipFlag) {
-        list.add(Component.translatable("tooltip.wildernature.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
-    }
 }

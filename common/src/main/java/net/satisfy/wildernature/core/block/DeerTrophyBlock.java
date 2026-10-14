@@ -19,7 +19,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.*;
 import net.satisfy.wildernature.core.registry.MobEffectRegistry;
-import net.satisfy.wildernature.core.util.WilderNatureUtil;
+import net.satisfy.foundation.util.ShapeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 
@@ -45,7 +45,7 @@ public class DeerTrophyBlock extends WallDecorationBlock {
 
     public static final Map<Direction, VoxelShape> SHAPE = Util.make(new HashMap<>(), map -> {
         for (Direction direction : Direction.Plane.HORIZONTAL.stream().toList()) {
-            map.put(direction, WilderNatureUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
+            map.put(direction, ShapeUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
         }
     });
 

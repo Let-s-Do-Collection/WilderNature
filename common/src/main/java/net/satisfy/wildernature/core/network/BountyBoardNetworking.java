@@ -5,12 +5,20 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.satisfy.wildernature.WilderNature;
+import net.satisfy.wildernature.client.ClientBountyBoardNotes;
+import net.satisfy.wildernature.core.bounty.BountyBoardSavedData;
+import net.satisfy.wildernature.core.bounty.BountyDefinition;
+import net.satisfy.wildernature.core.bounty.BountyManager;
+import net.satisfy.wildernature.core.bounty.PlayerBountyData;
 import net.satisfy.wildernature.core.gui.handler.BountyBoardMenu;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @SuppressWarnings("removal")
@@ -20,6 +28,9 @@ public final class BountyBoardNetworking {
     public static final ResourceLocation CLAIM = WilderNature.identifier("bounty_claim");
     public static final ResourceLocation SELECT = WilderNature.identifier("bounty_select");
     public static final ResourceLocation SYNC = WilderNature.identifier("bounty_sync");
+    public static final ResourceLocation NOTES = WilderNature.identifier("bounty_board_notes");
+    private static final int NOTES_INTERVAL = 40;
+    private static final Map<UUID, Integer> SENT_NOTES = new HashMap<>();
 
     public static void init() {
         NetworkManager.registerReceiver(NetworkManager.c2s(), ACCEPT, (buffer, context) -> context.queue(() -> {
@@ -27,6 +38,7 @@ public final class BountyBoardNetworking {
             if (serverPlayer.containerMenu instanceof BountyBoardMenu menu) {
                 menu.acceptSelectedBounty();
                 sendSync(serverPlayer, menu);
+                sendNotes(serverPlayer, true);
             }
         }));
 
@@ -36,6 +48,7 @@ public final class BountyBoardNetworking {
                 menu.abandonActiveBounty(serverPlayer);
                 menu.broadcastChanges();
                 sendSync(serverPlayer, menu);
+                sendNotes(serverPlayer, true);
             }
         }));
 
@@ -44,6 +57,7 @@ public final class BountyBoardNetworking {
             if (serverPlayer.containerMenu instanceof BountyBoardMenu menu) {
                 menu.claimActiveBounty();
                 sendSync(serverPlayer, menu);
+                sendNotes(serverPlayer, true);
             }
         }));
 
@@ -55,6 +69,7 @@ public final class BountyBoardNetworking {
                     menu.setSelectedBountyIndex(selectedIndex);
                     menu.broadcastChanges();
                     sendSync(serverPlayer, menu);
+                    sendNotes(serverPlayer, true);
                 }
             });
         });
@@ -62,6 +77,12 @@ public final class BountyBoardNetworking {
     }
 
     public static void initClient() {
+        NetworkManager.registerReceiver(NetworkManager.s2c(), NOTES, (buffer, context) -> {
+            int openBounties = buffer.readInt();
+            int totalBounties = buffer.readInt();
+            context.queue(() -> ClientBountyBoardNotes.set(openBounties, totalBounties));
+        });
+
         NetworkManager.registerReceiver(NetworkManager.s2c(), SYNC, (buffer, context) -> {
             int selectedBountyIndex = buffer.readInt();
             boolean hasActiveBounty = buffer.readBoolean();
@@ -142,6 +163,42 @@ public final class BountyBoardNetworking {
         }
 
         NetworkManager.sendToPlayer(serverPlayer, SYNC, buffer);
+    }
+
+    public static void tickNotes(ServerPlayer serverPlayer) {
+        if (serverPlayer.tickCount % NOTES_INTERVAL == 0) {
+            sendNotes(serverPlayer, false);
+        }
+    }
+
+    public static void sendNotes(ServerPlayer serverPlayer, boolean force) {
+        ServerLevel serverLevel = serverPlayer.serverLevel();
+        List<BountyDefinition> dailyBounties = BountyManager.getDailyBounties(serverLevel);
+        PlayerBountyData playerBountyData = BountyBoardSavedData.get(serverLevel).getPlayerBountyData(serverPlayer.getUUID());
+        BountyDefinition activeBounty = playerBountyData.hasActiveBounty() ? playerBountyData.getActiveBounty() : null;
+        int openBounties = 0;
+
+        for (BountyDefinition dailyBounty : dailyBounties) {
+            if (!playerBountyData.hasAbandoned(dailyBounty.id()) && (activeBounty == null || !activeBounty.id().equals(dailyBounty.id()))) {
+                openBounties++;
+            }
+        }
+
+        int totalBounties = dailyBounties.size();
+        int packed = openBounties * 1000 + totalBounties;
+        Integer previous = SENT_NOTES.put(serverPlayer.getUUID(), packed);
+        if (!force && previous != null && previous == packed) {
+            return;
+        }
+
+        RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), serverPlayer.registryAccess());
+        buffer.writeInt(openBounties);
+        buffer.writeInt(totalBounties);
+        NetworkManager.sendToPlayer(serverPlayer, NOTES, buffer);
+    }
+
+    public static void forgetNotes(ServerPlayer serverPlayer) {
+        SENT_NOTES.remove(serverPlayer.getUUID());
     }
 
     private static RegistryFriendlyByteBuf createClientBuffer() {

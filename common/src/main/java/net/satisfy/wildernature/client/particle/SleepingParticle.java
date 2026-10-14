@@ -1,6 +1,7 @@
 package net.satisfy.wildernature.client.particle;
 
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.satisfy.wildernature.platform.PlatformHelper;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
@@ -104,6 +105,9 @@ public class SleepingParticle extends TextureSheetParticle {
 
         @Override
         public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+            if (!PlatformHelper.isEmoteParticlesEnabled()) {
+                return null;
+            }
             SleepingParticle particle = new SleepingParticle(level, x, y, z, velocityX, velocityY, velocityZ);
             particle.pickSprite(this.spriteSet);
             return particle;

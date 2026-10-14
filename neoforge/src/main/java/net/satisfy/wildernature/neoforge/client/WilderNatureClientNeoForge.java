@@ -26,8 +26,7 @@ import net.satisfy.wildernature.core.registry.MenuTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
 import net.satisfy.wildernature.neoforge.client.extensions.WilderNatureHatExtensions;
-import net.satisfy.wildernature.neoforge.core.player.layer.WolfFurChestplateLayer;
-import net.satisfy.wildernature.neoforge.core.player.model.WolfFurChestplateModel;
+import net.satisfy.wildernature.client.render.entity.FurCloakLayer;
 
 import java.util.function.Function;
 
@@ -66,21 +65,16 @@ public class WilderNatureClientNeoForge {
     }
 
     @SubscribeEvent
-    public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(WilderNatureClient.WOLF_FUR_CHESTPLATE_LAYER, WolfFurChestplateModel::createBodyLayer);
-    }
-
-    @SubscribeEvent
     public static void constructLayers(EntityRenderersEvent.AddLayers event) {
-        addLayerToPlayerSkin(event, "default", WolfFurChestplateLayer::new);
-        addLayerToPlayerSkin(event, "slim", WolfFurChestplateLayer::new);
+        addLayerToPlayerSkin(event, "default", FurCloakLayer::new);
+        addLayerToPlayerSkin(event, "slim", FurCloakLayer::new);
         addLayerToArmorStand(event);
     }
 
     private static void addLayerToArmorStand(EntityRenderersEvent.AddLayers event) {
         LivingEntityRenderer<ArmorStand, ArmorStandArmorModel> renderer = event.getRenderer(EntityType.ARMOR_STAND);
         if (renderer != null) {
-            renderer.addLayer(new WolfFurChestplateLayer<>(renderer));
+            renderer.addLayer(new FurCloakLayer<>(renderer));
         }
     }
 

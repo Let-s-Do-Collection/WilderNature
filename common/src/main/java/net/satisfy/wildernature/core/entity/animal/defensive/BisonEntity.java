@@ -1,6 +1,7 @@
 package net.satisfy.wildernature.core.entity.animal.defensive;
 
 import net.minecraft.core.particles.BlockParticleOption;
+import net.satisfy.wildernature.platform.PlatformHelper;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -404,7 +405,7 @@ public class BisonEntity extends Animal {
     }
 
     public boolean canStartCharge() {
-        return this.chargeCooldownTicks <= 0 && !this.isBaby();
+        return PlatformHelper.isBisonChargeEnabled() && this.chargeCooldownTicks <= 0 && !this.isBaby();
     }
 
     public void startCharge() {

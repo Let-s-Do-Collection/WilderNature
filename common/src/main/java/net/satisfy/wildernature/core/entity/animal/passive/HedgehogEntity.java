@@ -17,8 +17,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
@@ -33,9 +31,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.wildernature.core.block.MushroomColonyBlock;
 import net.satisfy.wildernature.core.block.entity.HollowCacheBlockEntity;
 import net.satisfy.wildernature.core.entity.ai.behavior.CacheEatingMob;
-import net.satisfy.wildernature.core.entity.ai.behavior.RandomAction;
+import net.satisfy.foundation.entity.ai.RandomAction;
 import net.satisfy.wildernature.core.entity.ai.goal.EatFromBlockGoal;
-import net.satisfy.wildernature.core.entity.ai.goal.RandomActionGoal;
+import net.satisfy.foundation.entity.ai.RandomActionGoal;
 import net.satisfy.wildernature.core.entity.animal.defensive.BisonEntity;
 import net.satisfy.wildernature.core.entity.animal.defensive.CassowaryEntity;
 import net.satisfy.wildernature.core.entity.animal.neutral.SwiftFoxEntity;
@@ -46,7 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 
-public class HedgehogEntity extends Animal implements CacheEatingMob {
+public class HedgehogEntity extends Animal implements CacheEatingMob, RandomAction {
     public final AnimationState idleAnimationState = new AnimationState();
     public final AnimationState sniffAnimationState = new AnimationState();
     public final AnimationState noAnimationState = new AnimationState();
@@ -134,45 +132,40 @@ public class HedgehogEntity extends Animal implements CacheEatingMob {
             }
         });
         this.goalSelector.addGoal(13, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(14, new RandomActionGoal(new RandomAction() {
-            @Override
-            public boolean isInterruptable() {
-                return false;
-            }
+        this.goalSelector.addGoal(14, new RandomActionGoal(this));
+    }
 
-            @Override
-            public void onStart() {
-                HedgehogEntity.this.setSniffing(true);
-            }
+    @Override
+    public boolean isInterruptable() {
+        return false;
+    }
 
-            @Override
-            public void onStop() {
-                HedgehogEntity.this.setSniffing(false);
-            }
+    @Override
+    public void onStart() {
+        this.setSniffing(true);
+    }
 
-            @Override
-            public boolean isPossible() {
-                return HedgehogEntity.this.isAvailableForNormalBehavior() && !HedgehogEntity.this.hasNearbyThreat();
-            }
+    @Override
+    public void onStop() {
+        this.setSniffing(false);
+    }
 
-            @Override
-            public int duration() {
-                return 75;
-            }
+    @Override
+    public boolean isPossible() {
+        return this.isAvailableForNormalBehavior() && !this.hasNearbyThreat();
+    }
 
-            @Override
-            public float chance() {
-                if (!HedgehogEntity.this.isAvailableForNormalBehavior()) {
-                    return 0.0F;
-                }
-                return HedgehogEntity.this.level().isNight() ? 0.012F : 0.003F;
-            }
+    @Override
+    public int duration() {
+        return 75;
+    }
 
-            @Override
-            public AttributeInstance getAttribute(Attribute movementSpeed) {
-                return HedgehogEntity.this.getAttribute(Attributes.MOVEMENT_SPEED);
-            }
-        }));
+    @Override
+    public float chance() {
+        if (!this.isAvailableForNormalBehavior()) {
+            return 0.0F;
+        }
+        return this.level().isNight() ? 0.012F : 0.003F;
     }
 
     private void consumeWildMushroom(Level level, BlockPos pos, BlockState state) {

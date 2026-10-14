@@ -2,8 +2,8 @@
   "feature": "wildernature:hollow_cache",
   "placement": [
     {
-      "type": "minecraft:rarity_filter",
-      "chance": 18
+      "type": "wildernature:config_rarity_filter",
+      "option": "hollow_cache"
     },
     {
       "type": "minecraft:in_square"

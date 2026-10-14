@@ -14,6 +14,7 @@ import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalBiomeTags;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -38,7 +39,8 @@ import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.TagsRegistry;
 import net.satisfy.wildernature.core.util.WilderNatureUtil;
-import net.satisfy.wildernature.fabric.core.config.ConfigFabric;
+import net.satisfy.wildernature.fabric.compat.TrinketsCompat;
+import net.satisfy.wildernature.fabric.core.config.WilderNatureFabricConfig;
 import net.satisfy.wildernature.fabric.core.world.PlacedFeatures;
 
 public class WilderNatureFabric implements ModInitializer {
@@ -52,8 +54,11 @@ public class WilderNatureFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        AutoConfig.register(ConfigFabric.class, GsonConfigSerializer::new);
+        AutoConfig.register(WilderNatureFabricConfig.class, GsonConfigSerializer::new);
         WilderNature.init();
+        if (FabricLoader.getInstance().isModLoaded("trinkets")) {
+            TrinketsCompat.init();
+        }
         registerFuel();
         addSpawns();
         addBiomeModification();
@@ -72,25 +77,25 @@ public class WilderNatureFabric implements ModInitializer {
     }
 
     void addBiomeModification() {
-        ConfigFabric config = AutoConfig.getConfigHolder(ConfigFabric.class).getConfig();
+        WilderNatureFabricConfig.WorldSettings settings = AutoConfig.getConfigHolder(WilderNatureFabricConfig.class).getConfig().world;
         BiomeModification world = BiomeModifications.create(WilderNature.identifier("world_features"));
         Predicate<BiomeSelectionContext> spawnsPatchHazelnutBush = getWilderNatureSelector();
         Predicate<BiomeSelectionContext> spawnTermiteMound = BiomeSelectors.tag(BiomeTags.IS_SAVANNA);
         Predicate<BiomeSelectionContext> spawnHollowCache = getHollowCacheSelector();
 
-        if (config.spawnHazelnutBush) {
+        if (settings.enableHazelnutBushes) {
             world.add(ModificationPhase.ADDITIONS, spawnsPatchHazelnutBush, context -> context.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.PATCH_HAZELNUT_BUSH));
         } else {
             world.add(ModificationPhase.REMOVALS, spawnsPatchHazelnutBush, context -> context.getGenerationSettings().removeFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.PATCH_HAZELNUT_BUSH));
         }
 
-        if (config.spawnTermiteMound) {
+        if (settings.enableTermiteMounds) {
             world.add(ModificationPhase.ADDITIONS, spawnTermiteMound, context -> context.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.TERMITE_MOUND));
         } else {
             world.add(ModificationPhase.REMOVALS, spawnTermiteMound, context -> context.getGenerationSettings().removeFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.TERMITE_MOUND));
         }
 
-        if (config.spawnHollowCache) {
+        if (settings.enableHollowCaches) {
             world.add(ModificationPhase.ADDITIONS, spawnHollowCache, context -> context.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.HOLLOW_CACHE));
         } else {
             world.add(ModificationPhase.REMOVALS, spawnHollowCache, context -> context.getGenerationSettings().removeFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatures.HOLLOW_CACHE));
@@ -103,39 +108,40 @@ public class WilderNatureFabric implements ModInitializer {
     }
 
     void addSpawns() {
-        ConfigFabric config = AutoConfig.getConfigHolder(ConfigFabric.class).getConfig();
+        WilderNatureFabricConfig config = AutoConfig.getConfigHolder(WilderNatureFabricConfig.class).getConfig();
+        WilderNatureFabricConfig.SpawningSettings spawning = config.spawning;
 
-        addMobSpawn(TagsRegistry.SPAWNS_DEER, EntityTypeRegistry.DEER.get(), config.DeerSpawnWeight, config.DeerMinGroupSize, config.DeerMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_RACCOON, EntityTypeRegistry.RACCOON.get(), config.RaccoonSpawnWeight, config.RaccoonMinGroupSize, config.RaccoonMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_SQUIRREL, EntityTypeRegistry.SQUIRREL.get(), config.SquirrelSpawnWeight, config.SquirrelMinGroupSize, config.SquirrelMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_SWIFT_FOX, EntityTypeRegistry.SWIFT_FOX.get(), config.SwiftfoxSpawnWeight, config.SwiftfoxMinGroupSize, config.SwiftfoxMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_BOAR, EntityTypeRegistry.BOAR.get(), config.BoarSpawnWeight, config.BoarMinGroupSize, config.BoarMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_BISON, EntityTypeRegistry.BISON.get(), config.BisonSpawnWeight, config.BisonMinGroupSize, config.BisonMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_TURKEY, EntityTypeRegistry.TURKEY.get(), config.TurkeySpawnWeight, config.TurkeyMinGroupSize, config.TurkeyMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_DOG, EntityTypeRegistry.DOG.get(), config.DogSpawnWeight, config.DogMinGroupSize, config.DogMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_MINISHEEP, EntityTypeRegistry.MINISHEEP.get(), config.MiniSheepSpawnWeight, config.MiniSheepMinGroupSize, config.MiniSheepMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_CASSOWARY, EntityTypeRegistry.CASSOWARY.get(), config.CassowarySpawnWeight, config.CassowaryMinGroupSize, config.CassowaryMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_HEDGEHOG, EntityTypeRegistry.HEDGEHOG.get(), config.HedgehogSpawnWeight, config.HedgehogMinGroupSize, config.HedgehogMaxGroupSize);
-        addMobSpawn(TagsRegistry.SPAWNS_SCORPION, EntityTypeRegistry.SCORPION.get(), config.ScorpionSpawnWeight, config.ScorpionMinGroupSize, config.ScorpionMaxGroupSize);
-        addMobSpawn(BiomeTags.IS_SAVANNA, EntityTypeRegistry.ELEPHANT.get(), config.ElephantSpawnWeight, config.ElephantMinGroupSize, config.ElephantMaxGroupSize);
-        addMobSpawn(BiomeTags.IS_SAVANNA, EntityTypeRegistry.GIRAFFE.get(), config.GiraffeSpawnWeight, config.GiraffeMinGroupSize, config.GiraffeMaxGroupSize);
-        addMobSpawn(BiomeTags.IS_RIVER, EntityTypeRegistry.HIPPO.get(), config.HippoSpawnWeight, config.HippoMinGroupSize, config.HippoMaxGroupSize);
-        addMobSpawn(BiomeTags.IS_RIVER, EntityTypeRegistry.BEAVER.get(), config.BeaverSpawnWeight, config.BeaverMinGroupSize, config.BeaverMaxGroupSize);
-        addMobSpawn(BiomeTags.IS_SAVANNA, EntityTypeRegistry.LION.get(), config.LionSpawnWeight, config.LionMinGroupSize, config.LionMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_DEER, EntityTypeRegistry.DEER.get(), spawning.deerSpawnWeight, spawning.deerMinGroupSize, spawning.deerMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_RACCOON, EntityTypeRegistry.RACCOON.get(), spawning.raccoonSpawnWeight, spawning.raccoonMinGroupSize, spawning.raccoonMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_SQUIRREL, EntityTypeRegistry.SQUIRREL.get(), spawning.squirrelSpawnWeight, spawning.squirrelMinGroupSize, spawning.squirrelMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_SWIFT_FOX, EntityTypeRegistry.SWIFT_FOX.get(), spawning.swiftFoxSpawnWeight, spawning.swiftFoxMinGroupSize, spawning.swiftFoxMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_BOAR, EntityTypeRegistry.BOAR.get(), spawning.boarSpawnWeight, spawning.boarMinGroupSize, spawning.boarMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_BISON, EntityTypeRegistry.BISON.get(), spawning.bisonSpawnWeight, spawning.bisonMinGroupSize, spawning.bisonMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_TURKEY, EntityTypeRegistry.TURKEY.get(), spawning.turkeySpawnWeight, spawning.turkeyMinGroupSize, spawning.turkeyMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_DOG, EntityTypeRegistry.DOG.get(), spawning.dogSpawnWeight, spawning.dogMinGroupSize, spawning.dogMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_MINISHEEP, EntityTypeRegistry.MINISHEEP.get(), spawning.miniSheepSpawnWeight, spawning.miniSheepMinGroupSize, spawning.miniSheepMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_CASSOWARY, EntityTypeRegistry.CASSOWARY.get(), spawning.cassowarySpawnWeight, spawning.cassowaryMinGroupSize, spawning.cassowaryMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_HEDGEHOG, EntityTypeRegistry.HEDGEHOG.get(), spawning.hedgehogSpawnWeight, spawning.hedgehogMinGroupSize, spawning.hedgehogMaxGroupSize);
+        addMobSpawn(TagsRegistry.SPAWNS_SCORPION, EntityTypeRegistry.SCORPION.get(), spawning.scorpionSpawnWeight, spawning.scorpionMinGroupSize, spawning.scorpionMaxGroupSize);
+        addMobSpawn(BiomeTags.IS_SAVANNA, EntityTypeRegistry.ELEPHANT.get(), spawning.elephantSpawnWeight, spawning.elephantMinGroupSize, spawning.elephantMaxGroupSize);
+        addMobSpawn(BiomeTags.IS_SAVANNA, EntityTypeRegistry.GIRAFFE.get(), spawning.giraffeSpawnWeight, spawning.giraffeMinGroupSize, spawning.giraffeMaxGroupSize);
+        addMobSpawn(BiomeTags.IS_RIVER, EntityTypeRegistry.HIPPO.get(), spawning.hippoSpawnWeight, spawning.hippoMinGroupSize, spawning.hippoMaxGroupSize);
+        addMobSpawn(BiomeTags.IS_RIVER, EntityTypeRegistry.BEAVER.get(), spawning.beaverSpawnWeight, spawning.beaverMinGroupSize, spawning.beaverMaxGroupSize);
+        addMobSpawn(BiomeTags.IS_SAVANNA, EntityTypeRegistry.LION.get(), spawning.lionSpawnWeight, spawning.lionMinGroupSize, spawning.lionMaxGroupSize);
 
-        if (config.removeSavannaAnimals) {
+        if (config.world.removeSavannaAnimals) {
             removeSpawn(BiomeTags.IS_SAVANNA, List.of(EntityType.SHEEP, EntityType.PIG, EntityType.CHICKEN, EntityType.COW));
         }
-        if (config.removeForestAnimals) {
+        if (config.world.removeForestAnimals) {
             removeSpawn(BiomeTags.IS_FOREST, List.of(EntityType.PIG, EntityType.CHICKEN));
         }
-        if (config.removeSwampAnimals) {
+        if (config.world.removeSwampAnimals) {
             removeSpawn(ConventionalBiomeTags.SWAMP, List.of(EntityType.SHEEP, EntityType.PIG, EntityType.CHICKEN, EntityType.COW));
         }
-        if (config.removeJungleAnimals) {
+        if (config.world.removeJungleAnimals) {
             removeSpawn(BiomeTags.IS_JUNGLE, List.of(EntityType.PIG, EntityType.CHICKEN, EntityType.COW));
         }
-        if (config.addJungleAnimals) {
+        if (config.world.enableJungleFrogs) {
             addMobSpawn(BiomeTags.IS_JUNGLE, EntityType.FROG, 8, 3, 4);
         }
 

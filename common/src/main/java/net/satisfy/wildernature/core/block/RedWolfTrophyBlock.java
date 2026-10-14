@@ -22,7 +22,7 @@ import net.minecraft.world.scores.Scoreboard;
 import net.satisfy.wildernature.core.entity.fx.GlowingBlock;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.TagsRegistry;
-import net.satisfy.wildernature.core.util.WilderNatureUtil;
+import net.satisfy.foundation.util.ShapeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 
@@ -53,7 +53,7 @@ public class RedWolfTrophyBlock extends WallDecorationBlock {
 
     public static final Map<Direction, VoxelShape> SHAPE = Util.make(new HashMap<>(), map -> {
         for (Direction direction : Direction.Plane.HORIZONTAL.stream().toList()) {
-            map.put(direction, WilderNatureUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
+            map.put(direction, ShapeUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
         }
     });
 

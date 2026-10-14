@@ -1,6 +1,7 @@
 package net.satisfy.wildernature.core.bounty;
 
 import net.minecraft.core.Holder;
+import net.satisfy.wildernature.platform.PlatformHelper;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -21,8 +22,6 @@ import net.satisfy.wildernature.WilderNature;
 import java.util.*;
 
 public final class BountyGenerator {
-    private static final int MIN_DAILY_BOUNTY_COUNT = 12;
-    private static final int MAX_DAILY_BOUNTY_COUNT = 16;
     private static final int SPECIAL_BOUNTY_COUNT = 4;
 
     private BountyGenerator() {
@@ -30,7 +29,9 @@ public final class BountyGenerator {
 
     public static List<BountyDefinition> generateDailyBounties(ServerLevel serverLevel) {
         RandomSource randomSource = serverLevel.getRandom();
-        int dailyBountyCount = MIN_DAILY_BOUNTY_COUNT + randomSource.nextInt(MAX_DAILY_BOUNTY_COUNT - MIN_DAILY_BOUNTY_COUNT + 1);
+        int minDailyBountyCount = PlatformHelper.getBountyMinDaily();
+        int maxDailyBountyCount = Math.max(minDailyBountyCount, PlatformHelper.getBountyMaxDaily());
+        int dailyBountyCount = minDailyBountyCount + randomSource.nextInt(maxDailyBountyCount - minDailyBountyCount + 1);
         List<BountyDefinition.BountyType> typePool = createTypePool();
         Collections.shuffle(typePool, new Random(randomSource.nextLong()));
 
@@ -54,7 +55,7 @@ public final class BountyGenerator {
             ResourceLocation selectedTargetId = getNextTargetId(selectedType, selectedCategory, huntEntityPoolByCategory, observeEntityPoolByCategory, gatherItemPool, exploreBiomePool, usedTargets, randomSource);
             BountyDefinition.BountyTargetType targetType = getTargetType(selectedType);
             int requiredAmount = getRequiredAmount(selectedType, selectedCategory, randomSource);
-            int experienceReward = getRandomExperienceReward(selectedType, selectedCategory, requiredAmount, randomSource);
+            int experienceReward = scaleExperience(getRandomExperienceReward(selectedType, selectedCategory, requiredAmount, randomSource));
             ResourceLocation lootTableId = switch (selectedType) {
                 case HUNT -> selectedCategory == BountyCategory.BOSS ? WilderNature.identifier("bounty/elite_bounty") : WilderNature.identifier("bounty/tracking_order");
                 case GATHER -> WilderNature.identifier("bounty/provision_request");
@@ -78,7 +79,7 @@ public final class BountyGenerator {
                 ResourceLocation lootTableId = WilderNature.identifier("bounty/guild_commission");
                 ItemStack previewStack = new ItemStack(BuiltInRegistries.ITEM.get(commission.rewardItem()), commission.rewardCount());
 
-                generatedBounties.add(new BountyDefinition(commission.id(), commission.type(), getTargetType(commission.type()), BountyCategory.NEUTRAL, commission.target(), commission.amount(), new BountyReward(lootTableId, commission.rewardXp(), BuiltInRegistries.ITEM.getKey(previewStack.getItem()), previewStack.getCount()), true));
+                generatedBounties.add(new BountyDefinition(commission.id(), commission.type(), getTargetType(commission.type()), BountyCategory.NEUTRAL, commission.target(), commission.amount(), new BountyReward(lootTableId, scaleExperience(commission.rewardXp()), BuiltInRegistries.ITEM.getKey(previewStack.getItem()), previewStack.getCount()), true));
             }
         }
 
@@ -293,6 +294,10 @@ public final class BountyGenerator {
             case GATHER -> 16 + randomSource.nextInt(49);
             case OBSERVE, EXPLORE -> 1;
         };
+    }
+
+    private static int scaleExperience(int experience) {
+        return (int) Math.round(experience * PlatformHelper.getBountyExperienceMultiplier());
     }
 
     private static int getRandomExperienceReward(BountyDefinition.BountyType bountyType, BountyCategory bountyCategory, int requiredAmount, RandomSource randomSource) {

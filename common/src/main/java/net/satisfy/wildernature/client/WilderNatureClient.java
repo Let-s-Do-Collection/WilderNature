@@ -1,5 +1,6 @@
 package net.satisfy.wildernature.client;
 
+import dev.architectury.platform.Platform;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import dev.architectury.registry.client.particle.ParticleProviderRegistry;
@@ -9,14 +10,15 @@ import dev.architectury.registry.client.rendering.RenderTypeRegistry;
 import dev.architectury.registry.menu.MenuRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.GrassColor;
+import net.satisfy.wildernature.client.compat.AccessoriesClientCompat;
 import net.satisfy.wildernature.client.gui.screen.BountyBoardScreen;
 import net.satisfy.wildernature.client.gui.screen.FieldGuideScreen;
+import net.satisfy.wildernature.client.model.armor.FurCloakModel;
 import net.satisfy.wildernature.client.model.armor.StylinPurpleHatModel;
 import net.satisfy.wildernature.client.model.block.BountyBoardModel;
 import net.satisfy.wildernature.client.model.block.GlowingBlockModel;
@@ -32,6 +34,8 @@ import net.satisfy.wildernature.core.network.BountyBoardNetworking;
 import net.satisfy.wildernature.core.registry.MenuTypeRegistry;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.registry.ParticleTypeRegistry;
+import net.satisfy.wildernature.core.registry.TabRegistry;
+import net.satisfy.foundation.client.creative.CreativeSideTabs;
 
 import static net.satisfy.wildernature.client.util.WilderNatureClientUtil.makeHorn;
 import static net.satisfy.wildernature.core.registry.EntityTypeRegistry.TURKEY_EGG;
@@ -40,10 +44,15 @@ import static net.satisfy.wildernature.core.registry.ObjectRegistry.*;
 
 @Environment(EnvType.CLIENT)
 public class WilderNatureClient {
-    public static final ModelLayerLocation WOLF_FUR_CHESTPLATE_LAYER = new ModelLayerLocation(ResourceLocation.parse("minecraft:player"), "wolf_fur_chestplate");
-
     public static void onInitializeClient() {
         BountyBoardNetworking.initClient();
+        WilderNatureTooltips.init();
+        CreativeSideTabs.register(TabRegistry.WILDERNATURE_TAB.getKey(),
+                CreativeSideTabs.SideTab.of(Component.translatable("creativetab.wildernature.side.wilds"), BOUNTY_BOARD.get(), TabRegistry::acceptWilds),
+                CreativeSideTabs.SideTab.of(Component.translatable("creativetab.wildernature.side.spawn_eggs"), DEER_SPAWN_EGG.get(), TabRegistry::acceptSpawnEggs));
+        if (Platform.isModLoaded("accessories")) {
+            AccessoriesClientCompat.init();
+        }
 
         RenderTypeRegistry.register(RenderType.cutout(), DEER_TROPHY.get(), HAZELNUT_BUSH.get(), BOUNTY_BOARD.get(), BURROW.get(), RED_MUSHROOM_COLONY.get(), BROWN_MUSHROOM_COLONY.get(), BEAVER_DAM.get());
 
@@ -111,6 +120,7 @@ public class WilderNatureClient {
 
     public static void registerEntityModelLayer() {
         EntityModelLayerRegistry.register(StylinPurpleHatModel.LAYER_LOCATION, StylinPurpleHatModel::getTexturedModelData);
+        EntityModelLayerRegistry.register(FurCloakModel.LAYER_LOCATION, FurCloakModel::createBodyLayer);
         EntityModelLayerRegistry.register(TermiteModel.LAYER_LOCATION, TermiteModel::getTexturedModelData);
         EntityModelLayerRegistry.register(BabyLionModel.LAYER_LOCATION, BabyLionModel::getTexturedModelData);
         EntityModelLayerRegistry.register(LionModel.LAYER_LOCATION, LionModel::getTexturedModelData);

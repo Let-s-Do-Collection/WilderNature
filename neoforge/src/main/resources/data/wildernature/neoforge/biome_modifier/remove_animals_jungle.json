@@ -1,0 +1,15 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "wildernature:config",
+      "option": "removeJungleAnimals"
+    }
+  ],
+  "type": "neoforge:remove_spawns",
+  "biomes": "#minecraft:is_jungle",
+  "entity_types": [
+    "minecraft:pig",
+    "minecraft:chicken",
+    "minecraft:cow"
+  ]
+}

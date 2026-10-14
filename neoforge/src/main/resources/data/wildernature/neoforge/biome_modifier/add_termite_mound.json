@@ -1,0 +1,14 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "wildernature:config",
+      "option": "enableTermiteMounds"
+    }
+  ],
+  "type": "neoforge:add_features",
+  "biomes": "minecraft:savanna",
+  "features": [
+    "wildernature:termite_mound"
+  ],
+  "step": "vegetal_decoration"
+}

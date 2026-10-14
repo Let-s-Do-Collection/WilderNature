@@ -1,6 +1,8 @@
 package net.satisfy.wildernature.core.entity.ai.goal.animal;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.GameRules;
+import net.satisfy.wildernature.platform.PlatformHelper;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -441,6 +443,9 @@ public class BeaverGoals {
 
         @Override
         public boolean canUse() {
+            if (!PlatformHelper.isBeaverDamsEnabled() || !this.beaver.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+                return false;
+            }
             if (this.beaver.isGnawing() || !this.beaver.hasRawLogs() || this.beaver.getDamCooldownTicks() > 0) {
                 return false;
             }

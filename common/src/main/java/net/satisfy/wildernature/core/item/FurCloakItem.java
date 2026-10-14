@@ -1,8 +1,10 @@
 package net.satisfy.wildernature.core.item;
 
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.*;
+import net.satisfy.foundation.armor.Wearing;
+import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
 
 public class FurCloakItem extends Item implements Equipable {
@@ -14,13 +16,12 @@ public class FurCloakItem extends Item implements Equipable {
         this.type = pType;
     }
 
-    public static boolean isEquippedBy(Player player) {
-        for (ItemStack itemStack : player.getArmorSlots()) {
-            if (itemStack.getItem() instanceof FurCloakItem) {
-                return true;
-            }
+    public static boolean isVisibleOn(LivingEntity entity) {
+        ItemStack chest = entity.getItemBySlot(EquipmentSlot.CHEST);
+        if (chest.getItem() instanceof FurCloakItem) {
+            return true;
         }
-        return false;
+        return chest.isEmpty() && Wearing.isWearing(entity, ObjectRegistry.FUR_CLOAK.get());
     }
 
     @Override

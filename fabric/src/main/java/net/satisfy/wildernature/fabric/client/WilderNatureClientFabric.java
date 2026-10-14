@@ -3,7 +3,6 @@ package net.satisfy.wildernature.fabric.client;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.minecraft.client.renderer.entity.ArmorStandRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
@@ -15,8 +14,7 @@ import net.satisfy.wildernature.client.WilderNatureClient;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 import net.satisfy.wildernature.core.util.WilderNatureUtil;
 import net.satisfy.wildernature.fabric.client.renderer.StylinPurpleHatRenderer;
-import net.satisfy.wildernature.fabric.core.player.layer.WolfFurChestplateLayer;
-import net.satisfy.wildernature.fabric.core.player.model.WolfFurChestplateModel;
+import net.satisfy.wildernature.client.render.entity.FurCloakLayer;
 
 import java.util.List;
 
@@ -28,13 +26,12 @@ public class WilderNatureClientFabric implements ClientModInitializer {
 
         ArmorRenderer.register(new StylinPurpleHatRenderer(), ObjectRegistry.STYLIN_PURPLE_HAT.get());
 
-        EntityModelLayerRegistry.registerModelLayer(WilderNatureClient.WOLF_FUR_CHESTPLATE_LAYER, WolfFurChestplateModel::createBodyLayer);
 
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {
             if (entityRenderer instanceof PlayerRenderer renderer) {
-                registrationHelper.register(new WolfFurChestplateLayer<>(renderer));
+                registrationHelper.register(new FurCloakLayer<>(renderer));
             } else if (entityRenderer instanceof ArmorStandRenderer armorStandRenderer) {
-                registrationHelper.register(new WolfFurChestplateLayer<>(armorStandRenderer));
+                registrationHelper.register(new FurCloakLayer<>(armorStandRenderer));
             }
         });
 

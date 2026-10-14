@@ -15,7 +15,7 @@ import net.satisfy.wildernature.core.entity.animal.tameable.ScorpionEntity;
 import net.satisfy.wildernature.core.registry.EntityTypeRegistry;
 import net.satisfy.wildernature.core.registry.TagsRegistry;
 import net.satisfy.wildernature.neoforge.core.registry.WilderNatureBiomeModifiers;
-import net.satisfy.wildernature.neoforge.core.registry.WilderNatureConfig;
+import net.satisfy.wildernature.neoforge.core.config.WilderNatureNeoForgeConfig;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -58,24 +58,26 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
 
         registerEntities();
 
-        addMobSpawn(builder, biome, BiomeTags.IS_SAVANNA, EntityTypeRegistry.LION.get(), WilderNatureConfig.lionSpawnWeight, WilderNatureConfig.lionMinGroupSize, WilderNatureConfig.lionMaxGroupSize);
-        addMobSpawn(builder, biome, BiomeTags.IS_SAVANNA, EntityTypeRegistry.ELEPHANT.get(), WilderNatureConfig.elephantSpawnWeight, WilderNatureConfig.elephantMinGroupSize, WilderNatureConfig.elephantMaxGroupSize);
-        addMobSpawn(builder, biome, BiomeTags.IS_SAVANNA, EntityTypeRegistry.GIRAFFE.get(), WilderNatureConfig.giraffeSpawnWeight, WilderNatureConfig.giraffeMinGroupSize, WilderNatureConfig.giraffeMaxGroupSize);
-        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_DEER, EntityTypeRegistry.DEER.get(), WilderNatureConfig.deerSpawnWeight, WilderNatureConfig.deerMinGroupSize, WilderNatureConfig.deerMaxGroupSize);
-        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_RACCOON, EntityTypeRegistry.RACCOON.get(), WilderNatureConfig.raccoonSpawnWeight, WilderNatureConfig.raccoonMinGroupSize, WilderNatureConfig.raccoonMaxGroupSize);
-        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_SQUIRREL, EntityTypeRegistry.SQUIRREL.get(), WilderNatureConfig.squirrelSpawnWeight, WilderNatureConfig.squirrelMinGroupSize, WilderNatureConfig.squirrelMaxGroupSize);
-        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_SWIFT_FOX, EntityTypeRegistry.SWIFT_FOX.get(), WilderNatureConfig.swiftFoxSpawnWeight, WilderNatureConfig.swiftFoxMinGroupSize, WilderNatureConfig.swiftFoxMaxGroupSize);
-        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_BOAR, EntityTypeRegistry.BOAR.get(), WilderNatureConfig.boarSpawnWeight, WilderNatureConfig.boarMinGroupSize, WilderNatureConfig.boarMaxGroupSize);
-        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_BISON, EntityTypeRegistry.BISON.get(), WilderNatureConfig.bisonSpawnWeight, WilderNatureConfig.bisonMinGroupSize, WilderNatureConfig.bisonMaxGroupSize);
-        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_TURKEY, EntityTypeRegistry.TURKEY.get(), WilderNatureConfig.turkeySpawnWeight, WilderNatureConfig.turkeyMinGroupSize, WilderNatureConfig.turkeyMaxGroupSize);
-        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_DOG, EntityTypeRegistry.DOG.get(), WilderNatureConfig.dogSpawnWeight, WilderNatureConfig.dogMinGroupSize, WilderNatureConfig.dogMaxGroupSize);
-        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_MINISHEEP, EntityTypeRegistry.MINISHEEP.get(), WilderNatureConfig.minisheepSpawnWeight, WilderNatureConfig.minisheepMinGroupSize, WilderNatureConfig.minisheepMaxGroupSize);
-        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_CASSOWARY, EntityTypeRegistry.CASSOWARY.get(), WilderNatureConfig.cassowarySpawnWeight, WilderNatureConfig.cassowaryMinGroupSize, WilderNatureConfig.cassowaryMaxGroupSize);
-        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_SCORPION, EntityTypeRegistry.SCORPION.get(), WilderNatureConfig.scorpionSpawnWeight, WilderNatureConfig.scorpionMinGroupSize, WilderNatureConfig.scorpionMaxGroupSize);
-        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_HEDGEHOG, EntityTypeRegistry.HEDGEHOG.get(), WilderNatureConfig.hedgehogSpawnWeight, WilderNatureConfig.hedgehogMinGroupSize, WilderNatureConfig.hedgehogMaxGroupSize);
-        addMobSpawn(builder, biome, BiomeTags.IS_RIVER, EntityTypeRegistry.HIPPO.get(), WilderNatureConfig.hippoSpawnWeight, WilderNatureConfig.hippoMinGroupSize, WilderNatureConfig.hippoMaxGroupSize);
-        addMobSpawn(builder, biome, BiomeTags.IS_JUNGLE, EntityType.FROG, 8, 3, 4);
-        addMobSpawn(builder, biome, BiomeTags.IS_RIVER, EntityTypeRegistry.BEAVER.get(), WilderNatureConfig.beaverSpawnWeight, WilderNatureConfig.beaverMinGroupSize, WilderNatureConfig.beaverMaxGroupSize);
+        addMobSpawn(builder, biome, BiomeTags.IS_SAVANNA, EntityTypeRegistry.LION.get(), WilderNatureNeoForgeConfig.lionSpawnWeight, WilderNatureNeoForgeConfig.lionMinGroupSize, WilderNatureNeoForgeConfig.lionMaxGroupSize);
+        addMobSpawn(builder, biome, BiomeTags.IS_SAVANNA, EntityTypeRegistry.ELEPHANT.get(), WilderNatureNeoForgeConfig.elephantSpawnWeight, WilderNatureNeoForgeConfig.elephantMinGroupSize, WilderNatureNeoForgeConfig.elephantMaxGroupSize);
+        addMobSpawn(builder, biome, BiomeTags.IS_SAVANNA, EntityTypeRegistry.GIRAFFE.get(), WilderNatureNeoForgeConfig.giraffeSpawnWeight, WilderNatureNeoForgeConfig.giraffeMinGroupSize, WilderNatureNeoForgeConfig.giraffeMaxGroupSize);
+        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_DEER, EntityTypeRegistry.DEER.get(), WilderNatureNeoForgeConfig.deerSpawnWeight, WilderNatureNeoForgeConfig.deerMinGroupSize, WilderNatureNeoForgeConfig.deerMaxGroupSize);
+        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_RACCOON, EntityTypeRegistry.RACCOON.get(), WilderNatureNeoForgeConfig.raccoonSpawnWeight, WilderNatureNeoForgeConfig.raccoonMinGroupSize, WilderNatureNeoForgeConfig.raccoonMaxGroupSize);
+        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_SQUIRREL, EntityTypeRegistry.SQUIRREL.get(), WilderNatureNeoForgeConfig.squirrelSpawnWeight, WilderNatureNeoForgeConfig.squirrelMinGroupSize, WilderNatureNeoForgeConfig.squirrelMaxGroupSize);
+        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_SWIFT_FOX, EntityTypeRegistry.SWIFT_FOX.get(), WilderNatureNeoForgeConfig.swiftFoxSpawnWeight, WilderNatureNeoForgeConfig.swiftFoxMinGroupSize, WilderNatureNeoForgeConfig.swiftFoxMaxGroupSize);
+        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_BOAR, EntityTypeRegistry.BOAR.get(), WilderNatureNeoForgeConfig.boarSpawnWeight, WilderNatureNeoForgeConfig.boarMinGroupSize, WilderNatureNeoForgeConfig.boarMaxGroupSize);
+        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_BISON, EntityTypeRegistry.BISON.get(), WilderNatureNeoForgeConfig.bisonSpawnWeight, WilderNatureNeoForgeConfig.bisonMinGroupSize, WilderNatureNeoForgeConfig.bisonMaxGroupSize);
+        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_TURKEY, EntityTypeRegistry.TURKEY.get(), WilderNatureNeoForgeConfig.turkeySpawnWeight, WilderNatureNeoForgeConfig.turkeyMinGroupSize, WilderNatureNeoForgeConfig.turkeyMaxGroupSize);
+        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_DOG, EntityTypeRegistry.DOG.get(), WilderNatureNeoForgeConfig.dogSpawnWeight, WilderNatureNeoForgeConfig.dogMinGroupSize, WilderNatureNeoForgeConfig.dogMaxGroupSize);
+        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_MINISHEEP, EntityTypeRegistry.MINISHEEP.get(), WilderNatureNeoForgeConfig.miniSheepSpawnWeight, WilderNatureNeoForgeConfig.miniSheepMinGroupSize, WilderNatureNeoForgeConfig.miniSheepMaxGroupSize);
+        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_CASSOWARY, EntityTypeRegistry.CASSOWARY.get(), WilderNatureNeoForgeConfig.cassowarySpawnWeight, WilderNatureNeoForgeConfig.cassowaryMinGroupSize, WilderNatureNeoForgeConfig.cassowaryMaxGroupSize);
+        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_SCORPION, EntityTypeRegistry.SCORPION.get(), WilderNatureNeoForgeConfig.scorpionSpawnWeight, WilderNatureNeoForgeConfig.scorpionMinGroupSize, WilderNatureNeoForgeConfig.scorpionMaxGroupSize);
+        addMobSpawn(builder, biome, TagsRegistry.SPAWNS_HEDGEHOG, EntityTypeRegistry.HEDGEHOG.get(), WilderNatureNeoForgeConfig.hedgehogSpawnWeight, WilderNatureNeoForgeConfig.hedgehogMinGroupSize, WilderNatureNeoForgeConfig.hedgehogMaxGroupSize);
+        addMobSpawn(builder, biome, BiomeTags.IS_RIVER, EntityTypeRegistry.HIPPO.get(), WilderNatureNeoForgeConfig.hippoSpawnWeight, WilderNatureNeoForgeConfig.hippoMinGroupSize, WilderNatureNeoForgeConfig.hippoMaxGroupSize);
+        if (WilderNatureNeoForgeConfig.ENABLE_JUNGLE_FROGS.get()) {
+            addMobSpawn(builder, biome, BiomeTags.IS_JUNGLE, EntityType.FROG, 8, 3, 4);
+        }
+        addMobSpawn(builder, biome, BiomeTags.IS_RIVER, EntityTypeRegistry.BEAVER.get(), WilderNatureNeoForgeConfig.beaverSpawnWeight, WilderNatureNeoForgeConfig.beaverMinGroupSize, WilderNatureNeoForgeConfig.beaverMaxGroupSize);
     }
 
     void addMobSpawn(ModifiableBiomeInfo.BiomeInfo.Builder builder, Holder<Biome> biome, TagKey<Biome> tag, EntityType<?> entityType, int weight, int minGroupSize, int maxGroupSize) {

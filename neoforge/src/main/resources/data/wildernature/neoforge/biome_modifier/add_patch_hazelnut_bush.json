@@ -1,0 +1,14 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "wildernature:config",
+      "option": "enableHazelnutBushes"
+    }
+  ],
+  "type": "neoforge:add_features",
+  "biomes": "#wildernature:spawns_patch_hazelnut_bush",
+  "features": [
+    "wildernature:patch_hazelnut_bush"
+  ],
+  "step": "vegetal_decoration"
+}

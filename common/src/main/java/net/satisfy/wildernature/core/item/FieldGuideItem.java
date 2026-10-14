@@ -2,7 +2,6 @@ package net.satisfy.wildernature.core.item;
 
 import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -12,7 +11,6 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.satisfy.wildernature.core.fieldguide.FieldGuideDataLoader;
 import net.satisfy.wildernature.core.fieldguide.FieldGuideEntry;
@@ -43,11 +41,4 @@ public class FieldGuideItem extends Item {
         return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide());
     }
 
-    @Override
-    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> list, TooltipFlag tooltipFlag) {
-        list.add(Component.translatable("tooltip.wildernature.field_guide"));
-        list.add(Component.empty());
-        list.add(Component.translatable("tooltip.wildernature.field_guide.edition").withStyle(style -> style.withColor(TextColor.fromRgb(0xC8A96E)).withItalic(true)));
-        super.appendHoverText(itemStack, tooltipContext, list, tooltipFlag);
-    }
 }

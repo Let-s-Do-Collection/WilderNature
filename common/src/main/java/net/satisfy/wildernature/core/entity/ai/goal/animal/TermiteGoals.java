@@ -1,6 +1,8 @@
 package net.satisfy.wildernature.core.entity.ai.goal.animal;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.GameRules;
+import net.satisfy.wildernature.platform.PlatformHelper;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -396,6 +398,9 @@ public class TermiteGoals {
 
         @Override
         public boolean canUse() {
+            if (!PlatformHelper.isTermiteLogEatingEnabled() || !this.termite.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+                return false;
+            }
             if (this.noLogCooldown > 0) {
                 this.noLogCooldown--;
                 return false;

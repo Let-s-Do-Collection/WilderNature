@@ -26,6 +26,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.wildernature.core.registry.ObjectRegistry;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -52,6 +53,26 @@ public final class BountyManager {
         BountyBoardSavedData savedData = BountyBoardSavedData.get(serverLevel);
         savedData.ensureCurrentBounties(serverLevel);
         return savedData.getDailyBounties();
+    }
+
+    public static List<BountyDefinition> getBoardBounties(ServerLevel serverLevel, PlayerBountyData playerBountyData) {
+        List<BountyDefinition> dailyBounties = getDailyBounties(serverLevel);
+        BountyDefinition activeBounty = playerBountyData.getActiveBounty();
+
+        if (!playerBountyData.hasActiveBounty() || activeBounty == null) {
+            return dailyBounties;
+        }
+
+        for (BountyDefinition dailyBounty : dailyBounties) {
+            if (dailyBounty.id().equals(activeBounty.id())) {
+                return dailyBounties;
+            }
+        }
+
+        List<BountyDefinition> boardBounties = new ArrayList<>(dailyBounties.size() + 1);
+        boardBounties.add(activeBounty);
+        boardBounties.addAll(dailyBounties);
+        return boardBounties;
     }
 
     public static PlayerBountyData getPlayerBountyData(ServerPlayer serverPlayer) {

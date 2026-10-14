@@ -1,6 +1,7 @@
 package net.satisfy.wildernature.core.entity.ai.goal.animal;
 
 import net.minecraft.core.BlockPos;
+import net.satisfy.wildernature.platform.PlatformHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -559,6 +560,9 @@ public class DogGoals {
 
         @Override
         public boolean canUse() {
+            if (!PlatformHelper.isDogDiggingEnabled()) {
+                return false;
+            }
             if (!this.dog.canUseBurrowGoal()) {
                 return false;
             }
@@ -689,6 +693,9 @@ public class DogGoals {
 
         @Override
         public boolean canUse() {
+            if (!PlatformHelper.isDogDiggingEnabled()) {
+                return false;
+            }
             if (!this.dog.isTame()) {
                 return false;
             }

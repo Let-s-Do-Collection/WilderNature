@@ -2,14 +2,17 @@
   "schemaVersion": 1,
   "id": "wildernature",
   "version": "${version}",
-  "name": "[Let's Do] WilderNature",
+  "name": "[Let's Do] Wilder Nature",
   "description": "Discover enchanting new animals like playful squirrels and majestic deers! Visit the bounty board for fun challenges and fabulous rewards.",
   "authors": [
-    "satisfy, jason13"
+    "satisfy",
+    "Jason13Official"
   ],
   "contact": {
-    "homepage": "https://legacy.curseforge.com/minecraft/mc-mods/lets-do-wildernature",
-    "sources": "https://github.com/satisfyu/wildernature"
+    "homepage": "https://www.lets-do.ch",
+    "wiki": "https://lets-do.ch/wiki/wildernature/",
+    "sources": "https://github.com/Let-s-Do-Collection/WilderNature",
+    "issues": "https://github.com/satisfyu/Let-s-Do-Hub"
   },
   "license": "Custom",
   "icon": "pack.png",
@@ -25,13 +28,20 @@
       "net.satisfy.wildernature.fabric.core.config.ModMenu"
     ]
   },
-  "depends": {
-    "fabric": "*",
-    "minecraft": ">=1.21.1",
-    "trinkets": ">=3.7.1",
-    "architectury": ">=9.0.8"
-  },
   "mixins": [
-    "wildernature.fabric.mixins.json"
-  ]
+    "wildernature.fabric.mixins.json",
+    "wildernature-common.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "fabric-api": "*",
+    "minecraft": "~1.21.1",
+    "architectury": ">=13.0.8",
+    "cloth-config": "*",
+    "foundation": ">=1.0.6"
+  },
+  "suggests": {
+    "accessories": "*",
+    "trinkets": "*"
+  }
 }

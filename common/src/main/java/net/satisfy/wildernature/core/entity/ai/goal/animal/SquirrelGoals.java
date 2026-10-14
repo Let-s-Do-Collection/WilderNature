@@ -1,6 +1,7 @@
 package net.satisfy.wildernature.core.entity.ai.goal.animal;
 
 import net.minecraft.core.BlockPos;
+import net.satisfy.wildernature.platform.PlatformHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -29,6 +30,9 @@ public class SquirrelGoals {
 
         @Override
         public boolean canUse() {
+            if (!PlatformHelper.isSquirrelGiftsEnabled()) {
+                return false;
+            }
             if (!this.squirrel.hasMaximumTrust()) {
                 return false;
             }

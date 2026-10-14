@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.satisfy.wildernature.core.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "CatMixin",
+    "StemBlockMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}

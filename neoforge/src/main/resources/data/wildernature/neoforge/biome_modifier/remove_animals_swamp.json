@@ -1,0 +1,16 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "wildernature:config",
+      "option": "removeSwampAnimals"
+    }
+  ],
+  "type": "neoforge:remove_spawns",
+  "biomes": "minecraft:swamp",
+  "entity_types": [
+    "minecraft:sheep",
+    "minecraft:pig",
+    "minecraft:chicken",
+    "minecraft:cow"
+  ]
+}

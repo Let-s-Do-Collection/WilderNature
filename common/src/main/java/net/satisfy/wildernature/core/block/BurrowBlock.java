@@ -66,7 +66,6 @@ public class BurrowBlock extends BaseEntityBlock {
         if (blockEntity instanceof BurrowBlockEntity burrowBlockEntity) {
             player.openMenu(burrowBlockEntity);
             player.awardStat(Stats.OPEN_CHEST);
-            level.playSound(null, blockPos, SoundEvents.GRASS_BREAK, SoundSource.BLOCKS, 0.6F, 0.85F);
             level.gameEvent(player, GameEvent.CONTAINER_OPEN, blockPos);
         }
 

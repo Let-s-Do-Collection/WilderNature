@@ -34,6 +34,8 @@ dependencies {
     modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
 
+    include(modImplementation("net.satisfy.foundation:foundation-neoforge:${rootProject.foundation_version}") { transitive = false })
+    modCompileOnly("io.wispforest:accessories-neoforge:${rootProject.accessories_version}") { transitive = false }
     runtimeOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
     compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
 
@@ -108,7 +110,7 @@ modrinth {
 
     dependencies {
         required.project "architectury-api"
-        required.project "curios"
+        optional.project "curios"
     }
 }
 
@@ -125,6 +127,6 @@ tasks.register("curseforge1071657", net.darkhax.curseforgegradle.TaskPublishCurs
     mainFile.addModLoader("NeoForge")
     mainFile.addEnvironment("Client", "Server")
     mainFile.addRequirement("architectury-api")
-    mainFile.addRequirement("curios")
+    mainFile.addOptional("curios")
 }
 

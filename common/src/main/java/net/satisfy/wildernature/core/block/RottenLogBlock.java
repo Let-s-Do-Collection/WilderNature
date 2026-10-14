@@ -39,6 +39,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.satisfy.wildernature.platform.PlatformHelper;
 import net.satisfy.wildernature.core.block.entity.RottenLogBlockEntity;
 import net.satisfy.wildernature.core.block.entity.TermiteMoundBlockEntity;
 import net.satisfy.wildernature.core.entity.animal.passive.TermiteEntity;
@@ -150,6 +151,34 @@ public class RottenLogBlock extends RotatedPillarBlock implements EntityBlock {
 
             if (moisture > 0) {
                 level.setBlock(pos, state.setValue(MOISTURE, moisture - 1), Block.UPDATE_ALL);
+            }
+        }
+    }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (!PlatformHelper.isAnimationsEnabled()) {
+            return;
+        }
+        switch (state.getValue(STAGE)) {
+            case INFESTED -> {
+                if (random.nextInt(3) == 0) {
+                    level.addParticle(ParticleTypes.WHITE_ASH, pos.getX() + random.nextDouble(), pos.getY() + random.nextDouble(), pos.getZ() + random.nextDouble(), 0.0D, 0.0D, 0.0D);
+                }
+                if (random.nextInt(10) == 0) {
+                    level.addParticle(new BlockParticleOption(ParticleTypes.FALLING_DUST, state), pos.getX() + 0.2D + random.nextDouble() * 0.6D, pos.getY(), pos.getZ() + 0.2D + random.nextDouble() * 0.6D, 0.0D, 0.0D, 0.0D);
+                }
+            }
+            case FARMLAND -> {
+                int moisture = state.getValue(MOISTURE);
+                if (moisture > 0 && random.nextInt(16 - moisture) == 0) {
+                    BlockPos below = pos.below();
+                    if (!level.getBlockState(below).isFaceSturdy(level, below, Direction.UP)) {
+                        level.addParticle(ParticleTypes.DRIPPING_WATER, pos.getX() + 0.2D + random.nextDouble() * 0.6D, pos.getY() - 0.05D, pos.getZ() + 0.2D + random.nextDouble() * 0.6D, 0.0D, 0.0D, 0.0D);
+                    }
+                }
+            }
+            default -> {
             }
         }
     }
