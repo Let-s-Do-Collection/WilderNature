@@ -1,6 +1,8 @@
 package net.satisfy.wildernature.core.network;
 
 import dev.architectury.networking.NetworkManager;
+import dev.architectury.platform.Platform;
+import dev.architectury.utils.Env;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -33,6 +35,11 @@ public final class BountyBoardNetworking {
     private static final Map<UUID, Integer> SENT_NOTES = new HashMap<>();
 
     public static void init() {
+        if (Platform.getEnvironment() == Env.SERVER) {
+            NetworkManager.registerS2CPayloadType(NOTES);
+            NetworkManager.registerS2CPayloadType(SYNC);
+        }
+
         NetworkManager.registerReceiver(NetworkManager.c2s(), ACCEPT, (buffer, context) -> context.queue(() -> {
             ServerPlayer serverPlayer = (ServerPlayer) context.getPlayer();
             if (serverPlayer.containerMenu instanceof BountyBoardMenu menu) {

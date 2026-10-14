@@ -1,3 +1,8 @@
+[1.1.8]
+
+**Fixed**
+* Players could not join dedicated servers because the server could not send Bounty Board data
+
 [1.1.7]
 
 **Requires**
